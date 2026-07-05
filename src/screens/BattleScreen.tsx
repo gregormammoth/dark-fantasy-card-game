@@ -49,8 +49,8 @@ export function BattleScreen({ actor }: BattleScreenProps) {
   }, [state, battle.activePlay, actor]);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl gap-6 p-6">
-      <div className="relative flex flex-1 flex-col gap-6">
+    <div className="mx-auto flex min-h-screen max-w-6xl gap-6 overflow-visible p-6">
+      <div className="relative flex flex-1 flex-col gap-6 overflow-visible">
         <header className="text-center">
           <h1 className="text-2xl font-bold tracking-[0.2em] text-red-300/90 uppercase">
             Dark Fantasy Duel
@@ -60,7 +60,16 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           </p>
         </header>
 
-        <section className="relative flex items-start justify-between gap-8">
+        {battle.activePlay && isAnimating && (
+          <BattlePlayAnimation
+            key={battle.activePlay.cardInstanceId}
+            cue={battle.activePlay.cue}
+            onImpact={handleImpact}
+            onComplete={handleAnimationComplete}
+          />
+        )}
+
+        <section className="relative z-0 flex min-h-44 items-start justify-between gap-8 overflow-visible">
           <CombatantPanel
             name="Player"
             health={playerHealth}
@@ -84,18 +93,9 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             align="right"
             isHit={hitTarget === 'enemy'}
           />
-
-          {battle.activePlay && isAnimating && (
-            <BattlePlayAnimation
-              key={battle.activePlay.cardInstanceId}
-              cue={battle.activePlay.cue}
-              onImpact={handleImpact}
-              onComplete={handleAnimationComplete}
-            />
-          )}
         </section>
 
-        <section className="flex flex-col items-center gap-6">
+        <section className="flex flex-col items-center gap-6 overflow-visible">
           <PileInfo
             deckSize={battle.player.deck.length}
             discardSize={battle.player.discard.length}

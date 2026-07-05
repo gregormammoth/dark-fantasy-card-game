@@ -66,7 +66,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
   const strikeX = cue.source === 'player' ? 180 : -180;
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center overflow-visible">
       <motion.div
         className="absolute inset-0 bg-black/50"
         initial={{ opacity: 0 }}
@@ -76,20 +76,20 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
 
       <motion.div
         key={cue.cardId + cue.cardName}
-        className={`relative z-10 flex w-40 flex-col overflow-hidden rounded-xl border-2 shadow-2xl ${colorClass}`}
-        initial={{ opacity: 0, x: cardX, y: 80, scale: 0.75, rotate: cue.source === 'player' ? -6 : 6 }}
+        className={`relative z-10 flex w-32 flex-col rounded-xl border-2 shadow-2xl ${colorClass}`}
+        initial={{ opacity: 0, x: cardX, y: 48, scale: 0.8, rotate: cue.source === 'player' ? -6 : 6 }}
         animate={{
           opacity: phase === 'done' ? 0 : 1,
-          x: phase === 'play' ? 0 : strikeX * 0.35,
-          y: phase === 'play' ? 0 : -20,
-          scale: phase === 'impact' ? 1.08 : 1,
+          x: phase === 'play' ? 0 : strikeX * 0.25,
+          y: phase === 'play' ? 0 : -12,
+          scale: phase === 'impact' ? 1.05 : 1,
           rotate: 0,
         }}
         transition={{ type: 'spring', stiffness: 320, damping: 24 }}
       >
         {imageSrc && (
-          <div className="aspect-[307/512] w-full bg-stone-950/60">
-            <img src={imageSrc} alt="" className="h-full w-full object-contain" />
+          <div className="h-36 w-full shrink-0 bg-stone-950/60">
+            <img src={imageSrc} alt="" className="h-full w-full object-contain object-center" />
           </div>
         )}
         <div className="p-3 text-center">
@@ -104,8 +104,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
       <AnimatePresence>
         {phase === 'impact' && isPlayerAttack && (
           <motion.div
-            className="absolute z-20 h-1 w-56 origin-left rounded-full bg-gradient-to-r from-red-500 via-orange-400 to-transparent shadow-[0_0_24px_rgba(239,68,68,0.8)]"
-            style={{ left: '38%', top: '42%' }}
+            className="absolute left-1/2 top-1/2 z-20 h-1 w-48 -translate-y-1/2 origin-left rounded-full bg-gradient-to-r from-red-500 via-orange-400 to-transparent shadow-[0_0_24px_rgba(239,68,68,0.8)]"
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -114,8 +113,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && isEnemyAttack && (
           <motion.div
-            className="absolute z-20 h-1 w-56 origin-right rounded-full bg-gradient-to-l from-red-600 via-red-400 to-transparent shadow-[0_0_24px_rgba(220,38,38,0.8)]"
-            style={{ right: '38%', top: '42%' }}
+            className="absolute right-1/2 top-1/2 z-20 h-1 w-48 -translate-y-1/2 origin-right rounded-full bg-gradient-to-l from-red-600 via-red-400 to-transparent shadow-[0_0_24px_rgba(220,38,38,0.8)]"
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -124,7 +122,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && isDefense && cue.shieldGained && (
           <motion.div
-            className="absolute left-[18%] top-[28%] z-20 rounded-full border-2 border-blue-400/80 bg-blue-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(59,130,246,0.6)]"
+            className="absolute left-8 top-1/3 z-20 rounded-full border-2 border-blue-400/80 bg-blue-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(59,130,246,0.6)]"
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.3, 1], opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -135,7 +133,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && isDefense && cue.barrierGained && (
           <motion.div
-            className="absolute left-[18%] top-[28%] z-20 rounded-full border-2 border-violet-400/80 bg-violet-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(139,92,246,0.6)]"
+            className="absolute left-8 top-1/3 z-20 rounded-full border-2 border-violet-400/80 bg-violet-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(139,92,246,0.6)]"
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.3, 1], opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -146,8 +144,8 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && cue.poisonAppliedTo && (
           <motion.div
-            className={`absolute top-[28%] z-20 rounded-full border-2 border-green-400/80 bg-green-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(34,197,94,0.6)] ${
-              cue.poisonAppliedTo === 'enemy' ? 'right-[18%]' : 'left-[18%]'
+            className={`absolute top-1/3 z-20 rounded-full border-2 border-green-400/80 bg-green-500/20 px-4 py-3 text-2xl shadow-[0_0_30px_rgba(34,197,94,0.6)] ${
+              cue.poisonAppliedTo === 'enemy' ? 'right-8' : 'left-8'
             }`}
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.2, 1], opacity: 1 }}
@@ -159,7 +157,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && cue.damageToEnemy !== undefined && cue.damageToEnemy > 0 && (
           <motion.p
-            className="absolute right-[16%] top-[24%] z-20 text-4xl font-black text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.9)]"
+            className="absolute right-8 top-1/4 z-20 text-4xl font-black text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.9)]"
             initial={{ opacity: 0, y: 16, scale: 0.6 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -24 }}
@@ -170,7 +168,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && cue.damageToPlayer !== undefined && cue.damageToPlayer > 0 && (
           <motion.p
-            className="absolute left-[16%] top-[24%] z-20 text-4xl font-black text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.9)]"
+            className="absolute left-8 top-1/4 z-20 text-4xl font-black text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.9)]"
             initial={{ opacity: 0, y: 16, scale: 0.6 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -24 }}
@@ -181,7 +179,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         )}
         {phase === 'impact' && cue.ignoresShield && isPlayerAttack && (
           <motion.p
-            className="absolute right-[22%] top-[36%] z-20 text-xs font-semibold uppercase tracking-widest text-violet-300"
+            className="absolute right-12 top-2/5 z-20 text-xs font-semibold uppercase tracking-widest text-violet-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

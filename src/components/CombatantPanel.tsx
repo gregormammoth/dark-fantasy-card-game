@@ -63,7 +63,7 @@ export function CombatantPanel({
           : { x: 0, filter: 'brightness(1)' }
       }
       transition={{ duration: 0.4 }}
-      className={`flex flex-col gap-3 ${align === 'right' ? 'items-end' : 'items-start'}`}
+      className={`flex flex-col gap-3 overflow-visible ${align === 'right' ? 'items-end' : 'items-start'}`}
     >
       <h2 className="text-lg font-bold tracking-wide text-stone-200">{name}</h2>
       <div className="w-64">
