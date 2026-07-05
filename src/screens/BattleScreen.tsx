@@ -48,6 +48,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             health={playerHealth}
             maxHealth={battle.playerMaxHealth}
             shield={battle.player.shield}
+            maxShield={battle.player.maxShield}
             barrier={battle.player.barrier}
             deckCount={battle.player.deck.length}
             handCount={battle.player.hand.length + battle.combo.length}
@@ -58,6 +59,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             health={enemyHealth}
             maxHealth={battle.enemyMaxHealth}
             shield={battle.enemy.shield}
+            maxShield={battle.enemy.maxShield}
             deckCount={battle.enemy.deck.length}
             poison={battle.enemyPoison}
             align="right"

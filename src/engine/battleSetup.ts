@@ -57,9 +57,13 @@ export function createInitialBattle(): BattleContext {
     ),
   );
 
+  const playerMaxShield = battleData.player.maxShield ?? 2;
+  const enemyMaxShield = battleData.enemy.maxShield ?? 2;
+
   return {
     player: {
-      shield: battleData.player.startingShield,
+      shield: Math.min(battleData.player.startingShield, playerMaxShield),
+      maxShield: playerMaxShield,
       barrier: 0,
       deck: playerDeck,
       hand: [],
@@ -67,7 +71,8 @@ export function createInitialBattle(): BattleContext {
     },
     enemy: {
       name: battleData.enemy.name,
-      shield: battleData.enemy.startingShield,
+      shield: Math.min(battleData.enemy.startingShield, enemyMaxShield),
+      maxShield: enemyMaxShield,
       deck: enemyDeck,
       discard: [],
     },

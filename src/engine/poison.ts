@@ -1,5 +1,5 @@
 import type { BattleContext } from '@/types/battle';
-import { dealDamage } from './health';
+import { dealDamage, getHealth } from './health';
 import { appendLog, targetLabel } from './battleLog';
 
 export function applyPoisonTick(
@@ -12,10 +12,17 @@ export function applyPoisonTick(
     return battle;
   }
 
-  let next = dealDamage(battle, target, poison.damagePerTurn, false, { silent: true });
+  const healthBefore = getHealth(battle, target);
+  let next = dealDamage(battle, target, poison.damagePerTurn, false, {
+    silent: true,
+    bypassDefenses: true,
+  });
+  const cardsLost = healthBefore - getHealth(next, target);
   appendLog(
     next,
-    `${targetLabel(next, target)} took ${poison.damagePerTurn} poison damage.`,
+    `${targetLabel(next, target)} took ${poison.damagePerTurn} poison damage${
+      cardsLost > 0 ? ` (${cardsLost} card${cardsLost === 1 ? '' : 's'} lost)` : ''
+    }.`,
     'poison',
   );
 
@@ -35,9 +42,9 @@ export function expireRoundEffects(battle: BattleContext): BattleContext {
   const next = structuredClone(battle);
 
   if (next.player.barrier > 0) {
-    const expired = next.player.barrier;
+    const unused = next.player.barrier;
     next.player.barrier = 0;
-    appendLog(next, `Barrier expired (${expired} removed).`, 'barrier');
+    appendLog(next, `Unused barrier expired (${unused}).`, 'barrier');
   }
 
   if (next.damageReductionPercent > 0) {

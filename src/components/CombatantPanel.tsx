@@ -31,6 +31,7 @@ interface CombatantPanelProps {
   health: number;
   maxHealth: number;
   shield: number;
+  maxShield: number;
   barrier?: number;
   deckCount: number;
   handCount?: number;
@@ -43,6 +44,7 @@ export function CombatantPanel({
   health,
   maxHealth,
   shield,
+  maxShield,
   barrier,
   deckCount,
   handCount,
@@ -61,7 +63,7 @@ export function CombatantPanel({
           {handCount !== undefined ? ` · Hand ${handCount}` : ''}
         </span>
         <span className="rounded-md border border-blue-900/50 bg-blue-950/40 px-3 py-1 font-mono text-blue-200">
-          🛡 {shield}
+          🛡 {shield}/{maxShield}
         </span>
         {barrier !== undefined && barrier > 0 && (
           <span className="rounded-md border border-violet-900/50 bg-violet-950/40 px-3 py-1 font-mono text-violet-200">

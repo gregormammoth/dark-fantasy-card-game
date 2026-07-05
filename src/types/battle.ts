@@ -8,6 +8,7 @@ export interface PoisonState {
 
 export interface PlayerState {
   shield: number;
+  maxShield: number;
   barrier: number;
   deck: CardInstance[];
   hand: CardInstance[];
@@ -17,6 +18,7 @@ export interface PlayerState {
 export interface EnemyState {
   name: string;
   shield: number;
+  maxShield: number;
   deck: CardInstance[];
   discard: CardInstance[];
 }

@@ -89,7 +89,7 @@ export function dealDamage(
   target: EffectTarget,
   amount: number,
   ignoreShield = false,
-  options?: { silent?: boolean },
+  options?: { silent?: boolean; bypassDefenses?: boolean },
 ): BattleContext {
   if (amount <= 0) {
     return battle;
@@ -100,8 +100,9 @@ export function dealDamage(
   let damage = amount;
   let barrierAbsorbed = 0;
   let shieldAbsorbed = 0;
+  const bypassDefenses = options?.bypassDefenses ?? false;
 
-  if (target === 'player' && next.damageReductionPercent > 0) {
+  if (!bypassDefenses && target === 'player' && next.damageReductionPercent > 0) {
     const reduced = Math.ceil(damage * (next.damageReductionPercent / 100));
     const afterReduction = damage - reduced;
     if (reduced > 0) {
@@ -114,13 +115,13 @@ export function dealDamage(
     damage = afterReduction;
   }
 
-  if (target === 'player' && next.player.barrier > 0) {
+  if (!bypassDefenses && target === 'player' && next.player.barrier > 0) {
     barrierAbsorbed = Math.min(next.player.barrier, damage);
     next.player.barrier -= barrierAbsorbed;
     damage -= barrierAbsorbed;
   }
 
-  if (!ignoreShield && combatant.shield > 0) {
+  if (!bypassDefenses && !ignoreShield && combatant.shield > 0) {
     shieldAbsorbed = Math.min(combatant.shield, damage);
     combatant.shield -= shieldAbsorbed;
     damage -= shieldAbsorbed;
@@ -205,10 +206,15 @@ export function addShield(
 
   const next = structuredClone(battle);
   const combatant = target === 'player' ? next.player : next.enemy;
-  combatant.shield += amount;
+  const gained = Math.min(amount, combatant.maxShield - combatant.shield);
+  if (gained <= 0) {
+    return battle;
+  }
+
+  combatant.shield += gained;
   appendLog(
     next,
-    `${targetLabel(next, target)} gained ${amount} shield.`,
+    `${targetLabel(next, target)} gained ${gained} shield.`,
     'shield',
   );
   return next;
