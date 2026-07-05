@@ -28,17 +28,12 @@ export function drawCards(
   discard: CardInstance[],
   count: number,
 ): { deck: CardInstance[]; discard: CardInstance[]; drawn: CardInstance[] } {
-  let currentDeck = [...deck];
-  let currentDiscard = [...discard];
+  const currentDeck = [...deck];
   const drawn: CardInstance[] = [];
 
   for (let i = 0; i < count; i += 1) {
     if (currentDeck.length === 0) {
-      if (currentDiscard.length === 0) {
-        break;
-      }
-      currentDeck = shuffle(currentDiscard);
-      currentDiscard = [];
+      break;
     }
     const card = currentDeck.shift();
     if (card) {
@@ -46,5 +41,5 @@ export function drawCards(
     }
   }
 
-  return { deck: currentDeck, discard: currentDiscard, drawn };
+  return { deck: currentDeck, discard, drawn };
 }
