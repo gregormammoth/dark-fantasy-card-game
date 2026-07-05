@@ -86,6 +86,11 @@ export function createInitialBattle(): BattleContext {
       attackCardsPlayed: 0,
       defenseCardsPlayed: 0,
     },
+    battleStats: {
+      turnCount: 0,
+      cardsBurnedToEnemy: 0,
+      cardsLostByPlayer: 0,
+    },
     playerPoison: null,
     enemyPoison: null,
     damageReductionPercent: 0,

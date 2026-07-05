@@ -19,6 +19,12 @@ function clearActivePlay(context: BattleContext): BattleContext {
   return next;
 }
 
+function incrementTurnCount(context: BattleContext): BattleContext {
+  const next = structuredClone(context);
+  next.battleStats.turnCount += 1;
+  return next;
+}
+
 export const battleMachine = setup({
   types: {
     context: {} as BattleContext,
@@ -49,6 +55,7 @@ export const battleMachine = setup({
     expireRound: assign(({ context }) => expireRoundEffects(context)),
     logVictory: assign(({ context }) => logVictory(context)),
     logDefeat: assign(({ context }) => logDefeat(context)),
+    incrementTurnCount: assign(({ context }) => incrementTurnCount(context)),
   },
   guards: {
     isVictory: ({ context }) => checkWinner(context) === 'victory',
@@ -87,6 +94,7 @@ export const battleMachine = setup({
         },
         END_TURN: {
           target: 'resolvingPlayerCombo',
+          actions: 'incrementTurnCount',
         },
       },
     },

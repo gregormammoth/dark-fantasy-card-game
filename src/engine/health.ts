@@ -176,6 +176,14 @@ export function dealDamage(
     );
   }
 
+  if (cardsLost > 0) {
+    if (target === 'enemy') {
+      next.battleStats.cardsBurnedToEnemy += cardsLost;
+    } else {
+      next.battleStats.cardsLostByPlayer += cardsLost;
+    }
+  }
+
   if (!options?.silent && !options?.bypassDefenses) {
     next.lastDamageResult = {
       target,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@/machine/battleMachine';
@@ -8,6 +8,7 @@ import { getEnemyIntent } from '@/engine/enemyIntent';
 import { Combo } from '@/components/Combo';
 import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
 import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
+import { BattleResultModal } from '@/components/BattleResultModal';
 import { TopBar } from '@/components/TopBar';
 import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
@@ -18,6 +19,11 @@ type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
   actor: BattleActor;
+}
+
+interface BurnState {
+  enemy: number;
+  player: number;
 }
 
 function formatTurnLabel(state: string): string {
@@ -49,6 +55,8 @@ export function BattleScreen({ actor }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
   const [hitTarget, setHitTarget] = useState<'player' | 'enemy' | null>(null);
+  const [burnState, setBurnState] = useState<BurnState>({ enemy: 0, player: 0 });
+  const burnTimerRef = useRef<number | null>(null);
 
   const state = typeof value === 'string' ? value : Object.keys(value)[0];
   const isPlayerTurn = state === 'playerTurn';
@@ -69,14 +77,42 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     [battle, isPlayerTurn],
   );
 
+  const clearBurnTimer = useCallback(() => {
+    if (burnTimerRef.current !== null) {
+      window.clearTimeout(burnTimerRef.current);
+      burnTimerRef.current = null;
+    }
+  }, []);
+
   const handleAnimationComplete = useCallback(() => {
     setHitTarget(null);
     actor.send({ type: 'ANIMATION_COMPLETE' });
   }, [actor]);
 
-  const handleImpact = useCallback((target: 'player' | 'enemy') => {
-    setHitTarget(target);
-  }, []);
+  const handleImpact = useCallback(
+    (target: 'player' | 'enemy', cardsLost: number) => {
+      setHitTarget(target);
+      if (cardsLost <= 0) {
+        return;
+      }
+
+      clearBurnTimer();
+      setBurnState((prev) => ({
+        ...prev,
+        [target === 'enemy' ? 'enemy' : 'player']: cardsLost,
+      }));
+
+      burnTimerRef.current = window.setTimeout(() => {
+        setBurnState({ enemy: 0, player: 0 });
+        burnTimerRef.current = null;
+      }, 820);
+    },
+    [clearBurnTimer],
+  );
+
+  useEffect(() => {
+    return () => clearBurnTimer();
+  }, [clearBurnTimer]);
 
   useEffect(() => {
     if (state === 'animatingEnemyCard' && !battle.activePlay) {
@@ -136,6 +172,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           shield={battle.enemy.shield}
           poison={battle.enemyPoison}
           intent={enemyIntent}
+          burningTopCount={burnState.enemy}
           isHit={hitTarget === 'enemy'}
         />
 
@@ -165,14 +202,22 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           handDisabled={!isPlayerTurn || isResolving}
           endTurnDisabled={isResolving}
           showEndTurn={isPlayerTurn}
-          showRestart={isVictory || isDefeat}
-          outcomeLabel={isVictory ? 'Victory!' : isDefeat ? 'Defeat...' : undefined}
+          burningTopCount={burnState.player}
           onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}
           onEndTurn={() => actor.send({ type: 'END_TURN' })}
-          onRestart={() => actor.send({ type: 'RESTART' })}
           isHit={hitTarget === 'player'}
         />
       </div>
+
+      {(isVictory || isDefeat) && (
+        <BattleResultModal
+          victory={isVictory}
+          enemyName={battle.enemy.name}
+          stats={battle.battleStats}
+          logEntries={battle.log}
+          onFightAgain={() => actor.send({ type: 'RESTART' })}
+        />
+      )}
     </div>
   );
 }

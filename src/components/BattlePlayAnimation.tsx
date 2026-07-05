@@ -10,7 +10,7 @@ const duration = 0.45;
 
 interface BattlePlayAnimationProps {
   cue: AnimationCue;
-  onImpact: (target: 'player' | 'enemy') => void;
+  onImpact: (target: 'player' | 'enemy', cardsLost: number) => void;
   onComplete: () => void;
 }
 
@@ -251,12 +251,19 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
     setPhase('play');
     const impactTimer = window.setTimeout(() => {
       setPhase('impact');
+      const cardsLost =
+        isPlayerAttack && hasHitEffects
+          ? (cue.damageToEnemy ?? 0)
+          : isEnemyAttack && hasHitEffects
+            ? (cue.damageToPlayer ?? 0)
+            : 0;
+
       if (isPlayerAttack && hasHitEffects) {
-        onImpactRef.current('enemy');
+        onImpactRef.current('enemy', cardsLost);
       } else if (isEnemyAttack && hasHitEffects) {
-        onImpactRef.current('player');
+        onImpactRef.current('player', cardsLost);
       } else if (isDefense && cue.source === 'player') {
-        onImpactRef.current('player');
+        onImpactRef.current('player', 0);
       }
     }, 520);
 

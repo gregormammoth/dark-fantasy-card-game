@@ -12,6 +12,7 @@ interface EnemyZoneProps {
   shield: number;
   poison: PoisonState | null;
   intent: EnemyIntent | null;
+  burningTopCount?: number;
   isHit?: boolean;
 }
 
@@ -46,6 +47,7 @@ export function EnemyZone({
   shield,
   poison,
   intent,
+  burningTopCount = 0,
   isHit = false,
 }: EnemyZoneProps) {
   return (
@@ -135,7 +137,7 @@ export function EnemyZone({
       </div>
 
       <div className="flex flex-col items-center gap-2.5">
-        <CardStack count={deckCount} side="enemy" />
+        <CardStack count={deckCount} side="enemy" burningTopCount={burningTopCount} />
         <div className="flex flex-col items-center leading-none">
           <span
             className="font-cinzel text-[40px] text-[#f0b3aa]"

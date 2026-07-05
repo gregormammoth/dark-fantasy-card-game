@@ -43,6 +43,12 @@ export interface CombatStats {
   defenseCardsPlayed: number;
 }
 
+export interface BattleStats {
+  turnCount: number;
+  cardsBurnedToEnemy: number;
+  cardsLostByPlayer: number;
+}
+
 export interface BattleContext {
   player: PlayerState;
   enemy: EnemyState;
@@ -50,6 +56,7 @@ export interface BattleContext {
   playerMaxHealth: number;
   enemyMaxHealth: number;
   combatStats: CombatStats;
+  battleStats: BattleStats;
   playerPoison: PoisonState | null;
   enemyPoison: PoisonState | null;
   damageReductionPercent: number;

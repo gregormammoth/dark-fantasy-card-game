@@ -16,12 +16,10 @@ interface PlayerZoneProps {
   hand: CardInstance[];
   onAddToCombo: (instanceId: string) => void;
   onEndTurn: () => void;
-  onRestart?: () => void;
+  burningTopCount?: number;
   handDisabled?: boolean;
   endTurnDisabled?: boolean;
   showEndTurn?: boolean;
-  showRestart?: boolean;
-  outcomeLabel?: string;
   isHit?: boolean;
 }
 
@@ -35,12 +33,10 @@ export function PlayerZone({
   hand,
   onAddToCombo,
   onEndTurn,
-  onRestart,
+  burningTopCount = 0,
   handDisabled,
   endTurnDisabled,
   showEndTurn = true,
-  showRestart = false,
-  outcomeLabel,
   isHit = false,
 }: PlayerZoneProps) {
   return (
@@ -72,7 +68,7 @@ export function PlayerZone({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <CardStack count={deckCount} side="player" />
+          <CardStack count={deckCount} side="player" burningTopCount={burningTopCount} />
           <div className="flex items-baseline gap-2 leading-none">
             <span
               className="font-cinzel text-[30px] text-[#e0b552]"
@@ -104,19 +100,7 @@ export function PlayerZone({
       <Hand cards={hand} disabled={handDisabled} onAddToCombo={onAddToCombo} />
 
       <div className="flex shrink-0 flex-col items-center gap-3">
-        {outcomeLabel && (
-          <p className="font-cinzel text-lg text-[#f0dfcb]">{outcomeLabel}</p>
-        )}
         {showEndTurn && <EndTurnButton onClick={onEndTurn} disabled={endTurnDisabled} />}
-        {showRestart && onRestart && (
-          <button
-            type="button"
-            onClick={onRestart}
-            className="cursor-pointer rounded-[7px] border border-[rgba(201,162,74,.25)] bg-transparent px-3.5 py-1.5 font-spectral text-[11px] tracking-[.14em] text-[#8a7f72] transition-colors hover:border-[rgba(201,162,74,.55)] hover:text-[#e8ddcf]"
-          >
-            ↺ RESTART
-          </button>
-        )}
       </div>
     </motion.section>
   );
