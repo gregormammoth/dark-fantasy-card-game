@@ -24,6 +24,7 @@ export function Card({ card, onClick, disabled, layoutId }: CardProps) {
   const { definition } = card;
   const classKey = definition.class ?? 'fighter';
   const colorClass = classColors[classKey] ?? 'border-stone-700 bg-stone-900/40';
+  const imageSrc = definition.image ?? (definition.class ? `/cards/${definition.id}.png` : undefined);
 
   return (
     <motion.button
@@ -37,18 +38,27 @@ export function Card({ card, onClick, disabled, layoutId }: CardProps) {
       whileHover={disabled ? undefined : { y: -8, scale: 1.03 }}
       whileTap={disabled ? undefined : { scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className={`flex w-36 flex-col rounded-lg border-2 p-3 text-left shadow-lg ${colorClass} ${
+      className={`flex w-36 flex-col overflow-hidden rounded-lg border-2 text-left shadow-lg ${colorClass} ${
         disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-red-900/20'
       }`}
     >
-      <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wider text-stone-400">
-        <span>{definition.class ?? 'enemy'}</span>
-        <span>{typeIcons[definition.type ?? 'attack'] ?? '⚔'}</span>
-      </div>
-      <h3 className="mb-1 text-sm font-semibold text-stone-100">{definition.name}</h3>
-      {definition.description && (
-        <p className="text-xs leading-snug text-stone-400">{definition.description}</p>
+      {imageSrc && (
+        <img
+          src={imageSrc}
+          alt=""
+          className="aspect-[3/4] w-full object-cover object-center"
+        />
       )}
+      <div className="flex flex-col p-3">
+        <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wider text-stone-400">
+          <span>{definition.class ?? 'enemy'}</span>
+          <span>{typeIcons[definition.type ?? 'attack'] ?? '⚔'}</span>
+        </div>
+        <h3 className="mb-1 text-sm font-semibold text-stone-100">{definition.name}</h3>
+        {definition.description && (
+          <p className="text-xs leading-snug text-stone-400">{definition.description}</p>
+        )}
+      </div>
     </motion.button>
   );
 }

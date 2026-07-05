@@ -30,6 +30,7 @@ export interface CardDefinition {
   class?: CardClass;
   type?: CardType;
   description?: string;
+  image?: string;
   effects: Effect[];
 }
 
