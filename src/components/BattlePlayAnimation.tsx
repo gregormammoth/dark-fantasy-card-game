@@ -251,17 +251,17 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
     setPhase('play');
     const impactTimer = window.setTimeout(() => {
       setPhase('impact');
-      const cardsLost =
-        isPlayerAttack && hasHitEffects
-          ? (cue.damageToEnemy ?? 0)
-          : isEnemyAttack && hasHitEffects
-            ? (cue.damageToPlayer ?? 0)
+      const stackSpend =
+        isPlayerAttack
+          ? (cue.enemyDeckCardsLost ?? cue.damageToEnemy ?? 0)
+          : isEnemyAttack
+            ? (cue.playerDeckCardsLost ?? cue.damageToPlayer ?? 0)
             : 0;
 
-      if (isPlayerAttack && hasHitEffects) {
-        onImpactRef.current('enemy', cardsLost);
-      } else if (isEnemyAttack && hasHitEffects) {
-        onImpactRef.current('player', cardsLost);
+      if (isPlayerAttack) {
+        onImpactRef.current('enemy', stackSpend);
+      } else if (isEnemyAttack) {
+        onImpactRef.current('player', stackSpend);
       } else if (isDefense && cue.source === 'player') {
         onImpactRef.current('player', 0);
       }

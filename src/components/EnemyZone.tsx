@@ -12,7 +12,8 @@ interface EnemyZoneProps {
   shield: number;
   poison: PoisonState | null;
   intent: EnemyIntent | null;
-  burningTopCount?: number;
+  spendingIndices?: Set<number>;
+  spendMode?: 'burn' | 'draw';
   isHit?: boolean;
 }
 
@@ -47,9 +48,12 @@ export function EnemyZone({
   shield,
   poison,
   intent,
-  burningTopCount = 0,
+  spendingIndices,
+  spendMode = 'burn',
   isHit = false,
 }: EnemyZoneProps) {
+  const spendCount = spendingIndices?.size ?? 0;
+  const displayHealth = health + (spendMode === 'burn' ? spendCount : 0);
   return (
     <motion.section
       animate={
@@ -137,13 +141,18 @@ export function EnemyZone({
       </div>
 
       <div className="flex flex-col items-center gap-2.5">
-        <CardStack count={deckCount} side="enemy" burningTopCount={burningTopCount} />
+        <CardStack
+          count={deckCount}
+          side="enemy"
+          spendingIndices={spendingIndices}
+          spendMode={spendMode}
+        />
         <div className="flex flex-col items-center leading-none">
           <span
-            className="font-cinzel text-[40px] text-[#f0b3aa]"
+            className="font-cinzel text-[40px] text-[#f0b3aa] transition-all duration-300"
             style={{ textShadow: '0 0 20px rgba(214,68,58,.5)' }}
           >
-            {health}
+            {displayHealth}
           </span>
           <span className="mt-1 text-[10px] tracking-[.22em] text-[#8a7f72]">CARDS · HEALTH</span>
         </div>

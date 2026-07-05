@@ -99,6 +99,7 @@ export function createInitialBattle(): BattleContext {
     activePlay: null,
     lastDamageResult: null,
     isFirstPlayerTurn: true,
+    lastPlayerDrawCount: 0,
     log: [],
   };
 }
@@ -113,6 +114,7 @@ function drawPlayerCards(battle: BattleContext, count: number): BattleContext {
   next.player.deck = deck;
   next.player.discard = discard;
   next.player.hand.push(...drawn);
+  next.lastPlayerDrawCount = drawn.length;
   if (drawn.length > 0) {
     appendLog(
       next,

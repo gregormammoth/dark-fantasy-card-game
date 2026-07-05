@@ -12,6 +12,8 @@ export interface AnimationCue {
   barrierBlocked?: number;
   damageToPlayer?: number;
   damageToEnemy?: number;
+  playerDeckCardsLost?: number;
+  enemyDeckCardsLost?: number;
   shieldGained?: number;
   barrierGained?: number;
   poisonAppliedTo?: 'player' | 'enemy';

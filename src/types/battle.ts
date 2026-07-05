@@ -65,6 +65,7 @@ export interface BattleContext {
   activePlay: ActivePlay | null;
   lastDamageResult: DamageResolution | null;
   isFirstPlayerTurn: boolean;
+  lastPlayerDrawCount: number;
   log: BattleLogEntry[];
 }
 

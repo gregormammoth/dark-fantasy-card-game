@@ -13,6 +13,7 @@ import { TopBar } from '@/components/TopBar';
 import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
+import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
 import { PLAYER_PORTRAIT } from '@/data/portraits';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
@@ -21,9 +22,14 @@ interface BattleScreenProps {
   actor: BattleActor;
 }
 
-interface BurnState {
-  enemy: number;
-  player: number;
+interface StackSpendState {
+  indices: Set<number>;
+  mode: StackSpendMode;
+}
+
+interface SpendState {
+  enemy: StackSpendState | null;
+  player: StackSpendState | null;
 }
 
 function formatTurnLabel(state: string): string {
@@ -55,8 +61,15 @@ export function BattleScreen({ actor }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
   const [hitTarget, setHitTarget] = useState<'player' | 'enemy' | null>(null);
-  const [burnState, setBurnState] = useState<BurnState>({ enemy: 0, player: 0 });
-  const burnTimerRef = useRef<number | null>(null);
+  const [spendState, setSpendState] = useState<SpendState>({
+    enemy: null,
+    player: null,
+  });
+  const spendTimerRef = useRef<number | null>(null);
+  const battleRef = useRef(battle);
+  const drawTokenRef = useRef('');
+
+  battleRef.current = battle;
 
   const state = typeof value === 'string' ? value : Object.keys(value)[0];
   const isPlayerTurn = state === 'playerTurn';
@@ -77,12 +90,40 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     [battle, isPlayerTurn],
   );
 
-  const clearBurnTimer = useCallback(() => {
-    if (burnTimerRef.current !== null) {
-      window.clearTimeout(burnTimerRef.current);
-      burnTimerRef.current = null;
+  const clearSpendTimer = useCallback(() => {
+    if (spendTimerRef.current !== null) {
+      window.clearTimeout(spendTimerRef.current);
+      spendTimerRef.current = null;
     }
   }, []);
+
+  const triggerStackSpend = useCallback(
+    (
+      target: 'player' | 'enemy',
+      deckCount: number,
+      count: number,
+      mode: StackSpendMode = 'burn',
+    ) => {
+      if (count <= 0) {
+        return;
+      }
+
+      clearSpendTimer();
+      const indices = buildSpendIndices(deckCount, count);
+      const duration = mode === 'draw' ? 700 : 820;
+
+      setSpendState((prev) => ({
+        ...prev,
+        [target === 'enemy' ? 'enemy' : 'player']: { indices, mode },
+      }));
+
+      spendTimerRef.current = window.setTimeout(() => {
+        setSpendState({ enemy: null, player: null });
+        spendTimerRef.current = null;
+      }, duration);
+    },
+    [clearSpendTimer],
+  );
 
   const handleAnimationComplete = useCallback(() => {
     setHitTarget(null);
@@ -90,29 +131,43 @@ export function BattleScreen({ actor }: BattleScreenProps) {
   }, [actor]);
 
   const handleImpact = useCallback(
-    (target: 'player' | 'enemy', cardsLost: number) => {
+    (target: 'player' | 'enemy', cardsSpent: number) => {
       setHitTarget(target);
-      if (cardsLost <= 0) {
+      if (cardsSpent <= 0) {
         return;
       }
 
-      clearBurnTimer();
-      setBurnState((prev) => ({
-        ...prev,
-        [target === 'enemy' ? 'enemy' : 'player']: cardsLost,
-      }));
-
-      burnTimerRef.current = window.setTimeout(() => {
-        setBurnState({ enemy: 0, player: 0 });
-        burnTimerRef.current = null;
-      }, 820);
+      const b = battleRef.current;
+      const deckCount =
+        target === 'enemy' ? b.enemy.deck.length : b.player.deck.length;
+      triggerStackSpend(target, deckCount, cardsSpent, 'burn');
     },
-    [clearBurnTimer],
+    [triggerStackSpend],
   );
 
   useEffect(() => {
-    return () => clearBurnTimer();
-  }, [clearBurnTimer]);
+    return () => clearSpendTimer();
+  }, [clearSpendTimer]);
+
+  useEffect(() => {
+    if (state !== 'playerTurn' || battle.lastPlayerDrawCount <= 0) {
+      return;
+    }
+
+    const token = `${battle.battleStats.turnCount}:${battle.lastPlayerDrawCount}:${battle.player.deck.length}`;
+    if (drawTokenRef.current === token) {
+      return;
+    }
+
+    drawTokenRef.current = token;
+    triggerStackSpend('player', battle.player.deck.length, battle.lastPlayerDrawCount, 'draw');
+  }, [
+    state,
+    battle.lastPlayerDrawCount,
+    battle.player.deck.length,
+    battle.battleStats.turnCount,
+    triggerStackSpend,
+  ]);
 
   useEffect(() => {
     if (state === 'animatingEnemyCard' && !battle.activePlay) {
@@ -172,7 +227,8 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           shield={battle.enemy.shield}
           poison={battle.enemyPoison}
           intent={enemyIntent}
-          burningTopCount={burnState.enemy}
+          spendingIndices={spendState.enemy?.indices}
+          spendMode={spendState.enemy?.mode}
           isHit={hitTarget === 'enemy'}
         />
 
@@ -202,7 +258,8 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           handDisabled={!isPlayerTurn || isResolving}
           endTurnDisabled={isResolving}
           showEndTurn={isPlayerTurn}
-          burningTopCount={burnState.player}
+          spendingIndices={spendState.player?.indices}
+          spendMode={spendState.player?.mode}
           onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}
           onEndTurn={() => actor.send({ type: 'END_TURN' })}
           isHit={hitTarget === 'player'}

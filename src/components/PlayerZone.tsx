@@ -16,7 +16,8 @@ interface PlayerZoneProps {
   hand: CardInstance[];
   onAddToCombo: (instanceId: string) => void;
   onEndTurn: () => void;
-  burningTopCount?: number;
+  spendingIndices?: Set<number>;
+  spendMode?: 'burn' | 'draw';
   handDisabled?: boolean;
   endTurnDisabled?: boolean;
   showEndTurn?: boolean;
@@ -33,12 +34,19 @@ export function PlayerZone({
   hand,
   onAddToCombo,
   onEndTurn,
-  burningTopCount = 0,
+  spendingIndices,
+  spendMode = 'burn',
   handDisabled,
   endTurnDisabled,
   showEndTurn = true,
   isHit = false,
 }: PlayerZoneProps) {
+  const spendCount = spendingIndices?.size ?? 0;
+  const displayHealth =
+    health + (spendMode === 'burn' ? spendCount : 0);
+  const displayDeckCount =
+    spendMode === 'draw' ? deckCount + spendCount : deckCount;
+
   return (
     <motion.section
       animate={
@@ -68,13 +76,18 @@ export function PlayerZone({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <CardStack count={deckCount} side="player" burningTopCount={burningTopCount} />
+          <CardStack
+            count={displayDeckCount}
+            side="player"
+            spendingIndices={spendingIndices}
+            spendMode={spendMode}
+          />
           <div className="flex items-baseline gap-2 leading-none">
             <span
-              className="font-cinzel text-[30px] text-[#e0b552]"
+              className="font-cinzel text-[30px] text-[#e0b552] transition-all duration-300"
               style={{ textShadow: '0 0 16px rgba(224,181,82,.5)' }}
             >
-              {health}
+              {displayHealth}
             </span>
             <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">CARDS</span>
           </div>

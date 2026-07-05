@@ -13,6 +13,8 @@ interface BattleSnapshot {
   playerBarrier: number;
   playerPoison: boolean;
   enemyPoison: boolean;
+  playerDeckCount: number;
+  enemyDeckCount: number;
 }
 
 function snapshot(battle: BattleContext): BattleSnapshot {
@@ -24,6 +26,8 @@ function snapshot(battle: BattleContext): BattleSnapshot {
     playerBarrier: battle.player.barrier,
     playerPoison: battle.playerPoison !== null,
     enemyPoison: battle.enemyPoison !== null,
+    playerDeckCount: battle.player.deck.length,
+    enemyDeckCount: battle.enemy.deck.length,
   };
 }
 
@@ -46,6 +50,8 @@ export function buildAnimationCue(
   const afterSnapshot = snapshot(after);
   const damageToPlayer = Math.max(0, before.playerHealth - afterSnapshot.playerHealth);
   const damageToEnemy = Math.max(0, before.enemyHealth - afterSnapshot.enemyHealth);
+  const playerDeckCardsLost = Math.max(0, before.playerDeckCount - after.player.deck.length);
+  const enemyDeckCardsLost = Math.max(0, before.enemyDeckCount - after.enemy.deck.length);
   const shieldGained =
     source === 'player'
       ? Math.max(0, afterSnapshot.playerShield - before.playerShield)
@@ -68,6 +74,8 @@ export function buildAnimationCue(
     source,
     damageToPlayer: damageToPlayer > 0 ? damageToPlayer : undefined,
     damageToEnemy: damageToEnemy > 0 ? damageToEnemy : undefined,
+    playerDeckCardsLost: playerDeckCardsLost > 0 ? playerDeckCardsLost : undefined,
+    enemyDeckCardsLost: enemyDeckCardsLost > 0 ? enemyDeckCardsLost : undefined,
     shieldGained: shieldGained > 0 ? shieldGained : undefined,
     barrierGained: barrierGained > 0 ? barrierGained : undefined,
     poisonAppliedTo,
