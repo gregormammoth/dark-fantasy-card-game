@@ -67,10 +67,9 @@
     "class": "wizard",
     "type": "defense",
     "effects": [
-      { "type": "temporary", "duration": 1 },
-      { "type": "shield", "value": 3 }
+      { "type": "barrier", "value": 3 }
     ],
-    "description": "Gain 3 Shield until end of round."
+    "description": "Gain 3 Barrier until end of round."
   },
   {
     "id": "wizard_defense_02",
@@ -78,10 +77,10 @@
     "class": "wizard",
     "type": "defense",
     "effects": [
-      { "type": "bonusShieldPerDefenseCard", "value": 1 },
-      { "type": "shield", "value": 2 }
+      { "type": "bonusBarrierPerDefenseCard", "value": 1 },
+      { "type": "barrier", "value": 2 }
     ],
-    "description": "Gain 2 Shield +1 for each Defense card played."
+    "description": "Gain 2 Barrier +1 for each Defense card played."
   },
   {
     "id": "survivor_attack_01",

@@ -98,10 +98,12 @@ export function dealDamage(
   const next = structuredClone(battle);
   const combatant = target === 'player' ? next.player : next.enemy;
   let damage = amount;
-  let absorbed = 0;
+  let barrierAbsorbed = 0;
+  let shieldAbsorbed = 0;
 
   if (target === 'player' && next.damageReductionPercent > 0) {
-    const reduced = damage - Math.floor(damage * (1 - next.damageReductionPercent / 100));
+    const reduced = Math.ceil(damage * (next.damageReductionPercent / 100));
+    const afterReduction = damage - reduced;
     if (reduced > 0) {
       appendLog(
         next,
@@ -109,14 +111,22 @@ export function dealDamage(
         'shield',
       );
     }
-    damage = Math.floor(damage * (1 - next.damageReductionPercent / 100));
+    damage = afterReduction;
+  }
+
+  if (target === 'player' && next.player.barrier > 0) {
+    barrierAbsorbed = Math.min(next.player.barrier, damage);
+    next.player.barrier -= barrierAbsorbed;
+    damage -= barrierAbsorbed;
   }
 
   if (!ignoreShield && combatant.shield > 0) {
-    absorbed = Math.min(combatant.shield, damage);
-    combatant.shield -= absorbed;
-    damage -= absorbed;
+    shieldAbsorbed = Math.min(combatant.shield, damage);
+    combatant.shield -= shieldAbsorbed;
+    damage -= shieldAbsorbed;
   }
+
+  const absorbed = barrierAbsorbed + shieldAbsorbed;
 
   let cardsLost = 0;
   if (damage > 0) {
@@ -132,8 +142,11 @@ export function dealDamage(
       if (ignoreShield) {
         parts.push('ignoring shield');
       }
-      if (absorbed > 0) {
-        parts.push(`${absorbed} blocked by shield`);
+      if (barrierAbsorbed > 0) {
+        parts.push(`${barrierAbsorbed} blocked by barrier`);
+      }
+      if (shieldAbsorbed > 0) {
+        parts.push(`${shieldAbsorbed} blocked by shield`);
       }
       if (cardsLost > 0) {
         parts.push(`${cardsLost} card${cardsLost === 1 ? '' : 's'} lost`);
@@ -145,13 +158,39 @@ export function dealDamage(
       );
     }
   } else if (absorbed > 0 && !options?.silent) {
+    const blockParts: string[] = [];
+    if (barrierAbsorbed > 0) {
+      blockParts.push(`${barrierAbsorbed} with barrier`);
+    }
+    if (shieldAbsorbed > 0) {
+      blockParts.push(`${shieldAbsorbed} with shield`);
+    }
     appendLog(
       next,
-      `${targetLabel(next, target)} blocked ${absorbed} damage with shield.`,
-      'shield',
+      `${targetLabel(next, target)} blocked ${blockParts.join(', ')}.`,
+      barrierAbsorbed > 0 ? 'barrier' : 'shield',
     );
   }
 
+  return next;
+}
+
+export function addBarrier(
+  battle: BattleContext,
+  target: EffectTarget,
+  amount: number,
+): BattleContext {
+  if (amount <= 0 || target !== 'player') {
+    return battle;
+  }
+
+  const next = structuredClone(battle);
+  next.player.barrier += amount;
+  appendLog(
+    next,
+    `${targetLabel(next, target)} gained ${amount} barrier.`,
+    'barrier',
+  );
   return next;
 }
 

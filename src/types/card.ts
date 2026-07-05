@@ -5,14 +5,15 @@ export type CardType = 'attack' | 'defense';
 export type EffectType =
   | 'damage'
   | 'shield'
+  | 'barrier'
   | 'poison'
   | 'ignoreShield'
   | 'draw'
   | 'recoverDiscard'
   | 'bonusDamagePerAttackCard'
   | 'reduceDamagePercent'
-  | 'temporary'
   | 'bonusShieldPerDefenseCard'
+  | 'bonusBarrierPerDefenseCard'
   | 'bonusIfLowerHp';
 
 export interface Effect {

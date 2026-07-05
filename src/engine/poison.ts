@@ -34,11 +34,10 @@ export function applyPoisonTick(
 export function expireRoundEffects(battle: BattleContext): BattleContext {
   const next = structuredClone(battle);
 
-  if (next.temporaryShieldAmount > 0) {
-    const expired = next.temporaryShieldAmount;
-    next.player.shield = Math.max(0, next.player.shield - expired);
-    appendLog(next, `Temporary shield expired (${expired} removed).`, 'shield');
-    next.temporaryShieldAmount = 0;
+  if (next.player.barrier > 0) {
+    const expired = next.player.barrier;
+    next.player.barrier = 0;
+    appendLog(next, `Barrier expired (${expired} removed).`, 'barrier');
   }
 
   if (next.damageReductionPercent > 0) {

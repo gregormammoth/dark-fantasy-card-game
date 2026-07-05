@@ -8,6 +8,7 @@ export interface PoisonState {
 
 export interface PlayerState {
   shield: number;
+  barrier: number;
   deck: CardInstance[];
   hand: CardInstance[];
   discard: CardInstance[];
@@ -35,7 +36,6 @@ export interface BattleContext {
   playerPoison: PoisonState | null;
   enemyPoison: PoisonState | null;
   damageReductionPercent: number;
-  temporaryShieldAmount: number;
   resolvingCardInstanceId: string | null;
   isFirstPlayerTurn: boolean;
   log: BattleLogEntry[];

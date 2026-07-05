@@ -5,6 +5,6 @@ export function createResolutionState(): EffectContext['resolution'] {
     ignoreShield: false,
     pendingDamageBonus: 0,
     pendingShieldBonus: 0,
-    temporaryShield: false,
+    pendingBarrierBonus: 0,
   };
 }

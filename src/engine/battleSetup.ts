@@ -60,6 +60,7 @@ export function createInitialBattle(): BattleContext {
   return {
     player: {
       shield: battleData.player.startingShield,
+      barrier: 0,
       deck: playerDeck,
       hand: [],
       discard: [],
@@ -80,7 +81,6 @@ export function createInitialBattle(): BattleContext {
     playerPoison: null,
     enemyPoison: null,
     damageReductionPercent: 0,
-    temporaryShieldAmount: 0,
     resolvingCardInstanceId: null,
     isFirstPlayerTurn: true,
     log: [],

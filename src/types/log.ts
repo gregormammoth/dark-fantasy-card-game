@@ -5,6 +5,7 @@ export type BattleLogKind =
   | 'play'
   | 'damage'
   | 'shield'
+  | 'barrier'
   | 'poison'
   | 'heal'
   | 'victory'

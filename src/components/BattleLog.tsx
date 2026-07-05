@@ -8,6 +8,7 @@ const kindStyles: Record<BattleLogEntry['kind'], string> = {
   play: 'text-violet-300',
   damage: 'text-red-400',
   shield: 'text-blue-400',
+  barrier: 'text-violet-400',
   poison: 'text-green-400',
   heal: 'text-emerald-400',
   victory: 'text-yellow-300 font-semibold',

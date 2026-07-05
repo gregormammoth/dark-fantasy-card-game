@@ -7,7 +7,7 @@ export interface ResolutionState {
   ignoreShield: boolean;
   pendingDamageBonus: number;
   pendingShieldBonus: number;
-  temporaryShield: boolean;
+  pendingBarrierBonus: number;
 }
 
 export interface EffectContext {

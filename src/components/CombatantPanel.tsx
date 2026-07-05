@@ -31,6 +31,7 @@ interface CombatantPanelProps {
   health: number;
   maxHealth: number;
   shield: number;
+  barrier?: number;
   deckCount: number;
   handCount?: number;
   poison?: { damagePerTurn: number; remainingTurns: number } | null;
@@ -42,6 +43,7 @@ export function CombatantPanel({
   health,
   maxHealth,
   shield,
+  barrier,
   deckCount,
   handCount,
   poison,
@@ -61,6 +63,11 @@ export function CombatantPanel({
         <span className="rounded-md border border-blue-900/50 bg-blue-950/40 px-3 py-1 font-mono text-blue-200">
           🛡 {shield}
         </span>
+        {barrier !== undefined && barrier > 0 && (
+          <span className="rounded-md border border-violet-900/50 bg-violet-950/40 px-3 py-1 font-mono text-violet-200">
+            ✦ {barrier}
+          </span>
+        )}
         {poison && (
           <span className="rounded-md border border-green-900/50 bg-green-950/40 px-3 py-1 font-mono text-green-300">
             ☠ {poison.damagePerTurn}/turn ({poison.remainingTurns})
