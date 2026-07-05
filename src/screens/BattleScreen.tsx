@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@/machine/battleMachine';
 import { getPlayerHealth, getEnemyHealth } from '@/engine/health';
+import { previewCombo } from '@/engine/comboPreview';
 import { CombatantPanel } from '@/components/CombatantPanel';
 import { Hand } from '@/components/Hand';
 import { Combo } from '@/components/Combo';
@@ -10,6 +11,7 @@ import { PileInfo } from '@/components/PileInfo';
 import { ActionButton } from '@/components/ActionButton';
 import { BattleLog } from '@/components/BattleLog';
 import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
+import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
@@ -32,6 +34,10 @@ export function BattleScreen({ actor }: BattleScreenProps) {
 
   const playerHealth = getPlayerHealth(battle);
   const enemyHealth = getEnemyHealth(battle);
+  const comboPreview = useMemo(
+    () => (isPlayerTurn ? previewCombo(battle) : null),
+    [battle, isPlayerTurn],
+  );
 
   const handleAnimationComplete = useCallback(() => {
     setHitTarget(null);
@@ -100,6 +106,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             deckSize={battle.player.deck.length}
             discardSize={battle.player.discard.length}
           />
+          <ComboPreviewPanel preview={comboPreview} />
           <Combo
             cards={battle.combo}
             disabled={!isPlayerTurn || isResolving}
