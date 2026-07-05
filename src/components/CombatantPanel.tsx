@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 interface StatBarProps {
   label: string;
   current: number;
@@ -37,6 +39,7 @@ interface CombatantPanelProps {
   handCount?: number;
   poison?: { damagePerTurn: number; remainingTurns: number } | null;
   align?: 'left' | 'right';
+  isHit?: boolean;
 }
 
 export function CombatantPanel({
@@ -50,9 +53,18 @@ export function CombatantPanel({
   handCount,
   poison,
   align = 'left',
+  isHit = false,
 }: CombatantPanelProps) {
   return (
-    <div className={`flex flex-col gap-3 ${align === 'right' ? 'items-end' : 'items-start'}`}>
+    <motion.div
+      animate={
+        isHit
+          ? { x: [0, -10, 10, -6, 6, 0], filter: ['brightness(1)', 'brightness(1.4)', 'brightness(1)'] }
+          : { x: 0, filter: 'brightness(1)' }
+      }
+      transition={{ duration: 0.4 }}
+      className={`flex flex-col gap-3 ${align === 'right' ? 'items-end' : 'items-start'}`}
+    >
       <h2 className="text-lg font-bold tracking-wide text-stone-200">{name}</h2>
       <div className="w-64">
         <StatBar label="Health (cards)" current={health} max={maxHealth} color="bg-red-700" />
@@ -76,6 +88,6 @@ export function CombatantPanel({
           </span>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

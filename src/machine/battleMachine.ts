@@ -4,12 +4,20 @@ import { createInitialBattle, drawAtTurnStart, initBattleLog } from '@/engine/ba
 import {
   addToCombo,
   removeFromCombo,
-  resolveCombo,
+  beginPlayerResolution,
+  resolveNextComboCard,
+  finishPlayerResolution,
   checkWinner,
-  playRandomEnemyCard,
+  resolveEnemyTurn,
   startPlayerTurn,
 } from '@/engine/combo';
 import { expireRoundEffects, logVictory, logDefeat } from '@/engine/poison';
+
+function clearActivePlay(context: BattleContext): BattleContext {
+  const next = structuredClone(context);
+  next.activePlay = null;
+  return next;
+}
 
 export const battleMachine = setup({
   types: {
@@ -33,8 +41,11 @@ export const battleMachine = setup({
       }
       return removeFromCombo(context, event.cardInstanceId);
     }),
-    resolvePlayerCombo: assign(({ context }) => resolveCombo(context)),
-    resolveEnemyCard: assign(({ context }) => playRandomEnemyCard(context)),
+    beginPlayerResolution: assign(({ context }) => beginPlayerResolution(context)),
+    resolveNextComboCard: assign(({ context }) => resolveNextComboCard(context)),
+    finishPlayerResolution: assign(({ context }) => finishPlayerResolution(context)),
+    resolveEnemyTurn: assign(({ context }) => resolveEnemyTurn(context)),
+    clearActivePlay: assign(({ context }) => clearActivePlay(context)),
     expireRound: assign(({ context }) => expireRoundEffects(context)),
     logVictory: assign(({ context }) => logVictory(context)),
     logDefeat: assign(({ context }) => logDefeat(context)),
@@ -42,6 +53,8 @@ export const battleMachine = setup({
   guards: {
     isVictory: ({ context }) => checkWinner(context) === 'victory',
     isDefeat: ({ context }) => checkWinner(context) === 'defeat',
+    hasPlayerCardsToResolve: ({ context }) => context.resolutionQueue.length > 0,
+    hasActivePlay: ({ context }) => context.activePlay !== null,
   },
 }).createMachine({
   id: 'battle',
@@ -78,23 +91,44 @@ export const battleMachine = setup({
       },
     },
     resolvingPlayerCombo: {
-      entry: 'resolvePlayerCombo',
+      entry: 'beginPlayerResolution',
       always: [
+        { guard: 'hasPlayerCardsToResolve', target: 'animatingPlayerCard' },
         { guard: 'isVictory', target: 'victory' },
         { guard: 'isDefeat', target: 'defeat' },
         { target: 'enemyTurn' },
       ],
     },
-    enemyTurn: {
-      always: { target: 'resolvingEnemyCard' },
+    animatingPlayerCard: {
+      entry: 'resolveNextComboCard',
+      on: {
+        ANIMATION_COMPLETE: [
+          { guard: 'isVictory', target: 'victory', actions: ['clearActivePlay', 'finishPlayerResolution'] },
+          { guard: 'isDefeat', target: 'defeat', actions: ['clearActivePlay', 'finishPlayerResolution'] },
+          {
+            guard: 'hasPlayerCardsToResolve',
+            target: 'animatingPlayerCard',
+            reenter: true,
+          },
+          {
+            target: 'enemyTurn',
+            actions: ['clearActivePlay', 'finishPlayerResolution'],
+          },
+        ],
+      },
     },
-    resolvingEnemyCard: {
-      entry: 'resolveEnemyCard',
-      always: [
-        { guard: 'isVictory', target: 'victory' },
-        { guard: 'isDefeat', target: 'defeat' },
-        { target: 'endOfRound' },
-      ],
+    enemyTurn: {
+      always: { target: 'animatingEnemyCard' },
+    },
+    animatingEnemyCard: {
+      entry: 'resolveEnemyTurn',
+      on: {
+        ANIMATION_COMPLETE: [
+          { guard: 'isVictory', target: 'victory', actions: 'clearActivePlay' },
+          { guard: 'isDefeat', target: 'defeat', actions: 'clearActivePlay' },
+          { target: 'endOfRound', actions: 'clearActivePlay' },
+        ],
+      },
     },
     endOfRound: {
       entry: 'expireRound',

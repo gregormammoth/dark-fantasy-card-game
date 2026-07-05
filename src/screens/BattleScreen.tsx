@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@/machine/battleMachine';
@@ -8,6 +9,7 @@ import { Combo } from '@/components/Combo';
 import { PileInfo } from '@/components/PileInfo';
 import { ActionButton } from '@/components/ActionButton';
 import { BattleLog } from '@/components/BattleLog';
+import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
@@ -18,21 +20,37 @@ interface BattleScreenProps {
 export function BattleScreen({ actor }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
+  const [hitTarget, setHitTarget] = useState<'player' | 'enemy' | null>(null);
 
   const state = typeof value === 'string' ? value : Object.keys(value)[0];
   const isPlayerTurn = state === 'playerTurn';
   const isIdle = state === 'idle';
   const isVictory = state === 'victory';
   const isDefeat = state === 'defeat';
-  const isResolving =
-    state === 'resolvingPlayerCombo' || state === 'resolvingEnemyCard';
+  const isAnimating = state === 'animatingPlayerCard' || state === 'animatingEnemyCard';
+  const isResolving = isAnimating || state === 'resolvingPlayerCombo';
 
   const playerHealth = getPlayerHealth(battle);
   const enemyHealth = getEnemyHealth(battle);
 
+  const handleAnimationComplete = useCallback(() => {
+    setHitTarget(null);
+    actor.send({ type: 'ANIMATION_COMPLETE' });
+  }, [actor]);
+
+  const handleImpact = useCallback((target: 'player' | 'enemy') => {
+    setHitTarget(target);
+  }, []);
+
+  useEffect(() => {
+    if (state === 'animatingEnemyCard' && !battle.activePlay) {
+      actor.send({ type: 'ANIMATION_COMPLETE' });
+    }
+  }, [state, battle.activePlay, actor]);
+
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl gap-6 p-6">
-      <div className="flex flex-1 flex-col gap-6">
+      <div className="relative flex flex-1 flex-col gap-6">
         <header className="text-center">
           <h1 className="text-2xl font-bold tracking-[0.2em] text-red-300/90 uppercase">
             Dark Fantasy Duel
@@ -42,7 +60,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           </p>
         </header>
 
-        <section className="flex items-start justify-between gap-8">
+        <section className="relative flex items-start justify-between gap-8">
           <CombatantPanel
             name="Player"
             health={playerHealth}
@@ -53,6 +71,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             deckCount={battle.player.deck.length}
             handCount={battle.player.hand.length + battle.combo.length}
             poison={battle.playerPoison}
+            isHit={hitTarget === 'player'}
           />
           <CombatantPanel
             name={battle.enemy.name}
@@ -63,7 +82,17 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             deckCount={battle.enemy.deck.length}
             poison={battle.enemyPoison}
             align="right"
+            isHit={hitTarget === 'enemy'}
           />
+
+          {battle.activePlay && isAnimating && (
+            <BattlePlayAnimation
+              key={battle.activePlay.cardInstanceId}
+              cue={battle.activePlay.cue}
+              onImpact={handleImpact}
+              onComplete={handleAnimationComplete}
+            />
+          )}
         </section>
 
         <section className="flex flex-col items-center gap-6">

@@ -87,6 +87,8 @@ export function createInitialBattle(): BattleContext {
     enemyPoison: null,
     damageReductionPercent: 0,
     resolvingCardInstanceId: null,
+    resolutionQueue: [],
+    activePlay: null,
     isFirstPlayerTurn: true,
     log: [],
   };

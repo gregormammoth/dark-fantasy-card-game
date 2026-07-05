@@ -1,5 +1,6 @@
 import type { CardInstance } from './card';
 import type { BattleLogEntry } from './log';
+import type { ActivePlay } from './animation';
 
 export interface PoisonState {
   damagePerTurn: number;
@@ -39,6 +40,8 @@ export interface BattleContext {
   enemyPoison: PoisonState | null;
   damageReductionPercent: number;
   resolvingCardInstanceId: string | null;
+  resolutionQueue: CardInstance[];
+  activePlay: ActivePlay | null;
   isFirstPlayerTurn: boolean;
   log: BattleLogEntry[];
 }
@@ -48,4 +51,5 @@ export type BattleEvent =
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
   | { type: 'END_TURN' }
+  | { type: 'ANIMATION_COMPLETE' }
   | { type: 'RESTART' };
