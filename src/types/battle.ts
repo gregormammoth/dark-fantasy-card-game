@@ -2,6 +2,18 @@ import type { CardInstance } from './card';
 import type { BattleLogEntry } from './log';
 import type { ActivePlay } from './animation';
 
+import type { EffectTarget } from './effect';
+
+export interface DamageResolution {
+  target: EffectTarget;
+  incoming: number;
+  reduced: number;
+  barrierBlocked: number;
+  shieldBlocked: number;
+  cardsLost: number;
+  ignoredShield: boolean;
+}
+
 export interface PoisonState {
   damagePerTurn: number;
   remainingTurns: number;
@@ -42,6 +54,7 @@ export interface BattleContext {
   resolvingCardInstanceId: string | null;
   resolutionQueue: CardInstance[];
   activePlay: ActivePlay | null;
+  lastDamageResult: DamageResolution | null;
   isFirstPlayerTurn: boolean;
   log: BattleLogEntry[];
 }

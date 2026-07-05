@@ -1,6 +1,7 @@
 import type { BattleContext } from '@/types/battle';
 import type { CardInstance } from '@/types/card';
 import type { AnimationCue } from '@/types/animation';
+import type { CardType } from '@/types/card';
 import type { EffectTarget } from '@/types/effect';
 import { getEnemyHealth, getPlayerHealth } from './health';
 
@@ -26,6 +27,16 @@ function snapshot(battle: BattleContext): BattleSnapshot {
   };
 }
 
+function inferCardType(card: CardInstance): CardType {
+  if (card.definition.type) {
+    return card.definition.type;
+  }
+  const hasDamage = card.definition.effects.some(
+    (effect) => effect.type === 'damage' || effect.type === 'poison',
+  );
+  return hasDamage ? 'attack' : 'defense';
+}
+
 export function buildAnimationCue(
   before: BattleSnapshot,
   after: BattleContext,
@@ -48,11 +59,12 @@ export function buildAnimationCue(
     poisonAppliedTo = 'player';
   }
 
-  return {
+  const dmg = after.lastDamageResult;
+  const cue: AnimationCue = {
     cardName: card.definition.name,
     cardId: card.definition.id,
     cardClass: card.definition.class,
-    cardType: card.definition.type,
+    cardType: inferCardType(card),
     source,
     damageToPlayer: damageToPlayer > 0 ? damageToPlayer : undefined,
     damageToEnemy: damageToEnemy > 0 ? damageToEnemy : undefined,
@@ -61,8 +73,38 @@ export function buildAnimationCue(
     poisonAppliedTo,
     ignoresShield: card.definition.effects.some((effect) => effect.type === 'ignoreShield'),
   };
+
+  if (dmg) {
+    cue.incomingDamage = dmg.incoming;
+    if (dmg.reduced > 0) {
+      cue.damageReduced = dmg.reduced;
+    }
+    if (dmg.shieldBlocked > 0) {
+      cue.shieldBlocked = dmg.shieldBlocked;
+    }
+    if (dmg.barrierBlocked > 0) {
+      cue.barrierBlocked = dmg.barrierBlocked;
+    }
+    if (dmg.ignoredShield) {
+      cue.ignoresShield = true;
+    }
+    if (dmg.target === 'player' && dmg.cardsLost > 0) {
+      cue.damageToPlayer = dmg.cardsLost;
+    }
+    if (dmg.target === 'enemy' && dmg.cardsLost > 0) {
+      cue.damageToEnemy = dmg.cardsLost;
+    }
+  }
+
+  return cue;
 }
 
 export function captureBattleSnapshot(battle: BattleContext): BattleSnapshot {
   return snapshot(battle);
+}
+
+export function clearDamageResult(battle: BattleContext): BattleContext {
+  const next = structuredClone(battle);
+  next.lastDamageResult = null;
+  return next;
 }

@@ -100,7 +100,9 @@ export function dealDamage(
   let damage = amount;
   let barrierAbsorbed = 0;
   let shieldAbsorbed = 0;
+  let damageReduced = 0;
   const bypassDefenses = options?.bypassDefenses ?? false;
+  const incoming = amount;
 
   if (!bypassDefenses && target === 'player' && next.damageReductionPercent > 0) {
     const reduced = Math.ceil(damage * (next.damageReductionPercent / 100));
@@ -112,6 +114,7 @@ export function dealDamage(
         'shield',
       );
     }
+    damageReduced = reduced;
     damage = afterReduction;
   }
 
@@ -171,6 +174,18 @@ export function dealDamage(
       `${targetLabel(next, target)} blocked ${blockParts.join(', ')}.`,
       barrierAbsorbed > 0 ? 'barrier' : 'shield',
     );
+  }
+
+  if (!options?.silent && !options?.bypassDefenses) {
+    next.lastDamageResult = {
+      target,
+      incoming,
+      reduced: damageReduced,
+      barrierBlocked: barrierAbsorbed,
+      shieldBlocked: shieldAbsorbed,
+      cardsLost,
+      ignoredShield: ignoreShield,
+    };
   }
 
   return next;

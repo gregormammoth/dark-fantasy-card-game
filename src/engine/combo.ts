@@ -7,7 +7,7 @@ import { isBattleOver } from './health';
 import { shuffle } from './deck';
 import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
-import { buildAnimationCue, captureBattleSnapshot } from './animationCue';
+import { buildAnimationCue, captureBattleSnapshot, clearDamageResult } from './animationCue';
 
 export function addToCombo(battle: BattleContext, cardInstanceId: string): BattleContext {
   const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
@@ -85,7 +85,7 @@ export function resolveNextComboCard(battle: BattleContext): BattleContext {
     cardInstanceId: card.instanceId,
     cue,
   };
-  return resolved;
+  return clearDamageResult(resolved);
 }
 
 export function finishPlayerResolution(battle: BattleContext): BattleContext {
@@ -166,7 +166,7 @@ export function resolveEnemyTurn(battle: BattleContext): BattleContext {
     cardInstanceId: card.instanceId,
     cue,
   };
-  return resolved;
+  return clearDamageResult(resolved);
 }
 
 export function playRandomEnemyCard(battle: BattleContext): BattleContext {

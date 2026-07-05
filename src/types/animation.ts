@@ -6,6 +6,10 @@ export interface AnimationCue {
   cardClass?: CardClass;
   cardType?: CardType;
   source: 'player' | 'enemy';
+  incomingDamage?: number;
+  damageReduced?: number;
+  shieldBlocked?: number;
+  barrierBlocked?: number;
   damageToPlayer?: number;
   damageToEnemy?: number;
   shieldGained?: number;
