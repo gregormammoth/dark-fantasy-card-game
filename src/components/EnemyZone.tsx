@@ -6,6 +6,7 @@ import { AttackIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface EnemyZoneProps {
   name: string;
+  portrait: string;
   deckCount: number;
   health: number;
   shield: number;
@@ -39,6 +40,7 @@ function EmberParticle({ left, size, color, delay, duration }: {
 
 export function EnemyZone({
   name,
+  portrait,
   deckCount,
   health,
   shield,
@@ -60,18 +62,11 @@ export function EnemyZone({
       className="grid grid-cols-[auto_1fr_auto] items-center gap-7 border-b border-[rgba(201,162,74,.12)] px-1.5 pt-3 pb-4"
     >
       <div className="animate-breathe relative">
-        <div
-          className="relative flex h-[308px] w-[236px] items-center justify-center overflow-hidden rounded-[14px] bg-gradient-to-br from-[#2b1311] to-[#120908]"
-        >
-          <div
-            className="opacity-30"
-            style={{
-              width: 80,
-              height: 80,
-              border: '1px solid rgba(214,68,58,.5)',
-              transform: 'rotate(45deg)',
-              boxShadow: 'inset 0 0 30px -5px rgba(214,68,58,.6)',
-            }}
+        <div className="relative h-[308px] w-[236px] overflow-hidden rounded-[14px] bg-[#120908]">
+          <img
+            src={portrait}
+            alt=""
+            className="h-full w-full object-cover object-top"
           />
         </div>
         <div

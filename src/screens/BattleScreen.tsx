@@ -12,6 +12,7 @@ import { TopBar } from '@/components/TopBar';
 import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
+import { PLAYER_PORTRAIT } from '@/data/portraits';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
@@ -87,6 +88,15 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     return (
       <div className="flex min-h-screen items-center justify-center px-7 py-10 font-spectral text-[#e8ddcf]">
         <div className="flex flex-col items-center gap-8 text-center">
+          <div className="relative">
+            <div className="h-40 w-[118px] overflow-hidden rounded-[11px] border border-[rgba(201,162,74,.5)] bg-[#151009]">
+              <img
+                src={PLAYER_PORTRAIT}
+                alt=""
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+          </div>
           <div>
             <h1 className="font-cinzel text-2xl tracking-[.36em] text-[#b8917f]">
               DARK FANTASY DUEL
@@ -120,6 +130,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
 
         <EnemyZone
           name={battle.enemy.name}
+          portrait={battle.enemy.portrait}
           deckCount={battle.enemy.deck.length}
           health={enemyHealth}
           shield={battle.enemy.shield}
@@ -144,6 +155,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
         </div>
 
         <PlayerZone
+          portrait={battle.player.portrait}
           health={playerHealth}
           deckCount={battle.player.deck.length}
           shield={battle.player.shield}

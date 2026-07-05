@@ -7,6 +7,7 @@ import { EndTurnButton } from './EndTurnButton';
 import { BarrierIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface PlayerZoneProps {
+  portrait: string;
   health: number;
   deckCount: number;
   shield: number;
@@ -25,6 +26,7 @@ interface PlayerZoneProps {
 }
 
 export function PlayerZone({
+  portrait,
   health,
   deckCount,
   shield,
@@ -56,15 +58,11 @@ export function PlayerZone({
     >
       <div className="flex shrink-0 items-end gap-4">
         <div className="relative">
-          <div className="flex h-[126px] w-24 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-br from-[#282011] to-[#151009]">
-            <div
-              className="opacity-40"
-              style={{
-                width: 40,
-                height: 40,
-                border: '1px solid rgba(201,162,74,.5)',
-                transform: 'rotate(45deg)',
-              }}
+          <div className="h-[126px] w-24 overflow-hidden rounded-[11px] bg-[#151009]">
+            <img
+              src={portrait}
+              alt=""
+              className="h-full w-full object-cover object-top"
             />
           </div>
           <div

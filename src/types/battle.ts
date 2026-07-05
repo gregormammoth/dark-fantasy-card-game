@@ -20,6 +20,7 @@ export interface PoisonState {
 }
 
 export interface PlayerState {
+  portrait: string;
   shield: number;
   maxShield: number;
   barrier: number;
@@ -30,6 +31,7 @@ export interface PlayerState {
 
 export interface EnemyState {
   name: string;
+  portrait: string;
   shield: number;
   maxShield: number;
   deck: CardInstance[];
