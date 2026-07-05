@@ -5,7 +5,13 @@ export const bonusBarrierPerDefenseCardHandler: EffectHandler = (
   effect: Effect,
   ctx: EffectContext,
 ) => {
-  ctx.resolution.pendingBarrierBonus +=
-    ctx.battle.combatStats.defenseCardsPlayed * (effect.value ?? 0);
+  const resolvingId = ctx.battle.resolvingCardInstanceId;
+  const defenseCount = ctx.battle.combo.filter(
+    (card) =>
+      card.definition.type === 'defense' &&
+      (resolvingId === null || card.instanceId !== resolvingId),
+  ).length;
+
+  ctx.resolution.pendingBarrierBonus += defenseCount * (effect.value ?? 0);
   return ctx.battle;
 };

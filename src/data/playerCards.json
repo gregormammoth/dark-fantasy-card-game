@@ -80,7 +80,7 @@
       { "type": "bonusBarrierPerDefenseCard", "value": 1 },
       { "type": "barrier", "value": 2 }
     ],
-    "description": "Gain 2 Barrier +1 for each Defense card played."
+    "description": "Gain 2 Barrier +1 for each other Defense card in your combo."
   },
   {
     "id": "survivor_attack_01",

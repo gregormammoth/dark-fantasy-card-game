@@ -14,6 +14,8 @@ const typeIcons: Record<string, string> = {
   defense: '🛡',
 };
 
+const duration = 0.5;
+
 interface BattlePlayAnimationProps {
   cue: AnimationCue;
   onImpact: (target: 'player' | 'enemy') => void;
@@ -44,7 +46,7 @@ function ImpactBadge({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration }}
     >
       {children}
     </motion.span>
@@ -95,7 +97,7 @@ function DamageBreakdown({
           className="text-4xl font-black text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.9)]"
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.25, delay: 0.1 }}
+          transition={{ duration, delay: 0.1 }}
         >
           -{cardsLost} {cardsLost === 1 ? 'card' : 'cards'}
         </motion.span>
@@ -164,7 +166,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         className="absolute inset-0 bg-black/50"
         initial={{ opacity: 0 }}
         animate={{ opacity: phase === 'done' ? 0 : 0.55 }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration }}
       />
 
       <motion.div
@@ -205,7 +207,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
+            transition={{ duration }}
           />
         )}
         {phase === 'impact' && isEnemyAttack && (
@@ -214,7 +216,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
+            transition={{ duration }}
           />
         )}
         {phase === 'impact' && isDefense && cue.shieldGained && (
@@ -223,7 +225,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.3, 1], opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration }}
           >
             🛡 +{cue.shieldGained}
           </motion.div>
@@ -234,7 +236,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.3, 1], opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration }}
           >
             ✦ +{cue.barrierGained}
           </motion.div>
@@ -247,7 +249,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: [0.4, 1.2, 1], opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration }}
           >
             ☠ Poison
           </motion.div>
