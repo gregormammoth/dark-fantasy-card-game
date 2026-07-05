@@ -58,7 +58,11 @@ export const battleMachine = setup({
     },
     playerTurnStart: {
       entry: ['initBattleLog', 'applyPlayerTurnStart', 'drawTurnCard'],
-      always: { target: 'playerTurn' },
+      always: [
+        { guard: 'isVictory', target: 'victory' },
+        { guard: 'isDefeat', target: 'defeat' },
+        { target: 'playerTurn' },
+      ],
     },
     playerTurn: {
       on: {

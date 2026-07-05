@@ -144,5 +144,7 @@ export function playRandomEnemyCard(battle: BattleContext): BattleContext {
 }
 
 export function startPlayerTurn(battle: BattleContext): BattleContext {
-  return applyPoisonTick(battle, 'player');
+  let next = applyPoisonTick(battle, 'player');
+  next = applyPoisonTick(next, 'enemy');
+  return next;
 }

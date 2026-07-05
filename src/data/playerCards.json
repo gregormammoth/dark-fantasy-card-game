@@ -18,7 +18,7 @@
       { "type": "bonusDamagePerAttackCard", "value": 1 },
       { "type": "damage", "value": 2 }
     ],
-    "description": "Deal 2 damage +1 for each Attack card played this combat."
+    "description": "Deal 2 damage. +1 for each other Attack card in your combo."
   },
   {
     "id": "fighter_defense_01",
@@ -88,10 +88,10 @@
     "class": "survivor",
     "type": "attack",
     "effects": [
-      { "type": "bonusIfLowerHp", "damage": 2 },
+      { "type": "bonusIfLowerHp", "damage": 2, "thresholdPercent": 50 },
       { "type": "damage", "value": 2 }
     ],
-    "description": "Deal 2 damage. If your HP is lower than the enemy's, deal 4 instead."
+    "description": "Deal 2 damage. If your HP is below 50%, deal 4 instead."
   },
   {
     "id": "survivor_defense_01",

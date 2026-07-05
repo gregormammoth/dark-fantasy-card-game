@@ -17,52 +17,52 @@
   {
     "id": "enemy_attack_04",
     "name": "Heavy Swing",
-    "effects": [{ "type": "damage", "value": 3 }]
+    "effects": [{ "type": "damage", "value": 4 }]
   },
   {
     "id": "enemy_attack_05",
     "name": "Poison Claws",
     "effects": [
       { "type": "damage", "value": 2 },
-      { "type": "poison", "damagePerTurn": 1, "duration": 2 }
+      { "type": "poison", "damagePerTurn": 1, "duration": 3 }
     ]
   },
   {
     "id": "enemy_attack_06",
     "name": "Fire Breath",
-    "effects": [{ "type": "damage", "value": 4 }]
+    "effects": [{ "type": "damage", "value": 1 }]
   },
   {
     "id": "enemy_attack_07",
     "name": "Dark Bolt",
     "effects": [
       { "type": "ignoreShield" },
-      { "type": "damage", "value": 3 }
+      { "type": "damage", "value": 2 }
     ]
   },
   {
     "id": "enemy_attack_08",
     "name": "Crushing Blow",
-    "effects": [{ "type": "damage", "value": 5 }]
+    "effects": [{ "type": "damage", "value": 3 }]
   },
   {
     "id": "enemy_attack_09",
     "name": "Tail Whip",
-    "effects": [{ "type": "damage", "value": 2 }]
+    "effects": [{ "type": "damage", "value": 4 }]
   },
   {
     "id": "enemy_attack_10",
     "name": "Shadow Strike",
-    "effects": [{ "type": "damage", "value": 4 }]
+    "effects": [{ "type": "damage", "value": 5 }]
   },
   {
     "id": "enemy_attack_11",
-    "name": "Rend",
-    "effects": [{ "type": "damage", "value": 3 }]
+    "name": "Scratch",
+    "effects": [{ "type": "damage", "value": 1 }]
   },
   {
     "id": "enemy_attack_12",
-    "name": "Execution",
-    "effects": [{ "type": "damage", "value": 5 }]
+    "name": "Bite",
+    "effects": [{ "type": "damage", "value": 2 }]
   }
 ]

@@ -23,6 +23,7 @@ export interface Effect {
   count?: number;
   damagePerTurn?: number;
   duration?: number;
+  thresholdPercent?: number;
 }
 
 export interface CardDefinition {
