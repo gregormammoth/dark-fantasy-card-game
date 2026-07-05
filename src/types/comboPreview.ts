@@ -1,5 +1,7 @@
 export interface ComboPreview {
   damageToEnemy: number;
+  totalDamageToEnemy: number;
+  enemyShieldBlocked: number;
   shieldGain: number;
   barrierGain: number;
   poison?: { damagePerTurn: number; turns: number };

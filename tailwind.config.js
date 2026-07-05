@@ -2,7 +2,12 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        cinzel: ['Cinzel', 'serif'],
+        spectral: ['Spectral', 'serif'],
+      },
+    },
   },
   plugins: [],
 };

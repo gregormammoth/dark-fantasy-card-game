@@ -10,18 +10,22 @@ interface ComboProps {
 
 export function Combo({ cards, onRemoveCard, disabled }: ComboProps) {
   return (
-    <div className="flex w-full flex-col items-center gap-2">
-      <span className="text-xs uppercase tracking-widest text-amber-400/80">Combo</span>
-      <div className="flex min-h-[22rem] min-w-full flex-wrap items-end justify-center gap-3 rounded-xl border border-dashed border-amber-900/40 bg-amber-950/10 p-4">
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">YOUR COMBO</span>
+        <span className="text-[11px] text-[#6f6659]">resolves left → right</span>
+      </div>
+      <div className="flex min-h-[180px] flex-wrap gap-3.5">
         <AnimatePresence mode="popLayout">
           {cards.length === 0 ? (
-            <p className="text-sm text-stone-600">Add cards from your hand</p>
+            <p className="self-center text-sm text-[#5a5147]">Add cards from your hand</p>
           ) : (
             cards.map((card) => (
               <Card
                 key={card.instanceId}
                 card={card}
                 layoutId={card.instanceId}
+                variant="combo"
                 disabled={disabled}
                 onClick={() => onRemoveCard(card.instanceId)}
               />

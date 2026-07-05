@@ -10,15 +10,17 @@ interface HandProps {
 
 export function Hand({ cards, onAddToCombo, disabled }: HandProps) {
   return (
-    <div className="flex w-full flex-col items-center gap-2">
-      <span className="text-xs uppercase tracking-widest text-stone-500">Hand</span>
-      <div className="flex min-h-[22rem] flex-wrap items-end justify-center gap-3">
+    <div className="flex flex-1 items-end justify-center" style={{ height: 200 }}>
+      <div className="flex items-end">
         <AnimatePresence mode="popLayout">
-          {cards.map((card) => (
+          {cards.map((card, index) => (
             <Card
               key={card.instanceId}
               card={card}
               layoutId={card.instanceId}
+              variant="hand"
+              handIndex={index}
+              handTotal={cards.length}
               disabled={disabled}
               onClick={() => onAddToCombo(card.instanceId)}
             />

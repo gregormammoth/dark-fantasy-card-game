@@ -4,19 +4,44 @@ import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@/machine/battleMachine';
 import { getPlayerHealth, getEnemyHealth } from '@/engine/health';
 import { previewCombo } from '@/engine/comboPreview';
-import { CombatantPanel } from '@/components/CombatantPanel';
-import { Hand } from '@/components/Hand';
+import { getEnemyIntent } from '@/engine/enemyIntent';
 import { Combo } from '@/components/Combo';
-import { PileInfo } from '@/components/PileInfo';
-import { ActionButton } from '@/components/ActionButton';
-import { BattleLog } from '@/components/BattleLog';
-import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
 import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
+import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
+import { TopBar } from '@/components/TopBar';
+import { EnemyZone } from '@/components/EnemyZone';
+import { PlayerZone } from '@/components/PlayerZone';
+import { EndTurnButton } from '@/components/EndTurnButton';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
   actor: BattleActor;
+}
+
+function formatTurnLabel(state: string): string {
+  if (state === 'playerTurn') {
+    return 'YOUR TURN';
+  }
+  if (state === 'animatingPlayerCard' || state === 'resolvingPlayerCombo') {
+    return 'RESOLVING COMBO';
+  }
+  if (state === 'animatingEnemyCard' || state === 'enemyTurn') {
+    return 'ENEMY TURN';
+  }
+  if (state === 'playerTurnStart') {
+    return 'TURN START';
+  }
+  if (state === 'endOfRound') {
+    return 'END OF ROUND';
+  }
+  if (state === 'victory') {
+    return 'VICTORY';
+  }
+  if (state === 'defeat') {
+    return 'DEFEAT';
+  }
+  return 'BATTLE';
 }
 
 export function BattleScreen({ actor }: BattleScreenProps) {
@@ -38,6 +63,10 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     () => (isPlayerTurn ? previewCombo(battle) : null),
     [battle, isPlayerTurn],
   );
+  const enemyIntent = useMemo(
+    () => (isPlayerTurn ? getEnemyIntent(battle) : null),
+    [battle, isPlayerTurn],
+  );
 
   const handleAnimationComplete = useCallback(() => {
     setHitTarget(null);
@@ -54,17 +83,31 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     }
   }, [state, battle.activePlay, actor]);
 
+  if (isIdle) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-7 py-10 font-spectral text-[#e8ddcf]">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div>
+            <h1 className="font-cinzel text-2xl tracking-[.36em] text-[#b8917f]">
+              DARK FANTASY DUEL
+            </h1>
+            <p className="mt-3 text-sm text-[#6f6659]">A card battle against the Shadow Beast</p>
+          </div>
+          <EndTurnButton
+            onClick={() => actor.send({ type: 'START_BATTLE' })}
+            line1="START"
+            line2="BATTLE"
+          />
+          <span className="text-[11px] tracking-[.14em] text-[#5a5147]">Face the Shadow Beast</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl gap-6 overflow-visible p-6">
-      <div className="relative flex flex-1 flex-col gap-6 overflow-visible">
-        <header className="text-center">
-          <h1 className="text-2xl font-bold tracking-[0.2em] text-red-300/90 uppercase">
-            Dark Fantasy Duel
-          </h1>
-          <p className="mt-1 text-xs tracking-widest text-stone-500 uppercase">
-            {state.replace(/([A-Z])/g, ' $1').trim()}
-          </p>
-        </header>
+    <div className="relative min-h-screen overflow-visible px-7 py-6 font-spectral text-[#e8ddcf]">
+      <div className="relative z-0 mx-auto flex w-full max-w-[1240px] flex-col gap-4">
+        <TopBar turnLabel={formatTurnLabel(state)} logEntries={battle.log} />
 
         {battle.activePlay && isAnimating && (
           <BattlePlayAnimation
@@ -75,77 +118,49 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           />
         )}
 
-        <section className="relative z-0 flex min-h-44 items-start justify-between gap-8 overflow-visible">
-          <CombatantPanel
-            name="Player"
-            health={playerHealth}
-            maxHealth={battle.playerMaxHealth}
-            shield={battle.player.shield}
-            maxShield={battle.player.maxShield}
-            barrier={battle.player.barrier}
-            deckCount={battle.player.deck.length}
-            handCount={battle.player.hand.length + battle.combo.length}
-            poison={battle.playerPoison}
-            isHit={hitTarget === 'player'}
-          />
-          <CombatantPanel
-            name={battle.enemy.name}
-            health={enemyHealth}
-            maxHealth={battle.enemyMaxHealth}
-            shield={battle.enemy.shield}
-            maxShield={battle.enemy.maxShield}
-            deckCount={battle.enemy.deck.length}
-            poison={battle.enemyPoison}
-            align="right"
-            isHit={hitTarget === 'enemy'}
-          />
-        </section>
+        <EnemyZone
+          name={battle.enemy.name}
+          deckCount={battle.enemy.deck.length}
+          health={enemyHealth}
+          shield={battle.enemy.shield}
+          poison={battle.enemyPoison}
+          intent={enemyIntent}
+          isHit={hitTarget === 'enemy'}
+        />
 
-        <section className="flex flex-col items-center gap-6 overflow-visible">
-          <PileInfo
-            deckSize={battle.player.deck.length}
-            discardSize={battle.player.discard.length}
-          />
-          <ComboPreviewPanel preview={comboPreview} />
+        <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_356px]">
           <Combo
             cards={battle.combo}
             disabled={!isPlayerTurn || isResolving}
             onRemoveCard={(id) => actor.send({ type: 'REMOVE_FROM_COMBO', cardInstanceId: id })}
           />
-          <Hand
-            cards={battle.player.hand}
-            disabled={!isPlayerTurn || isResolving}
-            onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}
+          <ComboPreviewPanel
+            preview={comboPreview}
+            comboSize={battle.combo.length}
+            enemyHealth={enemyHealth}
+            playerShield={battle.player.shield}
+            playerMaxShield={battle.player.maxShield}
           />
-        </section>
+        </div>
 
-        <footer className="flex justify-center gap-4">
-          {isIdle && (
-            <ActionButton label="Start Battle" onClick={() => actor.send({ type: 'START_BATTLE' })} />
-          )}
-          {isPlayerTurn && (
-            <ActionButton
-              label="End Turn"
-              onClick={() => actor.send({ type: 'END_TURN' })}
-              disabled={isResolving}
-            />
-          )}
-          {(isVictory || isDefeat) && (
-            <>
-              <p className="self-center text-lg font-semibold text-stone-300">
-                {isVictory ? 'Victory!' : 'Defeat...'}
-              </p>
-              <ActionButton
-                label="Restart Battle"
-                variant="secondary"
-                onClick={() => actor.send({ type: 'RESTART' })}
-              />
-            </>
-          )}
-        </footer>
+        <PlayerZone
+          health={playerHealth}
+          deckCount={battle.player.deck.length}
+          shield={battle.player.shield}
+          barrier={battle.player.barrier}
+          poison={battle.playerPoison}
+          hand={battle.player.hand}
+          handDisabled={!isPlayerTurn || isResolving}
+          endTurnDisabled={isResolving}
+          showEndTurn={isPlayerTurn}
+          showRestart={isVictory || isDefeat}
+          outcomeLabel={isVictory ? 'Victory!' : isDefeat ? 'Defeat...' : undefined}
+          onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}
+          onEndTurn={() => actor.send({ type: 'END_TURN' })}
+          onRestart={() => actor.send({ type: 'RESTART' })}
+          isHit={hitTarget === 'player'}
+        />
       </div>
-
-      {!isIdle && <BattleLog entries={battle.log} />}
     </div>
   );
 }
