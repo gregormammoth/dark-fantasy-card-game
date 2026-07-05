@@ -1,0 +1,107 @@
+[
+  {
+    "id": "fighter_attack_01",
+    "name": "Heavy Strike",
+    "class": "fighter",
+    "type": "attack",
+    "effects": [
+      { "type": "damage", "value": 3 }
+    ],
+    "description": "Deal 3 damage."
+  },
+  {
+    "id": "fighter_attack_02",
+    "name": "Battle Momentum",
+    "class": "fighter",
+    "type": "attack",
+    "effects": [
+      { "type": "bonusDamagePerAttackCard", "value": 1 },
+      { "type": "damage", "value": 2 }
+    ],
+    "description": "Deal 2 damage +1 for each Attack card played this combat."
+  },
+  {
+    "id": "fighter_defense_01",
+    "name": "Raise Shield",
+    "class": "fighter",
+    "type": "defense",
+    "effects": [
+      { "type": "shield", "value": 2 }
+    ],
+    "description": "Gain 2 Shield."
+  },
+  {
+    "id": "rogue_attack_01",
+    "name": "Poison Dagger",
+    "class": "rogue",
+    "type": "attack",
+    "effects": [
+      { "type": "poison", "damagePerTurn": 1, "duration": 3 }
+    ],
+    "description": "Apply Poison (1 damage each turn for 3 turns)."
+  },
+  {
+    "id": "rogue_defense_01",
+    "name": "Smoke Escape",
+    "class": "rogue",
+    "type": "defense",
+    "effects": [
+      { "type": "reduceDamagePercent", "value": 50 }
+    ],
+    "description": "Reduce incoming damage by 50%."
+  },
+  {
+    "id": "wizard_attack_01",
+    "name": "Arcane Bolt",
+    "class": "wizard",
+    "type": "attack",
+    "effects": [
+      { "type": "ignoreShield" },
+      { "type": "damage", "value": 2 }
+    ],
+    "description": "Deal 2 damage ignoring shields."
+  },
+  {
+    "id": "wizard_defense_01",
+    "name": "Magic Barrier",
+    "class": "wizard",
+    "type": "defense",
+    "effects": [
+      { "type": "temporary", "duration": 1 },
+      { "type": "shield", "value": 3 }
+    ],
+    "description": "Gain 3 Shield until end of round."
+  },
+  {
+    "id": "wizard_defense_02",
+    "name": "Barrier Mastery",
+    "class": "wizard",
+    "type": "defense",
+    "effects": [
+      { "type": "bonusShieldPerDefenseCard", "value": 1 },
+      { "type": "shield", "value": 2 }
+    ],
+    "description": "Gain 2 Shield +1 for each Defense card played."
+  },
+  {
+    "id": "survivor_attack_01",
+    "name": "Last Stand",
+    "class": "survivor",
+    "type": "attack",
+    "effects": [
+      { "type": "bonusIfLowerHp", "damage": 2 },
+      { "type": "damage", "value": 2 }
+    ],
+    "description": "Deal 2 damage. If your HP is lower than the enemy's, deal 4 instead."
+  },
+  {
+    "id": "survivor_defense_01",
+    "name": "Second Chance",
+    "class": "survivor",
+    "type": "defense",
+    "effects": [
+      { "type": "recoverDiscard", "count": 2 }
+    ],
+    "description": "Return 2 cards from your discard pile to your hand."
+  }
+]

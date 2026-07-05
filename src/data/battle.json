@@ -1,0 +1,12 @@
+{
+  "player": {
+    "startingShield": 2,
+    "startingHandSize": 4,
+    "deck": "all"
+  },
+  "enemy": {
+    "name": "Shadow Beast",
+    "startingShield": 2,
+    "deck": "all"
+  }
+}
