@@ -64,5 +64,17 @@
     "id": "enemy_attack_12",
     "name": "Bite",
     "effects": [{ "type": "damage", "value": 2 }]
+  },
+  {
+    "id": "enemy_attack_12",
+    "name": "Poison Bite",
+    "effects": [
+      { "type": "poison", "damagePerTurn": 1, "duration": 4 }
+    ]
+  },
+  {
+    "id": "enemy_attack_12",
+    "name": "Furry Bite",
+    "effects": [{ "type": "damage", "value": 4 }]
   }
 ]

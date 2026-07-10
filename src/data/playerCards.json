@@ -41,6 +41,17 @@
     "description": "Apply Poison (1 damage each turn for 3 turns)."
   },
   {
+    "id": "rogue_attack_02",
+    "name": "Backstab",
+    "class": "rogue",
+    "type": "attack",
+    "effects": [
+      { "type": "bonusIfFirstAttack", "damage": 2 },
+      { "type": "damage", "value": 2 }
+    ],
+    "description": "Deal 2 damage. If it's the first attack of the battle, deal 4 instead."
+  },
+  {
     "id": "rogue_defense_01",
     "name": "Smoke Escape",
     "class": "rogue",
@@ -102,5 +113,15 @@
       { "type": "recoverDiscard", "count": 2 }
     ],
     "description": "Return 2 cards from your discard pile to your hand."
+  },
+  {
+    "id": "survivor_defense_02",
+    "name": "Survival Instinct",
+    "class": "survivor",
+    "type": "defense",
+    "effects": [
+      { "type": "restoreMaxShields" }
+    ],
+    "description": "If you have no Shield, restore it to maximum."
   }
 ]

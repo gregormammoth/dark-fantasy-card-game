@@ -85,6 +85,12 @@ export function getCardEffectSummary(definition: CardDefinition): string {
     if (effect.type === 'bonusIfLowerHp') {
       parts.push(`+${effect.damage ?? 0} if low HP`);
     }
+    if (effect.type === 'bonusIfFirstAttack') {
+      parts.push(`+${effect.damage ?? 0} if first attack`);
+    }
+    if (effect.type === 'restoreMaxShields') {
+      parts.push('max shield if empty');
+    }
     if (effect.type === 'ignoreShield') {
       parts.push('pierce');
     }

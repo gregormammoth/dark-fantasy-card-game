@@ -12,6 +12,8 @@ import { reduceDamagePercentHandler } from './reduceDamagePercent';
 import { bonusShieldPerDefenseCardHandler } from './bonusShieldPerDefenseCard';
 import { bonusBarrierPerDefenseCardHandler } from './bonusBarrierPerDefenseCard';
 import { bonusIfLowerHpHandler } from './bonusIfLowerHp';
+import { bonusIfFirstAttackHandler } from './bonusIfFirstAttack';
+import { restoreMaxShieldsHandler } from './restoreMaxShields';
 
 export const effectHandlers: Record<EffectType, EffectHandler> = {
   damage: damageHandler,
@@ -26,4 +28,6 @@ export const effectHandlers: Record<EffectType, EffectHandler> = {
   bonusShieldPerDefenseCard: bonusShieldPerDefenseCardHandler,
   bonusBarrierPerDefenseCard: bonusBarrierPerDefenseCardHandler,
   bonusIfLowerHp: bonusIfLowerHpHandler,
+  bonusIfFirstAttack: bonusIfFirstAttackHandler,
+  restoreMaxShields: restoreMaxShieldsHandler,
 };

@@ -14,7 +14,9 @@ export type EffectType =
   | 'reduceDamagePercent'
   | 'bonusShieldPerDefenseCard'
   | 'bonusBarrierPerDefenseCard'
-  | 'bonusIfLowerHp';
+  | 'bonusIfLowerHp'
+  | 'bonusIfFirstAttack'
+  | 'restoreMaxShields';
 
 export interface Effect {
   type: EffectType;
