@@ -1,0 +1,554 @@
+{
+  "id": "hollowfort_prison",
+  "name": "Hollowfort Prison",
+  "startLocationId": "prison_cell",
+  "locations": [
+    {
+      "id": "prison_cell",
+      "name": "Prison Cell",
+      "subtitle": "Starting Cell",
+      "description": "Iron bars bent outward, straw scattered across the floor, a guard's key ring dropped mid-flight. Whatever came through here didn't knock.",
+      "type": "start",
+      "position": {
+        "x": 110,
+        "y": 150
+      },
+      "connectedLocations": [
+        "prison_corridor"
+      ],
+      "enemies": [],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "prisoners_shiv",
+          "name": "Prisoner's Shiv",
+          "description": "A sharpened scrap of iron. Better than bare hands.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "search_cell",
+          "action": "SEARCH",
+          "label": "Search the cell",
+          "requiresLoot": true,
+          "once": true
+        },
+        {
+          "id": "explore_cell",
+          "action": "EXPLORE",
+          "label": "Study the broken bars",
+          "once": true
+        }
+      ],
+      "visited": true,
+      "discovered": true,
+      "image": "/locations/prison_cell.png"
+    },
+    {
+      "id": "prison_corridor",
+      "name": "Prison Corridor",
+      "subtitle": "Main Corridor",
+      "description": "Torches gutter over churned blood. Three doors gape open into the dark, and something is still dragging itself down the far end.",
+      "type": "hub",
+      "position": {
+        "x": 330,
+        "y": 260
+      },
+      "connectedLocations": [
+        "prison_cell",
+        "storage_room",
+        "armory",
+        "kitchen"
+      ],
+      "enemies": [
+        {
+          "id": "wretched_prisoner",
+          "name": "Wretched Prisoner",
+          "tier": "Common \u00b7 Turned",
+          "defeated": false
+        }
+      ],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "corridor_ration",
+          "name": "Dropped Ration",
+          "description": "A half-eaten prison loaf, somehow still edible.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "attack_wretch",
+          "action": "ATTACK",
+          "label": "Fight the Wretched Prisoner",
+          "requiresEnemy": true,
+          "targetId": "wretched_prisoner",
+          "once": true
+        },
+        {
+          "id": "search_corridor",
+          "action": "SEARCH",
+          "label": "Search the corridor",
+          "requiresLoot": true,
+          "once": true
+        },
+        {
+          "id": "explore_corridor",
+          "action": "EXPLORE",
+          "label": "Scout the branching halls",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/prison_corridor.png"
+    },
+    {
+      "id": "storage_room",
+      "name": "Storage Room",
+      "subtitle": "Storage Room",
+      "description": "Crates split open, most already picked clean \u2014 but one at the back is bolted shut, and it hums faintly when you get close.",
+      "type": "loot",
+      "position": {
+        "x": 200,
+        "y": 430
+      },
+      "connectedLocations": [
+        "prison_corridor",
+        "secret_tunnel"
+      ],
+      "enemies": [],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "iron_ration_pack",
+          "name": "Iron Ration Pack",
+          "description": "Dense travel rations. Restore strength when you need it.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "open_crate",
+          "action": "OPEN",
+          "label": "Open the bolted crate",
+          "requiresLoot": true,
+          "once": true,
+          "locked": true,
+          "unlocksLocationId": "secret_tunnel"
+        },
+        {
+          "id": "search_storage",
+          "action": "SEARCH",
+          "label": "Rummage the shelves",
+          "once": true
+        },
+        {
+          "id": "explore_storage",
+          "action": "EXPLORE",
+          "label": "Look for hidden passages",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/storage_room.png"
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "subtitle": "Kitchen",
+      "description": "A prisoner is hiding behind the cold ovens, feverish and shaking \u2014 more afraid of the sounds from below than of you.",
+      "type": "npc",
+      "position": {
+        "x": 560,
+        "y": 250
+      },
+      "connectedLocations": [
+        "prison_corridor",
+        "prison_chapel"
+      ],
+      "enemies": [],
+      "npcs": [
+        {
+          "id": "frightened_cook",
+          "name": "Frightened Cook",
+          "description": "He begs you to escort him somewhere with open sky.",
+          "talked": false
+        }
+      ],
+      "loot": [],
+      "interactions": [
+        {
+          "id": "talk_cook",
+          "action": "TALK",
+          "label": "Talk to the Cook",
+          "requiresNpc": true,
+          "targetId": "frightened_cook",
+          "once": true
+        },
+        {
+          "id": "search_kitchen",
+          "action": "SEARCH",
+          "label": "Search the pantry",
+          "once": true
+        },
+        {
+          "id": "rest_kitchen",
+          "action": "REST",
+          "label": "Rest by the cold ovens"
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/kitchen.png"
+    },
+    {
+      "id": "armory",
+      "name": "Armory",
+      "subtitle": "Armory",
+      "description": "Weapon racks toppled across the floor. Someone armed themselves in a hurry here, and didn't get much further.",
+      "type": "loot",
+      "position": {
+        "x": 430,
+        "y": 440
+      },
+      "connectedLocations": [
+        "prison_corridor",
+        "courtyard"
+      ],
+      "enemies": [],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "watchmans_blade",
+          "name": "Watchman's Blade",
+          "description": "A service shortsword, still sharp enough.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "open_weapon_chest",
+          "action": "OPEN",
+          "label": "Open the weapon chest",
+          "requiresLoot": true,
+          "once": true,
+          "locked": true
+        },
+        {
+          "id": "search_armory",
+          "action": "SEARCH",
+          "label": "Search the racks",
+          "once": true
+        },
+        {
+          "id": "explore_armory",
+          "action": "EXPLORE",
+          "label": "Survey the armory",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/armory.png"
+    },
+    {
+      "id": "prison_chapel",
+      "name": "Prison Chapel",
+      "subtitle": "Chapel",
+      "description": "Candles still burn before a cracked altar. Someone prayed here recently, and it didn't save them \u2014 but the quiet is real.",
+      "type": "npc",
+      "position": {
+        "x": 740,
+        "y": 130
+      },
+      "connectedLocations": [
+        "kitchen"
+      ],
+      "enemies": [],
+      "npcs": [
+        {
+          "id": "silent_chaplain",
+          "name": "Silent Chaplain",
+          "description": "He offers no words, only a place to breathe.",
+          "talked": false
+        }
+      ],
+      "loot": [],
+      "interactions": [
+        {
+          "id": "talk_chaplain",
+          "action": "TALK",
+          "label": "Sit with the Chaplain",
+          "requiresNpc": true,
+          "targetId": "silent_chaplain",
+          "once": true
+        },
+        {
+          "id": "rest_chapel",
+          "action": "REST",
+          "label": "Rest at the altar"
+        },
+        {
+          "id": "explore_chapel",
+          "action": "EXPLORE",
+          "label": "Read the faded inscriptions",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/prison_chapel.png"
+    },
+    {
+      "id": "courtyard",
+      "name": "Courtyard",
+      "subtitle": "Main Courtyard",
+      "description": "Open sky at last, choked with smoke. Something enormous passed through here and left claw marks in the stone itself.",
+      "type": "hub",
+      "position": {
+        "x": 760,
+        "y": 500
+      },
+      "connectedLocations": [
+        "armory",
+        "secret_tunnel",
+        "guard_tower",
+        "warden_office"
+      ],
+      "enemies": [
+        {
+          "id": "bone_swarm",
+          "name": "Bone Swarm",
+          "tier": "Group",
+          "defeated": false
+        }
+      ],
+      "npcs": [],
+      "loot": [],
+      "interactions": [
+        {
+          "id": "attack_swarm",
+          "action": "ATTACK",
+          "label": "Fight the Bone Swarm",
+          "requiresEnemy": true,
+          "targetId": "bone_swarm",
+          "once": true
+        },
+        {
+          "id": "rest_courtyard",
+          "action": "REST",
+          "label": "Catch your breath"
+        },
+        {
+          "id": "explore_courtyard",
+          "action": "EXPLORE",
+          "label": "Scan the open yard",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/courtyard.png"
+    },
+    {
+      "id": "guard_tower",
+      "name": "Guard Tower",
+      "subtitle": "Guard Tower",
+      "description": "A rope ladder vanishes upward. From the top, they say, you can see the whole courtyard \u2014 and whatever's been stalking it.",
+      "type": "danger",
+      "position": {
+        "x": 990,
+        "y": 610
+      },
+      "connectedLocations": [
+        "courtyard",
+        "exit_gate"
+      ],
+      "enemies": [
+        {
+          "id": "watch_ghast",
+          "name": "Watch Ghast",
+          "tier": "Elite",
+          "defeated": false
+        }
+      ],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "longshot_bow",
+          "name": "Longshot Bow",
+          "description": "A tower watch bow, string still taut.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "attack_ghast",
+          "action": "ATTACK",
+          "label": "Fight the Watch Ghast",
+          "requiresEnemy": true,
+          "targetId": "watch_ghast",
+          "once": true
+        },
+        {
+          "id": "search_tower",
+          "action": "SEARCH",
+          "label": "Search the tower top",
+          "requiresLoot": true,
+          "once": true
+        },
+        {
+          "id": "explore_tower",
+          "action": "EXPLORE",
+          "label": "Survey the prison grounds",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/guard_tower.png"
+    },
+    {
+      "id": "warden_office",
+      "name": "Warden Office",
+      "subtitle": "Warden's Office",
+      "description": "Papers scattered everywhere, a chair overturned. His journal is still open on the desk, mid-sentence.",
+      "type": "npc",
+      "position": {
+        "x": 1150,
+        "y": 430
+      },
+      "connectedLocations": [
+        "courtyard",
+        "exit_gate"
+      ],
+      "enemies": [],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "master_key",
+          "name": "Master Key",
+          "description": "Heavy iron. It should open the Exit Gate.",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "search_journal",
+          "action": "SEARCH",
+          "label": "Read the Warden's journal",
+          "once": true
+        },
+        {
+          "id": "open_desk",
+          "action": "OPEN",
+          "label": "Force the desk drawer",
+          "requiresLoot": true,
+          "once": true,
+          "locked": true
+        },
+        {
+          "id": "explore_office",
+          "action": "EXPLORE",
+          "label": "Study the office maps",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/warden_office.png"
+    },
+    {
+      "id": "secret_tunnel",
+      "name": "Secret Tunnel",
+      "subtitle": "Hidden Passage",
+      "description": "A gap behind the shattered crate, just wide enough to crawl through. Cold air moves through it \u2014 this leads somewhere old.",
+      "type": "secret",
+      "position": {
+        "x": 300,
+        "y": 590
+      },
+      "connectedLocations": [
+        "storage_room",
+        "courtyard"
+      ],
+      "secret": true,
+      "enemies": [],
+      "npcs": [],
+      "loot": [],
+      "interactions": [
+        {
+          "id": "explore_tunnel",
+          "action": "EXPLORE",
+          "label": "Crawl deeper into the dark",
+          "once": true
+        },
+        {
+          "id": "search_tunnel",
+          "action": "SEARCH",
+          "label": "Feel along the walls",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/secret_tunnel.png"
+    },
+    {
+      "id": "exit_gate",
+      "name": "Exit Gate",
+      "subtitle": "Boss Arena",
+      "description": "The portcullis is sealed \u2014 and something wearing the Warden's coat is waiting for you on the other side.",
+      "type": "boss",
+      "position": {
+        "x": 1310,
+        "y": 580
+      },
+      "connectedLocations": [
+        "guard_tower",
+        "warden_office"
+      ],
+      "enemies": [
+        {
+          "id": "bloodwarden",
+          "name": "The Bloodwarden",
+          "tier": "BOSS",
+          "defeated": false
+        }
+      ],
+      "npcs": [],
+      "loot": [],
+      "interactions": [
+        {
+          "id": "open_gate",
+          "action": "OPEN",
+          "label": "Open the Exit Gate",
+          "once": true,
+          "locked": true,
+          "requiresFlag": "master_key"
+        },
+        {
+          "id": "attack_bloodwarden",
+          "action": "ATTACK",
+          "label": "Confront the Bloodwarden",
+          "requiresEnemy": true,
+          "targetId": "bloodwarden",
+          "once": true
+        },
+        {
+          "id": "explore_gate",
+          "action": "EXPLORE",
+          "label": "Study the portcullis",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/exit_gate.png"
+    }
+  ]
+}

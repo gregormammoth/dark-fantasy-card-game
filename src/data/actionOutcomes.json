@@ -1,0 +1,220 @@
+{
+  "MOVE": {
+    "default": {
+      "message": "You move carefully to a new chamber.",
+      "effects": [{ "type": "moveTo" }]
+    },
+    "fighter": {
+      "message": "You force your way through and arrive ready for trouble.",
+      "effects": [{ "type": "moveTo" }, { "type": "discoverConnected" }]
+    },
+    "rogue": {
+      "message": "You slip between shadows and arrive unseen.",
+      "effects": [{ "type": "moveTo" }]
+    },
+    "wizard": {
+      "message": "A whispered cantrip steadies your step as you travel.",
+      "effects": [{ "type": "moveTo" }]
+    },
+    "survivor": {
+      "message": "You take the safer route and note every exit.",
+      "effects": [{ "type": "moveTo" }, { "type": "discoverConnected" }]
+    }
+  },
+  "EXPLORE": {
+    "default": {
+      "message": "You take in the chamber and mark what matters.",
+      "effects": [{ "type": "discoverConnected" }, { "type": "completeInteraction" }]
+    },
+    "fighter": {
+      "message": "You kick over debris and map the room by force of habit.",
+      "effects": [{ "type": "discoverConnected" }, { "type": "completeInteraction" }]
+    },
+    "rogue": {
+      "message": "Your eyes catch seams and false panels others miss.",
+      "effects": [
+        { "type": "discoverConnected" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "wizard": {
+      "message": "Arcane sense brushes the walls and reveals nearby paths.",
+      "effects": [{ "type": "discoverConnected" }, { "type": "completeInteraction" }]
+    },
+    "survivor": {
+      "message": "You read the room for danger, exits, and anything useful.",
+      "effects": [
+        { "type": "discoverConnected" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    }
+  },
+  "SEARCH": {
+    "default": {
+      "message": "You search the area thoroughly.",
+      "effects": [{ "type": "claimLoot" }, { "type": "completeInteraction" }]
+    },
+    "fighter": {
+      "message": "You tear through crates until something useful turns up.",
+      "effects": [{ "type": "claimLoot" }, { "type": "completeInteraction" }]
+    },
+    "rogue": {
+      "message": "Nimble fingers find what was meant to stay hidden.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "recoverDiscard", "count": 1 },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "wizard": {
+      "message": "A detection charm pulls your gaze to the right place.",
+      "effects": [{ "type": "claimLoot" }, { "type": "completeInteraction" }]
+    },
+    "survivor": {
+      "message": "You know how to live off scraps — and you find some.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "recoverDiscard", "count": 1 },
+        { "type": "completeInteraction" }
+      ]
+    }
+  },
+  "OPEN": {
+    "default": {
+      "message": "You open what stands in your way.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "unlockInteraction" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "fighter": {
+      "message": "You break the lock with raw force.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "unlockInteraction" },
+        { "type": "revealSecret" },
+        { "type": "setFlag", "flag": "used_force", "flagValue": true },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "rogue": {
+      "message": "You pick the lock in a few quiet breaths.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "unlockInteraction" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "wizard": {
+      "message": "A soft unlock charm melts the mechanism open.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "unlockInteraction" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "survivor": {
+      "message": "You find another way in — a seam, a hinge, a forgotten latch.",
+      "effects": [
+        { "type": "claimLoot" },
+        { "type": "unlockInteraction" },
+        { "type": "revealSecret" },
+        { "type": "completeInteraction" }
+      ]
+    }
+  },
+  "ATTACK": {
+    "default": {
+      "message": "You strike and drive the threat back.",
+      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+    },
+    "fighter": {
+      "message": "A heavy blow ends the fight before it spreads.",
+      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+    },
+    "rogue": {
+      "message": "You cut from the blind side and leave the body cooling.",
+      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+    },
+    "wizard": {
+      "message": "A bolt of force drops the enemy where it stands.",
+      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+    },
+    "survivor": {
+      "message": "You fight dirty and live — the enemy does not.",
+      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+    }
+  },
+  "TALK": {
+    "default": {
+      "message": "You speak carefully and learn what you can.",
+      "effects": [
+        { "type": "talkNpc" },
+        { "type": "discoverConnected" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "fighter": {
+      "message": "Your blunt questions still get answers.",
+      "effects": [
+        { "type": "talkNpc" },
+        { "type": "discoverConnected" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "rogue": {
+      "message": "A few well-chosen words loosen tongues.",
+      "effects": [
+        { "type": "talkNpc" },
+        { "type": "discoverConnected" },
+        { "type": "recoverDiscard", "count": 1 },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "wizard": {
+      "message": "Calm speech and a touch of presence draw out secrets.",
+      "effects": [
+        { "type": "talkNpc" },
+        { "type": "discoverConnected" },
+        { "type": "completeInteraction" }
+      ]
+    },
+    "survivor": {
+      "message": "Shared hardship makes them trust you enough to talk.",
+      "effects": [
+        { "type": "talkNpc" },
+        { "type": "discoverConnected" },
+        { "type": "recoverDiscard", "count": 1 },
+        { "type": "completeInteraction" }
+      ]
+    }
+  },
+  "REST": {
+    "default": {
+      "message": "You catch your breath and gather yourself.",
+      "effects": [{ "type": "recoverDiscard", "count": 2 }, { "type": "completeInteraction" }]
+    },
+    "fighter": {
+      "message": "You brace against the wall and recover your strength.",
+      "effects": [{ "type": "recoverDiscard", "count": 2 }, { "type": "completeInteraction" }]
+    },
+    "rogue": {
+      "message": "A short rest in cover is enough to reset your nerves.",
+      "effects": [{ "type": "recoverDiscard", "count": 2 }, { "type": "completeInteraction" }]
+    },
+    "wizard": {
+      "message": "Meditation restores a measure of focus.",
+      "effects": [{ "type": "recoverDiscard", "count": 3 }, { "type": "completeInteraction" }]
+    },
+    "survivor": {
+      "message": "You rest like someone who has done this too many times.",
+      "effects": [{ "type": "recoverDiscard", "count": 3 }, { "type": "completeInteraction" }]
+    }
+  }
+}

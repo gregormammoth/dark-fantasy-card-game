@@ -1,0 +1,73 @@
+[
+  {
+    "id": "nothing_happens",
+    "title": "Nothing Happens",
+    "description": "The prison holds its breath. Footsteps fade. For a moment, you are alone.",
+    "weight": 3,
+    "effects": [
+      { "type": "log", "message": "The halls stay quiet." },
+      { "type": "nothing" }
+    ]
+  },
+  {
+    "id": "monster_patrol",
+    "title": "Monster Patrol",
+    "description": "Boots scrape stone nearby. Something hungry is sweeping the corridor.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "A patrol forces you to duck aside — you lose a card from your hand." },
+      { "type": "discardCards", "count": 1 }
+    ]
+  },
+  {
+    "id": "find_herbs",
+    "title": "Find Herbs",
+    "description": "A patch of bitter prison moss grows between the stones. It steadies the nerves.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "You gather herbs and recover a discarded card." },
+      { "type": "recoverDiscard", "count": 1 }
+    ]
+  },
+  {
+    "id": "hidden_treasure",
+    "title": "Hidden Treasure",
+    "description": "A loose brick hides a forgotten stash. Someone meant to come back for this.",
+    "weight": 1,
+    "effects": [
+      { "type": "log", "message": "You pocket a small cache and recover two discarded cards." },
+      { "type": "recoverDiscard", "count": 2 }
+    ]
+  },
+  {
+    "id": "ambush",
+    "title": "Ambush",
+    "description": "Shapes drop from the rafters. You fight free, but not without cost.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "An ambush costs you dearly — two cards are lost from hand." },
+      { "type": "discardCards", "count": 2 }
+    ]
+  },
+  {
+    "id": "lost_prisoner",
+    "title": "Lost Prisoner",
+    "description": "A half-mad inmate whispers of doors you have not yet found.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "The lost prisoner points toward nearby chambers." },
+      { "type": "discoverConnected" }
+    ]
+  },
+  {
+    "id": "collapsed_corridor",
+    "title": "Collapsed Corridor",
+    "description": "Stone groans and dust fills the air. The way behind you is briefly sealed.",
+    "weight": 1,
+    "effects": [
+      { "type": "log", "message": "Falling rubble forces a hard scramble — you discard a card." },
+      { "type": "discardCards", "count": 1 },
+      { "type": "discoverConnected" }
+    ]
+  }
+]
