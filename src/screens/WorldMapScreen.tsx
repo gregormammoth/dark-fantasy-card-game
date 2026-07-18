@@ -2,6 +2,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import worldMapData from '@/data/worldMap.json';
 import type { WorldLocationDefinition, WorldMapDefinition } from '@/types/world';
 import { iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
+import { WorldMapClouds } from '@/components/world/WorldMapClouds';
 
 const worldMap = worldMapData as WorldMapDefinition;
 
@@ -176,9 +177,7 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
         <div className="pointer-events-none absolute inset-0 z-[3] animate-[dayNight_100s_ease-in-out_infinite] mix-blend-multiply" />
         <div className="pointer-events-none absolute inset-0 z-[4] animate-[starsFade_100s_ease-in-out_infinite] bg-[radial-gradient(1px_1px_at_12%_8%,#fff,transparent),radial-gradient(1px_1px_at_22%_15%,#fff,transparent),radial-gradient(1.5px_1.5px_at_35%_6%,#fff,transparent),radial-gradient(1px_1px_at_48%_12%,#fff,transparent),radial-gradient(1.5px_1.5px_at_62%_5%,#fff,transparent),radial-gradient(1px_1px_at_74%_10%,#fff,transparent),radial-gradient(1px_1px_at_85%_7%,#fff,transparent),radial-gradient(1.5px_1.5px_at_92%_14%,#fff,transparent)] opacity-0" />
 
-        <div className="pointer-events-none absolute left-0 top-[2%] z-[6] h-[16%] w-[38%] animate-[cloudDriftA_60s_ease-in-out_infinite_alternate] bg-[radial-gradient(ellipse,rgba(255,255,255,.5),transparent_70%)] blur-[10px]" />
-        <div className="pointer-events-none absolute left-[40%] top-[12%] z-[6] h-[12%] w-[30%] animate-[cloudDriftB_75s_ease-in-out_infinite_alternate] bg-[radial-gradient(ellipse,rgba(255,255,255,.4),transparent_70%)] blur-[9px]" />
-        <div className="pointer-events-none absolute left-[68%] top-0 z-[6] h-[15%] w-[34%] animate-[cloudDriftA_85s_ease-in-out_infinite_alternate-reverse] bg-[radial-gradient(ellipse,rgba(255,255,255,.45),transparent_70%)] blur-[11px]" />
+        <WorldMapClouds parallax={parallax} />
 
         <div className="pointer-events-none absolute bottom-0 left-[-8%] z-[5] h-[16%] w-[70%] animate-[fogDrift_46s_ease-in-out_infinite] bg-[linear-gradient(0deg,rgba(200,205,210,.28),transparent)] blur-[10px]" />
         <div className="pointer-events-none absolute bottom-[4%] left-[74%] z-[5] h-[20%] w-[38%] animate-[fogDrift_38s_ease-in-out_infinite_reverse] bg-[linear-gradient(0deg,rgba(150,140,160,.3),transparent)] blur-[9px]" />

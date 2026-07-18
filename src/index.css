@@ -208,19 +208,19 @@ body {
 
 @keyframes cloudDriftA {
   from {
-    transform: translateX(-6%);
+    transform: translate3d(-4%, 0, 0);
   }
   to {
-    transform: translateX(8%);
+    transform: translate3d(5%, 0, 0);
   }
 }
 
 @keyframes cloudDriftB {
   from {
-    transform: translateX(6%);
+    transform: translate3d(5%, 0, 0);
   }
   to {
-    transform: translateX(-9%);
+    transform: translate3d(-6%, 0, 0);
   }
 }
 
