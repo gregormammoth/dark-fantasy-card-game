@@ -11,9 +11,14 @@ import { ExplorationLog } from '@/components/exploration/ExplorationLog';
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
   onOpenBattle?: () => void;
+  onBackToWorld?: () => void;
 }
 
-export function ExplorationScreen({ actor, onOpenBattle }: ExplorationScreenProps) {
+export function ExplorationScreen({
+  actor,
+  onOpenBattle,
+  onBackToWorld,
+}: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
   const isIdle = snapshot.matches('idle');
@@ -24,7 +29,7 @@ export function ExplorationScreen({ actor, onOpenBattle }: ExplorationScreenProp
   if (isIdle) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-        <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">EXPLORATION MODE</div>
+        <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">LOCATION MAP</div>
         <h1 className="font-cinzel text-4xl text-[#f3ead8]">Hollowfort Prison</h1>
         <p className="max-w-md text-[15px] leading-relaxed text-[#b7ab9c]">
           Play cards as actions. Move, search, open, fight, talk, and rest. End your turn to face
@@ -37,13 +42,13 @@ export function ExplorationScreen({ actor, onOpenBattle }: ExplorationScreenProp
         >
           ENTER THE PRISON
         </button>
-        {onOpenBattle && (
+        {onBackToWorld && (
           <button
             type="button"
-            onClick={onOpenBattle}
+            onClick={onBackToWorld}
             className="text-[12px] tracking-wider text-[#8a7f72] underline-offset-4 hover:text-[#c9a24a] hover:underline"
           >
-            Open battle simulator instead
+            ← Back to The Realm
           </button>
         )}
       </div>
@@ -52,6 +57,34 @@ export function ExplorationScreen({ actor, onOpenBattle }: ExplorationScreenProp
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
+      <div className="flex items-center justify-between">
+        {onBackToWorld ? (
+          <button
+            type="button"
+            onClick={onBackToWorld}
+            className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 text-[11px] tracking-wider text-[#e0b552]"
+          >
+            ← THE REALM
+          </button>
+        ) : (
+          <span />
+        )}
+        <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
+          HOLLOWFORT PRISON
+        </span>
+        {onOpenBattle ? (
+          <button
+            type="button"
+            onClick={onOpenBattle}
+            className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
+          >
+            BATTLE →
+          </button>
+        ) : (
+          <span />
+        )}
+      </div>
+
       <div className="relative">
         <PrisonMap
           context={context}
@@ -87,18 +120,6 @@ export function ExplorationScreen({ actor, onOpenBattle }: ExplorationScreenProp
       {context.lastActionMessage && (
         <div className="rounded-[10px] border border-[rgba(201,162,74,.2)] bg-[rgba(224,181,82,.08)] px-4 py-2 text-[13px] text-[#e8ddcf]">
           {context.lastActionMessage}
-        </div>
-      )}
-
-      {onOpenBattle && (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onOpenBattle}
-            className="text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
-          >
-            BATTLE SIMULATOR
-          </button>
         </div>
       )}
 

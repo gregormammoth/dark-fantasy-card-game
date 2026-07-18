@@ -205,3 +205,173 @@ body {
     opacity: 1;
   }
 }
+
+@keyframes cloudDriftA {
+  from {
+    transform: translateX(-6%);
+  }
+  to {
+    transform: translateX(8%);
+  }
+}
+
+@keyframes cloudDriftB {
+  from {
+    transform: translateX(6%);
+  }
+  to {
+    transform: translateX(-9%);
+  }
+}
+
+@keyframes shadowDriftA {
+  from {
+    transform: translateX(-5%);
+  }
+  to {
+    transform: translateX(9%);
+  }
+}
+
+@keyframes dayNight {
+  0%,
+  100% {
+    background: rgba(255, 196, 120, 0.08);
+  }
+  14% {
+    background: rgba(255, 255, 255, 0);
+  }
+  40% {
+    background: rgba(30, 38, 68, 0.5);
+  }
+  50% {
+    background: rgba(18, 22, 48, 0.62);
+  }
+  62% {
+    background: rgba(30, 38, 68, 0.42);
+  }
+  82% {
+    background: rgba(255, 150, 86, 0.14);
+  }
+}
+
+@keyframes starsFade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  38% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+}
+
+@keyframes fogDrift {
+  0%,
+  100% {
+    transform: translateX(-4%);
+  }
+  50% {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes smokeRise {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(9px, -64px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes flagWave {
+  0%,
+  100% {
+    transform: skewY(0deg);
+  }
+  50% {
+    transform: skewY(-16deg);
+  }
+}
+
+@keyframes birdFly {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(760px, -30px);
+  }
+  100% {
+    transform: translate(1560px, 6px);
+  }
+}
+
+@keyframes shipBob {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate(4px, -3px) rotate(2deg);
+  }
+}
+
+@keyframes torchFlicker {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.6;
+    transform: scale(0.92);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  80% {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes snowFall {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(12px, 240px);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sparkFloat {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(6px, -16px);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "id": "the_realm",
+  "name": "The Realm",
+  "image": "/world/world-map.png",
+  "mapWidth": 1536,
+  "mapHeight": 1024,
+  "startLocationId": "prison",
+  "locations": [
+    {
+      "id": "prison",
+      "name": "Prison Fortress",
+      "category": "dungeon",
+      "x": 150,
+      "y": 875,
+      "enabled": true,
+      "targetScreen": "exploration",
+      "flavor": "A grim island fortress ringed by black water. Your escape began within these walls."
+    },
+    {
+      "id": "viking",
+      "name": "Viking Village",
+      "category": "village",
+      "x": 270,
+      "y": 640,
+      "enabled": false,
+      "flavor": "Longboats rock at anchor beneath timber halls. The smoke of cookfires never quite clears the rooftops."
+    },
+    {
+      "id": "village",
+      "name": "Village",
+      "category": "village",
+      "x": 510,
+      "y": 480,
+      "enabled": false,
+      "flavor": "A quiet cluster of farmhouses along the crossroads, close enough to the capital to feel safe — for now."
+    },
+    {
+      "id": "farmland",
+      "name": "Farmland",
+      "category": "farmland",
+      "x": 740,
+      "y": 800,
+      "enabled": false,
+      "flavor": "Golden fields stretch beneath a slow-turning windmill. The harvest feeds half the valley."
+    },
+    {
+      "id": "capital",
+      "name": "Capital City",
+      "category": "capital",
+      "x": 790,
+      "y": 250,
+      "enabled": false,
+      "flavor": "Spires and rooftops crowd the river bend. Every road in the realm eventually leads here."
+    },
+    {
+      "id": "dwarf",
+      "name": "Dwarf Kingdom",
+      "category": "kingdom",
+      "x": 420,
+      "y": 190,
+      "enabled": false,
+      "flavor": "Carved into the mountain itself, the dwarven halls glow with forge-light behind gates of stone and iron."
+    },
+    {
+      "id": "royal",
+      "name": "Royal Fortress",
+      "category": "fortress",
+      "x": 1210,
+      "y": 145,
+      "enabled": false,
+      "flavor": "White walls crown the eastern hill. The crown's banners fly from towers that have never fallen.",
+      "threat": { "name": "Royal Garrison", "tier": "Stronghold" }
+    },
+    {
+      "id": "monastery",
+      "name": "Monastery",
+      "category": "monastery",
+      "x": 985,
+      "y": 390,
+      "enabled": false,
+      "flavor": "Bells still ring at dawn over the cloister gardens, though fewer monks remain to hear them."
+    },
+    {
+      "id": "elven",
+      "name": "Elven City",
+      "category": "kingdom",
+      "x": 1330,
+      "y": 330,
+      "enabled": false,
+      "flavor": "Towers grown from living wood rise through the ancient canopy, lit by lanterns no wind can touch."
+    },
+    {
+      "id": "cemetery",
+      "name": "Cemetery",
+      "category": "danger",
+      "x": 1260,
+      "y": 640,
+      "enabled": false,
+      "flavor": "Rows of leaning headstones vanish into bare trees. Something moves between them after dark.",
+      "threat": { "name": "Restless Dead", "tier": "Roaming" }
+    },
+    {
+      "id": "chapel",
+      "name": "Lake Chapel",
+      "category": "poi",
+      "x": 1290,
+      "y": 900,
+      "enabled": false,
+      "flavor": "A small chapel stands alone on the water, reachable only by a narrow footbridge."
+    }
+  ]
+}
