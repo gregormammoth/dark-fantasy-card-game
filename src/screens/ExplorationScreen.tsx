@@ -2,6 +2,7 @@ import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@/machine/explorationMachine';
 import type { ExplorationActionType } from '@/types/exploration';
+import { useAudio } from '@/audio/useAudio';
 import { PrisonMap } from '@/components/exploration/PrisonMap';
 import { LocationDetailPanel } from '@/components/exploration/LocationDetailPanel';
 import { ExplorationHandBar } from '@/components/exploration/ExplorationHandBar';
@@ -21,6 +22,7 @@ export function ExplorationScreen({
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
+  const { unlock } = useAudio();
   const isIdle = snapshot.matches('idle');
   const selected = context.selectedLocationId
     ? context.locations[context.selectedLocationId] ?? null
@@ -37,7 +39,10 @@ export function ExplorationScreen({
         </p>
         <button
           type="button"
-          onClick={() => actor.send({ type: 'START_EXPLORATION' })}
+          onClick={() => {
+            void unlock();
+            actor.send({ type: 'START_EXPLORATION' });
+          }}
           className="rounded-[12px] border border-[rgba(201,162,74,.55)] bg-[rgba(224,181,82,.16)] px-8 py-3.5 font-cinzel text-[14px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
         >
           ENTER THE PRISON

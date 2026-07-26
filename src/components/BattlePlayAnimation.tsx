@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { AnimationCue } from '@/types/animation';
 import { classThemes, enemyTheme } from '@/lib/cardTheme';
 import type { CardClass } from '@/types/card';
+import { useAudio } from '@/audio/useAudio';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 const duration = 0.45;
@@ -230,6 +231,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
   const [phase, setPhase] = useState<Phase>('play');
   const onImpactRef = useRef(onImpact);
   const onCompleteRef = useRef(onComplete);
+  const { play } = useAudio();
 
   useEffect(() => {
     onImpactRef.current = onImpact;
@@ -260,10 +262,19 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
 
       if (isPlayerAttack) {
         onImpactRef.current('enemy', stackSpend);
+        if ((cue.shieldBlocked ?? 0) > 0 || (cue.barrierBlocked ?? 0) > 0) {
+          play('partial_reveal');
+        }
       } else if (isEnemyAttack) {
         onImpactRef.current('player', stackSpend);
+        if ((cue.shieldBlocked ?? 0) > 0 || (cue.barrierBlocked ?? 0) > 0) {
+          play('partial_reveal');
+        }
       } else if (isDefense && cue.source === 'player') {
         onImpactRef.current('player', 0);
+        if ((cue.shieldGained ?? 0) > 0 || (cue.barrierGained ?? 0) > 0) {
+          play('resource_gain');
+        }
       }
     }, 520);
 
@@ -276,7 +287,24 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
       window.clearTimeout(impactTimer);
       window.clearTimeout(doneTimer);
     };
-  }, [cue.cardId, cue.cardName, isPlayerAttack, isEnemyAttack, isDefense, hasHitEffects, cue.source]);
+  }, [
+    cue.cardId,
+    cue.cardName,
+    isPlayerAttack,
+    isEnemyAttack,
+    isDefense,
+    hasHitEffects,
+    cue.source,
+    cue.enemyDeckCardsLost,
+    cue.damageToEnemy,
+    cue.playerDeckCardsLost,
+    cue.damageToPlayer,
+    cue.shieldBlocked,
+    cue.barrierBlocked,
+    cue.shieldGained,
+    cue.barrierGained,
+    play,
+  ]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">

@@ -284,6 +284,57 @@ body {
   }
 }
 
+@keyframes dustFloat {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.5;
+  }
+  88% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate(var(--dx, 14px), -140px);
+    opacity: 0;
+  }
+}
+
+@keyframes reachPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(224, 181, 82, 0),
+      0 0 22px -6px rgba(224, 181, 82, 0.55);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(224, 181, 82, 0.12),
+      0 0 30px -4px rgba(224, 181, 82, 0.85);
+  }
+}
+
+@keyframes lanternFlicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 0.75;
+    transform: scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  80% {
+    opacity: 0.85;
+    transform: scale(0.96);
+  }
+}
+
 @keyframes smokeRise {
   0% {
     transform: translate(0, 0) scale(0.5);

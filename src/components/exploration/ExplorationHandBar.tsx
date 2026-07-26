@@ -1,5 +1,6 @@
 import type { ExplorationContext } from '@/types/exploration';
 import { Card } from '@/components/Card';
+import { useAudio } from '@/audio/useAudio';
 
 interface ExplorationHandBarProps {
   context: ExplorationContext;
@@ -12,6 +13,7 @@ export function ExplorationHandBar({
   onSelectCard,
   onEndTurn,
 }: ExplorationHandBarProps) {
+  const { play } = useAudio();
   const deckStack = [0, 1, 2, 3, 4, 5];
 
   return (
@@ -80,7 +82,10 @@ export function ExplorationHandBar({
         </div>
         <button
           type="button"
-          onClick={onEndTurn}
+          onClick={() => {
+            play('end_turn');
+            onEndTurn();
+          }}
           className="rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[rgba(224,181,82,.12)] px-5 py-3 font-cinzel text-[12px] tracking-[.16em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.8)] hover:bg-[rgba(224,181,82,.2)]"
         >
           END TURN

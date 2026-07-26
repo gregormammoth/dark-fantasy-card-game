@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import type { BattleLogEntry } from '@/types/log';
 import type { BattleStats } from '@/types/battle';
+import { useAudio } from '@/audio/useAudio';
 
 const logColors: Record<BattleLogEntry['kind'], string> = {
   system: '#8a7f72',
@@ -31,6 +33,7 @@ export function BattleResultModal({
   logEntries,
   onFightAgain,
 }: BattleResultModalProps) {
+  const { play } = useAudio();
   const accent = victory ? '#e0b552' : '#e0524a';
   const glow = victory ? 'rgba(224,181,82,.28)' : 'rgba(224,82,74,.3)';
   const xp = victory
@@ -39,6 +42,11 @@ export function BattleResultModal({
   const subtitle = victory
     ? `${enemyName} has been vanquished.`
     : `You have fallen to ${enemyName}.`;
+
+  useEffect(() => {
+    play('modal_open');
+    play(victory ? 'success_reveal' : 'failure_reveal');
+  }, [play, victory]);
 
   return (
     <motion.div

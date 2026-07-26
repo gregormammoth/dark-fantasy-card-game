@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import type { CSSProperties } from 'react';
 import type { CardInstance } from '@/types/card';
 import { getCardEffectSummary, getCardTheme, getCardType } from '@/lib/cardTheme';
+import { useAudio } from '@/audio/useAudio';
+import { useHoverSound } from '@/audio/useHoverSound';
 import { AttackIcon, BarrierIcon, ShieldIcon } from './EffectIcons';
 
 interface CardProps {
@@ -52,12 +54,20 @@ export function Card({
   const isHand = variant === 'hand';
   const width = isHand ? 152 : 150;
   const imageHeight = isHand ? 116 : 96;
+  const { play } = useAudio();
+  const hover = useHoverSound('card_hover', 0.2);
 
   return (
     <motion.button
       layoutId={layoutId}
       type="button"
-      onClick={onClick}
+      onClick={() => {
+        if (disabled) return;
+        play('card_play');
+        onClick?.();
+      }}
+      onPointerEnter={hover.onPointerEnter}
+      onPointerLeave={hover.onPointerLeave}
       disabled={disabled}
       initial={{ opacity: 0, y: 24, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}

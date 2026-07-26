@@ -103,7 +103,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/prison_corridor.png"
+      "image": "/rooms/corridor.jpg"
     },
     {
       "id": "storage_room",
@@ -253,7 +253,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/armory.png"
+      "image": "/rooms/armory.jpg"
     },
     {
       "id": "prison_chapel",
@@ -301,7 +301,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/prison_chapel.png"
+      "image": "/rooms/chapel.jpg"
     },
     {
       "id": "courtyard",
@@ -352,7 +352,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/courtyard.png"
+      "image": "/rooms/courtyard.jpg"
     },
     {
       "id": "guard_tower",
@@ -460,7 +460,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/warden_office.png"
+      "image": "/rooms/warden.jpg"
     },
     {
       "id": "secret_tunnel",
@@ -496,7 +496,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/secret_tunnel.png"
+      "image": "/rooms/cave.jpg"
     },
     {
       "id": "exit_gate",
@@ -548,7 +548,7 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/exit_gate.png"
+      "image": "/rooms/exit.jpg"
     }
   ]
 }

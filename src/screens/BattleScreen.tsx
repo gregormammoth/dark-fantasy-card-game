@@ -5,6 +5,9 @@ import type { battleMachine } from '@/machine/battleMachine';
 import { getPlayerHealth, getEnemyHealth } from '@/engine/health';
 import { previewCombo } from '@/engine/comboPreview';
 import { getEnemyIntent } from '@/engine/enemyIntent';
+import { useAudio } from '@/audio/useAudio';
+import { useGameAudio } from '@/audio/useGameAudio';
+import { useGameOverAudio } from '@/audio/useGameOverAudio';
 import { Combo } from '@/components/Combo';
 import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
 import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
@@ -60,6 +63,7 @@ function formatTurnLabel(state: string): string {
 export function BattleScreen({ actor }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
+  const { play, unlock } = useAudio();
   const [hitTarget, setHitTarget] = useState<'player' | 'enemy' | null>(null);
   const [spendState, setSpendState] = useState<SpendState>({
     enemy: null,
@@ -89,6 +93,30 @@ export function BattleScreen({ actor }: BattleScreenProps) {
     () => (isPlayerTurn ? getEnemyIntent(battle) : null),
     [battle, isPlayerTurn],
   );
+
+  const audioPhase = isVictory
+    ? 'victory'
+    : isDefeat
+      ? 'defeat'
+      : isIdle
+        ? 'world'
+        : 'battle';
+
+  useGameAudio(
+    isIdle
+      ? null
+      : {
+          phase: audioPhase,
+          playerHp: playerHealth,
+          playerMaxHp: battle.playerMaxHealth,
+          enemyHp: enemyHealth,
+          enemyMaxHp: battle.enemyMaxHealth,
+          playerPoison: battle.playerPoison?.remainingTurns ?? 0,
+          lastPlayerDrawCount: battle.lastPlayerDrawCount,
+          turnCount: battle.battleStats.turnCount,
+        },
+  );
+  useGameOverAudio(isVictory ? 'victory' : isDefeat ? 'defeat' : null);
 
   const clearSpendTimer = useCallback(() => {
     if (spendTimerRef.current !== null) {
@@ -195,7 +223,10 @@ export function BattleScreen({ actor }: BattleScreenProps) {
             <p className="mt-3 text-sm text-[#6f6659]">A card battle against the Shadow Beast</p>
           </div>
           <EndTurnButton
-            onClick={() => actor.send({ type: 'START_BATTLE' })}
+            onClick={() => {
+              void unlock();
+              actor.send({ type: 'START_BATTLE' });
+            }}
             line1="START"
             line2="BATTLE"
           />
@@ -261,7 +292,10 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           spendingIndices={spendState.player?.indices}
           spendMode={spendState.player?.mode}
           onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}
-          onEndTurn={() => actor.send({ type: 'END_TURN' })}
+          onEndTurn={() => {
+            play('end_turn');
+            actor.send({ type: 'END_TURN' });
+          }}
           isHit={hitTarget === 'player'}
         />
       </div>

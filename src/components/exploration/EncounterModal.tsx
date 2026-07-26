@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import type { PendingEncounter } from '@/types/exploration';
+import { useAudio } from '@/audio/useAudio';
 
 interface EncounterModalProps {
   encounter: PendingEncounter;
@@ -6,6 +8,14 @@ interface EncounterModalProps {
 }
 
 export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
+  const { play } = useAudio();
+
+  useEffect(() => {
+    play('modal_open');
+    play('dice_roll');
+    play('event_sting');
+  }, [play, encounter.id]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(6,4,3,.72)] p-6 backdrop-blur-[2px]">
       <div className="w-full max-w-md rounded-[14px] border border-[rgba(201,162,74,.35)] bg-[linear-gradient(180deg,#1a1410,#100c0a)] p-6 shadow-[0_30px_80px_-20px_#000]">

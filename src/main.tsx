@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { useActorRef } from '@xstate/react';
 import { battleMachine } from '@/machine/battleMachine';
 import { explorationMachine } from '@/machine/explorationMachine';
+import { AudioProvider } from '@/components/AudioProvider';
+import { AudioSettings } from '@/components/AudioSettings';
 import { BattleScreen } from '@/screens/BattleScreen';
 import { ExplorationScreen } from '@/screens/ExplorationScreen';
 import { WorldMapScreen } from '@/screens/WorldMapScreen';
@@ -57,6 +59,9 @@ function App() {
             THE REALM
           </button>
         </div>
+        <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
+          <AudioSettings />
+        </div>
         <BattleScreen actor={battleActor} />
       </div>
     );
@@ -64,24 +69,38 @@ function App() {
 
   if (screen === 'exploration') {
     return (
-      <ExplorationScreen
-        actor={explorationActor}
-        onOpenBattle={() => {
-          setScreen('battle');
-          if (battleActor.getSnapshot().matches('idle')) {
-            battleActor.send({ type: 'START_BATTLE' });
-          }
-        }}
-        onBackToWorld={() => setScreen('world')}
-      />
+      <>
+        <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
+          <AudioSettings />
+        </div>
+        <ExplorationScreen
+          actor={explorationActor}
+          onOpenBattle={() => {
+            setScreen('battle');
+            if (battleActor.getSnapshot().matches('idle')) {
+              battleActor.send({ type: 'START_BATTLE' });
+            }
+          }}
+          onBackToWorld={() => setScreen('world')}
+        />
+      </>
     );
   }
 
-  return <WorldMapScreen onEnterLocation={enterLocation} />;
+  return (
+    <>
+      <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
+        <AudioSettings />
+      </div>
+      <WorldMapScreen onEnterLocation={enterLocation} />
+    </>
+  );
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <AudioProvider>
+      <App />
+    </AudioProvider>
   </StrictMode>,
 );
