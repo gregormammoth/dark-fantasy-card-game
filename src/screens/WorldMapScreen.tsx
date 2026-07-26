@@ -1,4 +1,4 @@
-import { useMemo, useState, type MouseEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import worldMapData from '@/data/worldMap.json';
 import type { WorldLocationDefinition, WorldMapDefinition } from '@/types/world';
 import { iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
@@ -13,10 +13,47 @@ interface WorldMapScreenProps {
 export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
   const [selectedId, setSelectedId] = useState<string | null>(worldMap.startLocationId);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const [viewport, setViewport] = useState({ w: 0, h: 0 });
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   const locations = worldMap.locations;
   const enabledCount = locations.filter((location) => location.enabled).length;
   const selected = locations.find((location) => location.id === selectedId) ?? null;
+
+  useEffect(() => {
+    const node = viewportRef.current;
+    if (!node) {
+      return;
+    }
+    const sync = () => {
+      const rect = node.getBoundingClientRect();
+      setViewport({ w: rect.width, h: rect.height });
+    };
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const stage = useMemo(() => {
+    if (viewport.w <= 0 || viewport.h <= 0) {
+      return { width: 0, height: 0, panX: 0, panY: 0 };
+    }
+    const cover = Math.max(
+      viewport.w / worldMap.mapWidth,
+      viewport.h / worldMap.mapHeight,
+    );
+    const width = worldMap.mapWidth * cover;
+    const height = worldMap.mapHeight * cover;
+    const overflowX = Math.max(0, width - viewport.w);
+    const overflowY = Math.max(0, height - viewport.h);
+    return {
+      width,
+      height,
+      panX: -overflowX / 2 - (parallax.x * overflowX) / 2,
+      panY: -overflowY / 2 - (parallax.y * overflowY) / 2,
+    };
+  }, [viewport.w, viewport.h, parallax.x, parallax.y]);
 
   const legend = useMemo(() => {
     const seen = new Set<string>();
@@ -70,7 +107,10 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
     const rect = event.currentTarget.getBoundingClientRect();
     const px = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     const py = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-    setParallax({ x: px, y: py });
+    setParallax({
+      x: Math.max(-1, Math.min(1, px)),
+      y: Math.max(-1, Math.min(1, py)),
+    });
   }
 
   function renderNode(location: WorldLocationDefinition) {
@@ -156,131 +196,140 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
       </div>
 
       <div
+        ref={viewportRef}
         className="relative min-h-0 w-full flex-1 overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[#0a0706]"
         onMouseMove={onMapMove}
         onMouseLeave={() => setParallax({ x: 0, y: 0 })}
       >
-        <img
-          src={worldMap.image}
-          alt=""
-          className="absolute inset-0 z-[1] h-full w-full object-cover object-center"
+        <div
+          className="absolute left-0 top-0 will-change-transform"
           style={{
-            filter: 'brightness(.95) contrast(1.1) saturate(.94)',
-            transform: `scale(1.06) translate(${parallax.x * 6}px, ${parallax.y * 4}px)`,
-            transition: 'transform .08s linear',
+            width: stage.width || '100%',
+            height: stage.height || '100%',
+            transform: `translate3d(${stage.panX}px, ${stage.panY}px, 0)`,
+            transition: 'transform 140ms ease-out',
           }}
-          draggable={false}
-        />
+        >
+          <img
+            src={worldMap.image}
+            alt=""
+            className="absolute inset-0 z-[1] h-full w-full object-fill"
+            style={{
+              filter: 'brightness(.95) contrast(1.1) saturate(.94)',
+            }}
+            draggable={false}
+          />
 
-        <div className="pointer-events-none absolute left-[-10%] top-[8%] z-[2] h-[22%] w-[46%] animate-[shadowDriftA_70s_ease-in-out_infinite_alternate] bg-[radial-gradient(ellipse,rgba(0,0,0,.28),transparent_70%)] blur-[14px]" />
-        <div className="pointer-events-none absolute left-[20%] top-[38%] z-[2] h-[18%] w-[40%] animate-[shadowDriftA_95s_ease-in-out_infinite_alternate-reverse] bg-[radial-gradient(ellipse,rgba(0,0,0,.22),transparent_70%)] blur-[16px]" />
+          <div className="pointer-events-none absolute left-[-10%] top-[8%] z-[2] h-[22%] w-[46%] animate-[shadowDriftA_70s_ease-in-out_infinite_alternate] bg-[radial-gradient(ellipse,rgba(0,0,0,.28),transparent_70%)] blur-[14px]" />
+          <div className="pointer-events-none absolute left-[20%] top-[38%] z-[2] h-[18%] w-[40%] animate-[shadowDriftA_95s_ease-in-out_infinite_alternate-reverse] bg-[radial-gradient(ellipse,rgba(0,0,0,.22),transparent_70%)] blur-[16px]" />
 
-        <div className="pointer-events-none absolute inset-0 z-[3] animate-[dayNight_100s_ease-in-out_infinite] mix-blend-multiply" />
-        <div className="pointer-events-none absolute inset-0 z-[4] animate-[starsFade_100s_ease-in-out_infinite] bg-[radial-gradient(1px_1px_at_12%_8%,#fff,transparent),radial-gradient(1px_1px_at_22%_15%,#fff,transparent),radial-gradient(1.5px_1.5px_at_35%_6%,#fff,transparent),radial-gradient(1px_1px_at_48%_12%,#fff,transparent),radial-gradient(1.5px_1.5px_at_62%_5%,#fff,transparent),radial-gradient(1px_1px_at_74%_10%,#fff,transparent),radial-gradient(1px_1px_at_85%_7%,#fff,transparent),radial-gradient(1.5px_1.5px_at_92%_14%,#fff,transparent)] opacity-0" />
+          <div className="pointer-events-none absolute inset-0 z-[3] animate-[dayNight_100s_ease-in-out_infinite] mix-blend-multiply" />
+          <div className="pointer-events-none absolute inset-0 z-[4] animate-[starsFade_100s_ease-in-out_infinite] bg-[radial-gradient(1px_1px_at_12%_8%,#fff,transparent),radial-gradient(1px_1px_at_22%_15%,#fff,transparent),radial-gradient(1.5px_1.5px_at_35%_6%,#fff,transparent),radial-gradient(1px_1px_at_48%_12%,#fff,transparent),radial-gradient(1.5px_1.5px_at_62%_5%,#fff,transparent),radial-gradient(1px_1px_at_74%_10%,#fff,transparent),radial-gradient(1px_1px_at_85%_7%,#fff,transparent),radial-gradient(1.5px_1.5px_at_92%_14%,#fff,transparent)] opacity-0" />
 
-        <WorldMapClouds parallax={parallax} />
+          <WorldMapClouds parallax={parallax} />
 
-        <div className="pointer-events-none absolute bottom-0 left-[-8%] z-[5] h-[16%] w-[70%] animate-[fogDrift_46s_ease-in-out_infinite] bg-[linear-gradient(0deg,rgba(200,205,210,.28),transparent)] blur-[10px]" />
-        <div className="pointer-events-none absolute bottom-[4%] left-[74%] z-[5] h-[20%] w-[38%] animate-[fogDrift_38s_ease-in-out_infinite_reverse] bg-[linear-gradient(0deg,rgba(150,140,160,.3),transparent)] blur-[9px]" />
+          <div className="pointer-events-none absolute bottom-0 left-[-8%] z-[5] h-[16%] w-[70%] animate-[fogDrift_46s_ease-in-out_infinite] bg-[linear-gradient(0deg,rgba(200,205,210,.28),transparent)] blur-[10px]" />
+          <div className="pointer-events-none absolute bottom-[4%] left-[74%] z-[5] h-[20%] w-[38%] animate-[fogDrift_38s_ease-in-out_infinite_reverse] bg-[linear-gradient(0deg,rgba(150,140,160,.3),transparent)] blur-[9px]" />
 
-        <div className="pointer-events-none absolute left-[8%] top-[82%] z-[7] h-[70px] w-[70px] animate-[torchFlicker_2.4s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,rgba(255,140,50,.5),transparent_70%)]" />
-        <div className="pointer-events-none absolute left-[26%] top-[14%] z-[7] h-[90px] w-[90px] animate-[torchFlicker_3.1s_ease-in-out_infinite_.6s] rounded-full bg-[radial-gradient(circle,rgba(255,150,60,.4),transparent_70%)]" />
+          <div className="pointer-events-none absolute left-[8%] top-[82%] z-[7] h-[70px] w-[70px] animate-[torchFlicker_2.4s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,rgba(255,140,50,.5),transparent_70%)]" />
+          <div className="pointer-events-none absolute left-[26%] top-[14%] z-[7] h-[90px] w-[90px] animate-[torchFlicker_3.1s_ease-in-out_infinite_.6s] rounded-full bg-[radial-gradient(circle,rgba(255,150,60,.4),transparent_70%)]" />
 
-        {smokeSpots.map((spot, index) => (
-          <div
-            key={`smoke-${index}`}
-            className="pointer-events-none absolute z-[7]"
-            style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
-          >
-            <span className="absolute h-[7px] w-[7px] animate-[smokeRise_4.6s_ease-out_infinite] rounded-full bg-[rgba(210,206,198,.55)] blur-[1px]" />
-            <span className="absolute h-[6px] w-[6px] animate-[smokeRise_4.6s_ease-out_infinite_1.5s] rounded-full bg-[rgba(210,206,198,.5)] blur-[1px]" />
-            <span className="absolute h-[6px] w-[6px] animate-[smokeRise_4.6s_ease-out_infinite_3s] rounded-full bg-[rgba(210,206,198,.45)] blur-[1px]" />
-          </div>
-        ))}
+          {smokeSpots.map((spot, index) => (
+            <div
+              key={`smoke-${index}`}
+              className="pointer-events-none absolute z-[7]"
+              style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
+            >
+              <span className="absolute h-[7px] w-[7px] animate-[smokeRise_4.6s_ease-out_infinite] rounded-full bg-[rgba(210,206,198,.55)] blur-[1px]" />
+              <span className="absolute h-[6px] w-[6px] animate-[smokeRise_4.6s_ease-out_infinite_1.5s] rounded-full bg-[rgba(210,206,198,.5)] blur-[1px]" />
+              <span className="absolute h-[6px] w-[6px] animate-[smokeRise_4.6s_ease-out_infinite_3s] rounded-full bg-[rgba(210,206,198,.45)] blur-[1px]" />
+            </div>
+          ))}
 
-        {flagSpots.map((flag, index) => (
-          <div
-            key={`flag-${index}`}
-            className="pointer-events-none absolute z-[8] h-[22px] w-0.5 bg-[#c9bdae]"
-            style={{ left: `${flag.x}%`, top: `${flag.y}%` }}
-          >
-            <span
-              className="absolute left-0.5 top-0 h-[9px] w-[14px] origin-top-left animate-[flagWave_1.7s_ease-in-out_infinite]"
+          {flagSpots.map((flag, index) => (
+            <div
+              key={`flag-${index}`}
+              className="pointer-events-none absolute z-[8] h-[22px] w-0.5 bg-[#c9bdae]"
+              style={{ left: `${flag.x}%`, top: `${flag.y}%` }}
+            >
+              <span
+                className="absolute left-0.5 top-0 h-[9px] w-[14px] origin-top-left animate-[flagWave_1.7s_ease-in-out_infinite]"
+                style={{
+                  background: flag.color,
+                  clipPath: 'polygon(0 0,100% 25%,0 50%)',
+                }}
+              />
+            </div>
+          ))}
+
+          {birdSpots.map((bird, index) => (
+            <div
+              key={`bird-${index}`}
+              className="pointer-events-none absolute left-0 z-[9]"
               style={{
-                background: flag.color,
-                clipPath: 'polygon(0 0,100% 25%,0 50%)',
+                top: `${bird.y}%`,
+                animation: `birdFly ${bird.dur}s linear infinite ${bird.delay}s`,
               }}
-            />
-          </div>
-        ))}
+            >
+              <span className="relative inline-block h-1.5 w-3.5 opacity-60">
+                <span className="absolute left-0 top-[3px] block h-0.5 w-2 rotate-[25deg] rounded-sm bg-[#2a2620]" />
+                <span className="absolute right-0 top-[3px] block h-0.5 w-2 -rotate-[25deg] rounded-sm bg-[#2a2620]" />
+              </span>
+            </div>
+          ))}
 
-        {birdSpots.map((bird, index) => (
-          <div
-            key={`bird-${index}`}
-            className="pointer-events-none absolute left-0 z-[9]"
-            style={{
-              top: `${bird.y}%`,
-              animation: `birdFly ${bird.dur}s linear infinite ${bird.delay}s`,
-            }}
-          >
-            <span className="relative inline-block h-1.5 w-3.5 opacity-60">
-              <span className="absolute left-0 top-[3px] block h-0.5 w-2 rotate-[25deg] rounded-sm bg-[#2a2620]" />
-              <span className="absolute right-0 top-[3px] block h-0.5 w-2 -rotate-[25deg] rounded-sm bg-[#2a2620]" />
-            </span>
-          </div>
-        ))}
+          {shipSpots.map((ship, index) => (
+            <div
+              key={`ship-${index}`}
+              className="pointer-events-none absolute z-[9]"
+              style={{
+                left: `${ship.x}%`,
+                top: `${ship.y}%`,
+                animation: `shipBob ${ship.dur}s ease-in-out infinite`,
+              }}
+            >
+              <div className="relative left-0.5 h-0 w-0 border-l-[7px] border-r-[7px] border-b-[16px] border-l-transparent border-r-transparent border-b-[rgba(230,224,210,.65)]" />
+              <div className="-mt-0.5 h-[5px] w-5 rounded-b-lg bg-[#3a3128]" />
+            </div>
+          ))}
 
-        {shipSpots.map((ship, index) => (
-          <div
-            key={`ship-${index}`}
-            className="pointer-events-none absolute z-[9]"
-            style={{
-              left: `${ship.x}%`,
-              top: `${ship.y}%`,
-              animation: `shipBob ${ship.dur}s ease-in-out infinite`,
-            }}
-          >
-            <div className="relative left-0.5 h-0 w-0 border-l-[7px] border-r-[7px] border-b-[16px] border-l-transparent border-r-transparent border-b-[rgba(230,224,210,.65)]" />
-            <div className="-mt-0.5 h-[5px] w-5 rounded-b-lg bg-[#3a3128]" />
+          <div className="pointer-events-none absolute left-[16%] top-0 z-[11] h-[26%] w-[18%] overflow-hidden">
+            {snowflakes.map((flake, index) => (
+              <span
+                key={`snow-${index}`}
+                className="absolute -top-[6%] rounded-full bg-[rgba(255,255,255,.85)]"
+                style={{
+                  left: `${flake.x}%`,
+                  width: flake.size,
+                  height: flake.size,
+                  animation: `snowFall ${flake.dur}s linear infinite ${flake.delay}s`,
+                }}
+              />
+            ))}
           </div>
-        ))}
+
+          <div className="pointer-events-none absolute left-[80%] top-[22%] z-[11] h-[22%] w-[18%] overflow-visible">
+            {sparks.map((spark, index) => (
+              <span
+                key={`spark-${index}`}
+                className="absolute rounded-full"
+                style={{
+                  left: `${spark.x}%`,
+                  top: `${spark.y}%`,
+                  width: spark.size,
+                  height: spark.size,
+                  background: spark.color,
+                  boxShadow: `0 0 6px 1px ${spark.color}`,
+                  animation: `sparkFloat ${spark.dur}s ease-in-out infinite ${spark.delay}s`,
+                }}
+              />
+            ))}
+          </div>
+
+          {locations.map(renderNode)}
+        </div>
 
         <div className="pointer-events-none absolute inset-0 z-[10] shadow-[inset_0_0_160px_40px_rgba(0,0,0,.6)]" />
-
-        <div className="pointer-events-none absolute left-[16%] top-0 z-[11] h-[26%] w-[18%] overflow-hidden">
-          {snowflakes.map((flake, index) => (
-            <span
-              key={`snow-${index}`}
-              className="absolute -top-[6%] rounded-full bg-[rgba(255,255,255,.85)]"
-              style={{
-                left: `${flake.x}%`,
-                width: flake.size,
-                height: flake.size,
-                animation: `snowFall ${flake.dur}s linear infinite ${flake.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="pointer-events-none absolute left-[80%] top-[22%] z-[11] h-[22%] w-[18%] overflow-visible">
-          {sparks.map((spark, index) => (
-            <span
-              key={`spark-${index}`}
-              className="absolute rounded-full"
-              style={{
-                left: `${spark.x}%`,
-                top: `${spark.y}%`,
-                width: spark.size,
-                height: spark.size,
-                background: spark.color,
-                boxShadow: `0 0 6px 1px ${spark.color}`,
-                animation: `sparkFloat ${spark.dur}s ease-in-out infinite ${spark.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {locations.map(renderNode)}
 
         <div className="absolute bottom-4 left-4 z-[14] flex max-w-[340px] flex-wrap gap-x-3.5 gap-y-2 rounded-[10px] border border-[rgba(201,162,74,.22)] bg-[rgba(10,8,7,.78)] px-3 py-2">
           {legend.map((item) => (
