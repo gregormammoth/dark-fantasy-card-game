@@ -1,7 +1,7 @@
 import { Howl, Howler } from 'howler';
 import { activeAmbienceIds, computeAmbienceTargets, computeLayerTargets } from './atmosphere';
 import { ProceduralAudioEngine } from './proceduralSfx';
-import { AMBIENCE_LOOP_IDS, MANIFEST_BY_ID, MUSIC_LAYER_IDS, SOUND_MANIFEST } from './soundManifest';
+import { AMBIENCE_LOOP_IDS, MANIFEST_BY_ID, MUSIC_LAYER_IDS, OVERLAY_MUSIC_IDS, SCREEN_MUSIC_IDS, SOUND_MANIFEST } from './soundManifest';
 import type {
   AmbienceLoopId,
   AtmosphereProfile,
@@ -12,8 +12,10 @@ import type {
   SoundCategory,
   SoundDefinition,
   SoundId,
+  MusicScreen,
   UiSoundId,
 } from './types';
+import { SCREEN_MUSIC } from './types';
 
 type LoadedHowl = {
   howl: Howl;
@@ -31,13 +33,13 @@ type LayerRuntime = {
 const FADE_TICK_MS = 50;
 const CROSSFADE_RATE = 0.04;
 const BED_FADE_RATE = 0.018;
-const BASE_AMBIENT_ID: MusicLayerId = 'base_ambient';
+const DEFAULT_SCREEN: MusicScreen = 'world';
 const GAMEPLAY_FADE_RATE = 0.025;
 const HOWL_LOAD_TIMEOUT_MS = 6000;
 
 const IS_DEV = import.meta.env.DEV;
 
-const GAME_OVER_STINGS: SoundId[] = ['victory_sting', 'survival_sting', 'failure_collapse'];
+const GAME_OVER_STINGS: SoundId[] = ['victory_sting', 'defeat_sting'];
 
 export class AudioManager {
   private cache = new Map<SoundId, LoadedHowl>();
@@ -64,6 +66,7 @@ export class AudioManager {
   private gameplayFadeRate = CROSSFADE_RATE;
   private unlockInFlight = false;
   private bedBaseTarget = 0;
+  private activeScreen: MusicScreen = DEFAULT_SCREEN;
 
   configure(settings: AudioSettings): void {
     this.settings = settings;
@@ -125,46 +128,65 @@ export class AudioManager {
     }
   }
 
-  async ensureBaseAmbient(): Promise<void> {
+  async setMusicScreen(screen: MusicScreen): Promise<void> {
+    this.activeScreen = screen;
+    if (!this.unlocked || this.disposed || this.settings.muted || this.gameOverMode) return;
+    await this.ensureScreenMusic();
+  }
+
+  getMusicScreen(): MusicScreen {
+    return this.activeScreen;
+  }
+
+  async ensureScreenMusic(): Promise<void> {
     if (!this.unlocked || this.disposed || this.settings.muted) return;
 
     const gain = this.effectiveMusicGain();
     this.bedBaseTarget = 0.34 * gain;
+    const activeId = SCREEN_MUSIC[this.activeScreen];
 
-    let baseRuntime = this.layers.get(BASE_AMBIENT_ID);
-    if (!baseRuntime) {
-      baseRuntime = { howl: null, currentVolume: 0, targetVolume: 0, useProcedural: false };
-      this.layers.set(BASE_AMBIENT_ID, baseRuntime);
+    for (const id of SCREEN_MUSIC_IDS) {
+      this.setMusicLayerTarget(id, id === activeId ? this.bedBaseTarget : 0);
     }
-    baseRuntime.targetVolume = this.bedBaseTarget;
 
-    const loaded = await this.ensureHowl(BASE_AMBIENT_ID);
+    let runtime = this.layers.get(activeId);
+    if (!runtime) {
+      runtime = { howl: null, currentVolume: 0, targetVolume: this.bedBaseTarget, useProcedural: false };
+      this.layers.set(activeId, runtime);
+    }
+    runtime.targetVolume = this.bedBaseTarget;
+
+    const loaded = await this.ensureHowl(activeId);
     if (loaded && !loaded.failed) {
-      baseRuntime.howl = loaded.howl;
-      baseRuntime.useProcedural = false;
-      this.procedural.stopLoop(BASE_AMBIENT_ID);
+      runtime.howl = loaded.howl;
+      runtime.useProcedural = false;
+      this.procedural.stopLoop(activeId);
       if (!loaded.howl.playing()) {
         loaded.howl.play();
       }
-      if (baseRuntime.currentVolume <= 0.02) {
-        baseRuntime.currentVolume = 0.04;
-        this.applyLayerVolume(BASE_AMBIENT_ID, baseRuntime, baseRuntime.currentVolume);
+      if (runtime.currentVolume <= 0.02) {
+        runtime.currentVolume = 0.04;
+        this.applyLayerVolume(activeId, runtime, runtime.currentVolume);
       }
-      this.log(`base_ambient playback started (${loaded.def.src[0]})`);
+      this.log(`${activeId} playback started (${loaded.def.src[0]})`);
       return;
     }
 
-    if (!baseRuntime.useProcedural) {
-      baseRuntime.useProcedural = true;
-      this.procedural.startLoop(BASE_AMBIENT_ID, 0);
-      this.log('base_ambient playback started (procedural fallback)');
+    if (!runtime.useProcedural) {
+      runtime.useProcedural = true;
+      this.procedural.startLoop(activeId, 0);
+      this.log(`${activeId} playback started (procedural fallback)`);
     }
+  }
+
+  async ensureBaseAmbient(): Promise<void> {
+    await this.ensureScreenMusic();
   }
 
   async startGameplayBed(): Promise<void> {
     if (!this.unlocked || this.disposed || this.settings.muted || this.gameOverMode) return;
     if (this.musicBedStarted) {
-      void this.ensureBaseAmbient();
+      void this.ensureScreenMusic();
       return;
     }
 
@@ -177,11 +199,11 @@ export class AudioManager {
     const gain = this.effectiveMusicGain();
     this.bedBaseTarget = 0.34 * gain;
 
-    await this.ensureBaseAmbient();
+    await this.ensureScreenMusic();
 
-    this.setAmbienceTarget('industrial_hum', 0.1 * gain);
+    this.setAmbienceTarget('dungeon_hum', 0.08 * gain);
     void this.preloadLoops();
-    this.log('gameplay bed started');
+    this.log(`gameplay bed started (${this.activeScreen})`);
   }
 
   fadeOutGameplay(durationMs = 1400): void {
@@ -216,24 +238,24 @@ export class AudioManager {
 
     if (type === 'victory') {
       this.play('victory_sting', { volume: 0.48, force: true });
-      this.setAmbienceTarget('crowd_murmur', 0.06 * gain);
+      this.setAmbienceTarget('distant_murmur', 0.06 * gain);
       this.log('game over suite: victory');
       return;
     }
 
     if (type === 'survival') {
-      this.play('survival_sting', { volume: 0.4, force: true });
-      this.setAmbienceTarget('radio_static', 0.08 * gain);
-      this.setMusicLayerTarget('base_ambient', 0.12 * gain);
+      this.play('victory_sting', { volume: 0.36, force: true });
+      this.setAmbienceTarget('torch_crackle', 0.08 * gain);
+      this.setMusicLayerTarget(SCREEN_MUSIC[this.activeScreen], 0.12 * gain);
       this.log('game over suite: survival');
       return;
     }
 
-    this.play('failure_collapse', { volume: 0.52, force: true });
-    this.setMusicLayerTarget('collapse_alarm', 0.38 * gain);
-    this.setAmbienceTarget('military_drone', 0.15 * gain);
+    this.play('defeat_sting', { volume: 0.52, force: true });
+    this.setMusicLayerTarget('defeat_drone', 0.38 * gain);
+    this.setAmbienceTarget('low_drone', 0.15 * gain);
     window.setTimeout(() => {
-      this.play('distant_siren', { volume: 0.32, force: true });
+      this.play('distant_howl', { volume: 0.32, force: true });
     }, 700);
     this.log('game over suite: failure');
   }
@@ -285,12 +307,13 @@ export class AudioManager {
 
     const layerTargets = computeLayerTargets(profile);
     const gain = this.effectiveMusicGain();
-    for (const id of MUSIC_LAYER_IDS) {
-      let target = (layerTargets[id] ?? 0) * gain;
-      if (id === BASE_AMBIENT_ID && this.musicBedStarted && !this.gameOverMode) {
-        target = Math.max(target, this.bedBaseTarget);
-      }
-      this.setMusicLayerTarget(id, target);
+    for (const id of OVERLAY_MUSIC_IDS) {
+      this.setMusicLayerTarget(id, (layerTargets[id] ?? 0) * gain);
+    }
+
+    if (this.musicBedStarted && profile.phase === 'battle') {
+      const battleId = SCREEN_MUSIC.battle;
+      this.setMusicLayerTarget(battleId, Math.max(this.bedBaseTarget, 0.28 * gain));
     }
 
     const ambTargets = computeAmbienceTargets(profile);
@@ -308,8 +331,8 @@ export class AudioManager {
 
     if (profile.phase === 'battle' && profile.nearCollapse) {
       this.setAmbienceTarget(
-        'military_drone',
-        Math.max(ambTargets.military_drone ?? 0, 0.2) * this.effectiveMusicGain()
+        'low_drone',
+        Math.max(ambTargets.low_drone ?? 0, 0.2) * this.effectiveMusicGain()
       );
     }
   }
@@ -423,9 +446,9 @@ export class AudioManager {
     return (
       this.isUiSound(soundId) ||
       GAME_OVER_STINGS.includes(soundId) ||
-      soundId === 'distant_siren' ||
-      soundId === 'event_sting' ||
-      soundId === 'election_sting'
+      soundId === 'distant_howl' ||
+      soundId === 'encounter_sting' ||
+      soundId === 'combat_hit'
     );
   }
 
@@ -461,7 +484,7 @@ export class AudioManager {
     const def = MANIFEST_BY_ID.get(layerId);
     if (!def) return;
 
-    const preferFileFirst = layerId === BASE_AMBIENT_ID || !def.procedural;
+    const preferFileFirst = SCREEN_MUSIC_IDS.includes(layerId as typeof SCREEN_MUSIC_IDS[number]) || !def.procedural;
 
     if (!preferFileFirst && def.procedural && !runtime.useProcedural) {
       runtime.useProcedural = true;
@@ -525,7 +548,12 @@ export class AudioManager {
     const diff = runtime.targetVolume - runtime.currentVolume;
     if (Math.abs(diff) < 0.001) {
       if (runtime.targetVolume <= 0.02 && runtime.currentVolume > 0) {
-        if (id === BASE_AMBIENT_ID && this.musicBedStarted && !this.gameOverMode) {
+        if (
+          SCREEN_MUSIC_IDS.includes(id as MusicLayerId) &&
+          id === SCREEN_MUSIC[this.activeScreen] &&
+          this.musicBedStarted &&
+          !this.gameOverMode
+        ) {
           return;
         }
         this.stopLayer(runtime, id);
@@ -609,8 +637,9 @@ export class AudioManager {
     this.sirenTimer = setInterval(() => {
       if (!this.lastAtmosphere || this.settings.muted || this.gameOverMode) return;
       if (this.lastAtmosphere.stability > 45 && !this.lastAtmosphere.nearCollapse) return;
+      if (this.activeScreen !== 'battle' && this.activeScreen !== 'exploration') return;
       if (Math.random() > 0.35) return;
-      this.play('distant_siren', { volume: 0.25 });
+      this.play('distant_howl', { volume: 0.25 });
     }, 32000);
   }
 
@@ -635,16 +664,16 @@ export class AudioManager {
     return (
       id === 'card_hover' ||
       id === 'card_play' ||
-      id === 'resource_gain' ||
+      id === 'shield_gain' ||
       id === 'draw_card' ||
       id === 'end_turn' ||
       id === 'modal_open' ||
-      id === 'dice_roll' ||
-      id === 'success_reveal' ||
-      id === 'partial_reveal' ||
-      id === 'failure_reveal' ||
+      id === 'fate_roll' ||
+      id === 'victory_reveal' ||
+      id === 'block_reveal' ||
+      id === 'defeat_reveal' ||
       id === 'button_hover' ||
-      id === 'warning_sting'
+      id === 'danger_warning'
     );
   }
 

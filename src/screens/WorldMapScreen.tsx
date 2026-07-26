@@ -139,30 +139,31 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6 text-[#e8ddcf]">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-0.5">
-          <span className="font-cinzel text-[20px] tracking-wider text-[#e8ddcf]">
+    <div className="mx-auto flex h-[100dvh] w-full max-w-[1500px] flex-col gap-2 overflow-hidden px-4 py-3 text-[#e8ddcf]">
+      <div className="flex shrink-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="truncate font-cinzel text-[18px] tracking-wider text-[#e8ddcf]">
             {worldMap.name}
           </span>
-          <span className="text-[12px] text-[#8a7f72]">Choose a region to explore</span>
+          <span className="text-[11px] text-[#8a7f72]">Choose a region to explore</span>
         </div>
-        <span className="font-cinzel text-[16px] tracking-[.3em] text-[#b8917f]">FAST TRAVEL</span>
-        <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
+        <span className="shrink-0 font-cinzel text-[14px] tracking-[.3em] text-[#b8917f]">
+          FAST TRAVEL
+        </span>
+        <span className="shrink-0 text-[10px] tracking-[.18em] text-[#8a7f72]">
           {enabledCount} / {locations.length} AVAILABLE
         </span>
       </div>
 
       <div
-        className="relative w-full overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[#0a0706]"
-        style={{ aspectRatio: `${worldMap.mapWidth} / ${worldMap.mapHeight}` }}
+        className="relative min-h-0 w-full flex-1 overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[#0a0706]"
         onMouseMove={onMapMove}
         onMouseLeave={() => setParallax({ x: 0, y: 0 })}
       >
         <img
           src={worldMap.image}
           alt=""
-          className="absolute inset-0 z-[1] h-full w-full object-cover"
+          className="absolute inset-0 z-[1] h-full w-full object-cover object-center"
           style={{
             filter: 'brightness(.95) contrast(1.1) saturate(.94)',
             transform: `scale(1.06) translate(${parallax.x * 6}px, ${parallax.y * 4}px)`,

@@ -263,17 +263,17 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
       if (isPlayerAttack) {
         onImpactRef.current('enemy', stackSpend);
         if ((cue.shieldBlocked ?? 0) > 0 || (cue.barrierBlocked ?? 0) > 0) {
-          play('partial_reveal');
+          play('block_reveal');
         }
       } else if (isEnemyAttack) {
         onImpactRef.current('player', stackSpend);
         if ((cue.shieldBlocked ?? 0) > 0 || (cue.barrierBlocked ?? 0) > 0) {
-          play('partial_reveal');
+          play('block_reveal');
         }
       } else if (isDefense && cue.source === 'player') {
         onImpactRef.current('player', 0);
         if ((cue.shieldGained ?? 0) > 0 || (cue.barrierGained ?? 0) > 0) {
-          play('resource_gain');
+          play('shield_gain');
         }
       }
     }, 520);

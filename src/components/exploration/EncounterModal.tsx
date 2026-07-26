@@ -12,8 +12,8 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
 
   useEffect(() => {
     play('modal_open');
-    play('dice_roll');
-    play('event_sting');
+    play('fate_roll');
+    play('encounter_sting');
   }, [play, encounter.id]);
 
   return (

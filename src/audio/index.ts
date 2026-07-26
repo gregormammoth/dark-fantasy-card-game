@@ -4,6 +4,7 @@ export { useAudio, useAudioUnlockOnGesture } from './useAudio';
 export { useGameAudio } from './useGameAudio';
 export { useGameOverAudio } from './useGameOverAudio';
 export { useHoverSound, useButtonHoverSound } from './useHoverSound';
+export { useScreenMusic } from './useScreenMusic';
 export { SOUND_MANIFEST, MANIFEST_BY_ID } from './soundManifest';
 export type {
   SoundId,
@@ -12,6 +13,7 @@ export type {
   AtmosphereProfile,
   PlayOptions,
   MusicLayerId,
+  MusicScreen,
   AmbienceLoopId,
 } from './types';
-export { computeAtmosphereFromBattle, DEFAULT_AUDIO_SETTINGS } from './types';
+export { computeAtmosphereFromBattle, DEFAULT_AUDIO_SETTINGS, SCREEN_MUSIC } from './types';

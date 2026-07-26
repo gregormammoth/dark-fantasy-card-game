@@ -1,37 +1,40 @@
 export type SoundCategory = 'ui' | 'event' | 'ambience' | 'music' | 'combat';
 
+export type MusicScreen = 'world' | 'exploration' | 'battle';
+
 export type MusicLayerId =
-  | 'base_ambient'
-  | 'election_tension'
-  | 'danger_escalation'
-  | 'collapse_alarm';
+  | 'world_theme'
+  | 'exploration_theme'
+  | 'battle_theme'
+  | 'battle_danger'
+  | 'defeat_drone';
 
 export type AmbienceLoopId =
-  | 'industrial_hum'
-  | 'radio_static'
-  | 'crowd_murmur'
-  | 'rain_wind'
-  | 'military_drone';
+  | 'dungeon_hum'
+  | 'torch_crackle'
+  | 'distant_murmur'
+  | 'wind_rain'
+  | 'low_drone';
 
 export type UiSoundId =
   | 'card_hover'
   | 'card_play'
-  | 'resource_gain'
+  | 'shield_gain'
   | 'draw_card'
   | 'end_turn'
   | 'modal_open'
-  | 'dice_roll'
-  | 'success_reveal'
-  | 'partial_reveal'
-  | 'failure_reveal'
+  | 'fate_roll'
+  | 'victory_reveal'
+  | 'block_reveal'
+  | 'defeat_reveal'
   | 'button_hover'
-  | 'warning_sting';
+  | 'danger_warning';
 
-export type GameOverSoundId = 'victory_sting' | 'survival_sting' | 'failure_collapse';
+export type GameOverSoundId = 'victory_sting' | 'defeat_sting';
 
-export type EventSoundId = 'event_sting' | 'election_sting' | 'election_pulse';
+export type EventSoundId = 'encounter_sting' | 'combat_hit';
 
-export type WorldOneShotId = 'distant_siren';
+export type WorldOneShotId = 'distant_howl';
 
 export type SoundId =
   | UiSoundId
@@ -87,7 +90,6 @@ export type GameAudioPhase =
 export type AtmosphereProfile = {
   stability: number;
   fearLevel: number;
-  isElectionRound: boolean;
   nearCollapse: boolean;
   consecutiveFailures: number;
   phase: GameAudioPhase;
@@ -100,6 +102,12 @@ export type PositionalSoundOptions = PlayOptions & {
   y: number;
   z: number;
   refDistance?: number;
+};
+
+export const SCREEN_MUSIC: Record<MusicScreen, MusicLayerId> = {
+  world: 'world_theme',
+  exploration: 'exploration_theme',
+  battle: 'battle_theme',
 };
 
 export function computeAtmosphereFromBattle(input: {
@@ -122,7 +130,6 @@ export function computeAtmosphereFromBattle(input: {
   return {
     stability: Math.round(playerRatio * 100),
     fearLevel,
-    isElectionRound: false,
     nearCollapse: playerRatio < 0.35,
     consecutiveFailures,
     phase: input.phase,

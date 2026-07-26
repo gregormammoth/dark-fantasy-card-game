@@ -45,7 +45,7 @@ export function BattleResultModal({
 
   useEffect(() => {
     play('modal_open');
-    play(victory ? 'success_reveal' : 'failure_reveal');
+    play(victory ? 'victory_reveal' : 'defeat_reveal');
   }, [play, victory]);
 
   return (

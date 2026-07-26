@@ -75,7 +75,7 @@ export class ProceduralAudioEngine {
         osc.stop(t + 0.22);
         break;
       }
-      case 'resource_gain': {
+      case 'shield_gain': {
         const osc = ctx.createOscillator();
         osc.type = 'square';
         osc.frequency.setValueAtTime(220, t);
@@ -130,7 +130,7 @@ export class ProceduralAudioEngine {
         osc.stop(t + 0.55);
         break;
       }
-      case 'dice_roll': {
+      case 'fate_roll': {
         const noise = this.brownNoise(ctx, 0.5);
         const filter = ctx.createBiquadFilter();
         filter.type = 'bandpass';
@@ -146,7 +146,7 @@ export class ProceduralAudioEngine {
         env.connect(g);
         break;
       }
-      case 'success_reveal': {
+      case 'victory_reveal': {
         const freqs = [130.81, 164.81, 196];
         freqs.forEach((f, i) => {
           const osc = ctx.createOscillator();
@@ -164,7 +164,7 @@ export class ProceduralAudioEngine {
         });
         break;
       }
-      case 'partial_reveal': {
+      case 'block_reveal': {
         const osc = ctx.createOscillator();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(110, t);
@@ -192,7 +192,7 @@ export class ProceduralAudioEngine {
         osc.stop(t + 0.06);
         break;
       }
-      case 'warning_sting': {
+      case 'danger_warning': {
         const osc = ctx.createOscillator();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(120, t);
@@ -211,7 +211,7 @@ export class ProceduralAudioEngine {
         osc.stop(t + 0.42);
         break;
       }
-      case 'failure_reveal': {
+      case 'defeat_reveal': {
         const osc = ctx.createOscillator();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(90, t);
@@ -248,17 +248,17 @@ export class ProceduralAudioEngine {
     g.gain.value = masterGain;
     g.connect(ctx.destination);
 
-    if (id === 'event_sting' || id === 'election_sting') {
+    if (id === 'encounter_sting' || id === 'combat_hit') {
       const osc = ctx.createOscillator();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(id === 'election_sting' ? 55 : 65, t);
+      osc.frequency.setValueAtTime(id === 'combat_hit' ? 55 : 65, t);
       osc.frequency.exponentialRampToValueAtTime(30, t + 0.6);
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = 280;
       const env = ctx.createGain();
       env.gain.setValueAtTime(0.0001, t);
-      env.gain.linearRampToValueAtTime(id === 'election_sting' ? 0.09 : 0.065, t + 0.05);
+      env.gain.linearRampToValueAtTime(id === 'combat_hit' ? 0.09 : 0.065, t + 0.05);
       env.gain.exponentialRampToValueAtTime(0.0001, t + 0.65);
       osc.connect(filter);
       filter.connect(env);
@@ -287,24 +287,7 @@ export class ProceduralAudioEngine {
       return;
     }
 
-    if (id === 'survival_sting') {
-      const osc = ctx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(88, t);
-      osc.frequency.linearRampToValueAtTime(82, t + 1.2);
-      const env = ctx.createGain();
-      env.gain.setValueAtTime(0.0001, t);
-      env.gain.linearRampToValueAtTime(0.045, t + 0.3);
-      env.gain.setValueAtTime(0.035, t + 0.8);
-      env.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
-      osc.connect(env);
-      env.connect(g);
-      osc.start(t);
-      osc.stop(t + 1.45);
-      return;
-    }
-
-    if (id === 'failure_collapse') {
+    if (id === 'defeat_sting') {
       const osc = ctx.createOscillator();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(50, t);
@@ -320,7 +303,7 @@ export class ProceduralAudioEngine {
       return;
     }
 
-    if (id === 'distant_siren') {
+    if (id === 'distant_howl') {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(440, t);
@@ -352,7 +335,7 @@ export class ProceduralAudioEngine {
     loop.gain.gain.linearRampToValueAtTime(Math.max(0, volume), t + rampSec);
   }
 
-  startLoop(id: AmbienceLoopId | MusicLayerId | 'election_pulse', targetVolume: number): void {
+  startLoop(id: AmbienceLoopId | MusicLayerId, targetVolume: number): void {
     if (this.loops.has(id)) {
       this.setLoopVolume(id, targetVolume);
       return;
@@ -366,15 +349,15 @@ export class ProceduralAudioEngine {
 
     const nodes: AudioNode[] = [gain];
 
-    if (id === 'industrial_hum' || id === 'base_ambient') {
+    if (id === 'dungeon_hum' || id === 'world_theme' || id === 'exploration_theme') {
       const noise = this.brownNoise(ctx, 30);
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.value = id === 'base_ambient' ? 120 : 90;
+      filter.frequency.value = id === 'world_theme' ? 140 : id === 'exploration_theme' ? 110 : 90;
       noise.connect(filter);
       filter.connect(gain);
       nodes.push(noise, filter);
-    } else if (id === 'radio_static') {
+    } else if (id === 'torch_crackle') {
       const noise = this.whiteNoise(ctx);
       const filter = ctx.createBiquadFilter();
       filter.type = 'highpass';
@@ -389,7 +372,7 @@ export class ProceduralAudioEngine {
       filter.connect(gain);
       lfo.start();
       nodes.push(noise, filter, lfo, lfoGain);
-    } else if (id === 'crowd_murmur') {
+    } else if (id === 'distant_murmur') {
       const noise = this.pinkNoise(ctx, 20);
       const filter = ctx.createBiquadFilter();
       filter.type = 'bandpass';
@@ -398,7 +381,7 @@ export class ProceduralAudioEngine {
       noise.connect(filter);
       filter.connect(gain);
       nodes.push(noise, filter);
-    } else if (id === 'rain_wind') {
+    } else if (id === 'wind_rain') {
       const noise = this.whiteNoise(ctx);
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
@@ -406,13 +389,13 @@ export class ProceduralAudioEngine {
       noise.connect(filter);
       filter.connect(gain);
       nodes.push(noise, filter);
-    } else if (id === 'military_drone' || id === 'danger_escalation') {
+    } else if (id === 'low_drone' || id === 'battle_danger' || id === 'battle_theme') {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.value = id === 'military_drone' ? 48 : 62;
+      osc.frequency.value = id === 'low_drone' ? 48 : id === 'battle_theme' ? 58 : 62;
       const osc2 = ctx.createOscillator();
       osc2.type = 'sine';
-      osc2.frequency.value = id === 'military_drone' ? 50.5 : 65.3;
+      osc2.frequency.value = id === 'low_drone' ? 50.5 : id === 'battle_theme' ? 60.2 : 65.3;
       const merge = ctx.createGain();
       merge.gain.value = 0.5;
       osc.connect(merge);
@@ -421,21 +404,7 @@ export class ProceduralAudioEngine {
       osc.start();
       osc2.start();
       nodes.push(osc, osc2, merge);
-    } else if (id === 'election_tension' || id === 'election_pulse') {
-      const osc = ctx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.value = 80;
-      const lfo = ctx.createOscillator();
-      lfo.frequency.value = id === 'election_pulse' ? 1.2 : 0.5;
-      const lfoGain = ctx.createGain();
-      lfoGain.gain.value = id === 'election_pulse' ? 25 : 8;
-      lfo.connect(lfoGain);
-      lfoGain.connect(osc.frequency);
-      osc.connect(gain);
-      lfo.start();
-      osc.start();
-      nodes.push(osc, lfo, lfoGain);
-    } else if (id === 'collapse_alarm') {
+    } else if (id === 'defeat_drone') {
       const osc = ctx.createOscillator();
       osc.type = 'square';
       osc.frequency.value = 110;

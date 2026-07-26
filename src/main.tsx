@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { useActorRef } from '@xstate/react';
 import { battleMachine } from '@/machine/battleMachine';
 import { explorationMachine } from '@/machine/explorationMachine';
+import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { AudioSettings } from '@/components/AudioSettings';
 import { BattleScreen } from '@/screens/BattleScreen';
@@ -19,6 +20,7 @@ function App() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
+  useScreenMusic(screen);
 
   function enterLocation(locationId: string) {
     const location = worldMap.locations.find((item) => item.id === locationId);

@@ -1,82 +1,79 @@
 # Audio system
 
-Frontend-only audio for **Dark Fantasy Card Game**. Howler + procedural fallbacks. Reacts to UI and battle snapshots — not coupled to engine rules.
+Frontend-only audio for **Dark Fantasy Card Game**. Howler + procedural fallbacks. Reacts to UI and screen/battle snapshots — not coupled to engine rules.
 
 ## Layout
 
 ```
 src/audio/
-  types.ts           — SoundId, settings, atmosphere profile
-  soundManifest.ts   — ids, public/audio paths, volumes
+  types.ts           — SoundId, settings, atmosphere, MusicScreen
+  soundManifest.ts   — ids → public/audio paths
   proceduralSfx.ts   — Web Audio fallbacks
-  atmosphere.ts      — layer targets from battle tension
-  AudioManager.ts    — Howler + crossfade + beds
-  audioStore.ts      — settings persistence (module store + useSyncExternalStore)
-  useAudio.ts        — play / volume / unlock
-  useGameAudio.ts    — battle atmosphere + draw SFX
-  useGameOverAudio.ts
-  useHoverSound.ts
-  index.ts
+  atmosphere.ts      — battle overlays + ambience targets
+  AudioManager.ts    — Howler, screen beds, crossfade
+  audioStore.ts      — settings persistence
+  useAudio.ts / useHoverSound.ts / useGameAudio.ts / useGameOverAudio.ts
+  useScreenMusic.ts  — world | exploration | battle theme switch
 
 src/components/
-  AudioProvider.tsx  — hydrate + unlock on first gesture
-  AudioSettings.tsx  — mute + volume sliders
+  AudioProvider.tsx
+  AudioSettings.tsx
+
+public/audio/
+  ui/          — SFX (ogg/wav)
+  music/       — world.ogg, exploration.ogg, battle.ogg (+ overlays/stings)
+  events/      — encounter-sting
+  combat/      — combat-hit
+  ambience/    — loops + distant-howl
 ```
 
 ## Unlock
 
-No banner. `AudioProvider` unlocks on the first `pointerdown` / `keydown`. Meaningful Start/Enter buttons also call `unlock()` explicitly. After unlock: preload UI SFX, start procedural `base_ambient` bed.
+No banner. First gesture unlocks; Start/Enter also call `unlock()`. Preloads UI SFX, starts the active screen theme (`world` by default).
 
-## Sound ids (UI)
+## Screen music
 
-| Id | When |
-|----|------|
-| `card_hover` | Card pointer enter |
-| `card_play` | Card click (hand / combo) |
-| `draw_card` | Player draw at turn start |
-| `resource_gain` | Shield / barrier gained on impact |
-| `partial_reveal` | Attack blocked by shield/barrier |
-| `end_turn` | End turn (battle + exploration) |
-| `modal_open` | Result / encounter modal |
-| `dice_roll` | Encounter modal (fate beat) |
-| `success_reveal` / `failure_reveal` | Victory / defeat modal |
-| `event_sting` | Exploration encounter |
-| `button_hover` | Generic UI hover hook |
-| `warning_sting` | Reserved (procedural) |
+| Screen | File | Id |
+|--------|------|----|
+| World map | `music/world.ogg` | `world_theme` |
+| Exploration | `music/exploration.ogg` | `exploration_theme` |
+| Battle | `music/battle.ogg` | `battle_theme` |
 
-Beds / stings without files under `public/audio` use procedural loops (`base_ambient`, danger layers, game-over suite).
+`useScreenMusic(screen)` in `main.tsx` crossfades between beds. Empty placeholder files fall back to procedural until real tracks are dropped in.
 
-## Atmosphere
+Battle overlays (from HP tension): `battle_danger`, `defeat_drone`.
 
-`computeAtmosphereFromBattle` maps player/enemy HP ratios + poison → `AtmosphereProfile`:
+## SFX ids
 
-- Low player HP → danger / collapse layers
-- High fear (missing HP) → ambience drone / crackle
-- Victory / defeat → game-over suite via `useGameOverAudio`
+| Id | File | When |
+|----|------|------|
+| `card_hover` | `ui/card-hover` | Card hover |
+| `card_play` | `ui/card-play` | Card click |
+| `draw_card` | `ui/draw-card` | Turn draw |
+| `shield_gain` | `ui/shield-gain` | Shield / barrier gain |
+| `block_reveal` | `ui/block-reveal` | Shield/barrier block |
+| `end_turn` | `ui/end-turn` | End turn |
+| `modal_open` | `ui/modal-open` | Modal open |
+| `fate_roll` | `ui/fate-roll` | Encounter fate beat |
+| `victory_reveal` / `defeat_reveal` | `ui/victory-reveal` / `defeat-reveal` | Battle result |
+| `encounter_sting` | `events/encounter-sting` | Exploration encounter |
+| `combat_hit` | `combat/combat-hit` | Reserved combat hit |
+| `button_hover` | `ui/button-hover` | Generic UI hover |
+| `danger_warning` | `ui/danger-warning` | Reserved warning |
+| `victory_sting` / `defeat_sting` | `music/*-sting` | Game-over suite |
+| `distant_howl` | `ambience/distant-howl` | Sparse ambience one-shot |
 
 ## Settings
 
-`localStorage` key: `dfcg-audio-settings-v1`
-
-- master / music / SFX volumes
-- mute toggle
-
-## Preload
-
-1. Unlock → `ui` + `event` one-shots
-2. +2s → music + ambience loops (lazy; missing files → procedural once)
+`localStorage` key: `dfcg-audio-settings-v1` — master / music / SFX / mute.
 
 ## Usage
 
 ```tsx
-const { play, unlocked, unlock } = useAudio();
-play('card_play');
-
+useScreenMusic(screen);
 useGameAudio({ phase: 'battle', playerHp, playerMaxHp, enemyHp, enemyMaxHp, ... });
 useGameOverAudio(isVictory ? 'victory' : isDefeat ? 'defeat' : null);
-
-<AudioProvider><App /></AudioProvider>
-<AudioSettings />
+play('card_play');
 ```
 
-Add OGG/MP3/WAV under `public/audio/` matching `soundManifest.ts` to replace procedural beds.
+Replace empty files under `public/audio/` with real OGG/MP3/WAV; keep the same filenames.
