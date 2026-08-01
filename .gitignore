@@ -1,4 +1,14 @@
 .DS_Store
-/dist
-/node_modules
-/temp
+node_modules
+dist
+temp
+.turbo
+*.tsbuildinfo
+playwright-report
+test-results
+blob-report
+playwright/.cache
+.vercel
+.env
+.env.*
+!.env.example

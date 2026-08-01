@@ -65,7 +65,8 @@ Rough progress against this roadmap as of the current codebase:
 
 | Area | Status |
 |------|--------|
-| Vite + React SPA shell | Current (pre–Next.js migration) |
+| pnpm + Turborepo monorepo | In place (`apps/web`, `tests/e2e`) |
+| Vite + React game client | In place under `apps/web` (pre–Next.js migration) |
 | World → Exploration → Battle navigation | In place (UI + XState machines) |
 | Battle engine (turns, combo, shields, poison, intent) | Partial — playable core |
 | Exploration map + actions | Partial — prison map, hand actions, encounters |
@@ -74,7 +75,7 @@ Rough progress against this roadmap as of the current codebase:
 | Save / load | Not started |
 | Full status set, relics, inventory, class XP | Not started |
 | Audio / polish | Started (SFX + screen music beds) |
-| Automated tests | Not started |
+| Automated tests | E2E smoke started (Playwright); unit tests not started |
 
 Update this table as milestones land.
 
