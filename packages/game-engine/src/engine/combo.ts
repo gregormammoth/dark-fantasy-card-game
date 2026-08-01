@@ -8,6 +8,7 @@ import { shuffle } from './deck';
 import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
 import { buildAnimationCue, captureBattleSnapshot, clearDamageResult } from './animationCue';
+import { awardCardXp } from './progression/xp';
 
 export function addToCombo(battle: BattleContext, cardInstanceId: string): BattleContext {
   const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
@@ -78,6 +79,10 @@ export function resolveNextComboCard(battle: BattleContext): BattleContext {
     resolved.combatStats.attackCardsPlayed += 1;
   } else if (card.definition.type === 'defense') {
     resolved.combatStats.defenseCardsPlayed += 1;
+  }
+
+  if (card.definition.class) {
+    resolved.progression = awardCardXp(resolved.progression, card.definition.class);
   }
 
   resolved.resolutionQueue = next.resolutionQueue;

@@ -10,3 +10,11 @@ export {
 export { canPlayAction } from './engine/exploration/actions';
 export { battleMachine } from './machine/battleMachine';
 export { explorationMachine } from './machine/explorationMachine';
+export {
+  awardCardXp,
+  createInitialProgression,
+  getClassXp,
+  getTotalXp,
+  getXpGained,
+  getTotalXpGained,
+} from './engine/progression/xp';

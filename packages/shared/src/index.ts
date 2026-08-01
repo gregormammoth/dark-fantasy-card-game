@@ -6,4 +6,5 @@ export * from './types/effect';
 export * from './types/exploration';
 export * from './types/explorationEffect';
 export * from './types/log';
+export * from './types/progression';
 export * from './types/world';

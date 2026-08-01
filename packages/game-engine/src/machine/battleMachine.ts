@@ -31,7 +31,12 @@ export const battleMachine = setup({
     events: {} as BattleEvent,
   },
   actions: {
-    initBattle: assign(() => createInitialBattle()),
+    initBattle: assign(({ event }) => {
+      if (event.type === 'START_BATTLE' || event.type === 'RESTART') {
+        return createInitialBattle(event.progression);
+      }
+      return createInitialBattle();
+    }),
     initBattleLog: assign(({ context }) => initBattleLog(context)),
     applyPlayerTurnStart: assign(({ context }) => startPlayerTurn(context)),
     drawTurnCard: assign(({ context }) => drawAtTurnStart(context)),

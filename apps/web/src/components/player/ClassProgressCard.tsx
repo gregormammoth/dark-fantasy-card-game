@@ -4,9 +4,7 @@ import { classThemes } from '@/lib/cardTheme';
 export interface ClassProgressSummary {
   id: CardClass;
   name: string;
-  level: number;
   xp: number;
-  xpNext: number;
   xpPct: number;
   nextUnlock: string;
   unlockedCount: number;
@@ -38,11 +36,9 @@ export function ClassProgressCard({ summary, onSelect }: ClassProgressCardProps)
         <span className="font-cinzel text-[17px] tracking-[.06em]" style={{ color }}>
           {summary.name}
         </span>
-        <span className="text-[11px] tracking-[.12em] text-[#8a7f72]">LV {summary.level}</span>
+        <span className="text-[11px] tracking-[.12em] text-[#8a7f72]">{summary.xp} XP</span>
       </div>
-      <div className="mt-2 text-[12px] text-[#a99c8d]">
-        {summary.xp} / {summary.xpNext} XP
-      </div>
+      <div className="mt-2 text-[12px] text-[#a99c8d]">Class experience</div>
       <div className="mt-1.5 h-2 overflow-hidden rounded border border-[rgba(255,255,255,.05)] bg-[rgba(0,0,0,.4)]">
         <div
           className="h-full rounded"

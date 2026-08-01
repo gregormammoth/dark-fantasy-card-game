@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node -e \"console.log('No unit tests yet for @dark-fantasy/game-engine')\""
+    "test": "vitest run"
   },
   "dependencies": {
     "@dark-fantasy/content": "workspace:*",
@@ -19,6 +19,7 @@
     "xstate": "^5.19.2"
   },
   "devDependencies": {
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "vitest": "^3.2.4"
   }
 }

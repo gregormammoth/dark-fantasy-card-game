@@ -3,9 +3,11 @@ import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
 import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
 import { PLAYER_PORTRAIT, pickRandomEnemyPortrait } from '@dark-fantasy/content/portraits';
+import { createInitialProgression } from './progression/xp';
 
 const cardRegistry = new Map<string, CardDefinition>();
 
@@ -37,7 +39,9 @@ function buildDeck(cardIds: string[]): ReturnType<typeof createCardInstance>[] {
   });
 }
 
-export function createInitialBattle(): BattleContext {
+export function createInitialBattle(
+  progression: PlayerProgression = createInitialProgression(),
+): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
 
@@ -101,6 +105,8 @@ export function createInitialBattle(): BattleContext {
     isFirstPlayerTurn: true,
     lastPlayerDrawCount: 0,
     log: [],
+    progression: structuredClone(progression),
+    progressionAtBattleStart: structuredClone(progression),
   };
 }
 

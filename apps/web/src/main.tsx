@@ -1,8 +1,10 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useActorRef } from '@xstate/react';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
+import { createInitialProgression } from '@dark-fantasy/game-engine';
+import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { SettingsMenu } from '@/components/SettingsMenu';
@@ -27,9 +29,20 @@ function musicForScreen(screen: AppScreen): MusicScreen {
 
 function App() {
   const [screen, setScreen] = useState<AppScreen>('world');
+  const [progression, setProgression] = useState<PlayerProgression>(createInitialProgression);
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
   useScreenMusic(musicForScreen(screen));
+
+  const handleProgressionChange = useCallback((next: PlayerProgression) => {
+    setProgression(next);
+  }, []);
+
+  function startBattleIfIdle() {
+    if (battleActor.getSnapshot().matches('idle')) {
+      battleActor.send({ type: 'START_BATTLE', progression });
+    }
+  }
 
   function enterLocation(locationId: string) {
     const location = worldMap.locations.find((item) => item.id === locationId);
@@ -45,9 +58,7 @@ function App() {
     }
     if (location.targetScreen === 'battle') {
       setScreen('battle');
-      if (battleActor.getSnapshot().matches('idle')) {
-        battleActor.send({ type: 'START_BATTLE' });
-      }
+      startBattleIfIdle();
     }
   }
 
@@ -78,7 +89,11 @@ function App() {
             THE REALM
           </button>
         </div>
-        <BattleScreen actor={battleActor} />
+        <BattleScreen
+          actor={battleActor}
+          progression={progression}
+          onProgressionChange={handleProgressionChange}
+        />
       </div>
     );
   } else if (screen === 'exploration') {
@@ -87,16 +102,19 @@ function App() {
         actor={explorationActor}
         onOpenBattle={() => {
           setScreen('battle');
-          if (battleActor.getSnapshot().matches('idle')) {
-            battleActor.send({ type: 'START_BATTLE' });
-          }
+          startBattleIfIdle();
         }}
         onOpenPlayer={openPlayer}
         onBackToWorld={() => setScreen('world')}
       />
     );
   } else if (screen === 'player') {
-    content = <PlayerScreen onBackToWorld={() => setScreen('world')} />;
+    content = (
+      <PlayerScreen
+        progression={progression}
+        onBackToWorld={() => setScreen('world')}
+      />
+    );
   }
 
   return (

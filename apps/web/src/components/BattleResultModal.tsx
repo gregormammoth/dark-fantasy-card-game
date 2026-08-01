@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+import type { CardClass } from '@dark-fantasy/shared/types/card';
 import type { BattleLogEntry } from '@dark-fantasy/shared/types/log';
 import type { BattleStats } from '@dark-fantasy/shared/types/battle';
 import { useAudio } from '@/audio/useAudio';
+import { classThemes } from '@/lib/cardTheme';
+import { PLAYER_CLASSES } from '@/data/playerProgress';
 
 const logColors: Record<BattleLogEntry['kind'], string> = {
   system: '#8a7f72',
@@ -23,6 +26,8 @@ interface BattleResultModalProps {
   enemyName: string;
   stats: BattleStats;
   logEntries: BattleLogEntry[];
+  xpGained: Record<CardClass, number>;
+  totalXpGained: number;
   onFightAgain: () => void;
 }
 
@@ -31,17 +36,24 @@ export function BattleResultModal({
   enemyName,
   stats,
   logEntries,
+  xpGained,
+  totalXpGained,
   onFightAgain,
 }: BattleResultModalProps) {
   const { play } = useAudio();
   const accent = victory ? '#e0b552' : '#e0524a';
   const glow = victory ? 'rgba(224,181,82,.28)' : 'rgba(224,82,74,.3)';
-  const xp = victory
-    ? stats.cardsBurnedToEnemy * 12 + 60
-    : stats.cardsBurnedToEnemy * 6;
   const subtitle = victory
     ? `${enemyName} has been vanquished.`
     : `You have fallen to ${enemyName}.`;
+  const classGains = PLAYER_CLASSES.filter((classId) => xpGained[classId] > 0).map(
+    (classId) => ({
+      classId,
+      amount: xpGained[classId],
+      label: classThemes[classId].label,
+      color: classThemes[classId].accent,
+    }),
+  );
 
   useEffect(() => {
     play('modal_open');
@@ -85,8 +97,18 @@ export function BattleResultModal({
           <StatCell label="TURNS" value={stats.turnCount} color="#e8ddcf" />
           <StatCell label="CARDS BURNED" value={stats.cardsBurnedToEnemy} color="#f0b3aa" />
           <StatCell label="CARDS LOST" value={stats.cardsLostByPlayer} color="#e0b552" />
-          <StatCell label="XP" value={`+${xp}`} color="#7ecb6a" />
+          <StatCell label="XP" value={`+${totalXpGained}`} color="#7ecb6a" />
         </div>
+
+        {classGains.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 border-b border-[rgba(201,162,74,.12)] px-6 py-3 text-[11px]">
+            {classGains.map((gain) => (
+              <span key={gain.classId} style={{ color: gain.color }}>
+                {gain.label} +{gain.amount}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="px-6 pt-[18px] pb-1.5">
           <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">COMBAT LOG</span>

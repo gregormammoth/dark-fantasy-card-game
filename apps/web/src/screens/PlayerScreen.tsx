@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
+import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { getClassXp, getTotalXp } from '@dark-fantasy/game-engine';
 import { Card } from '@/components/Card';
 import { ClassProgressCard } from '@/components/player/ClassProgressCard';
 import { DeckComposition } from '@/components/player/DeckComposition';
@@ -10,7 +12,6 @@ import {
   DECK_CAP,
   PLAYER_CLASSES,
   cardProgressMeta,
-  classProgressSeed,
   getCardsForClass,
   getDefaultDeckIds,
   getPlayerCardDefinitions,
@@ -19,6 +20,7 @@ import {
 type CardStatus = 'unlocked' | 'available' | 'locked' | 'locked-xp';
 
 interface PlayerScreenProps {
+  progression: PlayerProgression;
   onBackToWorld: () => void;
 }
 
@@ -48,7 +50,7 @@ function cardStatus(
   return 'locked-xp';
 }
 
-export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
+export function PlayerScreen({ progression, onBackToWorld }: PlayerScreenProps) {
   const allCards = useMemo(() => getPlayerCardDefinitions(), []);
   const [selectedClassId, setSelectedClassId] = useState<CardClass>('fighter');
   const [unlockedOverride, setUnlockedOverride] = useState<Record<string, boolean>>({});
@@ -94,12 +96,12 @@ export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
   }
 
   function currentXp(classId: CardClass): number {
-    return Math.max(0, classProgressSeed[classId].xp - spentXp(classId));
+    return Math.max(0, getClassXp(progression, classId) - spentXp(classId));
   }
 
   function buildClassSummary(classId: CardClass) {
-    const seed = classProgressSeed[classId];
     const xp = currentXp(classId);
+    const earnedXp = getClassXp(progression, classId);
     const cards = getCardsForClass(classId);
     let unlockedCount = 0;
     let nextUnlock: string | null = null;
@@ -118,10 +120,8 @@ export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
     return {
       id: classId,
       name: classLabel(classId),
-      level: seed.level,
-      xp,
-      xpNext: seed.xpNext,
-      xpPct: Math.min(100, Math.round((xp / seed.xpNext) * 100)),
+      xp: earnedXp,
+      xpPct: Math.min(100, earnedXp * 10),
       nextUnlock: nextUnlock ?? 'All current-tier cards unlocked',
       unlockedCount,
       selected: classId === selectedClassId,
@@ -155,11 +155,7 @@ export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
     .sort((a, b) => deckByClass[b] - deckByClass[a])
     .slice(0, 2)
     .map((id) => classLabel(id));
-  const overallLevel = PLAYER_CLASSES.reduce((sum, id) => sum + classProgressSeed[id].level, 0);
-  const totalXp = PLAYER_CLASSES.reduce(
-    (sum, id) => sum + currentXp(id) + spentXp(id),
-    0,
-  );
+  const totalXp = getTotalXp(progression);
 
   const confirmCard = confirmCardId ? cardById[confirmCardId] : null;
   const confirmClassId = confirmCardId ? cardClassById[confirmCardId] : null;
@@ -224,10 +220,6 @@ export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
                 </div>
               </div>
               <div>
-                <div className="text-[10px] tracking-[.2em] text-[#8a7f72]">LEVEL</div>
-                <div className="mt-1 font-cinzel text-[16px] text-[#c9a24a]">{overallLevel}</div>
-              </div>
-              <div>
                 <div className="text-[10px] tracking-[.2em] text-[#8a7f72]">TOTAL XP</div>
                 <div className="mt-1 font-cinzel text-[16px] text-[#e8ddcf]">
                   {totalXp.toLocaleString()}
@@ -276,15 +268,13 @@ export function PlayerScreen({ onBackToWorld }: PlayerScreenProps) {
                 {selectedSummary.name}
               </span>
               <span className="text-[11px] tracking-[.14em] text-[#8a7f72]">
-                LEVEL {selectedSummary.level} · {selectedSummary.xp} XP
+                {selectedSummary.xp} XP
               </span>
             </div>
             <div className="flex flex-wrap gap-x-[22px] gap-y-1 text-[11px] text-[#b7ab9c]">
               <span>
-                XP to next level:{' '}
-                <b className="font-cinzel font-medium text-[#e8ddcf]">
-                  {Math.max(0, selectedSummary.xpNext - selectedSummary.xp)}
-                </b>
+                Available XP:{' '}
+                <b className="font-cinzel font-medium text-[#e8ddcf]">{selectedXp}</b>
               </span>
               <span>
                 Unlocked:{' '}

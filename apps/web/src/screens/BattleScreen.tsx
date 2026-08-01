@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
+import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { getPlayerHealth, getEnemyHealth } from '@dark-fantasy/game-engine/engine/health';
 import { previewCombo } from '@dark-fantasy/game-engine/engine/comboPreview';
 import { getEnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
+import { getTotalXpGained, getXpGained } from '@dark-fantasy/game-engine';
 import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
 import { useGameOverAudio } from '@/audio/useGameOverAudio';
@@ -23,6 +25,8 @@ type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
   actor: BattleActor;
+  progression: PlayerProgression;
+  onProgressionChange: (progression: PlayerProgression) => void;
 }
 
 interface StackSpendState {
@@ -60,7 +64,11 @@ function formatTurnLabel(state: string): string {
   return 'BATTLE';
 }
 
-export function BattleScreen({ actor }: BattleScreenProps) {
+export function BattleScreen({
+  actor,
+  progression,
+  onProgressionChange,
+}: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
   const { play, unlock } = useAudio();
@@ -82,6 +90,22 @@ export function BattleScreen({ actor }: BattleScreenProps) {
   const isDefeat = state === 'defeat';
   const isAnimating = state === 'animatingPlayerCard' || state === 'animatingEnemyCard';
   const isResolving = isAnimating || state === 'resolvingPlayerCombo';
+
+  useEffect(() => {
+    if (state === 'idle') {
+      return;
+    }
+    onProgressionChange(battle.progression);
+  }, [state, battle.progression, onProgressionChange]);
+
+  const xpGained = useMemo(
+    () => getXpGained(battle.progressionAtBattleStart, battle.progression),
+    [battle.progression, battle.progressionAtBattleStart],
+  );
+  const totalXpGained = useMemo(
+    () => getTotalXpGained(battle.progressionAtBattleStart, battle.progression),
+    [battle.progression, battle.progressionAtBattleStart],
+  );
 
   const playerHealth = getPlayerHealth(battle);
   const enemyHealth = getEnemyHealth(battle);
@@ -225,7 +249,7 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           <EndTurnButton
             onClick={() => {
               void unlock();
-              actor.send({ type: 'START_BATTLE' });
+              actor.send({ type: 'START_BATTLE', progression });
             }}
             line1="START"
             line2="BATTLE"
@@ -306,7 +330,11 @@ export function BattleScreen({ actor }: BattleScreenProps) {
           enemyName={battle.enemy.name}
           stats={battle.battleStats}
           logEntries={battle.log}
-          onFightAgain={() => actor.send({ type: 'RESTART' })}
+          xpGained={xpGained}
+          totalXpGained={totalXpGained}
+          onFightAgain={() =>
+            actor.send({ type: 'RESTART', progression: battle.progression })
+          }
         />
       )}
     </div>

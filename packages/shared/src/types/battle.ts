@@ -3,6 +3,7 @@ import type { BattleLogEntry } from './log';
 import type { ActivePlay } from './animation';
 
 import type { EffectTarget } from './effect';
+import type { PlayerProgression } from './progression';
 
 export interface DamageResolution {
   target: EffectTarget;
@@ -67,12 +68,14 @@ export interface BattleContext {
   isFirstPlayerTurn: boolean;
   lastPlayerDrawCount: number;
   log: BattleLogEntry[];
+  progression: PlayerProgression;
+  progressionAtBattleStart: PlayerProgression;
 }
 
 export type BattleEvent =
-  | { type: 'START_BATTLE' }
+  | { type: 'START_BATTLE'; progression?: PlayerProgression }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
   | { type: 'END_TURN' }
   | { type: 'ANIMATION_COMPLETE' }
-  | { type: 'RESTART' };
+  | { type: 'RESTART'; progression?: PlayerProgression };

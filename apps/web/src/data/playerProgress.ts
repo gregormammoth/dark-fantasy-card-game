@@ -5,19 +5,6 @@ export const PLAYER_CLASSES: CardClass[] = ['fighter', 'rogue', 'wizard', 'survi
 
 export const DECK_CAP = 30;
 
-export interface ClassProgressSeed {
-  level: number;
-  xp: number;
-  xpNext: number;
-}
-
-export const classProgressSeed: Record<CardClass, ClassProgressSeed> = {
-  fighter: { level: 4, xp: 1240, xpNext: 1500 },
-  rogue: { level: 3, xp: 820, xpNext: 1000 },
-  wizard: { level: 2, xp: 430, xpNext: 700 },
-  survivor: { level: 1, xp: 120, xpNext: 400 },
-};
-
 export interface CardProgressMeta {
   cost: number;
   requirement: string | null;
