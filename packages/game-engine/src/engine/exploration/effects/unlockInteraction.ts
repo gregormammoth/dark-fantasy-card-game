@@ -21,7 +21,7 @@ export const unlockInteractionHandler: ExplorationEffectHandler = (_effect, ctx)
   }
   if (interaction.id === 'open_gate' || location.id === 'exit_gate') {
     ctx.exploration.flags.exitUnlocked = true;
-    appendExplorationLog(ctx.exploration, 'The Exit Gate lock yields.', 'loot');
+    appendExplorationLog(ctx.exploration, 'The Main Gate lock yields.', 'loot');
   }
   if (ctx.exploration.flags.master_key || location.loot.some((l) => l.id === 'master_key' && l.claimed)) {
     ctx.exploration.flags.master_key = true;

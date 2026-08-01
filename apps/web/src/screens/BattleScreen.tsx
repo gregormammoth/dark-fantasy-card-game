@@ -335,7 +335,14 @@ export function BattleScreen({
           xpGained={xpGained}
           totalXpGained={totalXpGained}
           onFightAgain={() =>
-            actor.send({ type: 'RESTART', progression: battle.progression })
+            actor.send({
+              type: 'RESTART',
+              progression: battle.progression,
+              enemy: {
+                name: battle.enemy.name,
+                portrait: battle.enemy.portrait,
+              },
+            })
           }
           onReturnToExploration={onReturnToExploration}
         />

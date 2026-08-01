@@ -15,6 +15,9 @@ export const claimLootHandler: ExplorationEffectHandler = (effect, ctx) => {
   if (loot.id === 'master_key') {
     ctx.exploration.flags.master_key = true;
   }
+  if (loot.id === 'tunnel_key') {
+    ctx.exploration.flags.tunnel_key = true;
+  }
   appendExplorationLog(ctx.exploration, `Claimed loot: ${loot.name}.`, 'loot');
   return ctx.exploration;
 };

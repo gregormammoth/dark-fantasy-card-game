@@ -7,6 +7,7 @@ import { buildEncounterDeck } from './encounters';
 import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';
 import { drawUntilHandSize } from './hand';
+import { setLocationEncounterQueue } from './locationEncounters';
 
 interface PrisonMapFile {
   id: string;
@@ -55,11 +56,14 @@ export function createInitialExploration(): ExplorationContext {
     encounterDeck: buildEncounterDeck(),
     encounterDiscard: [],
     pendingEncounter: null,
+    locationEncounterQueue: [],
+    dialogLineIndex: 0,
     lastActionMessage: null,
     log: [],
   };
 
   visitLocation(context, startId);
+  setLocationEncounterQueue(context, startId);
   appendExplorationLog(
     context,
     `You wake in ${locations[startId]?.name ?? 'a cell'} beneath ${mapFile.name}.`,

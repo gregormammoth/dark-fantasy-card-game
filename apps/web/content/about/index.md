@@ -5,9 +5,15 @@ description: A dark fantasy deckbuilder of prison escapes, class progression, an
 
 **Hollowfort** is a web-first dark fantasy deckbuilder. Explore a handcrafted prison, fight with combo-driven cards, and grow class experience as you play.
 
-## A prison built from broken oaths
+## A prison built on executions
 
-Centuries ago the crown sealed its heretics beneath Hollowfort's walls. Now the wards are failing. Every prisoner who escapes carries a deck of stolen magic — the only currency that matters in the dark below.
+Hollowfort stands on ground soaked by political killings. Decades ago anarchists and other prisoners were put to death within its walls — buried beneath the fortress, their souls left unrested.
+
+One night a mysterious sorcerer completes a forbidden ritual. The dead rise, the guards are slaughtered, and every cell is thrown open.
+
+## Your place in the night
+
+Caught in the massacre, you must survive, escape, and choose where your loyalties lie.
 
 ## The Beta promise
 

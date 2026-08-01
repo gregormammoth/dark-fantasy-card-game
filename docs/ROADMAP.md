@@ -497,16 +497,19 @@ Players specialise or hybridise through cards — and each fight changes what th
 
 ### Locations (handcrafted, ~10–12)
 
+Design target — full roster in [HOLLOWFORT.md](./HOLLOWFORT.md):
+
 - [ ] Prison Cell
-- [ ] Main Corridor
-- [ ] Storage
-- [ ] Kitchen
+- [ ] Cell Block
+- [ ] Central Prison Corridor
+- [ ] Torture Chamber
+- [ ] Prison Kitchen
+- [ ] Dining Hall
+- [ ] Guard Barracks
 - [ ] Armory
-- [ ] Chapel
-- [ ] Courtyard
-- [ ] Guard Tower
-- [ ] Warden Office
-- [ ] Secret Tunnel
+- [ ] Prison Yard
+- [ ] Administrative Tower
+- [ ] Underground Tunnels
 - [ ] Main Gate
 
 ### Per-location (as needed for the slice)
@@ -676,7 +679,8 @@ Inventory is cool but **not** required to prove “cards define the character.�
 
 - [ ] Game Vision
 - [x] [Game Mechanics](./MECHANICS.md)
-- [ ] Story
+- [x] [Story](./STORY.md) — Hollowfort prison plot & slice beats
+- [x] [Hollowfort design](./HOLLOWFORT.md) — NPCs, locations, enemies, factions
 - [x] [Architecture](./ARCHITECTURE.md)
 - [ ] Platform / Website notes
 - [ ] Card Design Guide

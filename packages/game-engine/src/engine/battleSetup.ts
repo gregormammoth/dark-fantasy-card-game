@@ -41,6 +41,7 @@ function buildDeck(cardIds: string[]): ReturnType<typeof createCardInstance>[] {
 
 export function createInitialBattle(
   progression: PlayerProgression = createInitialProgression(),
+  enemyOverride?: { name: string; portrait: string },
 ): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
@@ -76,8 +77,8 @@ export function createInitialBattle(
       discard: [],
     },
     enemy: {
-      name: battleData.enemy.name,
-      portrait: pickRandomEnemyPortrait(),
+      name: enemyOverride?.name ?? battleData.enemy.name,
+      portrait: enemyOverride?.portrait ?? pickRandomEnemyPortrait(),
       shield: Math.min(battleData.enemy.startingShield, enemyMaxShield),
       maxShield: enemyMaxShield,
       deck: enemyDeck,

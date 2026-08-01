@@ -2,6 +2,7 @@ import type { ExplorationEffectType } from '@dark-fantasy/shared/types/explorati
 import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { logHandler } from './log';
 import { moveToHandler } from './moveTo';
+import { queueBattleHandler } from './queueBattle';
 import { discoverConnectedHandler } from './discoverConnected';
 import { revealSecretHandler } from './revealSecret';
 import { claimLootHandler } from './claimLoot';
@@ -27,6 +28,7 @@ export const explorationEffectHandlers: Record<
   claimLoot: claimLootHandler,
   defeatEnemy: defeatEnemyHandler,
   talkNpc: talkNpcHandler,
+  queueBattle: queueBattleHandler,
   completeInteraction: completeInteractionHandler,
   unlockInteraction: unlockInteractionHandler,
   setFlag: setFlagHandler,

@@ -1,5 +1,6 @@
 import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { getCurrentLocation } from '../map';
+import { queueDialog } from '../locationEncounters';
 import { appendExplorationLog } from '../log';
 
 export const talkNpcHandler: ExplorationEffectHandler = (effect, ctx) => {
@@ -11,11 +12,6 @@ export const talkNpcHandler: ExplorationEffectHandler = (effect, ctx) => {
     appendExplorationLog(ctx.exploration, 'There is no one to speak with.', 'action');
     return ctx.exploration;
   }
-  npc.talked = true;
-  appendExplorationLog(
-    ctx.exploration,
-    `${npc.name}: "${npc.description}"`,
-    'action',
-  );
-  return ctx.exploration;
+  appendExplorationLog(ctx.exploration, `${npc.name} turns toward you.`, 'action');
+  return queueDialog(ctx.exploration, location.id, npc.id);
 };

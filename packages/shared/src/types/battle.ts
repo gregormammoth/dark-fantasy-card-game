@@ -73,10 +73,18 @@ export interface BattleContext {
 }
 
 export type BattleEvent =
-  | { type: 'START_BATTLE'; progression?: PlayerProgression }
+  | {
+      type: 'START_BATTLE';
+      progression?: PlayerProgression;
+      enemy?: { name: string; portrait: string };
+    }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
   | { type: 'END_TURN' }
   | { type: 'ANIMATION_COMPLETE' }
-  | { type: 'RESTART'; progression?: PlayerProgression }
+  | {
+      type: 'RESTART';
+      progression?: PlayerProgression;
+      enemy?: { name: string; portrait: string };
+    }
   | { type: 'LEAVE_BATTLE' };

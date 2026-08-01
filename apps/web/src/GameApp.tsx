@@ -17,8 +17,14 @@ import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
+import { pickRandomEnemyPortrait } from '@dark-fantasy/content/portraits';
 
 const worldMap = worldMapData as WorldMapDefinition;
+
+interface PendingLocationFight {
+  locationId: string;
+  enemyId: string;
+}
 
 function musicForScreen(screen: AppScreen): MusicScreen {
   if (screen === 'player') {
@@ -31,6 +37,9 @@ function GameShell() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const [playerReturnScreen, setPlayerReturnScreen] = useState<AppScreen>('world');
   const [progression, setProgression] = useState<PlayerProgression>(createInitialProgression);
+  const [pendingLocationFight, setPendingLocationFight] = useState<PendingLocationFight | null>(
+    null,
+  );
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
   useScreenMusic(musicForScreen(screen));
@@ -45,7 +54,17 @@ function GameShell() {
     }
   }
 
-  function returnToExploration() {
+  function returnToExploration(result?: 'victory' | 'defeat' | 'abort') {
+    if (pendingLocationFight) {
+      const won = result === 'victory';
+      explorationActor.send({
+        type: 'RESOLVE_LOCATION_BATTLE',
+        won,
+        locationId: pendingLocationFight.locationId,
+        enemyId: pendingLocationFight.enemyId,
+      });
+      setPendingLocationFight(null);
+    }
     if (explorationActor.getSnapshot().matches('idle')) {
       explorationActor.send({ type: 'START_EXPLORATION' });
     }
@@ -63,7 +82,9 @@ function GameShell() {
       return;
     }
     if (location.targetScreen === 'battle') {
-      startBattle();
+      leaveBattle();
+      battleActor.send({ type: 'START_BATTLE', progression });
+      setScreen('battle');
     }
   }
 
@@ -72,9 +93,23 @@ function GameShell() {
     setScreen('player');
   }
 
-  function startBattle() {
+  function startLocationBattle(locationId: string, enemyId: string) {
+    const exploration = explorationActor.getSnapshot().context;
+    const location = exploration.locations[locationId];
+    const enemy = location?.enemies.find((item) => item.id === enemyId);
+    if (!enemy) {
+      return;
+    }
+    setPendingLocationFight({ locationId, enemyId });
     leaveBattle();
-    battleActor.send({ type: 'START_BATTLE', progression });
+    battleActor.send({
+      type: 'START_BATTLE',
+      progression,
+      enemy: {
+        name: enemy.name,
+        portrait: enemy.image ?? pickRandomEnemyPortrait(),
+      },
+    });
     setScreen('battle');
   }
 
@@ -88,7 +123,16 @@ function GameShell() {
         <div className="fixed left-4 top-4 z-[60] flex gap-2">
           <button
             type="button"
-            onClick={returnToExploration}
+            onClick={() => {
+              const snap = battleActor.getSnapshot();
+              returnToExploration(
+                snap.matches('victory')
+                  ? 'victory'
+                  : snap.matches('defeat')
+                    ? 'defeat'
+                    : 'abort',
+              );
+            }}
             className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 text-[11px] tracking-wider text-[#e0b552]"
           >
             ← PRISON MAP
@@ -96,6 +140,7 @@ function GameShell() {
           <button
             type="button"
             onClick={() => {
+              setPendingLocationFight(null);
               leaveBattle();
               setScreen('world');
             }}
@@ -108,7 +153,16 @@ function GameShell() {
           actor={battleActor}
           progression={progression}
           onProgressionChange={handleProgressionChange}
-          onReturnToExploration={returnToExploration}
+          onReturnToExploration={() => {
+            const snap = battleActor.getSnapshot();
+            returnToExploration(
+              snap.matches('victory')
+                ? 'victory'
+                : snap.matches('defeat')
+                  ? 'defeat'
+                  : 'abort',
+            );
+          }}
         />
       </div>
     );
@@ -116,7 +170,7 @@ function GameShell() {
     content = (
       <ExplorationScreen
         actor={explorationActor}
-        onOpenBattle={startBattle}
+        onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
         onBackToWorld={() => setScreen('world')}
       />

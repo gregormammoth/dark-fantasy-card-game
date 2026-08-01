@@ -29,6 +29,8 @@ export interface LocationEnemy {
   id: string;
   name: string;
   tier: string;
+  description?: string;
+  image?: string;
   defeated: boolean;
 }
 
@@ -36,7 +38,23 @@ export interface LocationNpc {
   id: string;
   name: string;
   description: string;
+  tag?: string;
+  lines?: string[];
+  image?: string;
   talked: boolean;
+}
+
+export interface LocationQuest {
+  name: string;
+  description: string;
+}
+
+export type LocationEncounterKind = 'dialog' | 'battle';
+
+export interface LocationEncounterItem {
+  type: LocationEncounterKind;
+  locationId: string;
+  targetId?: string;
 }
 
 export interface LocationLoot {
@@ -74,6 +92,7 @@ export interface LocationDefinition {
   enemies: LocationEnemy[];
   npcs: LocationNpc[];
   loot: LocationLoot[];
+  quest?: LocationQuest;
   interactions: LocationInteraction[];
   visited: boolean;
   discovered: boolean;
@@ -110,6 +129,8 @@ export interface ExplorationContext {
   encounterDeck: string[];
   encounterDiscard: string[];
   pendingEncounter: PendingEncounter | null;
+  locationEncounterQueue: LocationEncounterItem[];
+  dialogLineIndex: number;
   lastActionMessage: string | null;
   log: ExplorationLogEntry[];
 }
@@ -128,6 +149,16 @@ export type ExplorationEvent =
     }
   | { type: 'END_TURN' }
   | { type: 'DISMISS_ENCOUNTER' }
+  | { type: 'ADVANCE_DIALOG' }
+  | { type: 'QUEUE_DIALOG'; locationId: string; npcId?: string }
+  | { type: 'QUEUE_BATTLE'; locationId: string; enemyId?: string }
+  | { type: 'FLEE_LOCATION_BATTLE' }
+  | {
+      type: 'RESOLVE_LOCATION_BATTLE';
+      won: boolean;
+      locationId?: string;
+      enemyId?: string;
+    }
   | { type: 'RESTART' };
 
 export interface ActionOutcomeDefinition {
@@ -147,6 +178,7 @@ export type ExplorationEffectType =
   | 'claimLoot'
   | 'defeatEnemy'
   | 'talkNpc'
+  | 'queueBattle'
   | 'completeInteraction'
   | 'unlockInteraction'
   | 'setFlag'

@@ -1,13 +1,13 @@
 ---
 title: Hollowfort Prison
-description: A stone labyrinth of cells, corridors, and a cursed courtyard.
+description: A fortress-prison of executions, uprising, and three factions fighting for your loyalty.
 date: 2026-07-01
 ---
 
-Hollowfort was built to hold the realm's worst. Now it holds something worse still.
+Hollowfort stands on ground soaked by political killings. One night a forbidden ritual returned the executed to their bodies. Guards fell. Every cell broke open.
 
-Fog-of-war exploration across ruined corridors, sealed wards, and the prison's own courtyards. Chart your escape room by room — then fight for every card that keeps you alive.
+## What waits inside
 
-## Rooms
+Prison Cell · Cell Block · Central Corridor · Torture Chamber · Kitchen · Dining Hall · Guard Barracks · Armory · Prison Yard · Administrative Tower · Underground Tunnels · Main Gate
 
-Prison Cell · Main Corridor · Storage · Kitchen · Armory · Chapel · Courtyard · Guard Tower · Warden Office · Secret Tunnel · Main Gate
+Anarchists, surviving Guards, and the Sorcerer's followers all want your loyalty. Escape means choosing who you stand with — or standing alone.

@@ -10,6 +10,13 @@ import {
 } from '../engine/exploration/setup';
 import { playExplorationAction, canPlayAction } from '../engine/exploration/actions';
 import { dismissEncounter, drawAndResolveEncounter } from '../engine/exploration/encounters';
+import {
+  advanceDialog,
+  fleeLocationBattle,
+  queueBattle,
+  queueDialog,
+  resolveLocationBattle,
+} from '../engine/exploration/locationEncounters';
 
 export const explorationMachine = setup({
   types: {
@@ -48,6 +55,35 @@ export const explorationMachine = setup({
     }),
     resolveEncounter: assign(({ context }) => drawAndResolveEncounter(context)),
     dismissEncounter: assign(({ context }) => dismissEncounter(context)),
+    advanceDialog: assign(({ context }) => {
+      const next = structuredClone(context);
+      return advanceDialog(next);
+    }),
+    queueDialog: assign(({ context, event }) => {
+      if (event.type !== 'QUEUE_DIALOG') {
+        return context;
+      }
+      const next = structuredClone(context);
+      return queueDialog(next, event.locationId, event.npcId);
+    }),
+    queueBattle: assign(({ context, event }) => {
+      if (event.type !== 'QUEUE_BATTLE') {
+        return context;
+      }
+      const next = structuredClone(context);
+      return queueBattle(next, event.locationId, event.enemyId);
+    }),
+    fleeLocationBattle: assign(({ context }) => {
+      const next = structuredClone(context);
+      return fleeLocationBattle(next);
+    }),
+    resolveLocationBattle: assign(({ context, event }) => {
+      if (event.type !== 'RESOLVE_LOCATION_BATTLE') {
+        return context;
+      }
+      const next = structuredClone(context);
+      return resolveLocationBattle(next, event.won, event.locationId, event.enemyId);
+    }),
   },
   guards: {
     hasActionsRemaining: ({ context }) => context.actionsRemaining > 0,
@@ -72,6 +108,13 @@ export const explorationMachine = setup({
   id: 'exploration',
   initial: 'idle',
   context: createInitialExploration(),
+  on: {
+    ADVANCE_DIALOG: { actions: 'advanceDialog' },
+    QUEUE_DIALOG: { actions: 'queueDialog' },
+    QUEUE_BATTLE: { actions: 'queueBattle' },
+    FLEE_LOCATION_BATTLE: { actions: 'fleeLocationBattle' },
+    RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
+  },
   states: {
     idle: {
       on: {

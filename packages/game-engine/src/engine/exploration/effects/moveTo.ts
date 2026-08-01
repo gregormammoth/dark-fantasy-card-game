@@ -1,5 +1,6 @@
 import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { applyMove } from '../map';
+import { setLocationEncounterQueue } from '../locationEncounters';
 import { appendExplorationLog } from '../log';
 
 export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
@@ -7,10 +8,11 @@ export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
   if (!targetId) {
     return ctx.exploration;
   }
-  const next = applyMove(ctx.exploration, targetId);
+  let next = applyMove(ctx.exploration, targetId);
   const location = next.locations[targetId];
   if (location) {
     appendExplorationLog(next, `Arrived at ${location.name}.`, 'move');
+    next = setLocationEncounterQueue(next, targetId);
   }
   return next;
 };

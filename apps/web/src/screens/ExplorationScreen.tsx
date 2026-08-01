@@ -2,23 +2,31 @@ import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
+import {
+  getActiveLocationEncounter,
+  getBattleEnemy,
+  getDialogLines,
+  getDialogNpc,
+} from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { useAudio } from '@/audio/useAudio';
 import { PrisonMap } from '@/components/exploration/PrisonMap';
 import { LocationDetailPanel } from '@/components/exploration/LocationDetailPanel';
 import { ExplorationHandBar } from '@/components/exploration/ExplorationHandBar';
 import { EncounterModal } from '@/components/exploration/EncounterModal';
+import { NpcDialogModal } from '@/components/exploration/NpcDialogModal';
+import { LocationBattleModal } from '@/components/exploration/LocationBattleModal';
 import { ExplorationLog } from '@/components/exploration/ExplorationLog';
 
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
-  onOpenBattle?: () => void;
+  onStartLocationBattle?: (locationId: string, enemyId: string) => void;
   onOpenPlayer?: () => void;
   onBackToWorld?: () => void;
 }
 
 export function ExplorationScreen({
   actor,
-  onOpenBattle,
+  onStartLocationBattle,
   onOpenPlayer,
   onBackToWorld,
 }: ExplorationScreenProps) {
@@ -30,14 +38,26 @@ export function ExplorationScreen({
     ? context.locations[context.selectedLocationId] ?? null
     : null;
 
+  const locationEncounter = getActiveLocationEncounter(context);
+  const dialogNpc =
+    locationEncounter?.type === 'dialog'
+      ? getDialogNpc(context, locationEncounter)
+      : null;
+  const dialogLines = dialogNpc ? getDialogLines(dialogNpc) : [];
+  const dialogIndex = Math.min(context.dialogLineIndex, Math.max(dialogLines.length - 1, 0));
+  const battleEnemy =
+    locationEncounter?.type === 'battle'
+      ? getBattleEnemy(context, locationEncounter)
+      : null;
+
   if (isIdle) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
         <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">LOCATION MAP</div>
         <h1 className="font-cinzel text-4xl text-[#f3ead8]">Hollowfort Prison</h1>
         <p className="max-w-md text-[15px] leading-relaxed text-[#b7ab9c]">
-          Play cards as actions. Move, search, open, fight, talk, and rest. End your turn to face
-          the encounter deck.
+          Travel room to room. Dialogs and fights trigger on enter. Play cards to move, search,
+          and act — then end your turn for the encounter deck.
         </p>
         <button
           type="button"
@@ -89,15 +109,6 @@ export function ExplorationScreen({
               CHARACTER
             </button>
           )}
-          {onOpenBattle ? (
-            <button
-              type="button"
-              onClick={onOpenBattle}
-              className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
-            >
-              BATTLE →
-            </button>
-          ) : null}
         </div>
       </div>
 
@@ -121,6 +132,12 @@ export function ExplorationScreen({
               interactionId: options?.interactionId,
             })
           }
+          onTalk={(locationId, npcId) =>
+            actor.send({ type: 'QUEUE_DIALOG', locationId, npcId })
+          }
+          onFight={(locationId, enemyId) =>
+            actor.send({ type: 'QUEUE_BATTLE', locationId, enemyId })
+          }
         />
       </div>
 
@@ -143,6 +160,28 @@ export function ExplorationScreen({
         <EncounterModal
           encounter={context.pendingEncounter}
           onDismiss={() => actor.send({ type: 'DISMISS_ENCOUNTER' })}
+        />
+      )}
+
+      {dialogNpc && dialogLines.length > 0 && (
+        <NpcDialogModal
+          npc={dialogNpc}
+          line={dialogLines[dialogIndex] ?? dialogLines[0]!}
+          progress={`${dialogIndex + 1} / ${dialogLines.length}`}
+          nextLabel={dialogIndex + 1 >= dialogLines.length ? 'CLOSE' : 'CONTINUE'}
+          onNext={() => actor.send({ type: 'ADVANCE_DIALOG' })}
+        />
+      )}
+
+      {battleEnemy && (
+        <LocationBattleModal
+          enemy={battleEnemy}
+          onFight={() => {
+            if (onStartLocationBattle && locationEncounter) {
+              onStartLocationBattle(locationEncounter.locationId, battleEnemy.id);
+            }
+          }}
+          onFlee={() => actor.send({ type: 'FLEE_LOCATION_BATTLE' })}
         />
       )}
     </div>

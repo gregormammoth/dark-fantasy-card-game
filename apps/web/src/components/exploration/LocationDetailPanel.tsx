@@ -13,6 +13,8 @@ interface LocationDetailPanelProps {
   onClose: () => void;
   onTravel: (locationId: string) => void;
   onAction: (action: ExplorationActionType, options?: { interactionId?: string; targetId?: string }) => void;
+  onTalk?: (locationId: string, npcId: string) => void;
+  onFight?: (locationId: string, enemyId: string) => void;
 }
 
 export function LocationDetailPanel({
@@ -21,6 +23,8 @@ export function LocationDetailPanel({
   onClose,
   onTravel,
   onAction,
+  onTalk,
+  onFight,
 }: LocationDetailPanelProps) {
   if (!location) {
     return null;
@@ -41,6 +45,7 @@ export function LocationDetailPanel({
     ...location.enemies.filter((e) => !e.defeated).map(() => ({ label: 'Combat', color: activityColors.combat })),
     ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
     ...location.npcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
+    ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
     ...location.interactions
       .filter((item) => item.action === 'REST' && !item.completed)
       .map(() => ({ label: 'Rest', color: activityColors.rest })),
@@ -102,27 +107,72 @@ export function LocationDetailPanel({
           </div>
         )}
 
+        {showInfo && location.npcs.map((npc) => (
+          <div
+            key={npc.id}
+            className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.1)] px-3 py-2.5"
+          >
+            {npc.image ? (
+              <img
+                src={npc.image}
+                alt=""
+                className="h-[38px] w-[38px] shrink-0 rounded-full border border-[rgba(91,134,196,.35)] object-cover object-top"
+                draggable={false}
+              />
+            ) : null}
+            <div className="flex-1">
+              <div className="text-[13px] text-[#d7e2f2]">{npc.name}</div>
+              <div className="mt-0.5 text-[10px] tracking-wider text-[#9fb3d6]">
+                {(npc.tag ?? 'NPC').toUpperCase()}
+              </div>
+            </div>
+            {isHere && onTalk && (
+              <button
+                type="button"
+                onClick={() => onTalk(location.id, npc.id)}
+                className="shrink-0 rounded-lg border border-[rgba(91,134,196,.5)] bg-[rgba(91,134,196,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#cfe0fa] transition hover:brightness-110"
+              >
+                TALK
+              </button>
+            )}
+          </div>
+        ))}
+
         {activeEnemy && showInfo && (
           <div className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#d6443a] bg-[rgba(214,68,58,.1)] px-3 py-2.5">
-            <div>
+            {activeEnemy.image ? (
+              <img
+                src={activeEnemy.image}
+                alt=""
+                className="h-[38px] w-[38px] shrink-0 rounded-[6px] border border-[rgba(224,82,74,.4)] object-cover object-top"
+                draggable={false}
+              />
+            ) : null}
+            <div className="flex-1">
               <div className="text-[13px] text-[#ffd9d2]">{activeEnemy.name}</div>
               <div className="mt-0.5 text-[10px] tracking-wider text-[#c99]">{activeEnemy.tier}</div>
             </div>
+            {isHere && onFight && (
+              <button
+                type="button"
+                onClick={() => onFight(location.id, activeEnemy.id)}
+                className="shrink-0 rounded-lg border border-[rgba(224,82,74,.5)] bg-[rgba(224,82,74,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
+              >
+                FIGHT
+              </button>
+            )}
           </div>
         )}
 
-        {showInfo && location.npcs.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">NPCS</span>
-            {location.npcs.map((npc) => (
-              <div
-                key={npc.id}
-                className="rounded-[10px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.08)] px-3 py-2.5"
-              >
-                <div className="text-[13px] text-[#d7e6f7]">{npc.name}</div>
-                <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">{npc.description}</div>
+        {showInfo && location.quest && (
+          <div className="flex items-start gap-3 rounded-[10px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-3 py-2.5">
+            <span className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rotate-45 border-2 border-[#e0b552]" />
+            <div>
+              <div className="text-[13px] text-[#f0e2c0]">{location.quest.name}</div>
+              <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">
+                {location.quest.description}
               </div>
-            ))}
+            </div>
           </div>
         )}
 
@@ -199,9 +249,14 @@ export function LocationDetailPanel({
           </span>
         )}
         {!isHere && status === 'visited' && !canTravel && (
-          <span className="flex-1 rounded-[10px] border border-[rgba(201,162,74,.24)] px-3 py-3 text-center text-[11px] tracking-wider text-[#8a7f72]">
-            Not connected
-          </span>
+          <button
+            type="button"
+            disabled={!hasCard || context.actionsRemaining <= 0 || !canMoveTo(context, location.id)}
+            onClick={() => onTravel(location.id)}
+            className="flex-1 rounded-[10px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            RETURN HERE
+          </button>
         )}
         <button
           type="button"

@@ -131,24 +131,24 @@
   },
   "ATTACK": {
     "default": {
-      "message": "You strike and drive the threat back.",
-      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+      "message": "Something hostile steps into your path.",
+      "effects": [{ "type": "queueBattle" }, { "type": "completeInteraction" }]
     },
     "fighter": {
-      "message": "A heavy blow ends the fight before it spreads.",
-      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+      "message": "You square up as the threat closes in.",
+      "effects": [{ "type": "queueBattle" }, { "type": "completeInteraction" }]
     },
     "rogue": {
-      "message": "You cut from the blind side and leave the body cooling.",
-      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+      "message": "You feel the ambush before it lands.",
+      "effects": [{ "type": "queueBattle" }, { "type": "completeInteraction" }]
     },
     "wizard": {
-      "message": "A bolt of force drops the enemy where it stands.",
-      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+      "message": "Arcane sense flares — a fight is coming.",
+      "effects": [{ "type": "queueBattle" }, { "type": "completeInteraction" }]
     },
     "survivor": {
-      "message": "You fight dirty and live — the enemy does not.",
-      "effects": [{ "type": "defeatEnemy" }, { "type": "completeInteraction" }]
+      "message": "You brace yourself; this will not end quietly.",
+      "effects": [{ "type": "queueBattle" }, { "type": "completeInteraction" }]
     }
   },
   "TALK": {
