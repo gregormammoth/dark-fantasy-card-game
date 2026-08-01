@@ -3,20 +3,56 @@
 @tailwind utilities;
 
 :root {
-  --brand-ash: #0b0807;
+  --brand-ash: #0b0908;
   --brand-ember: #c9a24a;
   --brand-parchment: #e8ddcf;
 }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(1100px 700px at 50% -12%, #2a1612 0%, #120c0a 55%, #0b0807 100%),
-    #0b0807;
+  background: #0b0908;
   color: var(--brand-parchment);
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 ::selection {
-  background: rgba(201, 162, 74, 0.35);
-  color: #f5eadc;
+  background: #c9a24a;
+  color: #0e0b0a;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }

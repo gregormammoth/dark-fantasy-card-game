@@ -51,10 +51,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${spectral.variable}`}>
-      <body className="min-h-screen bg-ash-950 font-spectral text-parchment-200 antialiased">
+      <body className="min-h-screen bg-[#0b0908] font-spectral text-[#e8ddcf] antialiased">
         <JsonLd />
         {children}
       </body>
     </html>
   );
 }
+

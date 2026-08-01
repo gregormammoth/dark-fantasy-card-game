@@ -6,7 +6,7 @@ export const siteConfig = {
   playPath: '/play',
 };
 
-export const siteNav = [
+export const primaryNav = [
   { href: '/', label: 'Home' },
   { href: '/play', label: 'Play' },
   { href: '/about', label: 'About' },
@@ -15,12 +15,89 @@ export const siteNav = [
   { href: '/cards', label: 'Cards' },
   { href: '/classes', label: 'Classes' },
   { href: '/enemies', label: 'Enemies' },
+] as const;
+
+export const secondaryNav = [
   { href: '/blog', label: 'Blog' },
   { href: '/roadmap', label: 'Roadmap' },
   { href: '/patch-notes', label: 'Patch Notes' },
 ] as const;
 
+export const siteNav = [...primaryNav, ...secondaryNav] as const;
+
 export const legalNav = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
+] as const;
+
+export const homeStats = [
+  { value: '4', label: 'CLASSES TO MASTER' },
+  { value: '24+', label: 'UNLOCKABLE CARDS' },
+  { value: '11', label: 'PRISON ROOMS' },
+  { value: '1', label: 'VERTICAL SLICE' },
+] as const;
+
+export const homeClassShowcase = [
+  {
+    id: 'fighter',
+    name: 'Fighter',
+    href: '/classes',
+    color: '#e0665c',
+    borderColor: 'rgba(214,68,58,.35)',
+    glow: 'rgba(214,68,58,.35)',
+    image: '/portraits/player.png',
+    blurb: 'Heavy strikes, raised shields, and reckless swings built to outlast anything below.',
+    tag: 'MELEE · DEFENCE',
+  },
+  {
+    id: 'rogue',
+    name: 'Rogue',
+    href: '/classes',
+    color: '#6fb681',
+    borderColor: 'rgba(74,150,94,.35)',
+    glow: 'rgba(74,150,94,.35)',
+    image: '/portraits/enemy_03.png',
+    blurb: 'Backstabs, poison, and smoke — vanish before the guards ever see you.',
+    tag: 'STEALTH · TEMPO',
+  },
+  {
+    id: 'wizard',
+    name: 'Wizard',
+    href: '/classes',
+    color: '#9b83d9',
+    borderColor: 'rgba(122,90,190,.35)',
+    glow: 'rgba(122,90,190,.35)',
+    image: '/portraits/enemy_06.png',
+    blurb: 'Arcane bolts, barriers, and tempo swings — control the field before it closes in.',
+    tag: 'RANGED · CONTROL',
+  },
+  {
+    id: 'survivor',
+    name: 'Survivor',
+    href: '/classes',
+    color: '#c9a24a',
+    borderColor: 'rgba(201,162,74,.35)',
+    glow: 'rgba(201,162,74,.35)',
+    image: '/portraits/enemy_02.png',
+    blurb: 'Scrap tools, desperate defenses, and hard-won grit from the prison itself.',
+    tag: 'ENDURE · SCRAP',
+  },
+] as const;
+
+export const homeFeatures = [
+  {
+    tag: 'PROGRESSION',
+    title: 'Spend XP, Not Just Earn It',
+    desc: 'Every class levels independently. Unlock new cards by spending the XP that class alone has earned.',
+  },
+  {
+    tag: 'COMBAT',
+    title: 'Combos Carve the Fight',
+    desc: 'Stack cards into a combo line, read the preview, then burn through shields, barriers, and decks.',
+  },
+  {
+    tag: 'EXPLORATION',
+    title: 'Fog of War, Real Stakes',
+    desc: 'Hollowfort hides what you have not seen — rooms, encounters, and danger wait behind every corridor.',
+  },
 ] as const;
