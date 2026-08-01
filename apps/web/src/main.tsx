@@ -1,17 +1,17 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useActorRef } from '@xstate/react';
-import { battleMachine } from '@/machine/battleMachine';
-import { explorationMachine } from '@/machine/explorationMachine';
+import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
+import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { AudioSettings } from '@/components/AudioSettings';
 import { BattleScreen } from '@/screens/BattleScreen';
 import { ExplorationScreen } from '@/screens/ExplorationScreen';
 import { WorldMapScreen } from '@/screens/WorldMapScreen';
-import type { AppScreen } from '@/types/world';
-import worldMapData from '@/data/worldMap.json';
-import type { WorldMapDefinition } from '@/types/world';
+import type { AppScreen } from '@dark-fantasy/shared/types/world';
+import worldMapData from '@dark-fantasy/content/worldMap.json';
+import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import './index.css';
 
 const worldMap = worldMapData as WorldMapDefinition;

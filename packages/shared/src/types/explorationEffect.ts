@@ -1,5 +1,5 @@
-import type { ExplorationContext, ExplorationEffect } from '@/types/exploration';
-import type { CardClass } from '@/types/card';
+import type { ExplorationContext, ExplorationEffect } from './exploration';
+import type { CardClass } from './card';
 
 export interface ExplorationEffectContext {
   exploration: ExplorationContext;

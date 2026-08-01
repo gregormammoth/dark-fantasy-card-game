@@ -1,4 +1,4 @@
-import type { CardClass, CardDefinition, CardType } from '@/types/card';
+import type { CardClass, CardDefinition, CardType } from '@dark-fantasy/shared/types/card';
 
 export interface ClassTheme {
   label: string;

@@ -1,4 +1,4 @@
-import type { ExplorationContext } from '@/types/exploration';
+import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import { Card } from '@/components/Card';
 import { useAudio } from '@/audio/useAudio';
 

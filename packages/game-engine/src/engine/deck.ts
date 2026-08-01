@@ -1,4 +1,4 @@
-import type { CardDefinition, CardInstance } from '@/types/card';
+import type { CardDefinition, CardInstance } from '@dark-fantasy/shared/types/card';
 
 let instanceCounter = 0;
 

@@ -1,6 +1,6 @@
-import type { ExplorationContext, ExplorationEffect } from '@/types/exploration';
-import type { CardClass } from '@/types/card';
-import type { ExplorationEffectContext } from '@/types/explorationEffect';
+import type { ExplorationContext, ExplorationEffect } from '@dark-fantasy/shared/types/exploration';
+import type { CardClass } from '@dark-fantasy/shared/types/card';
+import type { ExplorationEffectContext } from '@dark-fantasy/shared/types/explorationEffect';
 import { explorationEffectHandlers } from './effects/registry';
 
 export function resolveExplorationEffects(

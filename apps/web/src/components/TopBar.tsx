@@ -1,4 +1,4 @@
-import type { BattleLogEntry } from '@/types/log';
+import type { BattleLogEntry } from '@dark-fantasy/shared/types/log';
 
 interface TopBarProps {
   turnLabel: string;

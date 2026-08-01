@@ -1,5 +1,5 @@
-import type { CardInstance } from '@/types/card';
-import type { BattleContext } from '@/types/battle';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 
 export interface EnemyIntent {
   cardName: string;

@@ -1,5 +1,5 @@
-import type { ExplorationEffectType } from '@/types/exploration';
-import type { ExplorationEffectHandler } from '@/types/explorationEffect';
+import type { ExplorationEffectType } from '@dark-fantasy/shared/types/exploration';
+import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { logHandler } from './log';
 import { moveToHandler } from './moveTo';
 import { discoverConnectedHandler } from './discoverConnected';

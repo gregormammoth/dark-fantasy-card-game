@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@dark-fantasy/shared": ["../shared/src/index.ts"],
+      "@dark-fantasy/shared/*": ["../shared/src/*"],
+      "@dark-fantasy/content": ["../content/src/index.ts"],
+      "@dark-fantasy/content/*": ["../content/src/*"]
+    }
+  },
+  "include": ["src"]
+}

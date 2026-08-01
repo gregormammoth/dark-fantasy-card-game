@@ -1,4 +1,4 @@
-import type { ExplorationContext, ExplorationLogEntry } from '@/types/exploration';
+import type { ExplorationContext, ExplorationLogEntry } from '@dark-fantasy/shared/types/exploration';
 
 let logCounter = 0;
 

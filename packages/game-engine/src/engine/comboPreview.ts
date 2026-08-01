@@ -1,5 +1,5 @@
-import type { BattleContext } from '@/types/battle';
-import type { ComboPreview } from '@/types/comboPreview';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { ComboPreview } from '@dark-fantasy/shared/types/comboPreview';
 import { getEnemyHealth } from './health';
 import { resolveCardEffects } from './combo';
 

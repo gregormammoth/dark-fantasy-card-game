@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
-import type { ExplorationContext, LocationDefinition, LocationStatus } from '@/types/exploration';
+import type { ExplorationContext, LocationDefinition, LocationStatus } from '@dark-fantasy/shared/types/exploration';
 import {
   getLocationStatus,
   isLocationVisible,
   listMapEdges,
-} from '@/engine/exploration/map';
+} from '@dark-fantasy/game-engine/engine/exploration/map';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
 interface PrisonMapProps {

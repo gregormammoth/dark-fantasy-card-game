@@ -1,5 +1,5 @@
-import type { Effect } from '@/types/card';
-import type { EffectContext, EffectHandler } from '@/types/effect';
+import type { Effect } from '@dark-fantasy/shared/types/card';
+import type { EffectContext, EffectHandler } from '@dark-fantasy/shared/types/effect';
 
 export const bonusIfFirstAttackHandler: EffectHandler = (effect: Effect, ctx: EffectContext) => {
   if (ctx.battle.combatStats.attackCardsPlayed === 0) {

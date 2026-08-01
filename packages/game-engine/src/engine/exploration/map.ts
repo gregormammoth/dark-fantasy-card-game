@@ -2,7 +2,7 @@ import type {
   ExplorationContext,
   LocationDefinition,
   LocationStatus,
-} from '@/types/exploration';
+} from '@dark-fantasy/shared/types/exploration';
 
 export function getLocation(
   context: ExplorationContext,

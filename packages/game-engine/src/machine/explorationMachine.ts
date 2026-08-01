@@ -1,5 +1,5 @@
 import { setup, assign } from 'xstate';
-import type { ExplorationContext, ExplorationEvent } from '@/types/exploration';
+import type { ExplorationContext, ExplorationEvent } from '@dark-fantasy/shared/types/exploration';
 import {
   beginExplorationTurn,
   clearCardSelection,
@@ -7,9 +7,9 @@ import {
   createInitialExploration,
   selectCard,
   selectLocation,
-} from '@/engine/exploration/setup';
-import { playExplorationAction, canPlayAction } from '@/engine/exploration/actions';
-import { dismissEncounter, drawAndResolveEncounter } from '@/engine/exploration/encounters';
+} from '../engine/exploration/setup';
+import { playExplorationAction, canPlayAction } from '../engine/exploration/actions';
+import { dismissEncounter, drawAndResolveEncounter } from '../engine/exploration/encounters';
 
 export const explorationMachine = setup({
   types: {

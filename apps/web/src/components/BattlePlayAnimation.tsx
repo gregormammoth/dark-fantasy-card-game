@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { AnimationCue } from '@/types/animation';
+import type { AnimationCue } from '@dark-fantasy/shared/types/animation';
 import { classThemes, enemyTheme } from '@/lib/cardTheme';
-import type { CardClass } from '@/types/card';
+import type { CardClass } from '@dark-fantasy/shared/types/card';
 import { useAudio } from '@/audio/useAudio';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 

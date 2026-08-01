@@ -1,5 +1,5 @@
-import type { Effect } from '@/types/card';
-import type { EffectContext, EffectHandler } from '@/types/effect';
+import type { Effect } from '@dark-fantasy/shared/types/card';
+import type { EffectContext, EffectHandler } from '@dark-fantasy/shared/types/effect';
 import { addShield } from '../health';
 
 export const shieldHandler: EffectHandler = (effect: Effect, ctx: EffectContext) => {

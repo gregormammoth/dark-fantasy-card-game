@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import type { PoisonState } from '@/types/battle';
-import type { EnemyIntent } from '@/engine/enemyIntent';
+import type { PoisonState } from '@dark-fantasy/shared/types/battle';
+import type { EnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
 import { CardStack } from './CardStack';
 import { AttackIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 

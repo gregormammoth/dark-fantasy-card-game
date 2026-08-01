@@ -1,6 +1,6 @@
-import encountersData from '@/data/encounters.json';
-import type { EncounterDefinition, ExplorationContext } from '@/types/exploration';
-import { shuffle } from '@/engine/deck';
+import encountersData from '@dark-fantasy/content/encounters.json';
+import type { EncounterDefinition, ExplorationContext } from '@dark-fantasy/shared/types/exploration';
+import { shuffle } from '../deck';
 import { appendExplorationLog } from './log';
 import { resolveExplorationEffects } from './resolveEffects';
 

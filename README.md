@@ -82,8 +82,11 @@ pnpm e2e:report
 
 ```text
 apps/
-  web/          Vite + React game client
-packages/       Shared packages (reserved)
+  web/          Vite + React game client (UI)
+packages/
+  game-engine/  Pure TS rules + XState machines
+  shared/       Shared game types
+  content/      JSON content packs
 tests/
   e2e/          Playwright project
 docs/           Design / roadmap docs
@@ -92,5 +95,6 @@ docs/           Design / roadmap docs
 ## Docs
 
 - [Roadmap](./docs/ROADMAP.md)
+- [Architecture](./docs/ARCHITECTURE.md)
 - [Mechanics](./docs/MECHANICS.md)
 - [Audio](./docs/AUDIO.md)

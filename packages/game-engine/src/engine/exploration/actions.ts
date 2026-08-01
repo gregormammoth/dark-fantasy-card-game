@@ -1,10 +1,10 @@
-import actionOutcomesData from '@/data/actionOutcomes.json';
-import type { CardClass, CardInstance } from '@/types/card';
+import actionOutcomesData from '@dark-fantasy/content/actionOutcomes.json';
+import type { CardClass, CardInstance } from '@dark-fantasy/shared/types/card';
 import type {
   ActionOutcomeTable,
   ExplorationActionType,
   ExplorationContext,
-} from '@/types/exploration';
+} from '@dark-fantasy/shared/types/exploration';
 import { consumeCard } from './hand';
 import { appendExplorationLog } from './log';
 import {

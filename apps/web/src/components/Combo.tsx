@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import type { CardInstance } from '@/types/card';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import { Card } from './Card';
 
 interface ComboProps {

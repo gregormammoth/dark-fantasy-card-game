@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
-import type { battleMachine } from '@/machine/battleMachine';
-import { getPlayerHealth, getEnemyHealth } from '@/engine/health';
-import { previewCombo } from '@/engine/comboPreview';
-import { getEnemyIntent } from '@/engine/enemyIntent';
+import type { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
+import { getPlayerHealth, getEnemyHealth } from '@dark-fantasy/game-engine/engine/health';
+import { previewCombo } from '@dark-fantasy/game-engine/engine/comboPreview';
+import { getEnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
 import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
 import { useGameOverAudio } from '@/audio/useGameOverAudio';
@@ -17,7 +17,7 @@ import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
 import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
-import { PLAYER_PORTRAIT } from '@/data/portraits';
+import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
 
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 

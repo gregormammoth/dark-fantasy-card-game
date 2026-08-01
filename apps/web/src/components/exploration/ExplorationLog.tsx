@@ -1,4 +1,4 @@
-import type { ExplorationLogEntry } from '@/types/exploration';
+import type { ExplorationLogEntry } from '@dark-fantasy/shared/types/exploration';
 
 interface ExplorationLogProps {
   entries: ExplorationLogEntry[];

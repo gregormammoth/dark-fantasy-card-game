@@ -2,9 +2,9 @@ import type {
   ExplorationActionType,
   ExplorationContext,
   LocationDefinition,
-} from '@/types/exploration';
-import { canMoveTo, getLocationStatus, isInteractionAvailable } from '@/engine/exploration/map';
-import { canPlayAction } from '@/engine/exploration/actions';
+} from '@dark-fantasy/shared/types/exploration';
+import { canMoveTo, getLocationStatus, isInteractionAvailable } from '@dark-fantasy/game-engine/engine/exploration/map';
+import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 
 interface LocationDetailPanelProps {

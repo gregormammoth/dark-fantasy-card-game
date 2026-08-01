@@ -1,4 +1,4 @@
-import type { EffectContext } from '@/types/effect';
+import type { EffectContext } from '@dark-fantasy/shared/types/effect';
 
 export function createResolutionState(): EffectContext['resolution'] {
   return {

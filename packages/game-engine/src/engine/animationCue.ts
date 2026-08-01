@@ -1,8 +1,8 @@
-import type { BattleContext } from '@/types/battle';
-import type { CardInstance } from '@/types/card';
-import type { AnimationCue } from '@/types/animation';
-import type { CardType } from '@/types/card';
-import type { EffectTarget } from '@/types/effect';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { AnimationCue } from '@dark-fantasy/shared/types/animation';
+import type { CardType } from '@dark-fantasy/shared/types/card';
+import type { EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { getEnemyHealth, getPlayerHealth } from './health';
 
 interface BattleSnapshot {

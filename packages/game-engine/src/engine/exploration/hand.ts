@@ -1,6 +1,6 @@
-import type { CardInstance } from '@/types/card';
-import type { ExplorationContext } from '@/types/exploration';
-import { drawCards, shuffle } from '@/engine/deck';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
+import { drawCards, shuffle } from '../deck';
 import { appendExplorationLog } from './log';
 
 function reshuffleIfNeeded(context: ExplorationContext): void {

@@ -1,6 +1,6 @@
-import type { CardInstance } from '@/types/card';
-import type { BattleContext } from '@/types/battle';
-import type { EffectContext, EffectTarget } from '@/types/effect';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { EffectContext, EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { effectHandlers } from './effects/registry';
 import { createResolutionState } from './effects/resolutionState';
 import { isBattleOver } from './health';

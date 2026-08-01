@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
-import type { BattleLogEntry } from '@/types/log';
-import type { BattleStats } from '@/types/battle';
+import type { BattleLogEntry } from '@dark-fantasy/shared/types/log';
+import type { BattleStats } from '@dark-fantasy/shared/types/battle';
 import { useAudio } from '@/audio/useAudio';
 
 const logColors: Record<BattleLogEntry['kind'], string> = {

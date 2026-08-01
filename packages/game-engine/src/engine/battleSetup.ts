@@ -1,11 +1,11 @@
-import playerCardsData from '@/data/playerCards.json';
-import enemyCardsData from '@/data/enemyCards.json';
-import battleData from '@/data/battle.json';
-import type { CardDefinition } from '@/types/card';
-import type { BattleContext } from '@/types/battle';
+import playerCardsData from '@dark-fantasy/content/playerCards.json';
+import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
+import battleData from '@dark-fantasy/content/battle.json';
+import type { CardDefinition } from '@dark-fantasy/shared/types/card';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
-import { PLAYER_PORTRAIT, pickRandomEnemyPortrait } from '@/data/portraits';
+import { PLAYER_PORTRAIT, pickRandomEnemyPortrait } from '@dark-fantasy/content/portraits';
 
 const cardRegistry = new Map<string, CardDefinition>();
 

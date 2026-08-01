@@ -1,4 +1,4 @@
-import type { LocationType } from '@/types/exploration';
+import type { LocationType } from '@dark-fantasy/shared/types/exploration';
 
 export const locationTypeColors: Record<LocationType, string> = {
   start: '#e0b552',

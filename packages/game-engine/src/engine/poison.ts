@@ -1,4 +1,4 @@
-import type { BattleContext } from '@/types/battle';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import { dealDamage, getHealth } from './health';
 import { appendLog, targetLabel } from './battleLog';
 

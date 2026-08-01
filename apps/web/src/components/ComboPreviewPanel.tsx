@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import type { ComboPreview } from '@/types/comboPreview';
-import { isComboPreviewEmpty } from '@/types/comboPreview';
+import type { ComboPreview } from '@dark-fantasy/shared/types/comboPreview';
+import { isComboPreviewEmpty } from '@dark-fantasy/shared/types/comboPreview';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface ComboPreviewPanelProps {

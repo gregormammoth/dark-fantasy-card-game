@@ -1,6 +1,6 @@
 import { setup, assign } from 'xstate';
-import type { BattleContext, BattleEvent } from '@/types/battle';
-import { createInitialBattle, drawAtTurnStart, initBattleLog } from '@/engine/battleSetup';
+import type { BattleContext, BattleEvent } from '@dark-fantasy/shared/types/battle';
+import { createInitialBattle, drawAtTurnStart, initBattleLog } from '../engine/battleSetup';
 import {
   addToCombo,
   removeFromCombo,
@@ -10,8 +10,8 @@ import {
   checkWinner,
   resolveEnemyTurn,
   startPlayerTurn,
-} from '@/engine/combo';
-import { expireRoundEffects, logVictory, logDefeat } from '@/engine/poison';
+} from '../engine/combo';
+import { expireRoundEffects, logVictory, logDefeat } from '../engine/poison';
 
 function clearActivePlay(context: BattleContext): BattleContext {
   const next = structuredClone(context);

@@ -1,5 +1,5 @@
-import type { EffectType } from '@/types/card';
-import type { EffectHandler } from '@/types/effect';
+import type { EffectType } from '@dark-fantasy/shared/types/card';
+import type { EffectHandler } from '@dark-fantasy/shared/types/effect';
 import { damageHandler } from './damage';
 import { shieldHandler } from './shield';
 import { barrierHandler } from './barrier';

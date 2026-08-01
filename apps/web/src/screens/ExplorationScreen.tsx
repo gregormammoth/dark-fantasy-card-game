@@ -1,7 +1,7 @@
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
-import type { explorationMachine } from '@/machine/explorationMachine';
-import type { ExplorationActionType } from '@/types/exploration';
+import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
+import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
 import { useAudio } from '@/audio/useAudio';
 import { PrisonMap } from '@/components/exploration/PrisonMap';
 import { LocationDetailPanel } from '@/components/exploration/LocationDetailPanel';

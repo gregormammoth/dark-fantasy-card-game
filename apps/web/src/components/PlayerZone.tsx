@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import type { CardInstance } from '@/types/card';
-import type { PoisonState } from '@/types/battle';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { PoisonState } from '@dark-fantasy/shared/types/battle';
 import { CardStack } from './CardStack';
 import { Hand } from './Hand';
 import { EndTurnButton } from './EndTurnButton';

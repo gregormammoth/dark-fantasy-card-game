@@ -12,6 +12,9 @@
     "test": "node -e \"console.log('No unit tests yet for @dark-fantasy/web')\""
   },
   "dependencies": {
+    "@dark-fantasy/content": "workspace:*",
+    "@dark-fantasy/game-engine": "workspace:*",
+    "@dark-fantasy/shared": "workspace:*",
     "@xstate/react": "^5.0.3",
     "framer-motion": "^12.6.3",
     "howler": "^2.2.4",

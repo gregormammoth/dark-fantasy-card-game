@@ -1,5 +1,5 @@
-import type { ExplorationEffectHandler } from '@/types/explorationEffect';
-import { shuffle } from '@/engine/deck';
+import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
+import { shuffle } from '../../deck';
 import { appendExplorationLog } from '../log';
 
 export const reshuffleEncounterHandler: ExplorationEffectHandler = (_effect, ctx) => {

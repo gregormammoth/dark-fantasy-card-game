@@ -1,4 +1,4 @@
-import type { ExplorationEffectHandler } from '@/types/explorationEffect';
+import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { appendExplorationLog } from '../log';
 
 export const logHandler: ExplorationEffectHandler = (effect, ctx) => {

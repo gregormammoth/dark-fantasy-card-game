@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { CSSProperties } from 'react';
-import type { CardInstance } from '@/types/card';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import { getCardEffectSummary, getCardTheme, getCardType } from '@/lib/cardTheme';
 import { useAudio } from '@/audio/useAudio';
 import { useHoverSound } from '@/audio/useHoverSound';

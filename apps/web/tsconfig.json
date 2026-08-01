@@ -16,9 +16,16 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@dark-fantasy/shared": ["../../packages/shared/src/index.ts"],
+      "@dark-fantasy/shared/*": ["../../packages/shared/src/*"],
+      "@dark-fantasy/content": ["../../packages/content/src/index.ts"],
+      "@dark-fantasy/content/*": ["../../packages/content/src/*"],
+      "@dark-fantasy/game-engine": ["../../packages/game-engine/src/index.ts"],
+      "@dark-fantasy/game-engine/*": ["../../packages/game-engine/src/*"]
     }
   },
   "include": ["src"]

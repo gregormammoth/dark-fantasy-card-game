@@ -1,4 +1,4 @@
-import type { WorldLocationCategory } from '@/types/world';
+import type { WorldLocationCategory } from '@dark-fantasy/shared/types/world';
 
 export interface CategoryMeta {
   label: string;

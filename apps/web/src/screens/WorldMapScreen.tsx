@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
-import worldMapData from '@/data/worldMap.json';
-import type { WorldLocationDefinition, WorldMapDefinition } from '@/types/world';
+import worldMapData from '@dark-fantasy/content/worldMap.json';
+import type { WorldLocationDefinition, WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import { iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
 import { WorldMapClouds } from '@/components/world/WorldMapClouds';
 

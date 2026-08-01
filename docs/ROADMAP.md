@@ -22,6 +22,8 @@ After Hollowfort Prison ships, remaining work should be **mostly new content**, 
 
 ## Target architecture
 
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full target (DDD modular monolith, NestJS, Postgres schemas, engine vs backend domain).
+
 ```text
 Presentation Layer (React + Next.js App Router)
         ↓
@@ -31,14 +33,14 @@ Game Engine (Pure TypeScript)
         ↓
 Content Layer (JSON / Markdown)
         ↓
-Persistence Layer
+Persistence Layer (local → NestJS API + PostgreSQL)
 ```
 
 | Layer | Owns | Must not own |
 |-------|------|----------------|
 | Presentation | Website pages, `/play` client UI, SEO, animations | Combat / deck / progression math |
 | Application (XState) | Screen & turn flow, exploration/battle orchestration | Damage formulas, loot rolls |
-| Game Engine | Battle, exploration, deck, effects, RNG, progression | React, Next.js, JSX |
+| Game Engine | Battle, exploration, deck, effects, RNG, progression | React, Next.js, NestJS, JSX |
 | Content | Cards, regions, lore, blog, patch notes (SSG) | Runtime game rules |
 | Persistence | Save/load, settings, future cloud profiles | Gameplay calculations |
 
@@ -65,8 +67,9 @@ Rough progress against this roadmap as of the current codebase:
 
 | Area | Status |
 |------|--------|
-| pnpm + Turborepo monorepo | In place (`apps/web`, `tests/e2e`) |
+| pnpm + Turborepo monorepo | In place (`apps/web`, `packages/*`, `tests/e2e`) |
 | Vite + React game client | In place under `apps/web` (pre–Next.js migration) |
+| `packages/game-engine` + `shared` + `content` | Extracted from web app |
 | World → Exploration → Battle navigation | In place (UI + XState machines) |
 | Battle engine (turns, combo, shields, poison, intent) | Partial — playable core |
 | Exploration map + actions | Partial — prison map, hand actions, encounters |
@@ -473,7 +476,7 @@ Keep docs lightweight and current.
 | Game Vision | Audience, philosophy, Beta scope |
 | [Game Mechanics](./MECHANICS.md) | Combat, exploration, progression rules |
 | Story | Narrative, regions, quests |
-| Architecture | Engine / XState / Next.js shell boundaries |
+| Architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) — DDD modular monolith, engine vs API, NestJS/Postgres |
 | Platform / Website | App Router structure, `/play`, SEO, content SSG |
 | Card Design Guide | Classes, effects, balance, naming |
 | Content Pipeline | Adding locations, enemies, cards, events, site MDX |

@@ -1,6 +1,6 @@
-import type { BattleContext } from '@/types/battle';
-import type { BattleLogKind } from '@/types/log';
-import type { EffectTarget } from '@/types/effect';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { BattleLogKind } from '@dark-fantasy/shared/types/log';
+import type { EffectTarget } from '@dark-fantasy/shared/types/effect';
 
 let logCounter = 0;
 

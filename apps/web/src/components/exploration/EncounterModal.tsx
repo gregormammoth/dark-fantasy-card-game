@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { PendingEncounter } from '@/types/exploration';
+import type { PendingEncounter } from '@dark-fantasy/shared/types/exploration';
 import { useAudio } from '@/audio/useAudio';
 
 interface EncounterModalProps {

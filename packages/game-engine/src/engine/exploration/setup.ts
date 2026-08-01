@@ -1,8 +1,8 @@
-import prisonMapData from '@/data/prisonMap.json';
-import playerCardsData from '@/data/playerCards.json';
-import type { CardDefinition } from '@/types/card';
-import type { ExplorationContext, LocationDefinition } from '@/types/exploration';
-import { createCardInstance, resetInstanceCounter, shuffle } from '@/engine/deck';
+import prisonMapData from '@dark-fantasy/content/prisonMap.json';
+import playerCardsData from '@dark-fantasy/content/playerCards.json';
+import type { CardDefinition } from '@dark-fantasy/shared/types/card';
+import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
+import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
 import { buildEncounterDeck } from './encounters';
 import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';

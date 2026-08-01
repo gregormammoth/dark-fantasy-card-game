@@ -1,6 +1,6 @@
-import type { BattleContext } from '@/types/battle';
-import type { CardInstance } from '@/types/card';
-import type { EffectTarget } from '@/types/effect';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import type { EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { appendLog, targetLabel } from './battleLog';
 
 export function getPlayerHealth(battle: BattleContext): number {

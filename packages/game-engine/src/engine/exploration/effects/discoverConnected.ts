@@ -1,4 +1,4 @@
-import type { ExplorationEffectHandler } from '@/types/explorationEffect';
+import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { discoverConnectedLocations } from '../map';
 import { appendExplorationLog } from '../log';
 

@@ -1,0 +1,24 @@
+{
+  "name": "@dark-fantasy/game-engine",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./engine/*": "./src/engine/*",
+    "./machine/*": "./src/machine/*"
+  },
+  "scripts": {
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node -e \"console.log('No unit tests yet for @dark-fantasy/game-engine')\""
+  },
+  "dependencies": {
+    "@dark-fantasy/content": "workspace:*",
+    "@dark-fantasy/shared": "workspace:*",
+    "xstate": "^5.19.2"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2"
+  }
+}
