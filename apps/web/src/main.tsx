@@ -5,22 +5,31 @@ import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
-import { AudioSettings } from '@/components/AudioSettings';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { BattleScreen } from '@/screens/BattleScreen';
 import { ExplorationScreen } from '@/screens/ExplorationScreen';
+import { PlayerScreen } from '@/screens/PlayerScreen';
 import { WorldMapScreen } from '@/screens/WorldMapScreen';
 import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
+import type { MusicScreen } from '@/audio/types';
 import './index.css';
 
 const worldMap = worldMapData as WorldMapDefinition;
+
+function musicForScreen(screen: AppScreen): MusicScreen {
+  if (screen === 'player') {
+    return 'world';
+  }
+  return screen;
+}
 
 function App() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
-  useScreenMusic(screen);
+  useScreenMusic(musicForScreen(screen));
 
   function enterLocation(locationId: string) {
     const location = worldMap.locations.find((item) => item.id === locationId);
@@ -42,8 +51,16 @@ function App() {
     }
   }
 
+  function openPlayer() {
+    setScreen('player');
+  }
+
+  let content = (
+    <WorldMapScreen onEnterLocation={enterLocation} onOpenPlayer={openPlayer} />
+  );
+
   if (screen === 'battle') {
-    return (
+    content = (
       <div>
         <div className="fixed left-4 top-4 z-[60] flex gap-2">
           <button
@@ -61,40 +78,31 @@ function App() {
             THE REALM
           </button>
         </div>
-        <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
-          <AudioSettings />
-        </div>
         <BattleScreen actor={battleActor} />
       </div>
     );
-  }
-
-  if (screen === 'exploration') {
-    return (
-      <>
-        <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
-          <AudioSettings />
-        </div>
-        <ExplorationScreen
-          actor={explorationActor}
-          onOpenBattle={() => {
-            setScreen('battle');
-            if (battleActor.getSnapshot().matches('idle')) {
-              battleActor.send({ type: 'START_BATTLE' });
-            }
-          }}
-          onBackToWorld={() => setScreen('world')}
-        />
-      </>
+  } else if (screen === 'exploration') {
+    content = (
+      <ExplorationScreen
+        actor={explorationActor}
+        onOpenBattle={() => {
+          setScreen('battle');
+          if (battleActor.getSnapshot().matches('idle')) {
+            battleActor.send({ type: 'START_BATTLE' });
+          }
+        }}
+        onOpenPlayer={openPlayer}
+        onBackToWorld={() => setScreen('world')}
+      />
     );
+  } else if (screen === 'player') {
+    content = <PlayerScreen onBackToWorld={() => setScreen('world')} />;
   }
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-[60] w-[220px]">
-        <AudioSettings />
-      </div>
-      <WorldMapScreen onEnterLocation={enterLocation} />
+      <SettingsMenu />
+      {content}
     </>
   );
 }

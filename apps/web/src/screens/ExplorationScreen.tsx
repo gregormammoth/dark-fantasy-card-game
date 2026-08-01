@@ -12,12 +12,14 @@ import { ExplorationLog } from '@/components/exploration/ExplorationLog';
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
   onOpenBattle?: () => void;
+  onOpenPlayer?: () => void;
   onBackToWorld?: () => void;
 }
 
 export function ExplorationScreen({
   actor,
   onOpenBattle,
+  onOpenPlayer,
   onBackToWorld,
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
@@ -62,7 +64,7 @@ export function ExplorationScreen({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         {onBackToWorld ? (
           <button
             type="button"
@@ -77,17 +79,26 @@ export function ExplorationScreen({
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON
         </span>
-        {onOpenBattle ? (
-          <button
-            type="button"
-            onClick={onOpenBattle}
-            className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
-          >
-            BATTLE →
-          </button>
-        ) : (
-          <span />
-        )}
+        <div className="flex items-center gap-2 pr-12">
+          {onOpenPlayer && (
+            <button
+              type="button"
+              onClick={onOpenPlayer}
+              className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
+            >
+              CHARACTER
+            </button>
+          )}
+          {onOpenBattle ? (
+            <button
+              type="button"
+              onClick={onOpenBattle}
+              className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
+            >
+              BATTLE →
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <div className="relative">

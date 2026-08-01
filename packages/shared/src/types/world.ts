@@ -9,7 +9,7 @@ export type WorldLocationCategory =
   | 'danger'
   | 'poi';
 
-export type AppScreen = 'world' | 'exploration' | 'battle';
+export type AppScreen = 'world' | 'exploration' | 'battle' | 'player';
 
 export interface WorldThreat {
   name: string;

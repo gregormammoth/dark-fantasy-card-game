@@ -8,9 +8,10 @@ const worldMap = worldMapData as WorldMapDefinition;
 
 interface WorldMapScreenProps {
   onEnterLocation: (locationId: string) => void;
+  onOpenPlayer?: () => void;
 }
 
-export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
+export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreenProps) {
   const [selectedId, setSelectedId] = useState<string | null>(worldMap.startLocationId);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
@@ -190,9 +191,20 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
         <span className="shrink-0 font-cinzel text-[14px] tracking-[.3em] text-[#b8917f]">
           FAST TRAVEL
         </span>
-        <span className="shrink-0 text-[10px] tracking-[.18em] text-[#8a7f72]">
-          {enabledCount} / {locations.length} AVAILABLE
-        </span>
+        <div className="flex shrink-0 items-center gap-3 pr-12">
+          {onOpenPlayer && (
+            <button
+              type="button"
+              onClick={onOpenPlayer}
+              className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
+            >
+              CHARACTER
+            </button>
+          )}
+          <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
+            {enabledCount} / {locations.length} AVAILABLE
+          </span>
+        </div>
       </div>
 
       <div
@@ -215,16 +227,13 @@ export function WorldMapScreen({ onEnterLocation }: WorldMapScreenProps) {
             alt=""
             className="absolute inset-0 z-[1] h-full w-full object-fill"
             style={{
-              filter: 'brightness(.95) contrast(1.1) saturate(.94)',
+              filter: 'brightness(1.05) contrast(1.05) saturate(1)',
             }}
             draggable={false}
           />
 
           <div className="pointer-events-none absolute left-[-10%] top-[8%] z-[2] h-[22%] w-[46%] animate-[shadowDriftA_70s_ease-in-out_infinite_alternate] bg-[radial-gradient(ellipse,rgba(0,0,0,.28),transparent_70%)] blur-[14px]" />
           <div className="pointer-events-none absolute left-[20%] top-[38%] z-[2] h-[18%] w-[40%] animate-[shadowDriftA_95s_ease-in-out_infinite_alternate-reverse] bg-[radial-gradient(ellipse,rgba(0,0,0,.22),transparent_70%)] blur-[16px]" />
-
-          <div className="pointer-events-none absolute inset-0 z-[3] animate-[dayNight_100s_ease-in-out_infinite] mix-blend-multiply" />
-          <div className="pointer-events-none absolute inset-0 z-[4] animate-[starsFade_100s_ease-in-out_infinite] bg-[radial-gradient(1px_1px_at_12%_8%,#fff,transparent),radial-gradient(1px_1px_at_22%_15%,#fff,transparent),radial-gradient(1.5px_1.5px_at_35%_6%,#fff,transparent),radial-gradient(1px_1px_at_48%_12%,#fff,transparent),radial-gradient(1.5px_1.5px_at_62%_5%,#fff,transparent),radial-gradient(1px_1px_at_74%_10%,#fff,transparent),radial-gradient(1px_1px_at_85%_7%,#fff,transparent),radial-gradient(1.5px_1.5px_at_92%_14%,#fff,transparent)] opacity-0" />
 
           <WorldMapClouds parallax={parallax} />
 
