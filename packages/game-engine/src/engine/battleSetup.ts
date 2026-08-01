@@ -6,7 +6,7 @@ import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
-import { PLAYER_PORTRAIT, pickRandomEnemyPortrait } from '@dark-fantasy/content/portraits';
+import { PLAYER_PORTRAIT, DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
 
 const cardRegistry = new Map<string, CardDefinition>();
@@ -78,7 +78,7 @@ export function createInitialBattle(
     },
     enemy: {
       name: enemyOverride?.name ?? battleData.enemy.name,
-      portrait: enemyOverride?.portrait ?? pickRandomEnemyPortrait(),
+      portrait: enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT,
       shield: Math.min(battleData.enemy.startingShield, enemyMaxShield),
       maxShield: enemyMaxShield,
       deck: enemyDeck,

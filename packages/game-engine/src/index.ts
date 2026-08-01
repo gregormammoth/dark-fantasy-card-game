@@ -6,6 +6,9 @@ export {
   canMoveTo,
   getLocationStatus,
   isInteractionAvailable,
+  isLocationLocked,
+  isExitBlocked,
+  isFinalBranch,
 } from './engine/exploration/map';
 export { canPlayAction } from './engine/exploration/actions';
 export { battleMachine } from './machine/battleMachine';

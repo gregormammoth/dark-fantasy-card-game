@@ -17,7 +17,7 @@ import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
-import { pickRandomEnemyPortrait } from '@dark-fantasy/content/portraits';
+import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 
 const worldMap = worldMapData as WorldMapDefinition;
 
@@ -107,7 +107,7 @@ function GameShell() {
       progression,
       enemy: {
         name: enemy.name,
-        portrait: enemy.image ?? pickRandomEnemyPortrait(),
+        portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
       },
     });
     setScreen('battle');

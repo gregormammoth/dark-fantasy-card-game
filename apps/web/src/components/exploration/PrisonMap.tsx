@@ -4,6 +4,7 @@ import {
   getLocationStatus,
   isLocationVisible,
   listMapEdges,
+  isLocationLocked,
 } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
@@ -196,13 +197,14 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
 
         {allVisible.map((location) => {
           const status = getLocationStatus(context, location.id);
+          const locked = isLocationLocked(context, location.id);
           const [w, h] = roomSizeFor(location.type);
-          const color = markerColor(location, status);
+          const color = locked ? '#5a534a' : markerColor(location, status);
           const isCurrent = location.id === context.currentLocationId;
           const isSelected = location.id === context.selectedLocationId;
-          const isReachable = status === 'reachable';
+          const isReachable = status === 'reachable' && !locked;
           const isDistant = status === 'distant';
-          const showInfo = !isDistant;
+          const showInfo = !isDistant && !locked;
           const hasThreat = location.enemies.some((enemy) => !enemy.defeated);
 
           return (
@@ -223,13 +225,17 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                 width: w,
                 height: h,
                 border: `${location.secret ? '1px dashed' : '1.5px solid'} ${color}${status === 'visited' ? 'aa' : '55'}`,
-                opacity: isDistant ? 0.55 : 1,
-                filter: isDistant ? 'grayscale(1) brightness(.55) blur(.5px)' : 'none',
+                opacity: locked ? 0.45 : isDistant ? 0.55 : 1,
+                filter: locked
+                  ? 'grayscale(1) brightness(.4)'
+                  : isDistant
+                    ? 'grayscale(1) brightness(.55) blur(.5px)'
+                    : 'none',
                 boxShadow: isCurrent
                   ? '0 0 0 2px rgba(224,181,82,.6), 0 0 34px -2px rgba(224,181,82,.85)'
                   : isSelected
                     ? `0 0 0 1px ${color}`
-                    : status === 'visited'
+                    : status === 'visited' && !locked
                       ? `0 0 26px -6px ${color}99`
                       : 'none',
                 background: '#1a1512',
@@ -243,7 +249,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                   draggable={false}
                 />
               )}
-              {isDistant && (
+              {(isDistant || locked) && (
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(0,0,0,.5)_0_8px,rgba(0,0,0,.3)_8px_16px)]" />
               )}
               <div
@@ -258,15 +264,15 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                 <span
                   className="inline-block"
                   style={{
-                    width: location.type === 'boss' ? 22 : 16,
-                    height: location.type === 'boss' ? 22 : 16,
+                    width: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
+                    height: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
                     background: color,
                     clipPath: 'polygon(50% 0,100% 50%,50% 100%,0 50%)',
                     boxShadow: `0 0 14px -2px ${color}`,
                   }}
                 />
                 <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
-                  {showInfo ? location.name : '???'}
+                  {locked ? 'SEALED' : showInfo ? location.name : '???'}
                 </span>
                 {hasThreat && showInfo && (
                   <span className="text-[9px] tracking-[.14em] text-[#ff8f85] [text-shadow:0_1px_4px_#000]">
@@ -298,12 +304,13 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
 
       <div className="absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[10px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.82)] p-2.5">
         <span className="text-[8px] tracking-[.2em] text-[#8a7f72]">
-          REGION — RURAL COUNTRYSIDE BEYOND
+          HOLLOWFORT — FIRST FORTRESS
         </span>
         <div className="relative mt-1.5 h-[98px] w-full rounded-md border border-dashed border-[rgba(201,162,74,.2)]">
           {allVisible.map((location) => {
             const status = getLocationStatus(context, location.id);
-            const color = markerColor(location, status);
+            const locked = isLocationLocked(context, location.id);
+            const color = locked ? '#5a534a' : markerColor(location, status);
             return (
               <span
                 key={`mini-${location.id}`}
@@ -312,7 +319,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                   left: `${(location.position.x / 1400) * 100}%`,
                   top: `${(location.position.y / 900) * 100}%`,
                   background: color,
-                  opacity: status === 'distant' ? 0.55 : 1,
+                  opacity: locked || status === 'distant' ? 0.45 : 1,
                 }}
               />
             );

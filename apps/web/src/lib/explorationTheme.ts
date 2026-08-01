@@ -8,6 +8,7 @@ export const locationTypeColors: Record<LocationType, string> = {
   danger: '#d6443a',
   secret: '#9a7ae0',
   boss: '#e0524a',
+  gate: '#e0b552',
 };
 
 export const activityColors = {
@@ -21,7 +22,7 @@ export const activityColors = {
 };
 
 export function roomSizeFor(type: LocationType): [number, number] {
-  if (type === 'boss') {
+  if (type === 'boss' || type === 'gate') {
     return [210, 148];
   }
   if (type === 'secret') {

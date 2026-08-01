@@ -3,7 +3,7 @@ import type {
   ExplorationContext,
   LocationDefinition,
 } from '@dark-fantasy/shared/types/exploration';
-import { canMoveTo, getLocationStatus, isInteractionAvailable } from '@dark-fantasy/game-engine/engine/exploration/map';
+import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 
@@ -31,7 +31,9 @@ export function LocationDetailPanel({
   }
 
   const status = getLocationStatus(context, location.id);
-  const showInfo = status !== 'distant';
+  const locked = isLocationLocked(context, location.id);
+  const exitBlocked = isExitBlocked(context, location.id);
+  const showInfo = status !== 'distant' && !locked;
   const isHere = location.id === context.currentLocationId;
   const canTravel = canMoveTo(context, location.id) && !isHere;
   const hasCard = !!context.selectedCardInstanceId;
@@ -41,15 +43,17 @@ export function LocationDetailPanel({
     isInteractionAvailable(context, item.id),
   );
 
-  const chips = [
-    ...location.enemies.filter((e) => !e.defeated).map(() => ({ label: 'Combat', color: activityColors.combat })),
-    ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
-    ...location.npcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
-    ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
-    ...location.interactions
-      .filter((item) => item.action === 'REST' && !item.completed)
-      .map(() => ({ label: 'Rest', color: activityColors.rest })),
-  ];
+  const chips = locked
+    ? []
+    : [
+        ...location.enemies.filter((e) => !e.defeated).map(() => ({ label: 'Combat', color: activityColors.combat })),
+        ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
+        ...location.npcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
+        ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
+        ...location.interactions
+          .filter((item) => item.action === 'REST' && !item.completed)
+          .map(() => ({ label: 'Rest', color: activityColors.rest })),
+      ];
 
   return (
     <div className="absolute bottom-0 right-0 top-0 z-[15] flex w-[370px] animate-[slidein_.2s_ease-out] flex-col border-l border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,rgba(15,11,10,.97),rgba(9,7,6,.99))] shadow-[-30px_0_60px_-20px_rgba(0,0,0,.7)]">
@@ -66,22 +70,34 @@ export function LocationDetailPanel({
         <div className="absolute bottom-3.5 left-[22px]">
           <span
             className="text-[10px] tracking-[.24em] [text-shadow:0_1px_4px_#000]"
-            style={{ color: locationTypeColors[location.type] }}
+            style={{ color: locked ? '#5a534a' : locationTypeColors[location.type] }}
           >
-            {showInfo ? location.subtitle.toUpperCase() : 'UNKNOWN CHAMBER'}
+            {locked
+              ? 'BRANCH SEALED'
+              : showInfo
+                ? location.subtitle.toUpperCase()
+                : 'UNKNOWN CHAMBER'}
           </span>
           <div className="mt-1 font-cinzel text-[22px] leading-tight text-[#f3ead8] [text-shadow:0_2px_8px_#000]">
-            {showInfo ? location.name : '???'}
+            {locked ? 'SEALED' : showInfo ? location.name : '???'}
           </div>
         </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
         <p className="m-0 text-[13px] italic leading-relaxed text-[#c7bba9]">
-          {showInfo
-            ? location.description
-            : 'This part of the prison is still unexplored. Find a path through a nearby room first.'}
+          {locked
+            ? 'You committed to another path out of Hollowfort. This door will not open again.'
+            : showInfo
+              ? location.description
+              : 'This part of the prison is still unexplored. Find a path through a nearby room first.'}
         </p>
+
+        {exitBlocked && showInfo && (
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
+            Defeat the boss on your chosen path before the Exit Gate will open.
+          </p>
+        )}
 
         {showInfo && chips.length > 0 && (
           <div className="flex flex-col gap-2">
@@ -266,6 +282,11 @@ export function LocationDetailPanel({
           ✕
         </button>
       </div>
+      {location.id === 'exit_gate' && status === 'visited' && isHere && !exitBlocked && (
+        <div className="mx-[22px] mb-5 rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6]">
+          ESCAPE HOLLOWFORT →
+        </div>
+      )}
     </div>
   );
 }

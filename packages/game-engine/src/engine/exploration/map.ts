@@ -3,6 +3,36 @@ import type {
   LocationDefinition,
   LocationStatus,
 } from '@dark-fantasy/shared/types/exploration';
+import prisonMapData from '@dark-fantasy/content/prisonMap.json';
+
+const FINAL_BRANCH_IDS = new Set(
+  ((prisonMapData as { finalBranchIds?: string[] }).finalBranchIds ?? []) as string[],
+);
+const EXIT_LOCATION_ID =
+  ((prisonMapData as { exitLocationId?: string }).exitLocationId as string | undefined) ??
+  'exit_gate';
+
+export function isFinalBranch(locationId: string): boolean {
+  return FINAL_BRANCH_IDS.has(locationId);
+}
+
+export function isLocationLocked(
+  context: ExplorationContext,
+  locationId: string,
+): boolean {
+  return isFinalBranch(locationId) && !!context.finalBranchId && context.finalBranchId !== locationId;
+}
+
+export function isExitBlocked(context: ExplorationContext, locationId: string): boolean {
+  if (locationId !== EXIT_LOCATION_ID) {
+    return false;
+  }
+  if (!context.finalBranchId) {
+    return true;
+  }
+  const branch = context.locations[context.finalBranchId];
+  return !!branch?.enemies.some((enemy) => !enemy.defeated);
+}
 
 export function getLocation(
   context: ExplorationContext,
@@ -61,6 +91,12 @@ export function canMoveTo(context: ExplorationContext, locationId: string): bool
     return false;
   }
   if (target.secret && !target.discovered && !target.visited) {
+    return false;
+  }
+  if (isLocationLocked(context, locationId)) {
+    return false;
+  }
+  if (isExitBlocked(context, locationId)) {
     return false;
   }
   return true;
@@ -141,6 +177,9 @@ export function applyMove(
   context.currentLocationId = locationId;
   context.selectedLocationId = locationId;
   visitLocation(context, locationId);
+  if (isFinalBranch(locationId) && !context.finalBranchId) {
+    context.finalBranchId = locationId;
+  }
   return context;
 }
 

@@ -2,6 +2,8 @@
   "id": "hollowfort_prison",
   "name": "Hollowfort Prison",
   "startLocationId": "prison_cell",
+  "finalBranchIds": ["chapel", "warden_tower", "political_wing"],
+  "exitLocationId": "exit_gate",
   "locations": [
     {
       "id": "prison_cell",
@@ -9,21 +11,16 @@
       "subtitle": "Starting Cell",
       "description": "Iron bars bent outward, straw scattered across the floor. A man in shackles kneels over a dead guard, and looks up at you like he already knows your name.",
       "type": "start",
-      "position": {
-        "x": 110,
-        "y": 190
-      },
-      "connectedLocations": [
-        "cell_block"
-      ],
+      "position": { "x": 110, "y": 450 },
+      "connectedLocations": ["cell_block"],
       "enemies": [
         {
           "id": "tutorial_undead_prisoner",
           "name": "Undead Prisoner",
           "tier": "Common · Tutorial",
           "description": "A shambling inmate, newly risen and still learning how its limbs work. A fair first test of your deck.",
-          "defeated": false,
-          "image": "/enemies/undead_prisoner.png"
+          "image": "/enemies/undead_prisoner.png",
+          "defeated": false
         }
       ],
       "npcs": [
@@ -31,14 +28,14 @@
           "id": "dead_anarchist",
           "name": "The Dead Anarchist",
           "tag": "Resurrected Prisoner",
-          "description": "A resurrected political prisoner who searches for comrades and offers help against the guards.",
+          "description": "A resurrected political prisoner who points you toward the courtyard ahead.",
           "lines": [
             "You're not the one I came for. But the door's open regardless.",
             "They buried me for a revolution I never finished. Seems I'm needed again.",
-            "There were other political prisoners in this block. If any still draw breath, we go together."
+            "Whatever's holding this fortress together, it runs through the courtyard ahead. Find it."
           ],
-          "talked": false,
-          "image": "/portraits/npcs/dead_anarchist.png"
+          "image": "/portraits/npcs/dead_anarchist.png",
+          "talked": false
         }
       ],
       "loot": [
@@ -90,22 +87,16 @@
       "subtitle": "Cell Block",
       "description": "Row after row of empty cells. Someone has scratched tally marks into every door on the political prisoners' side — years of them.",
       "type": "npc",
-      "position": {
-        "x": 300,
-        "y": 190
-      },
-      "connectedLocations": [
-        "prison_cell",
-        "central_corridor"
-      ],
+      "position": { "x": 300, "y": 450 },
+      "connectedLocations": ["prison_cell", "central_corridor"],
       "enemies": [
         {
           "id": "undead_prisoner_pack",
           "name": "Undead Prisoner",
           "tier": "Common · Pack",
           "description": "Three more of them, drawn by the noise, shuffling out of the dark cells.",
-          "defeated": false,
-          "image": "/enemies/undead_prisoner.png"
+          "image": "/enemies/undead_prisoner.png",
+          "defeated": false
         }
       ],
       "npcs": [
@@ -113,14 +104,14 @@
           "id": "old_prisoner",
           "name": "The Old Prisoner",
           "tag": "Long-Term Inmate",
-          "description": "A living veteran of Hollowfort who remembers the executions and the sorcerer's walk.",
+          "description": "A living veteran who warns that only one final door will open.",
           "lines": [
             "Before the ritual, this row held debtors and thieves. Small men, for small crimes.",
-            "The sorcerer walked this block twice. Once to look. Once to open something.",
-            "He's still in the corridor ahead, I'd wager. Watching what he made."
+            "There's a courtyard ahead where three paths meet — chapel, tower, and the political wing.",
+            "Choose carefully down there. I've heard only one door opens once you've picked."
           ],
-          "talked": false,
-          "image": "/portraits/npcs/old_prisoner.png"
+          "image": "/portraits/npcs/old_prisoner.png",
+          "talked": false
         }
       ],
       "loot": [],
@@ -148,13 +139,7 @@
         {
           "id": "explore_cell_block",
           "action": "EXPLORE",
-          "label": "Search the political wing",
-          "once": true
-        },
-        {
-          "id": "search_cell_block",
-          "action": "SEARCH",
-          "label": "Rummage the open cells",
+          "label": "Search the political wing marks",
           "once": true
         }
       ],
@@ -164,45 +149,33 @@
     },
     {
       "id": "central_corridor",
-      "name": "Central Prison Corridor",
+      "name": "Central Corridor",
       "subtitle": "Central Corridor",
       "description": "The fortress's main artery. Torches gutter over churned blood, and every door in Hollowfort seems to open off this one hall.",
       "type": "hub",
-      "position": {
-        "x": 520,
-        "y": 330
-      },
+      "position": { "x": 520, "y": 450 },
       "connectedLocations": [
         "cell_block",
-        "torture_chamber",
         "kitchen",
+        "infirmary",
+        "torture_chamber",
         "guard_barracks",
-        "prison_yard",
-        "administrative_tower"
+        "central_courtyard"
       ],
-      "enemies": [
-        {
-          "id": "resurrected_anarchist",
-          "name": "Resurrected Anarchist",
-          "tier": "Elite · Faction clash",
-          "description": "A revolutionary risen with his cause intact and his patience gone. Guards and prisoners alike are fighting here.",
-          "defeated": false,
-          "image": "/enemies/resurrected_anarchist.png"
-        }
-      ],
+      "enemies": [],
       "npcs": [
         {
           "id": "sorcerer",
           "name": "The Sorcerer",
           "tag": "Ritual Mage",
-          "description": "Cryptic ritual mage who hints that something beneath the fortress is waking.",
+          "description": "Cryptic ritual mage who points you toward the branching courtyard.",
           "lines": [
             "Interesting. The dead usually stay reasonable.",
             "This was never about the prisoners. The wards beneath this fortress were failing long before I arrived.",
-            "Finish what's below, or don't. Either way, something wakes."
+            "Kitchen, infirmary, torture chamber, barracks — pick through them, or push on to the courtyard. Either way, something wakes."
           ],
-          "talked": false,
-          "image": "/portraits/npcs/sorcerer.png"
+          "image": "/portraits/npcs/sorcerer.png",
+          "talked": false
         }
       ],
       "loot": [],
@@ -220,14 +193,6 @@
           "once": true
         },
         {
-          "id": "attack_anarchist",
-          "action": "ATTACK",
-          "label": "Fight the Resurrected Anarchist",
-          "requiresEnemy": true,
-          "targetId": "resurrected_anarchist",
-          "once": true
-        },
-        {
           "id": "explore_corridor",
           "action": "EXPLORE",
           "label": "Scout the branching halls",
@@ -239,98 +204,21 @@
       "image": "/locations/central_corridor.png"
     },
     {
-      "id": "torture_chamber",
-      "name": "Torture Chamber",
-      "subtitle": "Torture Chamber",
-      "description": "Chains creak with no one pulling them. The equipment here was built to make people talk — or stop them from ever talking again.",
-      "type": "npc",
-      "position": {
-        "x": 740,
-        "y": 170
-      },
-      "connectedLocations": [
-        "central_corridor"
-      ],
-      "enemies": [],
-      "npcs": [
-        {
-          "id": "executioner",
-          "name": "The Executioner",
-          "tag": "Broken Man",
-          "description": "He executed his own fiancée under orders and now offers a key to a hidden passage.",
-          "lines": [
-            "I hanged my own bride on the Warden's order. Called it duty, once.",
-            "There's a passage behind the rack. I used it to avoid my own reflection.",
-            "Take the key. I have no more use for doors."
-          ],
-          "talked": false,
-          "image": "/portraits/npcs/executioner.png"
-        }
-      ],
-      "loot": [
-        {
-          "id": "executioners_key",
-          "name": "Executioner's Key",
-          "description": "Unlocks a hidden passage",
-          "claimed": false
-        }
-      ],
-      "interactions": [
-        {
-          "id": "talk_executioner",
-          "action": "TALK",
-          "label": "Talk to the Executioner",
-          "requiresNpc": true,
-          "targetId": "executioner",
-          "once": true
-        },
-        {
-          "id": "open_tunnel_hatch",
-          "action": "OPEN",
-          "label": "Open the tunnel hatch",
-          "once": true,
-          "unlocksLocationId": "underground_tunnels"
-        },
-        {
-          "id": "search_torture",
-          "action": "SEARCH",
-          "label": "Search the chamber",
-          "requiresLoot": true,
-          "once": true
-        },
-        {
-          "id": "explore_torture",
-          "action": "EXPLORE",
-          "label": "Study the execution block",
-          "once": true
-        }
-      ],
-      "visited": false,
-      "discovered": false,
-      "image": "/locations/torture_chamber.png"
-    },
-    {
       "id": "kitchen",
       "name": "Prison Kitchen",
       "subtitle": "Prison Kitchen",
       "description": "Cold ovens, spilled grain, a knife block missing every blade. Something is moving slowly behind the pantry door.",
       "type": "npc",
-      "position": {
-        "x": 740,
-        "y": 400
-      },
-      "connectedLocations": [
-        "central_corridor",
-        "dining_hall"
-      ],
+      "position": { "x": 520, "y": 210 },
+      "connectedLocations": ["central_corridor"],
       "enemies": [
         {
           "id": "bound_corpse",
           "name": "Bound Corpse",
           "tier": "Common · Chained",
           "description": "A dead prisoner still wearing kitchen chains, dragging a cleaver in one fist.",
-          "defeated": false,
-          "image": "/enemies/bound_corpse.png"
+          "image": "/enemies/bound_corpse.png",
+          "defeated": false
         }
       ],
       "npcs": [
@@ -338,13 +226,13 @@
           "id": "wounded_prisoner",
           "name": "The Wounded Prisoner",
           "tag": "Trapped Survivor",
-          "description": "A trapped survivor who begs for rescue and knows faction routes.",
+          "description": "A trapped survivor who knows the three doors ahead.",
           "lines": [
             "Please — don't leave me with them. The pantry, they're still moving in there.",
-            "Get me to the yard and I'll tell you everything I know about the factions."
+            "Get me somewhere safe and I'll tell you everything I know about the three doors ahead."
           ],
-          "talked": false,
-          "image": "/portraits/npcs/wounded_prisoner.png"
+          "image": "/portraits/npcs/wounded_prisoner.png",
+          "talked": false
         }
       ],
       "loot": [],
@@ -386,34 +274,29 @@
       "image": "/locations/kitchen.png"
     },
     {
-      "id": "dining_hall",
-      "name": "Dining Hall",
-      "subtitle": "Dining Hall",
-      "description": "Overturned tables form a barricade that didn't hold. Bodies hang from the rafters where the gallows crew strung them up — and not all of them are still.",
+      "id": "infirmary",
+      "name": "Infirmary",
+      "subtitle": "Infirmary",
+      "description": "Rows of empty cots, bandages black with old blood. Whatever died here last did not stay down.",
       "type": "danger",
-      "position": {
-        "x": 900,
-        "y": 400
-      },
-      "connectedLocations": [
-        "kitchen"
-      ],
+      "position": { "x": 520, "y": 690 },
+      "connectedLocations": ["central_corridor"],
       "enemies": [
         {
           "id": "hanging_corpse",
           "name": "Hanging Corpse",
           "tier": "Pack · Ambush",
-          "description": "Executed prisoners returned from the gallows, dropping from the rafters the moment you step inside.",
-          "defeated": false,
-          "image": "/enemies/hanging_corpse.png"
+          "description": "Patients returned from the dead, dropping from where they were strung up the moment you step inside.",
+          "image": "/enemies/hanging_corpse.png",
+          "defeated": false
         }
       ],
       "npcs": [],
       "loot": [
         {
-          "id": "gallows_rope",
-          "name": "Gallows Rope",
-          "description": "Bind target 1 turn",
+          "id": "field_dressing",
+          "name": "Field Dressing",
+          "description": "Heal 3 before a fight",
           "claimed": false
         }
       ],
@@ -427,27 +310,81 @@
           "once": true
         },
         {
-          "id": "search_dining",
+          "id": "search_infirmary",
           "action": "SEARCH",
-          "label": "Salvage the gallows rope",
+          "label": "Salvage the dressings",
           "requiresLoot": true,
           "once": true
         },
         {
-          "id": "explore_dining",
+          "id": "explore_infirmary",
           "action": "EXPLORE",
-          "label": "Scan the hall for survivors",
+          "label": "Scan the empty cots",
           "once": true
-        },
-        {
-          "id": "rest_dining",
-          "action": "REST",
-          "label": "Catch your breath under a table"
         }
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/dining_hall.png"
+      "image": "/locations/infirmary.png"
+    },
+    {
+      "id": "torture_chamber",
+      "name": "Torture Chamber",
+      "subtitle": "Torture Chamber",
+      "description": "Chains creak with no one pulling them. The equipment here was built to make people talk — or stop them from ever talking again.",
+      "type": "npc",
+      "position": { "x": 740, "y": 170 },
+      "connectedLocations": ["central_corridor"],
+      "enemies": [],
+      "npcs": [
+        {
+          "id": "executioner",
+          "name": "The Executioner",
+          "tag": "Broken Man",
+          "description": "He offers a key and a warning about the three doors past the courtyard.",
+          "lines": [
+            "I hanged my own bride on the Warden's order. Called it duty, once.",
+            "Three doors past the courtyard: a chapel, a tower, a wing for the politicals. Pick your poison.",
+            "Take the key. I have no more use for doors."
+          ],
+          "image": "/portraits/npcs/executioner.png",
+          "talked": false
+        }
+      ],
+      "loot": [
+        {
+          "id": "executioners_key",
+          "name": "Executioner's Key",
+          "description": "Unlocks a hidden passage",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "talk_executioner",
+          "action": "TALK",
+          "label": "Talk to the Executioner",
+          "requiresNpc": true,
+          "targetId": "executioner",
+          "once": true
+        },
+        {
+          "id": "search_torture",
+          "action": "SEARCH",
+          "label": "Search the chamber",
+          "requiresLoot": true,
+          "once": true
+        },
+        {
+          "id": "explore_torture",
+          "action": "EXPLORE",
+          "label": "Study the execution block",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/torture_chamber.png"
     },
     {
       "id": "guard_barracks",
@@ -455,22 +392,16 @@
       "subtitle": "Guard Barracks",
       "description": "Bunks overturned, foot-lockers pried open. One guard is still breathing, back against the wall, sword shaking in his hand.",
       "type": "npc",
-      "position": {
-        "x": 520,
-        "y": 520
-      },
-      "connectedLocations": [
-        "central_corridor",
-        "armory"
-      ],
+      "position": { "x": 740, "y": 730 },
+      "connectedLocations": ["central_corridor"],
       "enemies": [
         {
           "id": "undead_guard",
           "name": "Undead Guard",
           "tier": "Common · Armored",
           "description": "A revived guard in full kit, shield raised out of muscle memory alone.",
-          "defeated": false,
-          "image": "/enemies/undead_guard.png"
+          "image": "/enemies/undead_guard.png",
+          "defeated": false
         }
       ],
       "npcs": [
@@ -478,14 +409,14 @@
           "id": "prison_guard",
           "name": "The Prison Guard",
           "tag": "Surviving Guard",
-          "description": "A living survivor of the old watch who offers protection for loyalty to Order.",
+          "description": "A living survivor who warns the courtyard will force a single choice.",
           "lines": [
             "Help me hold this room and I'll put in a word for your pardon.",
-            "The Warden's still giving orders from the tower. Or something wearing him is.",
-            "Watch yourself in the armory. Not all of us turned quietly."
+            "The courtyard captain won't let you through all three doors. Pick one and the others seal.",
+            "Watch yourself down there. Not all of us turned quietly."
           ],
-          "talked": false,
-          "image": "/portraits/npcs/prison_guard.png"
+          "image": "/portraits/npcs/prison_guard.png",
+          "talked": false
         }
       ],
       "loot": [
@@ -532,37 +463,34 @@
       "image": "/locations/guard_barracks.png"
     },
     {
-      "id": "armory",
-      "name": "Armory",
-      "subtitle": "Armory",
-      "description": "Weapon racks toppled across the floor. Someone armed themselves in a hurry here, and gave the orders that followed.",
-      "type": "danger",
-      "position": {
-        "x": 700,
-        "y": 520
-      },
+      "id": "central_courtyard",
+      "name": "Central Courtyard",
+      "subtitle": "Branching Courtyard",
+      "description": "Open sky at last, choked with smoke. Three doors face you across the stone — a chapel, a tower, and the political wing. Once you commit, the other two will seal.",
+      "type": "hub",
+      "position": { "x": 920, "y": 450 },
       "connectedLocations": [
-        "guard_barracks"
+        "central_corridor",
+        "chapel",
+        "warden_tower",
+        "political_wing"
       ],
       "enemies": [
         {
           "id": "guard_captain",
           "name": "Guard Captain",
           "tier": "Elite · Commander",
-          "description": "Still barking commands at soldiers who stopped listening days ago.",
-          "defeated": false,
-          "image": "/enemies/guard_captain.png"
+          "description": "Still barking orders at soldiers who stopped listening days ago, holding the courtyard by will alone.",
+          "image": "/enemies/guard_captain.png",
+          "defeated": false
         }
       ],
       "npcs": [],
-      "loot": [
-        {
-          "id": "watchmans_blade",
-          "name": "Watchman's Blade",
-          "description": "+2 damage",
-          "claimed": false
-        }
-      ],
+      "loot": [],
+      "quest": {
+        "name": "The Final Door",
+        "description": "Choose a path out of Hollowfort — chapel, tower, or political wing. The other two will be lost to you."
+      },
       "interactions": [
         {
           "id": "attack_guard_captain",
@@ -573,131 +501,115 @@
           "once": true
         },
         {
-          "id": "open_weapon_chest",
-          "action": "OPEN",
-          "label": "Open the weapon chest",
-          "requiresLoot": true,
-          "once": true,
-          "locked": true
-        },
-        {
-          "id": "search_armory",
-          "action": "SEARCH",
-          "label": "Search the racks",
-          "once": true
-        },
-        {
-          "id": "explore_armory",
+          "id": "explore_courtyard",
           "action": "EXPLORE",
-          "label": "Survey the armory",
+          "label": "Study the three doors",
           "once": true
         }
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/armory.png"
+      "image": "/locations/central_courtyard.png"
     },
     {
-      "id": "prison_yard",
-      "name": "Prison Yard",
-      "subtitle": "Prison Yard",
-      "description": "Open sky at last, choked with smoke. An execution platform stands empty at the center — for now.",
-      "type": "danger",
-      "position": {
-        "x": 900,
-        "y": 560
-      },
-      "connectedLocations": [
-        "central_corridor",
-        "exit_gate"
-      ],
+      "id": "chapel",
+      "name": "Chapel",
+      "subtitle": "Final Branch · Chapel",
+      "description": "Candlelight over a desecrated altar. The Inquisitor kneels before it, and rises the instant he hears you.",
+      "type": "boss",
+      "position": { "x": 1160, "y": 220 },
+      "connectedLocations": ["central_courtyard", "exit_gate"],
       "enemies": [
         {
-          "id": "the_torturer",
-          "name": "The Torturer",
-          "tier": "Elite · Corrupted",
-          "description": "A former interrogator, alive and far worse for it, dragging his tools out into daylight.",
-          "defeated": false,
-          "image": "/enemies/bound_corpse.png"
+          "id": "inquisitor_boss",
+          "name": "The Inquisitor",
+          "tier": "BOSS",
+          "description": "A former interrogator, alive and far worse for it, guarding the chapel's door out.",
+          "image": "/enemies/inquisitor.png",
+          "defeated": false
         }
       ],
-      "npcs": [],
-      "loot": [],
-      "quest": {
-        "name": "Signal Fire",
-        "description": "Light the beacon and see if anyone outside these walls is still coming."
-      },
-      "interactions": [
-        {
-          "id": "attack_torturer",
-          "action": "ATTACK",
-          "label": "Fight the Torturer",
-          "requiresEnemy": true,
-          "targetId": "the_torturer",
-          "once": true
-        },
-        {
-          "id": "rest_yard",
-          "action": "REST",
-          "label": "Catch your breath"
-        },
-        {
-          "id": "explore_yard",
-          "action": "EXPLORE",
-          "label": "Scan the execution platform",
-          "once": true
-        }
-      ],
-      "visited": false,
-      "discovered": false,
-      "image": "/locations/prison_yard.png"
-    },
-    {
-      "id": "administrative_tower",
-      "name": "Administrative Tower",
-      "subtitle": "Administrative Tower",
-      "description": "Papers scattered everywhere, a chair overturned. The Warden's journal sits open on the desk, mid-sentence.",
-      "type": "npc",
-      "position": {
-        "x": 1080,
-        "y": 380
-      },
-      "connectedLocations": [
-        "central_corridor",
-        "underground_tunnels",
-        "exit_gate"
-      ],
-      "enemies": [],
       "npcs": [],
       "loot": [
         {
-          "id": "master_key",
-          "name": "Master Key",
-          "description": "Unlocks the Main Gate",
+          "id": "inquisitors_censer",
+          "name": "Inquisitor's Censer",
+          "description": "Purge all debuffs",
           "claimed": false
         }
       ],
-      "quest": {
-        "name": "The Warden's Journal",
-        "description": "Learn what he did last night, and what answered him."
-      },
       "interactions": [
         {
-          "id": "search_journal",
-          "action": "SEARCH",
-          "label": "Read the Warden's journal",
+          "id": "attack_inquisitor",
+          "action": "ATTACK",
+          "label": "Confront the Inquisitor",
+          "requiresEnemy": true,
+          "targetId": "inquisitor_boss",
           "once": true
         },
         {
-          "id": "open_desk",
-          "action": "OPEN",
-          "label": "Force the desk drawer",
+          "id": "search_chapel",
+          "action": "SEARCH",
+          "label": "Search the altar",
           "requiresLoot": true,
-          "once": true,
-          "locked": true
+          "once": true
         },
         {
-          "id": "explore_office",
+          "id": "explore_chapel",
+          "action": "EXPLORE",
+          "label": "Study the desecrated altar",
+          "once": true
+        }
+      ],
+      "visited": false,
+      "discovered": false,
+      "image": "/locations/chapel.png"
+    },
+    {
+      "id": "warden_tower",
+      "name": "Warden's Tower",
+      "subtitle": "Final Branch · Tower",
+      "description": "Papers scattered everywhere, a chair overturned. The Warden's journal sits open mid-sentence — and the Warden himself is very much returned from the dead.",
+      "type": "boss",
+      "position": { "x": 1160, "y": 450 },
+      "connectedLocations": ["central_courtyard", "exit_gate"],
+      "enemies": [
+        {
+          "id": "prison_warden_boss",
+          "name": "The Prison Warden",
+          "tier": "BOSS",
+          "description": "Symbol of the old order, risen to keep it intact by any means left to him.",
+          "image": "/enemies/prison_warden.png",
+          "defeated": false
+        }
+      ],
+      "npcs": [],
+      "loot": [
+        {
+          "id": "wardens_master_key",
+          "name": "Warden's Master Key",
+          "description": "Unlocks the Exit Gate",
+          "claimed": false
+        }
+      ],
+      "interactions": [
+        {
+          "id": "attack_warden",
+          "action": "ATTACK",
+          "label": "Confront the Prison Warden",
+          "requiresEnemy": true,
+          "targetId": "prison_warden_boss",
+          "once": true
+        },
+        {
+          "id": "search_tower",
+          "action": "SEARCH",
+          "label": "Read the Warden's journal",
+          "requiresLoot": true,
+          "once": true
+        },
+        {
+          "id": "explore_tower",
           "action": "EXPLORE",
           "label": "Study the prison records",
           "once": true
@@ -705,92 +617,71 @@
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/administrative_tower.png"
+      "image": "/locations/warden_tower.png"
     },
     {
-      "id": "underground_tunnels",
-      "name": "Underground Tunnels",
-      "subtitle": "Underground Tunnels",
-      "description": "Old foundations beneath the fortress, lit by torches that shouldn't still be burning. Chanting carries from somewhere further down.",
-      "type": "secret",
-      "position": {
-        "x": 1080,
-        "y": 620
-      },
-      "connectedLocations": [
-        "administrative_tower"
-      ],
-      "secret": true,
+      "id": "political_wing",
+      "name": "Political Wing",
+      "subtitle": "Final Branch · Political Wing",
+      "description": "The cells where the crown kept its heretics. The Anarchist you met at the start is here too — or something wearing what's left of him.",
+      "type": "boss",
+      "position": { "x": 1160, "y": 690 },
+      "connectedLocations": ["central_courtyard", "exit_gate"],
       "enemies": [
         {
-          "id": "ritual_cultist",
-          "name": "Ritual Cultist",
-          "tier": "Pack · Cultist",
-          "description": "Followers still finishing the Sorcerer's work, undisturbed by the chaos above.",
-          "defeated": false,
-          "image": "/enemies/ritual_cultist.png"
+          "id": "corrupted_anarchist",
+          "name": "The Corrupted Anarchist",
+          "tier": "BOSS",
+          "description": "The revolution he never finished, twisted into something that answers to the ritual instead of his cause.",
+          "image": "/enemies/resurrected_anarchist.png",
+          "defeated": false
         }
       ],
       "npcs": [],
       "loot": [
         {
-          "id": "cultist_talisman",
-          "name": "Cultist Talisman",
-          "description": "+1 card draw",
+          "id": "anarchists_oath",
+          "name": "Anarchist's Oath",
+          "description": "+2 damage vs. armored",
           "claimed": false
         }
       ],
       "interactions": [
         {
-          "id": "attack_cultist",
+          "id": "attack_corrupted_anarchist",
           "action": "ATTACK",
-          "label": "Fight the Ritual Cultist",
+          "label": "Confront the Corrupted Anarchist",
           "requiresEnemy": true,
-          "targetId": "ritual_cultist",
+          "targetId": "corrupted_anarchist",
           "once": true
         },
         {
-          "id": "search_tunnels",
+          "id": "search_political",
           "action": "SEARCH",
-          "label": "Feel along the foundation walls",
+          "label": "Search the heretic cells",
           "requiresLoot": true,
           "once": true
         },
         {
-          "id": "explore_tunnels",
+          "id": "explore_political",
           "action": "EXPLORE",
-          "label": "Follow the ritual chalk",
+          "label": "Read the scratched walls",
           "once": true
         }
       ],
       "visited": false,
       "discovered": false,
-      "image": "/locations/underground_tunnels.png"
+      "image": "/locations/political_wing.png"
     },
     {
       "id": "exit_gate",
-      "name": "Main Gate",
-      "subtitle": "Boss Arena",
-      "description": "The portcullis is sealed — and the Prison Warden himself is waiting on the other side, very much returned from the dead.",
-      "type": "boss",
-      "position": {
-        "x": 1290,
-        "y": 490
-      },
-      "connectedLocations": [
-        "prison_yard",
-        "administrative_tower"
-      ],
-      "enemies": [
-        {
-          "id": "prison_warden_boss",
-          "name": "The Prison Warden",
-          "tier": "BOSS",
-          "description": "Symbol of the old order, risen to keep it intact by any means left to him.",
-          "defeated": false,
-          "image": "/enemies/prison_warden.png"
-        }
-      ],
+      "name": "Exit Gate",
+      "subtitle": "Escape",
+      "description": "Sunlight through the portcullis. Whichever door you took, this is where every path out of Hollowfort ends.",
+      "type": "gate",
+      "position": { "x": 1400, "y": 450 },
+      "connectedLocations": ["chapel", "warden_tower", "political_wing"],
+      "enemies": [],
       "npcs": [],
       "loot": [
         {
@@ -802,23 +693,14 @@
       ],
       "interactions": [
         {
-          "id": "open_gate",
+          "id": "open_exit",
           "action": "OPEN",
-          "label": "Open the Main Gate",
+          "label": "Open the Exit Gate",
           "once": true,
-          "locked": true,
-          "requiresFlag": "master_key"
+          "requiresLoot": true
         },
         {
-          "id": "attack_warden_boss",
-          "action": "ATTACK",
-          "label": "Confront the Prison Warden",
-          "requiresEnemy": true,
-          "targetId": "prison_warden_boss",
-          "once": true
-        },
-        {
-          "id": "explore_gate",
+          "id": "explore_exit",
           "action": "EXPLORE",
           "label": "Study the portcullis",
           "once": true

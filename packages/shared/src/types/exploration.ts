@@ -7,7 +7,8 @@ export type LocationType =
   | 'npc'
   | 'danger'
   | 'secret'
-  | 'boss';
+  | 'boss'
+  | 'gate';
 
 export type ExplorationActionType =
   | 'MOVE'
@@ -131,6 +132,7 @@ export interface ExplorationContext {
   pendingEncounter: PendingEncounter | null;
   locationEncounterQueue: LocationEncounterItem[];
   dialogLineIndex: number;
+  finalBranchId: string | null;
   lastActionMessage: string | null;
   log: ExplorationLogEntry[];
 }
