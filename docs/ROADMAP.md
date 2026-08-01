@@ -163,14 +163,15 @@ Update this table as milestones land.
 
 ### Player journey checklist
 
-- [ ] Start a new run from `/play`
+- [x] Start a new run from `/play` (session; no save yet)
 - [ ] Wake / begin in Prison Cell
-- [ ] Explore the prison on a shared run
-- [ ] Trigger an encounter from exploration
-- [ ] Enter battle with the same run state
-- [ ] Earn class XP from successful card plays
+- [x] Enter prison exploration from the world map
+- [x] Trigger battle from exploration (manual Battle button for now)
+- [x] Enter battle carrying app-level progression
+- [x] Earn class XP from successful card plays
 - [ ] Improve deck (unlock / rebuild) mid-run
-- [ ] Return to exploration with progression intact
+- [x] Return to exploration after battle (`TO PRISON`) with XP intact
+- [x] Open Player and see updated class XP
 - [ ] Fight again with a meaningfully different deck
 - [ ] Defeat the prison boss
 - [ ] Escape Hollowfort

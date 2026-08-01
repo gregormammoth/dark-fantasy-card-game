@@ -78,4 +78,5 @@ export type BattleEvent =
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
   | { type: 'END_TURN' }
   | { type: 'ANIMATION_COMPLETE' }
-  | { type: 'RESTART'; progression?: PlayerProgression };
+  | { type: 'RESTART'; progression?: PlayerProgression }
+  | { type: 'LEAVE_BATTLE' };

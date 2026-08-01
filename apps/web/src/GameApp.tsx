@@ -29,6 +29,7 @@ function musicForScreen(screen: AppScreen): MusicScreen {
 
 function GameShell() {
   const [screen, setScreen] = useState<AppScreen>('world');
+  const [playerReturnScreen, setPlayerReturnScreen] = useState<AppScreen>('world');
   const [progression, setProgression] = useState<PlayerProgression>(createInitialProgression);
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
@@ -38,10 +39,18 @@ function GameShell() {
     setProgression(next);
   }, []);
 
-  function startBattleIfIdle() {
-    if (battleActor.getSnapshot().matches('idle')) {
-      battleActor.send({ type: 'START_BATTLE', progression });
+  function leaveBattle() {
+    if (!battleActor.getSnapshot().matches('idle')) {
+      battleActor.send({ type: 'LEAVE_BATTLE' });
     }
+  }
+
+  function returnToExploration() {
+    if (explorationActor.getSnapshot().matches('idle')) {
+      explorationActor.send({ type: 'START_EXPLORATION' });
+    }
+    setScreen('exploration');
+    leaveBattle();
   }
 
   function enterLocation(locationId: string) {
@@ -50,20 +59,23 @@ function GameShell() {
       return;
     }
     if (location.targetScreen === 'exploration' || locationId === 'prison') {
-      setScreen('exploration');
-      if (explorationActor.getSnapshot().matches('idle')) {
-        explorationActor.send({ type: 'START_EXPLORATION' });
-      }
+      returnToExploration();
       return;
     }
     if (location.targetScreen === 'battle') {
-      setScreen('battle');
-      startBattleIfIdle();
+      startBattle();
     }
   }
 
   function openPlayer() {
+    setPlayerReturnScreen(screen === 'player' ? 'world' : screen);
     setScreen('player');
+  }
+
+  function startBattle() {
+    leaveBattle();
+    battleActor.send({ type: 'START_BATTLE', progression });
+    setScreen('battle');
   }
 
   let content = (
@@ -76,14 +88,17 @@ function GameShell() {
         <div className="fixed left-4 top-4 z-[60] flex gap-2">
           <button
             type="button"
-            onClick={() => setScreen('exploration')}
+            onClick={returnToExploration}
             className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 text-[11px] tracking-wider text-[#e0b552]"
           >
             ← PRISON MAP
           </button>
           <button
             type="button"
-            onClick={() => setScreen('world')}
+            onClick={() => {
+              leaveBattle();
+              setScreen('world');
+            }}
             className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
           >
             THE REALM
@@ -93,6 +108,7 @@ function GameShell() {
           actor={battleActor}
           progression={progression}
           onProgressionChange={handleProgressionChange}
+          onReturnToExploration={returnToExploration}
         />
       </div>
     );
@@ -100,10 +116,7 @@ function GameShell() {
     content = (
       <ExplorationScreen
         actor={explorationActor}
-        onOpenBattle={() => {
-          setScreen('battle');
-          startBattleIfIdle();
-        }}
+        onOpenBattle={startBattle}
         onOpenPlayer={openPlayer}
         onBackToWorld={() => setScreen('world')}
       />
@@ -112,7 +125,8 @@ function GameShell() {
     content = (
       <PlayerScreen
         progression={progression}
-        onBackToWorld={() => setScreen('world')}
+        onBack={() => setScreen(playerReturnScreen)}
+        backLabel={playerReturnScreen === 'exploration' ? '← Prison Map' : '← World Map'}
       />
     );
   }

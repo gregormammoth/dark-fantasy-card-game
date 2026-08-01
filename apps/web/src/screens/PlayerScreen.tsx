@@ -21,7 +21,8 @@ type CardStatus = 'unlocked' | 'available' | 'locked' | 'locked-xp';
 
 interface PlayerScreenProps {
   progression: PlayerProgression;
-  onBackToWorld: () => void;
+  onBack: () => void;
+  backLabel?: string;
 }
 
 function classLabel(classId: CardClass): string {
@@ -50,7 +51,11 @@ function cardStatus(
   return 'locked-xp';
 }
 
-export function PlayerScreen({ progression, onBackToWorld }: PlayerScreenProps) {
+export function PlayerScreen({
+  progression,
+  onBack,
+  backLabel = '← World Map',
+}: PlayerScreenProps) {
   const allCards = useMemo(() => getPlayerCardDefinitions(), []);
   const [selectedClassId, setSelectedClassId] = useState<CardClass>('fighter');
   const [unlockedOverride, setUnlockedOverride] = useState<Record<string, boolean>>({});
@@ -191,10 +196,10 @@ export function PlayerScreen({ progression, onBackToWorld }: PlayerScreenProps) 
         <div className="flex items-center justify-between pr-12">
           <button
             type="button"
-            onClick={onBackToWorld}
+            onClick={onBack}
             className="text-[12px] text-[#8a7f72] transition hover:text-[#e0b552]"
           >
-            ← World Map
+            {backLabel}
           </button>
           <span className="font-cinzel text-[16px] tracking-[.3em] text-[#b8917f]">CHARACTER</span>
           <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">DECK DEFINES CLASS</span>

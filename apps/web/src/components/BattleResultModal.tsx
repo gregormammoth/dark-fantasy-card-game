@@ -29,6 +29,7 @@ interface BattleResultModalProps {
   xpGained: Record<CardClass, number>;
   totalXpGained: number;
   onFightAgain: () => void;
+  onReturnToExploration: () => void;
 }
 
 export function BattleResultModal({
@@ -39,6 +40,7 @@ export function BattleResultModal({
   xpGained,
   totalXpGained,
   onFightAgain,
+  onReturnToExploration,
 }: BattleResultModalProps) {
   const { play } = useAudio();
   const accent = victory ? '#e0b552' : '#e0524a';
@@ -142,10 +144,10 @@ export function BattleResultModal({
           </button>
           <button
             type="button"
-            disabled
-            className="min-w-[130px] cursor-not-allowed rounded-[10px] border border-[rgba(201,162,74,.3)] bg-transparent px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#5a5147] opacity-60"
+            onClick={onReturnToExploration}
+            className="min-w-[130px] cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
           >
-            TO MAP
+            TO PRISON
           </button>
         </div>
       </motion.div>

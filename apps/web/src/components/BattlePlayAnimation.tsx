@@ -325,6 +325,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         <AnimatePresence>
           {phase === 'impact' && isPlayerAttack && (
             <motion.div
+              key="slash-player"
               className="absolute top-[24%] left-[38%] z-10 h-[3px] w-52 origin-left rounded-full"
               style={{
                 background: 'linear-gradient(90deg, #e0524a, #f0902a 55%, transparent)',
@@ -338,6 +339,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
           )}
           {phase === 'impact' && isEnemyAttack && (
             <motion.div
+              key="slash-enemy"
               className="absolute bottom-[30%] left-[38%] z-10 h-[3px] w-52 origin-left rounded-full"
               style={{
                 background: 'linear-gradient(90deg, transparent, #c1362c 45%, #e0524a)',
@@ -350,8 +352,8 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             />
           )}
 
-          {phase === 'impact' && isDefense && cue.shieldGained && (
-            <div className="absolute bottom-[24%] left-[4%] z-30">
+          {phase === 'impact' && isDefense && Boolean(cue.shieldGained) && (
+            <div key="gain-shield" className="absolute bottom-[24%] left-[4%] z-30">
               <EffectRow
                 tone="shield"
                 icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" />}
@@ -364,8 +366,8 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
             </div>
           )}
 
-          {phase === 'impact' && isDefense && cue.barrierGained && (
-            <div className="absolute bottom-[24%] left-[4%] z-30">
+          {phase === 'impact' && isDefense && Boolean(cue.barrierGained) && (
+            <div key="gain-barrier" className="absolute bottom-[24%] left-[4%] z-30">
               <EffectRow
                 tone="barrier"
                 icon={<BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />}
@@ -381,6 +383,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
 
           {phase === 'impact' && cue.poisonAppliedTo && (
             <div
+              key={`poison-${cue.poisonAppliedTo}`}
               className={`absolute z-30 ${cue.poisonAppliedTo === 'enemy' ? 'top-[16%] right-[4%]' : 'bottom-[22%] left-[4%]'}`}
             >
               <EffectRow
@@ -393,10 +396,10 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
           )}
 
           {phase === 'impact' && isPlayerAttack && hasHitEffects && (
-            <DamageBreakdown cue={cue} side="enemy" />
+            <DamageBreakdown key="damage-enemy" cue={cue} side="enemy" />
           )}
           {phase === 'impact' && isEnemyAttack && hasHitEffects && (
-            <DamageBreakdown cue={cue} side="player" />
+            <DamageBreakdown key="damage-player" cue={cue} side="player" />
           )}
         </AnimatePresence>
       </div>

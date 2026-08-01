@@ -37,6 +37,7 @@ export const battleMachine = setup({
       }
       return createInitialBattle();
     }),
+    resetBattle: assign(() => createInitialBattle()),
     initBattleLog: assign(({ context }) => initBattleLog(context)),
     applyPlayerTurnStart: assign(({ context }) => startPlayerTurn(context)),
     drawTurnCard: assign(({ context }) => drawAtTurnStart(context)),
@@ -72,6 +73,12 @@ export const battleMachine = setup({
   id: 'battle',
   initial: 'idle',
   context: createInitialBattle(),
+  on: {
+    LEAVE_BATTLE: {
+      target: '.idle',
+      actions: 'resetBattle',
+    },
+  },
   states: {
     idle: {
       on: {

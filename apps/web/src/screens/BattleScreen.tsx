@@ -27,6 +27,7 @@ interface BattleScreenProps {
   actor: BattleActor;
   progression: PlayerProgression;
   onProgressionChange: (progression: PlayerProgression) => void;
+  onReturnToExploration: () => void;
 }
 
 interface StackSpendState {
@@ -68,6 +69,7 @@ export function BattleScreen({
   actor,
   progression,
   onProgressionChange,
+  onReturnToExploration,
 }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
@@ -335,6 +337,7 @@ export function BattleScreen({
           onFightAgain={() =>
             actor.send({ type: 'RESTART', progression: battle.progression })
           }
+          onReturnToExploration={onReturnToExploration}
         />
       )}
     </div>
