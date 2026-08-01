@@ -201,14 +201,14 @@ A Next.js shell with SEO public pages and the current game playable at `/play`, 
 
 ### Tasks
 
-- [ ] Finalize game package boundaries (engine / machines / content / persistence)
+- [x] Finalize game package boundaries (engine / machines / content) — persistence package still pending
 - [x] Game state machines (XState) — battle + exploration present
 - [x] Connect World → Exploration → Battle flows
 - [ ] Save / load system
 - [x] Configuration-driven data (JSON) — expand as systems grow
 - [x] Core game types and interfaces
 - [ ] Deterministic RNG (optional, recommended)
-- [ ] App-level orchestration machine (World ↔ Exploration ↔ Battle) outside `main` React state
+- [ ] App-level orchestration machine (World ↔ Exploration ↔ Battle) outside React screen state
 
 ### Deliverable
 
@@ -252,7 +252,7 @@ Engine that can load regions, battles, and player progression, independent of th
 - [ ] Gold
 - [ ] Cards
 - [ ] Relics
-- [ ] Experience
+- [x] Experience (class XP on successful player card plays; shown on results modal)
 - [ ] Story rewards
 
 ### Deliverable
@@ -300,7 +300,7 @@ A fully interactive Hollowfort Prison.
 ### Classes
 
 - [x] Fighter, Rogue, Wizard (and related themes in data)
-- [ ] Survivor as a first-class progression path
+- [x] Survivor as a first-class class id + XP path (content volume still thin)
 
 ### Categories
 
@@ -324,21 +324,25 @@ A fully interactive Hollowfort Prison.
 
 ### Class experience
 
-Each played card grants XP to its class (Fighter / Rogue / Wizard / Survivor).
+- [x] Each successful player card play grants +1 XP to its class (Fighter / Rogue / Wizard / Survivor)
+- [x] Progression carried across battles in the current app session
+- [x] Character screen shows live class XP and total XP
+- [x] Battle results modal shows XP gained this fight (total + per class)
+- [ ] Persist progression across sessions (requires save / load)
 
 ### Level system
 
-Classes level independently and unlock:
-
-- New cards
-- Passive bonuses
-- Advanced abilities
+- [ ] Classes level independently from XP thresholds
+- [ ] Unlock new cards by class level
+- [ ] Passive bonuses
+- [ ] Advanced abilities
 
 ### Deck growth
 
-- New cards
-- Card removal
-- Card upgrades
+- [x] Character screen deck composition (add / remove unlocked cards, deck cap)
+- [x] Unlock cards by spending class XP (character UI)
+- [ ] Permanent card removal as a progression action
+- [ ] Card upgrades
 
 ### Deliverable
 
@@ -352,15 +356,19 @@ Players specialise in one class or build hybrids.
 
 ### Equipment
 
-Weapons, armour, trinkets.
+- [ ] Weapons
+- [ ] Armour
+- [ ] Trinkets
 
 ### Consumables
 
-Potions, scrolls, food.
+- [ ] Potions
+- [ ] Scrolls
+- [ ] Food
 
 ### Relics
 
-Permanent passives (e.g. +1 shield, draw extra, heal after battle).
+- [ ] Permanent passives (e.g. +1 shield, draw extra, heal after battle)
 
 ### Deliverable
 
@@ -374,16 +382,16 @@ A clear reward loop after exploration and combat.
 
 ### Story flow
 
-1. Wake in prison cell  
-2. Escape first cell  
-3. Explore prison  
-4. Discover monster invasion  
-5. Rescue survivor (optional)  
-6. Find equipment  
-7. Reach courtyard  
-8. Defeat prison boss  
-9. Escape Hollowfort  
-10. Reach world map  
+- [ ] Wake in prison cell
+- [ ] Escape first cell
+- [ ] Explore prison
+- [ ] Discover monster invasion
+- [ ] Rescue survivor (optional)
+- [ ] Find equipment
+- [ ] Reach courtyard
+- [ ] Defeat prison boss
+- [ ] Escape Hollowfort
+- [ ] Reach world map
 
 ### Deliverable
 
@@ -397,16 +405,26 @@ A finished narrative vertical slice of the prison.
 
 ### Hollowfort Prison rooms
 
-Prison Cell · Main Corridor · Storage · Kitchen · Armory · Chapel · Courtyard · Guard Tower · Warden Office · Secret Tunnel · Main Gate
+- [ ] Prison Cell
+- [ ] Main Corridor
+- [ ] Storage
+- [ ] Kitchen
+- [ ] Armory
+- [ ] Chapel
+- [ ] Courtyard
+- [ ] Guard Tower
+- [ ] Warden Office
+- [ ] Secret Tunnel
+- [ ] Main Gate
 
-Each location should include:
+### Per-location content
 
-- Artwork
-- Description
-- Enemies
-- Loot
-- Interactions
-- Story events
+- [ ] Artwork
+- [ ] Description
+- [ ] Enemies
+- [ ] Loot
+- [ ] Interactions
+- [ ] Story events
 
 Public **Regions / Lore** site pages may mirror this content via the SSG content platform (Milestone 1) without embedding engine code.
 
@@ -422,15 +440,25 @@ One handcrafted region ready for Beta.
 
 ### Animations
 
-Card play, movement, combat, damage, rewards.
+- [x] Card play / combat animation cues (basic)
+- [ ] Movement / exploration transitions
+- [ ] Damage feedback polish
+- [ ] Reward reveal animations
 
 ### Visual effects
 
-Fog, smoke, sparks, torchlight, dust.
+- [ ] Fog
+- [ ] Smoke
+- [ ] Sparks
+- [ ] Torchlight
+- [ ] Dust
 
 ### Audio
 
-Ambient beds, screen music, card / combat SFX (see [AUDIO.md](./AUDIO.md)).
+- [x] Ambient beds
+- [x] Screen music
+- [x] Card / combat SFX (see [AUDIO.md](./AUDIO.md))
+- [ ] Full mix pass + missing cues
 
 ### Deliverable
 
@@ -444,22 +472,29 @@ Polished feel for the prison vertical slice.
 
 ### Unit tests
 
-Damage, card effects, XP, deck ops, status effects.
+- [ ] Damage
+- [ ] Card effects
+- [x] XP / progression
+- [ ] Deck ops
+- [ ] Status effects
 
 ### Integration tests
 
-Exploration flow, battle flow, rewards, progression.
+- [ ] Exploration flow
+- [ ] Battle flow
+- [ ] Rewards
+- [ ] Progression
 
 ### End-to-end (Playwright)
 
-- New game (from `/play`)
-- Complete prison
-- Win battle
-- Save / load
-- Level up
-- Receive reward
-- Defeat boss
-- Public pages render (smoke + key SEO meta)
+- [x] New game entry from `/play` (smoke)
+- [ ] Complete prison
+- [ ] Win battle
+- [ ] Save / load
+- [ ] Level up
+- [ ] Receive reward
+- [ ] Defeat boss
+- [x] Public pages render (marketing home smoke)
 
 ### Deliverable
 
@@ -471,19 +506,17 @@ Stable Beta build on Vercel.
 
 Keep docs lightweight and current.
 
-| Document | Purpose |
-|----------|---------|
-| Game Vision | Audience, philosophy, Beta scope |
-| [Game Mechanics](./MECHANICS.md) | Combat, exploration, progression rules |
-| Story | Narrative, regions, quests |
-| Architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) — DDD modular monolith, engine vs API, NestJS/Postgres |
-| Platform / Website | App Router structure, `/play`, SEO, content SSG |
-| Card Design Guide | Classes, effects, balance, naming |
-| Content Pipeline | Adding locations, enemies, cards, events, site MDX |
-| Prompt Library | Cursor / design / asset prompts |
-| [Audio](./AUDIO.md) | Sound ids, beds, unlock |
-| Testing Guide | How to run and validate tests |
-| **This roadmap** | Milestones and Beta definition |
+- [ ] Game Vision — audience, philosophy, Beta scope
+- [x] [Game Mechanics](./MECHANICS.md) — combat, exploration, progression rules
+- [ ] Story — narrative, regions, quests
+- [x] [Architecture](./ARCHITECTURE.md) — DDD modular monolith, engine vs API, NestJS/Postgres
+- [ ] Platform / Website — App Router structure, `/play`, SEO, content SSG
+- [ ] Card Design Guide — classes, effects, balance, naming
+- [ ] Content Pipeline — adding locations, enemies, cards, events, site Markdown
+- [ ] Prompt Library — Cursor / design / asset prompts
+- [x] [Audio](./AUDIO.md) — sound ids, beds, unlock
+- [ ] Testing Guide — how to run and validate tests
+- [x] **This roadmap** — milestones and Beta definition
 
 ---
 
@@ -491,32 +524,41 @@ Keep docs lightweight and current.
 
 ### Region
 
-Hollowfort Prison only (world map as hub exit).
+- [ ] Hollowfort Prison only (world map as hub exit)
 
 ### Platform
 
-- Public site live (core pages + SEO)
-- Game playable at `/play`
-- Deployed on Vercel
+- [x] Public site live (core pages + SEO) — local / repo ready
+- [x] Game playable at `/play`
+- [ ] Deployed on Vercel
 
 ### Content targets
 
-| Content | Target |
-|---------|--------|
-| Locations | 10–12 |
-| Player cards | 40–60 |
-| Enemy types | 15–20 |
-| Bosses | 1 memorable |
-| Encounter cards | 20–30 |
-| Relics / equipment | Several |
+- [ ] Locations — 10–12
+- [ ] Player cards — 40–60
+- [ ] Enemy types — 15–20
+- [ ] Bosses — 1 memorable
+- [ ] Encounter cards — 20–30
+- [ ] Relics / equipment — several
 
 ### Systems required
 
-Exploration · Combat · Deckbuilding · Class XP · Inventory · Rewards · Save/Load · Story progression
+- [x] Exploration (partial)
+- [x] Combat (partial)
+- [x] Deckbuilding (character screen)
+- [x] Class XP (award + display)
+- [ ] Inventory
+- [ ] Rewards loop
+- [ ] Save / load
+- [ ] Story progression
 
 ### Polish required
 
-Sound · Music · Animations · VFX · Settings · Basic accessibility
+- [x] Sound / music (started)
+- [ ] Animations (beyond basic combat cues)
+- [ ] VFX
+- [x] Settings (audio settings menu)
+- [ ] Basic accessibility
 
 ---
 
@@ -548,13 +590,13 @@ The Beta game succeeds when a new player can:
 Work roughly in this dependency order (parallel where noted):
 
 ```text
-M1 Platform Architecture (Next.js shell + /play + SEO + SSG content)
+M1 Platform Architecture (Next.js shell + /play + SEO + SSG content) ✅
     ↓
 M2 Foundation (save/load + RNG + app orchestration)
     ↓
 M3 Battle completion  ↔  M4 Exploration depth
     ↓
-M5 Card volume + M6 Progression + M7 Inventory
+M5 Card volume + M6 Progression (levels / unlocks) + M7 Inventory
     ↓
 M8 Story beats wired into prison content (M9)
     ↓
@@ -563,4 +605,4 @@ M10 Polish  →  M11 QA  →  M13 Beta
 
 Documentation (M12) stays continuous, not a final gate.
 
-**Note:** Platform (M1) can start in parallel with late M2 hygiene (RNG, guards) if the Vite game keeps running until `/play` cutover. Prefer extracting a framework-free `game/` package **before** or **during** the Next.js migration so the engine never imports `next/*`.
+**Note:** M1 is complete. Prefer keeping `packages/game-engine` free of `next/*` imports as save/load and online services land.
