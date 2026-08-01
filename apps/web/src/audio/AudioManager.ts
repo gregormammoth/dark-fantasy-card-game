@@ -37,7 +37,7 @@ const DEFAULT_SCREEN: MusicScreen = 'world';
 const GAMEPLAY_FADE_RATE = 0.025;
 const HOWL_LOAD_TIMEOUT_MS = 6000;
 
-const IS_DEV = import.meta.env.DEV;
+const IS_DEV = process.env.NODE_ENV !== 'production';
 
 const GAME_OVER_STINGS: SoundId[] = ['victory_sting', 'defeat_sting'];
 

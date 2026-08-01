@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-ash: #0b0807;
+  --brand-ember: #c9a24a;
+  --brand-parchment: #e8ddcf;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 700px at 50% -12%, #2a1612 0%, #120c0a 55%, #0b0807 100%),
+    #0b0807;
+  color: var(--brand-parchment);
+}
+
+::selection {
+  background: rgba(201, 162, 74, 0.35);
+  color: #f5eadc;
+}

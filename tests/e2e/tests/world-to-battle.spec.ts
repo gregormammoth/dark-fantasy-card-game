@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('world → exploration → battle', () => {
-  test('navigates from home through prison map into battle', async ({ page }) => {
-    await page.goto('/');
+  test('navigates from /play through prison map into battle', async ({ page }) => {
+    await page.goto('/play');
 
     await expect(page.getByText('The Realm')).toBeVisible();
     await expect(page.getByText('Choose a region to explore')).toBeVisible();

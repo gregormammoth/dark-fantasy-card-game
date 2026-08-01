@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('home smoke', () => {
-  test('loads the world map home screen', async ({ page }) => {
+test.describe('marketing home', () => {
+  test('loads the public landing page', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/.+/);
-    await expect(page.getByText('The Realm')).toBeVisible();
-    await expect(page.getByText('Choose a region to explore')).toBeVisible();
+    await expect(page).toHaveTitle(/Hollowfort/i);
+    await expect(page.getByRole('heading', { name: 'Hollowfort' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'PLAY NOW' })).toBeVisible();
   });
 });

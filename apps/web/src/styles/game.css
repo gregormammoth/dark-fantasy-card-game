@@ -9,11 +9,12 @@ body {
     radial-gradient(1000px 640px at 50% -8%, #241512, #0d0908 62%),
     #0b0807;
   color: #e8ddcf;
-  font-family: 'Spectral', serif;
+  font-family: var(--font-spectral), 'Spectral', serif;
   -webkit-font-smoothing: antialiased;
 }
 
-#root {
+#root,
+#game-root {
   min-height: 100vh;
 }
 

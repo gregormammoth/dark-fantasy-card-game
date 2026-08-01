@@ -85,7 +85,7 @@ game/
 
 Current repo state:
 
-- `apps/web` — Vite + React client (UI, audio, screens)
+- `apps/web` — Next.js 15 App Router: public site + `/play` game client
 - `packages/game-engine` — battle / exploration engine + XState machines
 - `packages/shared` — shared TypeScript types
 - `packages/content` — card / map / encounter JSON + portraits

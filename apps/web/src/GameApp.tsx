@@ -1,5 +1,6 @@
-import { StrictMode, useCallback, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+'use client';
+
+import { useCallback, useState } from 'react';
 import { useActorRef } from '@xstate/react';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
@@ -16,7 +17,6 @@ import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
-import './index.css';
 
 const worldMap = worldMapData as WorldMapDefinition;
 
@@ -27,7 +27,7 @@ function musicForScreen(screen: AppScreen): MusicScreen {
   return screen;
 }
 
-function App() {
+function GameShell() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const [progression, setProgression] = useState<PlayerProgression>(createInitialProgression);
   const explorationActor = useActorRef(explorationMachine);
@@ -125,10 +125,10 @@ function App() {
   );
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+export function GameApp() {
+  return (
     <AudioProvider>
-      <App />
+      <GameShell />
     </AudioProvider>
-  </StrictMode>,
-);
+  );
+}

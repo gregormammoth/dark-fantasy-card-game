@@ -68,17 +68,17 @@ Rough progress against this roadmap as of the current codebase:
 | Area | Status |
 |------|--------|
 | pnpm + Turborepo monorepo | In place (`apps/web`, `packages/*`, `tests/e2e`) |
-| Vite + React game client | In place under `apps/web` (pre–Next.js migration) |
-| `packages/game-engine` + `shared` + `content` | Extracted from web app |
-| World → Exploration → Battle navigation | In place (UI + XState machines) |
+| Next.js 15 App Router platform | In place under `apps/web` (website + `/play`) |
+| `packages/game-engine` + `shared` + `content` | Extracted; engine stays framework-independent |
+| World → Exploration → Battle navigation | In place inside `/play` (UI + XState machines) |
 | Battle engine (turns, combo, shields, poison, intent) | Partial — playable core |
 | Exploration map + actions | Partial — prison map, hand actions, encounters |
 | JSON-driven content | Started (`prisonMap`, cards, encounters, world) |
-| Public website / SEO / `/play` route | Not started |
+| Public website / SEO / `/play` route | In place (marketing pages, sitemap, robots, Markdown SSG) |
 | Save / load | Not started |
-| Full status set, relics, inventory, class XP | Not started |
+| Full status set, relics, inventory, class levels | Partial — class XP awarded/displayed; levels/unlocks pending |
 | Audio / polish | Started (SFX + screen music beds) |
-| Automated tests | E2E smoke started (Playwright); unit tests not started |
+| Automated tests | E2E smoke (Playwright); engine XP unit tests started |
 
 Update this table as milestones land.
 
@@ -92,74 +92,74 @@ Next.js becomes the application shell for website pages, SEO, authentication, an
 
 ### Adopt Next.js 15
 
-- [ ] Create Next.js app with App Router
-- [ ] Configure TypeScript
-- [ ] Configure ESLint
-- [ ] Configure Prettier
-- [ ] Configure absolute imports
-- [ ] Configure environment variables
-- [ ] Configure production build
+- [x] Create Next.js app with App Router
+- [x] Configure TypeScript
+- [x] Configure ESLint
+- [x] Configure Prettier
+- [x] Configure absolute imports
+- [x] Configure environment variables
+- [x] Configure production build
 
 ### Separate website and game
 
 Public website pages:
 
-- [ ] Home
-- [ ] Play (entry to the client game)
-- [ ] About
-- [ ] Blog
-- [ ] Roadmap
-- [ ] Lore
-- [ ] Regions
-- [ ] Cards
-- [ ] Classes
-- [ ] Enemies
-- [ ] Patch Notes
-- [ ] Privacy Policy
-- [ ] Terms of Service
+- [x] Home
+- [x] Play (entry to the client game)
+- [x] About
+- [x] Blog
+- [x] Roadmap
+- [x] Lore
+- [x] Regions
+- [x] Cards
+- [x] Classes
+- [x] Enemies
+- [x] Patch Notes
+- [x] Privacy Policy
+- [x] Terms of Service
 
 Game client:
 
-- [ ] Mount the existing game under **`/play`** as a client-side application
-- [ ] Keep World → Exploration → Battle flows working inside `/play`
+- [x] Mount the existing game under **`/play`** as a client-side application
+- [x] Keep World → Exploration → Battle flows working inside `/play`
 
 ### Preserve existing game (framework-independent)
 
 These modules must not depend on Next.js APIs:
 
-- [ ] Game Engine
-- [ ] Battle Engine
-- [ ] Exploration Engine
-- [ ] Deck Engine
-- [ ] XState Machines
-- [ ] Content (game JSON packs)
+- [x] Game Engine
+- [x] Battle Engine
+- [x] Exploration Engine
+- [x] Deck Engine
+- [x] XState Machines
+- [x] Content (game JSON packs)
 - [ ] Save System (when added)
 
 ### SEO
 
-- [ ] Metadata API
-- [ ] Sitemap
-- [ ] `robots.txt`
-- [ ] OpenGraph
-- [ ] Twitter Cards
-- [ ] Canonical URLs
-- [ ] Structured Data (JSON-LD)
-- [ ] Optimize every public page for search engines
+- [x] Metadata API
+- [x] Sitemap
+- [x] `robots.txt`
+- [x] OpenGraph
+- [x] Twitter Cards
+- [x] Canonical URLs
+- [x] Structured Data (JSON-LD)
+- [x] Optimize every public page for search engines
 
 ### Content platform (SSG)
 
 Scalable content for marketing/docs pages (Markdown / MDX / CMS-friendly):
 
-- [ ] Lore
-- [ ] Regions
-- [ ] Cards
-- [ ] Enemies
-- [ ] Classes
+- [x] Lore
+- [x] Regions
+- [x] Cards
+- [x] Enemies
+- [x] Classes
 - [ ] Items
 - [ ] Relics
-- [ ] Blog
-- [ ] Patch Notes
-- [ ] Roadmap
+- [x] Blog
+- [x] Patch Notes
+- [x] Roadmap
 
 New content pages must be addable **without** changing gameplay code.
 
@@ -177,17 +177,17 @@ Prepare seams that do **not** touch the core engine:
 
 ### Deployment
 
-- [ ] Vercel-ready production deploy
-- [ ] Optimize static pages, images, fonts, metadata, code splitting
+- [x] Vercel-ready production deploy
+- [x] Optimize static pages, images, fonts, metadata, code splitting
 
 ### Success criteria (platform)
 
-- [ ] Website and game coexist in one project
-- [ ] The game runs entirely inside `/play`
-- [ ] Public pages are SEO optimized
-- [ ] The game engine remains framework-independent
-- [ ] New content pages can be added without modifying gameplay code
-- [ ] Ready for future auth, cloud saves, and community features
+- [x] Website and game coexist in one project
+- [x] The game runs entirely inside `/play`
+- [x] Public pages are SEO optimized
+- [x] The game engine remains framework-independent
+- [x] New content pages can be added without modifying gameplay code
+- [x] Ready for future auth, cloud saves, and community features
 
 ### Deliverable
 

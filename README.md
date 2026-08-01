@@ -1,6 +1,6 @@
 # Dark Fantasy Card Game
 
-pnpm + Turborepo monorepo. The playable Vite client lives in `apps/web`. End-to-end tests live in `tests/e2e`. Shared libraries will go under `packages/` as they are extracted.
+pnpm + Turborepo monorepo. `apps/web` is a Next.js 15 App Router platform: public marketing site plus the game at `/play`. Shared packages live under `packages/`. End-to-end tests live in `tests/e2e`.
 
 ## Install
 
@@ -15,19 +15,21 @@ The second command installs the Chromium browser used by Playwright (run once pe
 
 ## Development
 
-Start the Vite game app (Turbo fans out `dev` to workspace packages):
+Start the Next.js app:
 
 ```bash
 pnpm dev
 ```
 
-Open the URL Vite prints (default `http://localhost:5173`).
+Open `http://localhost:3000` for the site, and `http://localhost:3000/play` for the game.
 
-Filter to a single app:
+Filter to the web app:
 
 ```bash
 pnpm --filter @dark-fantasy/web dev
 ```
+
+Copy `apps/web/.env.example` to `apps/web/.env.local` to override site URL / name.
 
 ## Turbo tasks
 
@@ -48,7 +50,7 @@ Turbo caches build, lint, test, and typecheck. `dev` and `e2e` are not cached.
 
 E2E config: `tests/e2e/playwright.config.ts`.
 
-Run the full suite (builds `@dark-fantasy/web`, then serves `vite preview` and runs Chromium headless in CI):
+Run the full suite (builds `@dark-fantasy/web`, then serves `next start` and runs Chromium headless):
 
 ```bash
 pnpm e2e
@@ -58,12 +60,6 @@ Run a single test file:
 
 ```bash
 pnpm --filter @dark-fantasy/e2e exec playwright test tests/home.spec.ts
-```
-
-Run a single test by title:
-
-```bash
-pnpm --filter @dark-fantasy/e2e exec playwright test -g "loads the world map home screen"
 ```
 
 Interactive UI mode:
@@ -78,23 +74,18 @@ Open the HTML report after a run:
 pnpm e2e:report
 ```
 
-## Workspace layout
+## Layout
 
 ```text
-apps/
-  web/          Vite + React game client (UI)
+apps/web/          Next.js site + /play client
 packages/
-  game-engine/  Pure TS rules + XState machines
-  shared/       Shared game types
-  content/      JSON content packs
-tests/
-  e2e/          Playwright project
-docs/           Design / roadmap docs
+  game-engine/     Pure TS rules + XState machines
+  shared/          Shared types
+  content/         Game JSON + portrait refs
+tests/e2e/         Playwright smoke tests
+docs/              Roadmap, architecture, mechanics
 ```
 
-## Docs
+## Deploy (Vercel)
 
-- [Roadmap](./docs/ROADMAP.md)
-- [Architecture](./docs/ARCHITECTURE.md)
-- [Mechanics](./docs/MECHANICS.md)
-- [Audio](./docs/AUDIO.md)
+Set the Vercel project root to `apps/web`. Build command: `cd ../.. && pnpm --filter @dark-fantasy/web build` (or install from repo root and build the web package). Output: Next.js default.

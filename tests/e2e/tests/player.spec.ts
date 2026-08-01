@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('character page', () => {
   test('opens player experience and cards from the world map', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/play');
 
     await page.getByRole('button', { name: 'CHARACTER' }).click();
 

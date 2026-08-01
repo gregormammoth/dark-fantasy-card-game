@@ -11,7 +11,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     hydrate();
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV !== 'production') {
       getAudioManager().setDebug(true);
     }
   }, [hydrate]);

@@ -24,7 +24,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm --filter @dark-fantasy/web preview --host 127.0.0.1 --port ${PORT}`,
+    command: `pnpm --filter @dark-fantasy/web exec next start --hostname 127.0.0.1 --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
