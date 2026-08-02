@@ -111,13 +111,13 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         className="pointer-events-none absolute left-1/2 top-1/2 z-0 max-w-none -translate-x-1/2 -translate-y-1/2"
         style={{
           width: 1400,
-          filter: 'grayscale(1) brightness(.55) contrast(.9) blur(2.5px)',
-          opacity: 0.16,
+          filter: 'grayscale(.55) brightness(.9) contrast(1.08) blur(.8px)',
+          opacity: 0.45,
         }}
         draggable={false}
       />
 
-      <div className="pointer-events-none absolute inset-0 z-[8] shadow-[inset_0_0_160px_36px_rgba(0,0,0,.75)]" />
+      <div className="pointer-events-none absolute inset-0 z-[8] shadow-[inset_0_0_120px_28px_rgba(0,0,0,.55)]" />
       <div className="pointer-events-none absolute left-6 top-6 h-[120px] w-[120px] animate-[flicker_4s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,rgba(224,140,60,.22),transparent_70%)]" />
       <div className="pointer-events-none absolute bottom-10 right-[340px] h-[160px] w-[160px] animate-[flicker_5.4s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,rgba(214,68,58,.14),transparent_70%)]" />
 

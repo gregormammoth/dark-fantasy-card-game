@@ -172,10 +172,10 @@ Each module is a **bounded context** inside one deployable API. Prefer separate 
 
 - **Next.js** hosts marketing/content pages and the `/play` client.
 - **Game UI** talks to the **game engine** locally for rules; XState orchestrates flow.
-- **NestJS API** owns persistence, identity, and future online features.
-- **Redis / analytics** only when there is a concrete need.
+- **NestJS API** owns persistence, analytics ingest, feedback, and later identity / online features.
+- **Redis / warehouse analytics** only when there is a concrete need.
 
-Client-side play can remain offline-capable for Beta; cloud saves and auth attach at the API boundary without rewriting the engine.
+Beta ships the thin API (guest saves, events, feedback). Full auth and profiles attach later at the same boundary without rewriting the engine.
 
 ---
 
