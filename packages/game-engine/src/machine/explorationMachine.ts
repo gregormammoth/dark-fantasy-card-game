@@ -84,6 +84,11 @@ export const explorationMachine = setup({
       const next = structuredClone(context);
       return resolveLocationBattle(next, event.won, event.locationId, event.enemyId);
     }),
+    ackEscape: assign(({ context }) => {
+      const next = structuredClone(context);
+      delete next.flags.escaped_hollowfort;
+      return next;
+    }),
   },
   guards: {
     hasActionsRemaining: ({ context }) => context.actionsRemaining > 0,
@@ -114,6 +119,7 @@ export const explorationMachine = setup({
     QUEUE_BATTLE: { actions: 'queueBattle' },
     FLEE_LOCATION_BATTLE: { actions: 'fleeLocationBattle' },
     RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
+    ACK_ESCAPE: { actions: 'ackEscape' },
   },
   states: {
     idle: {

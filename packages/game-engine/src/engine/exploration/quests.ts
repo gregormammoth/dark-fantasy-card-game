@@ -21,6 +21,12 @@ export function isNpcAvailable(context: ExplorationContext, npc: LocationNpc): b
   return true;
 }
 
+const GATE_NPC_BY_BRANCH: Record<string, string> = {
+  warden_tower: 'gate_dead_anarchist',
+  chapel: 'gate_sorcerer',
+  political_wing: 'gate_guard_captain',
+};
+
 export function listAvailableNpcs(
   context: ExplorationContext,
   locationId: string,
@@ -29,7 +35,22 @@ export function listAvailableNpcs(
   if (!location) {
     return [];
   }
-  return location.npcs.filter((npc) => isNpcAvailable(context, npc));
+  const available = location.npcs.filter((npc) => isNpcAvailable(context, npc));
+  if (locationId === 'exit_gate' && context.finalBranchId) {
+    const preferred = GATE_NPC_BY_BRANCH[context.finalBranchId];
+    if (preferred) {
+      available.sort((a, b) => {
+        if (a.id === preferred) {
+          return -1;
+        }
+        if (b.id === preferred) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+  }
+  return available;
 }
 
 export function getQuestDefinition(questId: string): QuestDefinition | null {

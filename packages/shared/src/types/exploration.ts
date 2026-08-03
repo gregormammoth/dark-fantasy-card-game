@@ -185,6 +185,7 @@ export type ExplorationEvent =
       locationId?: string;
       enemyId?: string;
     }
+  | { type: 'ACK_ESCAPE' }
   | { type: 'RESTART' };
 
 export interface ActionOutcomeDefinition {

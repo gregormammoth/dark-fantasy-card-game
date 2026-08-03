@@ -119,52 +119,21 @@ function GameShell() {
 
   if (screen === 'battle') {
     content = (
-      <div>
-        <div className="fixed left-4 top-4 z-[60] flex gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              const snap = battleActor.getSnapshot();
-              returnToExploration(
-                snap.matches('victory')
-                  ? 'victory'
-                  : snap.matches('defeat')
-                    ? 'defeat'
-                    : 'abort',
-              );
-            }}
-            className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 text-[11px] tracking-wider text-[#e0b552]"
-          >
-            ← PRISON MAP
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPendingLocationFight(null);
-              leaveBattle();
-              setScreen('world');
-            }}
-            className="rounded-lg border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.7)] px-3 py-2 text-[11px] tracking-wider text-[#8a7f72] hover:text-[#c9a24a]"
-          >
-            THE REALM
-          </button>
-        </div>
-        <BattleScreen
-          actor={battleActor}
-          progression={progression}
-          onProgressionChange={handleProgressionChange}
-          onReturnToExploration={() => {
-            const snap = battleActor.getSnapshot();
-            returnToExploration(
-              snap.matches('victory')
-                ? 'victory'
-                : snap.matches('defeat')
-                  ? 'defeat'
-                  : 'abort',
-            );
-          }}
-        />
-      </div>
+      <BattleScreen
+        actor={battleActor}
+        progression={progression}
+        onProgressionChange={handleProgressionChange}
+        onReturnToExploration={() => {
+          const snap = battleActor.getSnapshot();
+          returnToExploration(
+            snap.matches('victory')
+              ? 'victory'
+              : snap.matches('defeat')
+                ? 'defeat'
+                : 'abort',
+          );
+        }}
+      />
     );
   } else if (screen === 'exploration') {
     content = (
@@ -172,7 +141,7 @@ function GameShell() {
         actor={explorationActor}
         onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
-        onBackToWorld={() => setScreen('world')}
+        onEscapeToWorld={() => setScreen('world')}
       />
     );
   } else if (screen === 'player') {

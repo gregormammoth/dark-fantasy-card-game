@@ -16,6 +16,7 @@ interface LocationDetailPanelProps {
   onAction: (action: ExplorationActionType, options?: { interactionId?: string; targetId?: string }) => void;
   onTalk?: (locationId: string, npcId: string) => void;
   onFight?: (locationId: string, enemyId: string) => void;
+  onEscape?: () => void;
 }
 
 export function LocationDetailPanel({
@@ -26,6 +27,7 @@ export function LocationDetailPanel({
   onAction,
   onTalk,
   onFight,
+  onEscape,
 }: LocationDetailPanelProps) {
   if (!location) {
     return null;
@@ -284,10 +286,14 @@ export function LocationDetailPanel({
           ✕
         </button>
       </div>
-      {location.id === 'exit_gate' && status === 'visited' && isHere && !exitBlocked && (
-        <div className="mx-[22px] mb-5 rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6]">
+      {location.id === 'exit_gate' && status === 'visited' && isHere && !exitBlocked && onEscape && (
+        <button
+          type="button"
+          onClick={onEscape}
+          className="mx-[22px] mb-5 w-[calc(100%-44px)] rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
+        >
           ESCAPE HOLLOWFORT →
-        </div>
+        </button>
       )}
     </div>
   );

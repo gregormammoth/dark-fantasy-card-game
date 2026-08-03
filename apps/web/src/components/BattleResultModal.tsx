@@ -28,7 +28,6 @@ interface BattleResultModalProps {
   logEntries: BattleLogEntry[];
   xpGained: Record<CardClass, number>;
   totalXpGained: number;
-  onFightAgain: () => void;
   onReturnToExploration: () => void;
 }
 
@@ -39,7 +38,6 @@ export function BattleResultModal({
   logEntries,
   xpGained,
   totalXpGained,
-  onFightAgain,
   onReturnToExploration,
 }: BattleResultModalProps) {
   const { play } = useAudio();
@@ -133,19 +131,8 @@ export function BattleResultModal({
         <div className="flex gap-3 px-6 pt-[18px] pb-6">
           <button
             type="button"
-            onClick={onFightAgain}
-            className="flex-1 cursor-pointer rounded-[10px] border px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#f3e2d6] transition-[filter] hover:brightness-[1.2]"
-            style={{
-              borderColor: accent,
-              background: 'linear-gradient(180deg, rgba(224,82,74,.18), rgba(90,23,19,.25))',
-            }}
-          >
-            FIGHT AGAIN
-          </button>
-          <button
-            type="button"
             onClick={onReturnToExploration}
-            className="min-w-[130px] cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
+            className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
           >
             TO PRISON
           </button>

@@ -259,7 +259,7 @@ Prison Cell (Dead Anarchist → quest: kill Warden)
 3. [x] Quest grants after Dead Anarchist / Sorcerer / Guard Captain dialog; quest log UI
 4. [x] Exit Gate conditional NPCs from boss flags
 5. [x] Add Dining Hall, Armory, Underground Tunnels
-6. [ ] Polish escape → world map wiring
+6. [x] Polish escape → world map wiring
 
 ---
 

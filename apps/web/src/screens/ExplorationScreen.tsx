@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
@@ -23,14 +23,14 @@ interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
   onStartLocationBattle?: (locationId: string, enemyId: string) => void;
   onOpenPlayer?: () => void;
-  onBackToWorld?: () => void;
+  onEscapeToWorld?: () => void;
 }
 
 export function ExplorationScreen({
   actor,
   onStartLocationBattle,
   onOpenPlayer,
-  onBackToWorld,
+  onEscapeToWorld,
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
@@ -55,6 +55,13 @@ export function ExplorationScreen({
       ? getBattleEnemy(context, locationEncounter)
       : null;
 
+  useEffect(() => {
+    if (context.flags.escaped_hollowfort && onEscapeToWorld) {
+      actor.send({ type: 'ACK_ESCAPE' });
+      onEscapeToWorld();
+    }
+  }, [actor, context.flags.escaped_hollowfort, onEscapeToWorld]);
+
   if (isIdle) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
@@ -74,15 +81,6 @@ export function ExplorationScreen({
         >
           ENTER THE PRISON
         </button>
-        {onBackToWorld && (
-          <button
-            type="button"
-            onClick={onBackToWorld}
-            className="text-[12px] tracking-wider text-[#8a7f72] underline-offset-4 hover:text-[#c9a24a] hover:underline"
-          >
-            ← Back to The Realm
-          </button>
-        )}
       </div>
     );
   }
@@ -90,17 +88,6 @@ export function ExplorationScreen({
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
       <div className="relative flex items-center justify-between gap-3">
-        {onBackToWorld ? (
-          <button
-            type="button"
-            onClick={onBackToWorld}
-            className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 text-[11px] tracking-wider text-[#e0b552]"
-          >
-            ← THE REALM
-          </button>
-        ) : (
-          <span />
-        )}
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON
         </span>
@@ -182,6 +169,7 @@ export function ExplorationScreen({
           onFight={(locationId, enemyId) =>
             actor.send({ type: 'QUEUE_BATTLE', locationId, enemyId })
           }
+          onEscape={onEscapeToWorld}
         />
       </div>
 
@@ -225,7 +213,6 @@ export function ExplorationScreen({
               onStartLocationBattle(locationEncounter.locationId, battleEnemy.id);
             }
           }}
-          onFlee={() => actor.send({ type: 'FLEE_LOCATION_BATTLE' })}
         />
       )}
     </div>

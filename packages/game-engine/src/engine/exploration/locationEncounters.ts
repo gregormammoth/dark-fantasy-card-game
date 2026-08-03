@@ -157,6 +157,10 @@ export function advanceDialog(context: ExplorationContext): ExplorationContext {
     if (npc.grantsQuestId) {
       grantQuest(context, npc.grantsQuestId);
     }
+    if (encounter.locationId === 'exit_gate') {
+      context.flags.escaped_hollowfort = true;
+      appendExplorationLog(context, 'You leave Hollowfort behind.', 'loot');
+    }
     return advanceLocationEncounterQueue(context);
   }
   context.dialogLineIndex += 1;
