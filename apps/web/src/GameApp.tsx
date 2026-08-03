@@ -108,6 +108,8 @@ function GameShell() {
       enemy: {
         name: enemy.name,
         portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
+        deckSize: enemy.deckSize,
+        barrierPerTurn: enemy.barrierPerTurn,
       },
     });
     setScreen('battle');

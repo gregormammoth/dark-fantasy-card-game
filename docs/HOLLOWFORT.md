@@ -55,7 +55,7 @@ Authoritative roster for who stands where. Implementation should match this tabl
 |----------|-----|-------|-------|
 | **Prison Cell** | Dead Anarchist | — | Intro dialog; grants Warden quest after talk |
 | **Cell Block** | — | Prisoner | Thin / basic prisoner fight |
-| **Ritual Room** | Sorcerer *(after Demon defeated)* | Demon | Sorcerer is **hidden until** the Demon is cleared; then grants Inquisitor quest after talk |
+| **Ritual Room** | Sorcerer *(after Demon defeated)* | Demon; optional Sorcerer fight | After Demon: ingredients quest → then Inquisitor quest; corridor gated until done or Sorcerer killed |
 | **Infirmary** | — | Crazy Prisoner | |
 | **Underground Tunnels** *(add)* | — | Giant Rat | Connect into the mid-prison graph |
 | **Torture Chamber** | Executioner | — | Lore / key NPC |
@@ -91,21 +91,24 @@ Quests are the Beta loyalty hooks. They unlock **only after dialog** with the gr
 | Quest id (suggested) | Granted by | When | Objective | Complete when |
 |----------------------|------------|------|-----------|---------------|
 | `kill_warden` | Dead Anarchist | After talk in Prison Cell | Defeat the Prison Warden in Warden’s Tower | Warden defeated |
-| `kill_inquisitor` | Sorcerer | After talk in Ritual Room (post-Demon) | Defeat the Inquisitor in the Chapel | Inquisitor defeated |
+| `gather_ritual_ingredients` | Sorcerer | After talk in Ritual Room (post-Demon) | Visit Infirmary + Underground Tunnels, return | Both visited and return to Ritual Room |
+| `kill_inquisitor` | Sorcerer | After ingredients quest completes | Defeat the Inquisitor in the Chapel | Inquisitor defeated |
 | `kill_resurrected_anarchist` | Guard Captain | After talk in Central Courtyard | Defeat the Resurrected Anarchist in the Political Wing | Resurrected Anarchist defeated |
 
 ### Quest rules
 
 1. **Dialog gate:** quest enters the run quest log only after the player finishes / advances the granting NPC’s talk interaction.
-2. **One path, one boss:** existing `finalBranchId` sealing still applies — the player commits to Chapel, Warden’s Tower, or Political Wing.
-3. **Gate payoff:** completing the matching boss is what enables that faction’s NPC at Exit Gate.
-4. **UI:** quest log shows title, grantor, objective, and complete/failed state (see ROADMAP Milestone 6b).
+2. **Corridor gate:** Central Corridor stays sealed until ingredients are delivered **or** the Sorcerer is defeated (20 HP, +2 barrier/turn).
+3. **One path, one boss:** existing `finalBranchId` sealing still applies — the player commits to Chapel, Warden’s Tower, or Political Wing.
+4. **Gate payoff:** completing the matching boss is what enables that faction’s NPC at Exit Gate.
+5. **UI:** quest log shows title, grantor, objective, and complete/failed state (see ROADMAP Milestone 6b).
 
 ### Suggested quest copy
 
 | Quest | Title | Description |
 |-------|-------|-------------|
 | Kill Warden | Break the Keys | The Dead Anarchist asks you to end the Warden — the man who kept the cages locked. |
+| Gather Ingredients | Ingredients for the Circle | Dried lavender from the Infirmary; lowcap mushroom from the Tunnels. |
 | Kill Inquisitor | Snuff the Holy Fire | The Sorcerer asks you to destroy the Inquisitor before the chapel seals the ritual away. |
 | Kill Resurrected Anarchist | Cut the Rising | The Guard Captain asks you to put down the Resurrected Anarchist before the political wing empties into the yard. |
 
@@ -218,13 +221,15 @@ Design map for the first fortress. Names here are the **content target**.
 ```text
 Prison Cell (Dead Anarchist → quest: kill Warden)
   → Cell Block (Prisoner)
-  → Ritual Room (Demon → then Sorcerer → quest: kill Inquisitor)
+  → Ritual Room (Demon → Sorcerer: ingredients quest)
+       ├── Infirmary (Crazy Prisoner + dried lavender)
+       ├── Underground Tunnels (Giant Rat + lowcap mushroom)
+       └── return → Inquisitor quest; Central Corridor opens
+            (or fight Sorcerer: 20 HP, +2 barrier/turn)
   → Central Corridor  ←── empty hub
-       ├── Kitchen (Butcher) → Dining Hall (Fat Prisoner)   [add dining]
-       ├── Infirmary (Crazy Prisoner)
+       ├── Kitchen (Butcher) → Dining Hall (Fat Prisoner)
        ├── Torture Chamber (Executioner)
-       ├── Barracks (Guard) → Armory (Knight)               [add armory]
-       ├── Underground Tunnels (Giant Rat)                  [add tunnels]
+       ├── Barracks (Guard) → Armory (Knight)
        └── Central Courtyard (Guard Captain → quest: kill Resurrected Anarchist)
               ├── Chapel (Inquisitor)
               ├── Warden’s Tower (Warden)

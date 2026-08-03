@@ -35,6 +35,7 @@ export interface EnemyState {
   portrait: string;
   shield: number;
   maxShield: number;
+  barrier: number;
   deck: CardInstance[];
   discard: CardInstance[];
 }
@@ -61,6 +62,7 @@ export interface BattleContext {
   playerPoison: PoisonState | null;
   enemyPoison: PoisonState | null;
   damageReductionPercent: number;
+  enemyBarrierPerTurn: number;
   resolvingCardInstanceId: string | null;
   resolutionQueue: CardInstance[];
   activePlay: ActivePlay | null;
@@ -72,11 +74,18 @@ export interface BattleContext {
   progressionAtBattleStart: PlayerProgression;
 }
 
+export type BattleEnemyOverride = {
+  name: string;
+  portrait: string;
+  deckSize?: number;
+  barrierPerTurn?: number;
+};
+
 export type BattleEvent =
   | {
       type: 'START_BATTLE';
       progression?: PlayerProgression;
-      enemy?: { name: string; portrait: string };
+      enemy?: BattleEnemyOverride;
     }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
@@ -85,6 +94,6 @@ export type BattleEvent =
   | {
       type: 'RESTART';
       progression?: PlayerProgression;
-      enemy?: { name: string; portrait: string };
+      enemy?: BattleEnemyOverride;
     }
   | { type: 'LEAVE_BATTLE' };

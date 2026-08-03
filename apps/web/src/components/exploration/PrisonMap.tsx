@@ -5,6 +5,7 @@ import {
   isLocationVisible,
   listMapEdges,
   isLocationLocked,
+  isCorridorBlocked,
 } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
@@ -237,7 +238,8 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
 
           {allVisible.map((location) => {
             const status = getLocationStatus(context, location.id);
-            const locked = isLocationLocked(context, location.id);
+            const locked =
+            isLocationLocked(context, location.id) || isCorridorBlocked(context, location.id);
             const [w, h] = roomSizeFor(location.type);
             const color = locked ? '#5a534a' : markerColor(location, status);
             const isCurrent = location.id === context.currentLocationId;
@@ -377,7 +379,8 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         <div className="relative mt-1.5 h-[98px] w-full rounded-md border border-dashed border-[rgba(201,162,74,.2)]">
           {allVisible.map((location) => {
             const status = getLocationStatus(context, location.id);
-            const locked = isLocationLocked(context, location.id);
+            const locked =
+            isLocationLocked(context, location.id) || isCorridorBlocked(context, location.id);
             const color = locked ? '#5a534a' : markerColor(location, status);
             return (
               <span

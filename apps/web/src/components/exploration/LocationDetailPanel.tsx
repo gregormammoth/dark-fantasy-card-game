@@ -3,9 +3,10 @@ import type {
   ExplorationContext,
   LocationDefinition,
 } from '@dark-fantasy/shared/types/exploration';
-import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
+import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked, isCorridorBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
+import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 
 interface LocationDetailPanelProps {
@@ -36,11 +37,13 @@ export function LocationDetailPanel({
   const status = getLocationStatus(context, location.id);
   const locked = isLocationLocked(context, location.id);
   const exitBlocked = isExitBlocked(context, location.id);
+  const corridorBlocked = isCorridorBlocked(context, location.id);
   const showInfo = status !== 'distant' && !locked;
   const isHere = location.id === context.currentLocationId;
   const canTravel = canMoveTo(context, location.id) && !isHere;
   const hasCard = !!context.selectedCardInstanceId;
-  const activeEnemy = location.enemies.find((enemy) => !enemy.defeated);
+  const availableEnemies = location.enemies.filter((enemy) => isEnemyAvailable(context, enemy));
+  const activeEnemy = availableEnemies[0];
   const availableNpcs = location.npcs.filter((npc) => isNpcAvailable(context, npc));
   const unclaimedLoot = location.loot.filter((item) => !item.claimed);
   const availableInteractions = location.interactions.filter((item) =>
@@ -50,7 +53,7 @@ export function LocationDetailPanel({
   const chips = locked
     ? []
     : [
-        ...location.enemies.filter((e) => !e.defeated).map(() => ({ label: 'Combat', color: activityColors.combat })),
+        ...availableEnemies.map(() => ({ label: 'Combat', color: activityColors.combat })),
         ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
         ...availableNpcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
         ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
@@ -100,6 +103,12 @@ export function LocationDetailPanel({
         {exitBlocked && showInfo && (
           <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
             Defeat the boss on your chosen path before the Exit Gate will open.
+          </p>
+        )}
+
+        {corridorBlocked && showInfo && (
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
+            The Sorcerer bars the Central Corridor until his ingredients are delivered — or until he falls.
           </p>
         )}
 

@@ -47,6 +47,12 @@ export function expireRoundEffects(battle: BattleContext): BattleContext {
     appendLog(next, `Unused barrier expired (${unused}).`, 'barrier');
   }
 
+  if (next.enemy.barrier > 0) {
+    const unused = next.enemy.barrier;
+    next.enemy.barrier = 0;
+    appendLog(next, `${next.enemy.name}'s unused barrier expired (${unused}).`, 'barrier');
+  }
+
   if (next.damageReductionPercent > 0) {
     appendLog(next, 'Damage reduction wore off.', 'shield');
   }

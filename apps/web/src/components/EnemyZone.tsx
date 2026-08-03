@@ -10,6 +10,7 @@ interface EnemyZoneProps {
   deckCount: number;
   health: number;
   shield: number;
+  barrier?: number;
   poison: PoisonState | null;
   intent: EnemyIntent | null;
   spendingIndices?: Set<number>;
@@ -46,6 +47,7 @@ export function EnemyZone({
   deckCount,
   health,
   shield,
+  barrier = 0,
   poison,
   intent,
   spendingIndices,
@@ -128,6 +130,11 @@ export function EnemyZone({
             Shield{' '}
             <b className="font-cinzel text-[#dbe6f5]">{shield}</b>
           </span>
+          {barrier > 0 && (
+            <span className="inline-flex items-center gap-1.5 text-[#c4b0ef]">
+              ✦ Barrier <b className="font-cinzel text-[#ddd0f5]">{barrier}</b>
+            </span>
+          )}
           {poison && (
             <span className="inline-flex items-center gap-1.5 text-[#8fce7a]">
               <PoisonIcon className="inline-block h-[15px] w-[13px]" />

@@ -2,6 +2,10 @@ import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explor
 import { applyMove, isFinalBranch } from '../map';
 import { setLocationEncounterQueue } from '../locationEncounters';
 import { appendExplorationLog } from '../log';
+import {
+  trackIngredientVisit,
+  tryCompleteGatherIngredientsQuest,
+} from '../quests';
 
 export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
   const targetId = effect.locationId ?? ctx.actionTargetId;
@@ -20,6 +24,8 @@ export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
         'system',
       );
     }
+    next = trackIngredientVisit(next, targetId);
+    next = tryCompleteGatherIngredientsQuest(next, targetId);
     next = setLocationEncounterQueue(next, targetId);
   }
   return next;

@@ -11,6 +11,7 @@ import {
   grantQuest,
   isNpcAvailable,
   listAvailableNpcs,
+  openCorridorByForce,
 } from './quests';
 
 const BOSS_FLAGS: Record<string, string> = {
@@ -18,6 +19,27 @@ const BOSS_FLAGS: Record<string, string> = {
   inquisitor_boss: 'boss_inquisitor_defeated',
   corrupted_anarchist: 'boss_anarchist_defeated',
 };
+
+export function isEnemyAvailable(context: ExplorationContext, enemy: LocationEnemy): boolean {
+  if (enemy.defeated) {
+    return false;
+  }
+  if (enemy.requiresFlag && !context.flags[enemy.requiresFlag]) {
+    return false;
+  }
+  return true;
+}
+
+export function listAvailableEnemies(
+  context: ExplorationContext,
+  locationId: string,
+): LocationEnemy[] {
+  const location = context.locations[locationId];
+  if (!location) {
+    return [];
+  }
+  return location.enemies.filter((enemy) => isEnemyAvailable(context, enemy));
+}
 
 export function buildLocationEncounterQueue(
   context: ExplorationContext,
@@ -30,7 +52,9 @@ export function buildLocationEncounterQueue(
   const queue: LocationEncounterItem[] = [];
   const availableNpcs = listAvailableNpcs(context, locationId);
   const npc = availableNpcs.find((item) => !item.talked);
-  const enemy = location.enemies.find((item) => !item.defeated);
+  const enemy = listAvailableEnemies(context, locationId).find(
+    (item) => !item.skipAutoEncounter,
+  );
   if (npc) {
     queue.push({ type: 'dialog', locationId, targetId: npc.id });
   }
@@ -87,8 +111,9 @@ export function queueBattle(
     return context;
   }
   const enemy =
-    (enemyId ? location.enemies.find((item) => item.id === enemyId) : null) ??
-    location.enemies.find((item) => !item.defeated);
+    (enemyId
+      ? listAvailableEnemies(context, locationId).find((item) => item.id === enemyId)
+      : null) ?? listAvailableEnemies(context, locationId).find((item) => !item.skipAutoEncounter);
   if (!enemy || enemy.defeated) {
     return context;
   }
@@ -128,8 +153,8 @@ export function getBattleEnemy(
     return null;
   }
   return (
-    location.enemies.find((enemy) => enemy.id === item.targetId) ??
-    location.enemies.find((enemy) => !enemy.defeated) ??
+    listAvailableEnemies(context, item.locationId).find((enemy) => enemy.id === item.targetId) ??
+    listAvailableEnemies(context, item.locationId).find((enemy) => !enemy.skipAutoEncounter) ??
     null
   );
 }
@@ -221,6 +246,9 @@ export function resolveLocationBattle(
     const bossFlag = BOSS_FLAGS[defeatedEnemyId];
     if (bossFlag) {
       context.flags[bossFlag] = true;
+    }
+    if (defeatedEnemyId === 'sorcerer_enemy') {
+      openCorridorByForce(context);
     }
     if (defeatedEnemyId === 'demon' && resolvedLocationId === 'ritual_room') {
       context.flags.ritual_demon_cleared = true;

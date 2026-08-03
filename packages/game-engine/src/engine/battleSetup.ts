@@ -2,7 +2,7 @@ import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
 import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
-import type { BattleContext } from '@dark-fantasy/shared/types/battle';
+import type { BattleContext, BattleEnemyOverride } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
@@ -39,9 +39,24 @@ function buildDeck(cardIds: string[]): ReturnType<typeof createCardInstance>[] {
   });
 }
 
+function buildEnemyDeckIds(deckSize?: number): string[] {
+  const base = resolveDeckIds(
+    battleData.enemy.deck as string[] | 'all',
+    enemyCardsData as CardDefinition[],
+  );
+  if (!deckSize || deckSize <= base.length) {
+    return deckSize ? base.slice(0, deckSize) : base;
+  }
+  const ids: string[] = [];
+  while (ids.length < deckSize) {
+    ids.push(...base);
+  }
+  return ids.slice(0, deckSize);
+}
+
 export function createInitialBattle(
   progression: PlayerProgression = createInitialProgression(),
-  enemyOverride?: { name: string; portrait: string },
+  enemyOverride?: BattleEnemyOverride,
 ): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
@@ -54,14 +69,7 @@ export function createInitialBattle(
       ),
     ),
   );
-  const enemyDeck = shuffle(
-    buildDeck(
-      resolveDeckIds(
-        battleData.enemy.deck as string[] | 'all',
-        enemyCardsData as CardDefinition[],
-      ),
-    ),
-  );
+  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)));
 
   const playerMaxShield = battleData.player.maxShield ?? 2;
   const enemyMaxShield = battleData.enemy.maxShield ?? 2;
@@ -81,6 +89,7 @@ export function createInitialBattle(
       portrait: enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT,
       shield: Math.min(battleData.enemy.startingShield, enemyMaxShield),
       maxShield: enemyMaxShield,
+      barrier: 0,
       deck: enemyDeck,
       discard: [],
     },
@@ -99,6 +108,7 @@ export function createInitialBattle(
     playerPoison: null,
     enemyPoison: null,
     damageReductionPercent: 0,
+    enemyBarrierPerTurn: enemyOverride?.barrierPerTurn ?? 0,
     resolvingCardInstanceId: null,
     resolutionQueue: [],
     activePlay: null,

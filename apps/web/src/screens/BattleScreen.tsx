@@ -282,6 +282,7 @@ export function BattleScreen({
           deckCount={battle.enemy.deck.length}
           health={enemyHealth}
           shield={battle.enemy.shield}
+          barrier={battle.enemy.barrier}
           poison={battle.enemyPoison}
           intent={enemyIntent}
           spendingIndices={spendState.enemy?.indices}

@@ -3,7 +3,7 @@ import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { EffectContext, EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { effectHandlers } from './effects/registry';
 import { createResolutionState } from './effects/resolutionState';
-import { isBattleOver } from './health';
+import { isBattleOver, addBarrier } from './health';
 import { shuffle } from './deck';
 import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
@@ -181,5 +181,8 @@ export function playRandomEnemyCard(battle: BattleContext): BattleContext {
 export function startPlayerTurn(battle: BattleContext): BattleContext {
   let next = applyPoisonTick(battle, 'player');
   next = applyPoisonTick(next, 'enemy');
+  if (next.enemyBarrierPerTurn > 0) {
+    next = addBarrier(next, 'enemy', next.enemyBarrierPerTurn);
+  }
   return next;
 }

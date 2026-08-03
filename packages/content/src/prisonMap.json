@@ -18,6 +18,18 @@
       "branchId": "warden_tower"
     },
     {
+      "id": "gather_ritual_ingredients",
+      "name": "Ingredients for the Circle",
+      "description": "The Sorcerer needs dried lavender from the Infirmary and a lowcap mushroom from the Underground Tunnels before he will let you pass.",
+      "requiredLocationIds": [
+        "infirmary",
+        "underground_tunnels"
+      ],
+      "completeOnReturnTo": "ritual_room",
+      "grantsQuestIdOnComplete": "kill_inquisitor",
+      "setFlagOnComplete": "ritual_corridor_open"
+    },
+    {
       "id": "kill_inquisitor",
       "name": "Silence the Inquisitor",
       "description": "The freed Sorcerer wants the Inquisitor destroyed before he finishes his work in the chapel.",
@@ -165,6 +177,18 @@
           "description": "Something the ritual called up and never fully controlled, still chained to this room.",
           "image": "/characters/demon.png",
           "defeated": false
+        },
+        {
+          "id": "sorcerer_enemy",
+          "name": "The Sorcerer",
+          "tier": "Boss · Ritual",
+          "description": "Refuse his errand and he will burn you where you stand. Twenty wards, two barriers every breath.",
+          "image": "/characters/sorcerer.png",
+          "defeated": false,
+          "requiresFlag": "ritual_demon_cleared",
+          "skipAutoEncounter": true,
+          "deckSize": 20,
+          "barrierPerTurn": 2
         }
       ],
       "npcs": [
@@ -174,13 +198,18 @@
           "tag": "Ritual Mage",
           "description": "The mage behind the ritual, revealed once the Demon falls.",
           "lines": [
-            "You put the demon down. I suppose I owe you an explanation.",
-            "This was never about the prisoners. The wards beneath this fortress were failing long before I arrived.",
-            "The Inquisitor guards the chapel and half of what I started. Finish him, and I'll finish nothing further."
+            "You put the demon down. Good. Now you work for me.",
+            "I need dried lavender from the Infirmary and a lowcap mushroom from the tunnels beneath.",
+            "Bring them back and I'll open the corridor. Refuse, and you can try the hard way."
+          ],
+          "followUpLines": [
+            "Lavender. Mushroom. The circle will hold a little longer.",
+            "The Inquisitor still sits on the other half of this ritual in the chapel.",
+            "Kill him, and the wards stop answering to anyone but me. The corridor is yours."
           ],
           "image": "/characters/sorcerer.png",
           "talked": false,
-          "grantsQuestId": "kill_inquisitor",
+          "grantsQuestId": "gather_ritual_ingredients",
           "requiresFlag": "ritual_demon_cleared"
         }
       ],
@@ -199,6 +228,15 @@
           "label": "Talk to the Sorcerer",
           "requiresNpc": true,
           "targetId": "sorcerer",
+          "once": true,
+          "requiresFlag": "ritual_demon_cleared"
+        },
+        {
+          "id": "attack_sorcerer",
+          "action": "ATTACK",
+          "label": "Fight the Sorcerer",
+          "requiresEnemy": true,
+          "targetId": "sorcerer_enemy",
           "once": true,
           "requiresFlag": "ritual_demon_cleared"
         },
@@ -245,6 +283,12 @@
           "id": "vermin_fang",
           "name": "Vermin Fang",
           "description": "+1 damage vs. beasts",
+          "claimed": false
+        },
+        {
+          "id": "lowcap_mushroom",
+          "name": "Lowcap Mushroom",
+          "description": "Pale fungus from the tunnels — a ritual ingredient",
           "claimed": false
         }
       ],
@@ -388,6 +432,12 @@
           "id": "field_dressing",
           "name": "Field Dressing",
           "description": "Heal 3 before a fight",
+          "claimed": false
+        },
+        {
+          "id": "dried_lavender",
+          "name": "Dried Lavender",
+          "description": "Ritual ingredient the Sorcerer requested",
           "claimed": false
         }
       ],

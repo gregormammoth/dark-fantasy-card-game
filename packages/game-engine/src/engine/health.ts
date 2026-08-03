@@ -124,6 +124,12 @@ export function dealDamage(
     damage -= barrierAbsorbed;
   }
 
+  if (!bypassDefenses && target === 'enemy' && next.enemy.barrier > 0) {
+    barrierAbsorbed = Math.min(next.enemy.barrier, damage);
+    next.enemy.barrier -= barrierAbsorbed;
+    damage -= barrierAbsorbed;
+  }
+
   if (!bypassDefenses && !ignoreShield && combatant.shield > 0) {
     shieldAbsorbed = Math.min(combatant.shield, damage);
     combatant.shield -= shieldAbsorbed;
@@ -204,12 +210,16 @@ export function addBarrier(
   target: EffectTarget,
   amount: number,
 ): BattleContext {
-  if (amount <= 0 || target !== 'player') {
+  if (amount <= 0) {
     return battle;
   }
 
   const next = structuredClone(battle);
-  next.player.barrier += amount;
+  if (target === 'player') {
+    next.player.barrier += amount;
+  } else {
+    next.enemy.barrier += amount;
+  }
   appendLog(
     next,
     `${targetLabel(next, target)} gained ${amount} barrier.`,

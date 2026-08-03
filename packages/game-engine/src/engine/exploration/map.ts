@@ -34,6 +34,13 @@ export function isExitBlocked(context: ExplorationContext, locationId: string): 
   return !!branch?.enemies.some((enemy) => !enemy.defeated);
 }
 
+export function isCorridorBlocked(context: ExplorationContext, locationId: string): boolean {
+  if (locationId !== 'central_corridor') {
+    return false;
+  }
+  return !context.flags.ritual_corridor_open;
+}
+
 export function getLocation(
   context: ExplorationContext,
   locationId: string,
@@ -97,6 +104,9 @@ export function canMoveTo(context: ExplorationContext, locationId: string): bool
     return false;
   }
   if (isExitBlocked(context, locationId)) {
+    return false;
+  }
+  if (isCorridorBlocked(context, locationId)) {
     return false;
   }
   return true;
@@ -193,9 +203,15 @@ export function isInteractionAvailable(
     return false;
   }
   if (interaction.requiresEnemy) {
-    const enemy = location.enemies.find((item) =>
-      interaction.targetId ? item.id === interaction.targetId : !item.defeated,
-    );
+    const enemy = location.enemies.find((item) => {
+      if (interaction.targetId && item.id !== interaction.targetId) {
+        return false;
+      }
+      if (item.requiresFlag && !context.flags[item.requiresFlag]) {
+        return false;
+      }
+      return !item.defeated;
+    });
     if (!enemy || enemy.defeated) {
       return false;
     }

@@ -33,6 +33,10 @@ export interface LocationEnemy {
   description?: string;
   image?: string;
   defeated: boolean;
+  requiresFlag?: string;
+  skipAutoEncounter?: boolean;
+  deckSize?: number;
+  barrierPerTurn?: number;
 }
 
 export interface LocationNpc {
@@ -41,6 +45,7 @@ export interface LocationNpc {
   description: string;
   tag?: string;
   lines?: string[];
+  followUpLines?: string[];
   image?: string;
   talked: boolean;
   grantsQuestId?: string;
@@ -59,6 +64,10 @@ export interface QuestDefinition {
   targetEnemyId?: string;
   targetLocationId?: string;
   branchId?: string;
+  requiredLocationIds?: string[];
+  completeOnReturnTo?: string;
+  grantsQuestIdOnComplete?: string;
+  setFlagOnComplete?: string;
 }
 
 export type RunQuestStatus = 'active' | 'completed';
