@@ -52,7 +52,7 @@ function makeEnemyCard(id: string): CardInstance {
 function makeBattle(hand: CardInstance[], enemyDeck: CardInstance[] = []): BattleContext {
   return {
     player: {
-      portrait: '/portraits/player.png',
+      portrait: '/characters/player.png',
       shield: 0,
       maxShield: 2,
       barrier: 0,
@@ -62,7 +62,7 @@ function makeBattle(hand: CardInstance[], enemyDeck: CardInstance[] = []): Battl
     },
     enemy: {
       name: 'Test Enemy',
-      portrait: '/portraits/enemy_01.png',
+      portrait: '/characters/prisoner.png',
       shield: 0,
       maxShield: 2,
       deck: enemyDeck,

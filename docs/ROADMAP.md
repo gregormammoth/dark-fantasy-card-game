@@ -163,7 +163,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Seeded RNG | Not started (now **required** for Beta) |
 | NestJS API + Postgres | Not started (Beta-critical) |
 | Analytics + feedback | Not started (Beta-critical) |
-| Hollowfort map content | 12 locations + branch bosses + encounter queue (polish ongoing) |
+| Hollowfort map content | 13 locations + branch bosses + encounter queue (polish ongoing) |
 | Inventory | Money for Beta; full items post-Beta |
 | Automated tests | E2E smoke + worldâ†’battle; XP unit tests |
 
@@ -570,6 +570,7 @@ Current roster in `prisonMap.json` (see also [HOLLOWFORT.md](./HOLLOWFORT.md) â€
 
 - [x] Prison Cell
 - [x] Cell Block
+- [x] Ritual Room
 - [x] Central Corridor
 - [x] Kitchen
 - [x] Infirmary
