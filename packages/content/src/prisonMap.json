@@ -112,6 +112,14 @@
           "description": "Three more of them, drawn by the noise, shuffling out of the dark cells.",
           "image": "/characters/dead_anarchist.png",
           "defeated": false
+        },
+        {
+          "id": "brutal_prisoner",
+          "name": "Brutal Prisoner",
+          "tier": "Common · Brute",
+          "description": "A bald mountain of muscle wrapped in his own chains, looking for something softer than iron to break.",
+          "image": "/characters/brutal_prisoner.png",
+          "defeated": false
         }
       ],
       "npcs": [
@@ -152,6 +160,14 @@
           "once": true
         },
         {
+          "id": "attack_brutal_prisoner",
+          "action": "ATTACK",
+          "label": "Fight the Brutal Prisoner",
+          "requiresEnemy": true,
+          "targetId": "brutal_prisoner",
+          "once": true
+        },
+        {
           "id": "explore_cell_block",
           "action": "EXPLORE",
           "label": "Search the political wing marks",
@@ -184,6 +200,14 @@
           "description": "A wolf-sized sewer rat with mangy fur and yellow chisels for teeth, drawn to the ritual circle's warmth.",
           "image": "/characters/giant_rat.png",
           "defeated": false
+        },
+        {
+          "id": "demon",
+          "name": "Lesser Demon",
+          "tier": "Elite · Fiend",
+          "description": "A horned scrap of the ritual, red-skinned and hungry, still sniffing the circle for unfinished work.",
+          "image": "/characters/demon.png",
+          "defeated": false
         }
       ],
       "npcs": [],
@@ -199,6 +223,14 @@
           "label": "Fight the Giant Rat",
           "requiresEnemy": true,
           "targetId": "giant_rat",
+          "once": true
+        },
+        {
+          "id": "attack_demon",
+          "action": "ATTACK",
+          "label": "Fight the Lesser Demon",
+          "requiresEnemy": true,
+          "targetId": "demon",
           "once": true
         },
         {
@@ -295,9 +327,9 @@
         },
         {
           "id": "fat_prisoner",
-          "name": "Fat Prisoner",
+          "name": "Fat Brutal Prisoner",
           "tier": "Common · Scrap",
-          "description": "An obese inmate with a greasy beard, swinging a giant cooking fork like a spear.",
+          "description": "An obese inmate with a greasy beard, swinging a spiked wooden club like it owes him blood.",
           "image": "/characters/fat_prisoner.png",
           "defeated": false
         }
@@ -341,7 +373,7 @@
         {
           "id": "attack_fat_prisoner",
           "action": "ATTACK",
-          "label": "Fight the Fat Prisoner",
+          "label": "Fight the Fat Brutal Prisoner",
           "requiresEnemy": true,
           "targetId": "fat_prisoner",
           "once": true
@@ -501,10 +533,10 @@
       "enemies": [
         {
           "id": "undead_guard",
-          "name": "Prison Knight",
+          "name": "Prison Guard",
           "tier": "Common · Armored",
-          "description": "A worn knight in prison-issue plate, kite shield raised, still walking the barracks as if the watch never ended.",
-          "image": "/characters/knight.png",
+          "description": "A living or risen watchman in plate, kite shield marked with the Hollowfort gate, still holding the barracks line.",
+          "image": "/characters/guard.png",
           "defeated": false
         }
       ],
@@ -543,7 +575,7 @@
         {
           "id": "attack_undead_guard",
           "action": "ATTACK",
-          "label": "Fight the Prison Knight",
+          "label": "Fight the Prison Guard",
           "requiresEnemy": true,
           "targetId": "undead_guard",
           "once": true
@@ -755,9 +787,9 @@
       "enemies": [
         {
           "id": "corrupted_anarchist",
-          "name": "The Corrupted Anarchist",
+          "name": "Undead Anarchist",
           "tier": "BOSS",
-          "description": "The revolution he never finished, twisted into something that answers to the ritual instead of his cause.",
+          "description": "The revolution unfinished — a burning blue skull and living mohawk of flame, chains still answering his call.",
           "image": "/characters/resurrected_anarchist.png",
           "defeated": false
         }
