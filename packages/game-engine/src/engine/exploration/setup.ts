@@ -59,6 +59,7 @@ export function createInitialExploration(): ExplorationContext {
     locationEncounterQueue: [],
     dialogLineIndex: 0,
     finalBranchId: null,
+    quests: [],
     lastActionMessage: null,
     log: [],
   };

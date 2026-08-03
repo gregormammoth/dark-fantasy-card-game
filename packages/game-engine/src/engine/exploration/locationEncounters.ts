@@ -6,6 +6,18 @@ import type {
   LocationNpc,
 } from '@dark-fantasy/shared/types/exploration';
 import { appendExplorationLog } from './log';
+import {
+  completeQuestForEnemy,
+  grantQuest,
+  isNpcAvailable,
+  listAvailableNpcs,
+} from './quests';
+
+const BOSS_FLAGS: Record<string, string> = {
+  prison_warden_boss: 'boss_warden_defeated',
+  inquisitor_boss: 'boss_inquisitor_defeated',
+  corrupted_anarchist: 'boss_anarchist_defeated',
+};
 
 export function buildLocationEncounterQueue(
   context: ExplorationContext,
@@ -16,11 +28,12 @@ export function buildLocationEncounterQueue(
     return [];
   }
   const queue: LocationEncounterItem[] = [];
-  const npc = location.npcs.find((item) => !item.talked);
+  const availableNpcs = listAvailableNpcs(context, locationId);
+  const npc = availableNpcs.find((item) => !item.talked);
+  const enemy = location.enemies.find((item) => !item.defeated);
   if (npc) {
     queue.push({ type: 'dialog', locationId, targetId: npc.id });
   }
-  const enemy = location.enemies.find((item) => !item.defeated);
   if (enemy) {
     queue.push({ type: 'battle', locationId, targetId: enemy.id });
   }
@@ -51,14 +64,15 @@ export function queueDialog(
   if (!location) {
     return context;
   }
+  const available = listAvailableNpcs(context, locationId);
   const npc =
-    (npcId ? location.npcs.find((item) => item.id === npcId) : null) ?? location.npcs[0];
+    (npcId ? available.find((item) => item.id === npcId) : null) ??
+    available.find((item) => !item.talked) ??
+    available[0];
   if (!npc) {
     return context;
   }
-  context.locationEncounterQueue = [
-    { type: 'dialog', locationId, targetId: npc.id },
-  ];
+  context.locationEncounterQueue = [{ type: 'dialog', locationId, targetId: npc.id }];
   context.dialogLineIndex = 0;
   return context;
 }
@@ -78,9 +92,7 @@ export function queueBattle(
   if (!enemy || enemy.defeated) {
     return context;
   }
-  context.locationEncounterQueue = [
-    { type: 'battle', locationId, targetId: enemy.id },
-  ];
+  context.locationEncounterQueue = [{ type: 'battle', locationId, targetId: enemy.id }];
   context.dialogLineIndex = 0;
   return context;
 }
@@ -99,9 +111,12 @@ export function getDialogNpc(
   if (!location) {
     return null;
   }
-  return (
-    location.npcs.find((npc) => npc.id === item.targetId) ?? location.npcs[0] ?? null
-  );
+  const npc =
+    location.npcs.find((entry) => entry.id === item.targetId) ?? location.npcs[0] ?? null;
+  if (!npc || !isNpcAvailable(context, npc)) {
+    return null;
+  }
+  return npc;
 }
 
 export function getBattleEnemy(
@@ -139,6 +154,9 @@ export function advanceDialog(context: ExplorationContext): ExplorationContext {
   if (context.dialogLineIndex + 1 >= lines.length) {
     npc.talked = true;
     appendExplorationLog(context, `Spoke with ${npc.name}.`, 'action');
+    if (npc.grantsQuestId) {
+      grantQuest(context, npc.grantsQuestId);
+    }
     return advanceLocationEncounterQueue(context);
   }
   context.dialogLineIndex += 1;
@@ -168,6 +186,8 @@ export function resolveLocationBattle(
   const encounter = getActiveLocationEncounter(context);
   const resolvedLocationId = locationId ?? encounter?.locationId;
   const resolvedEnemyId = enemyId ?? encounter?.targetId;
+  let defeatedEnemyId: string | null = null;
+
   if (won && resolvedLocationId) {
     const location = context.locations[resolvedLocationId];
     if (location) {
@@ -176,6 +196,7 @@ export function resolveLocationBattle(
       );
       if (index >= 0) {
         const [enemy] = location.enemies.splice(index, 1);
+        defeatedEnemyId = enemy.id;
         appendExplorationLog(context, `Defeated ${enemy.name}.`, 'danger');
         for (const interaction of location.interactions) {
           if (
@@ -189,6 +210,25 @@ export function resolveLocationBattle(
     }
   } else if (!won) {
     appendExplorationLog(context, 'The fight ends without a clear victory.', 'danger');
+  }
+
+  if (defeatedEnemyId) {
+    completeQuestForEnemy(context, defeatedEnemyId);
+    const bossFlag = BOSS_FLAGS[defeatedEnemyId];
+    if (bossFlag) {
+      context.flags[bossFlag] = true;
+    }
+    if (defeatedEnemyId === 'demon' && resolvedLocationId === 'ritual_room') {
+      context.flags.ritual_demon_cleared = true;
+      const sorcerer = context.locations.ritual_room?.npcs.find((npc) => npc.id === 'sorcerer');
+      if (sorcerer && !sorcerer.talked) {
+        context.locationEncounterQueue = [
+          { type: 'dialog', locationId: 'ritual_room', targetId: 'sorcerer' },
+        ];
+        context.dialogLineIndex = 0;
+        return context;
+      }
+    }
   }
 
   if (encounter?.type === 'battle') {

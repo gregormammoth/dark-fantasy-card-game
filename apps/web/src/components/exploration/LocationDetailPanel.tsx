@@ -5,6 +5,7 @@ import type {
 } from '@dark-fantasy/shared/types/exploration';
 import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
+import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 
 interface LocationDetailPanelProps {
@@ -38,6 +39,7 @@ export function LocationDetailPanel({
   const canTravel = canMoveTo(context, location.id) && !isHere;
   const hasCard = !!context.selectedCardInstanceId;
   const activeEnemy = location.enemies.find((enemy) => !enemy.defeated);
+  const availableNpcs = location.npcs.filter((npc) => isNpcAvailable(context, npc));
   const unclaimedLoot = location.loot.filter((item) => !item.claimed);
   const availableInteractions = location.interactions.filter((item) =>
     isInteractionAvailable(context, item.id),
@@ -48,7 +50,7 @@ export function LocationDetailPanel({
     : [
         ...location.enemies.filter((e) => !e.defeated).map(() => ({ label: 'Combat', color: activityColors.combat })),
         ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
-        ...location.npcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
+        ...availableNpcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
         ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
         ...location.interactions
           .filter((item) => item.action === 'REST' && !item.completed)
@@ -123,7 +125,7 @@ export function LocationDetailPanel({
           </div>
         )}
 
-        {showInfo && location.npcs.map((npc) => (
+        {showInfo && availableNpcs.map((npc) => (
           <div
             key={npc.id}
             className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.1)] px-3 py-2.5"

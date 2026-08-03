@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
@@ -8,6 +9,7 @@ import {
   getDialogLines,
   getDialogNpc,
 } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
+import { listActiveQuests } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { useAudio } from '@/audio/useAudio';
 import { PrisonMap } from '@/components/exploration/PrisonMap';
 import { LocationDetailPanel } from '@/components/exploration/LocationDetailPanel';
@@ -33,10 +35,13 @@ export function ExplorationScreen({
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
   const { unlock } = useAudio();
+  const [questLogOpen, setQuestLogOpen] = useState(false);
   const isIdle = snapshot.matches('idle');
   const selected = context.selectedLocationId
     ? context.locations[context.selectedLocationId] ?? null
     : null;
+  const activeQuests = listActiveQuests(context);
+  const completedQuests = context.quests.filter((quest) => quest.status === 'completed');
 
   const locationEncounter = getActiveLocationEncounter(context);
   const dialogNpc =
@@ -84,7 +89,7 @@ export function ExplorationScreen({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
-      <div className="flex items-center justify-between gap-3">
+      <div className="relative flex items-center justify-between gap-3">
         {onBackToWorld ? (
           <button
             type="button"
@@ -99,7 +104,19 @@ export function ExplorationScreen({
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON
         </span>
-        <div className="flex items-center gap-2 pr-12">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setQuestLogOpen((open) => !open)}
+            className="relative flex items-center gap-2 rounded-[10px] border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] px-3.5 py-2 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)]"
+          >
+            QUEST LOG
+            {activeQuests.length > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]">
+                {activeQuests.length}
+              </span>
+            )}
+          </button>
           {onOpenPlayer && (
             <button
               type="button"
@@ -110,6 +127,33 @@ export function ExplorationScreen({
             </button>
           )}
         </div>
+        {questLogOpen && (
+          <div className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-2.5 overflow-y-auto rounded-[12px] border border-[rgba(201,162,74,.28)] bg-[rgba(12,9,8,.96)] p-3.5 shadow-[0_24px_60px_-14px_#000]">
+            <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">ACTIVE THREADS</span>
+            {activeQuests.length === 0 && completedQuests.length === 0 && (
+              <p className="m-0 text-[12px] text-[#8a7f72]">No quests yet. Talk to faction NPCs.</p>
+            )}
+            {activeQuests.map((quest) => (
+              <div
+                key={quest.id}
+                className="rounded-[9px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-2.5 py-2"
+              >
+                <div className="font-cinzel text-[12px] text-[#f0e2c0]">{quest.name}</div>
+                <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">{quest.description}</div>
+                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">ACTIVE</div>
+              </div>
+            ))}
+            {completedQuests.map((quest) => (
+              <div
+                key={quest.id}
+                className="rounded-[9px] border-l-[3px] border-[#6fae5a] bg-[rgba(111,174,90,.08)] px-2.5 py-2"
+              >
+                <div className="font-cinzel text-[12px] text-[#d7e8cf]">{quest.name}</div>
+                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">COMPLETE</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="relative">

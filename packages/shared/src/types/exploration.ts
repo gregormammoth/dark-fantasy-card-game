@@ -43,11 +43,34 @@ export interface LocationNpc {
   lines?: string[];
   image?: string;
   talked: boolean;
+  grantsQuestId?: string;
+  requiresFlag?: string;
 }
 
 export interface LocationQuest {
   name: string;
   description: string;
+}
+
+export interface QuestDefinition {
+  id: string;
+  name: string;
+  description: string;
+  targetEnemyId?: string;
+  targetLocationId?: string;
+  branchId?: string;
+}
+
+export type RunQuestStatus = 'active' | 'completed';
+
+export interface RunQuest {
+  id: string;
+  name: string;
+  description: string;
+  status: RunQuestStatus;
+  targetEnemyId?: string;
+  targetLocationId?: string;
+  branchId?: string;
 }
 
 export type LocationEncounterKind = 'dialog' | 'battle';
@@ -133,6 +156,7 @@ export interface ExplorationContext {
   locationEncounterQueue: LocationEncounterItem[];
   dialogLineIndex: number;
   finalBranchId: string | null;
+  quests: RunQuest[];
   lastActionMessage: string | null;
   log: ExplorationLogEntry[];
 }

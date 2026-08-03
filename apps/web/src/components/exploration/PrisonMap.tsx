@@ -20,6 +20,10 @@ function markerColor(location: LocationDefinition, status: LocationStatus): stri
   return locationTypeColors[location.type];
 }
 
+const MAP_WIDTH = 1840;
+const MAP_HEIGHT = 900;
+const MAP_SCALE = 0.6;
+
 const dustMotes = Array.from({ length: 10 }, (_, i) => ({
   x: (i * 97) % 100,
   y: 40 + ((i * 53) % 55),
@@ -110,7 +114,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         alt=""
         className="pointer-events-none absolute left-1/2 top-1/2 z-0 max-w-none -translate-x-1/2 -translate-y-1/2"
         style={{
-          width: 1400,
+          width: MAP_WIDTH,
           filter: 'grayscale(.55) brightness(.9) contrast(1.08) blur(.8px)',
           opacity: 0.45,
         }}
@@ -165,8 +169,13 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
       </div>
 
       <div
-        className="absolute left-0 top-0 origin-top-left"
-        style={{ width: 1500, height: 900, transform: 'scale(0.733)' }}
+        className="absolute left-0 origin-top-left"
+        style={{
+          top: (660 - MAP_HEIGHT * MAP_SCALE) / 2,
+          width: MAP_WIDTH,
+          height: MAP_HEIGHT,
+          transform: `scale(${MAP_SCALE})`,
+        }}
       >
         {edges.map((edge) => {
           const hovered =
@@ -316,8 +325,8 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                 key={`mini-${location.id}`}
                 className="absolute h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full"
                 style={{
-                  left: `${(location.position.x / 1400) * 100}%`,
-                  top: `${(location.position.y / 900) * 100}%`,
+                  left: `${(location.position.x / MAP_WIDTH) * 100}%`,
+                  top: `${(location.position.y / MAP_HEIGHT) * 100}%`,
                   background: color,
                   opacity: locked || status === 'distant' ? 0.45 : 1,
                 }}
@@ -328,8 +337,8 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
             <span
               className="absolute h-[11px] w-[11px] -translate-x-1/2 -translate-y-1/2 animate-[herepulse_1.8s_ease-in-out_infinite] rounded-full border-2 border-[#e0b552]"
               style={{
-                left: `${(current.position.x / 1400) * 100}%`,
-                top: `${(current.position.y / 900) * 100}%`,
+                left: `${(current.position.x / MAP_WIDTH) * 100}%`,
+                top: `${(current.position.y / MAP_HEIGHT) * 100}%`,
               }}
             />
           )}

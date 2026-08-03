@@ -201,10 +201,19 @@ export function isInteractionAvailable(
     }
   }
   if (interaction.requiresNpc) {
-    const npc = location.npcs.find((item) =>
-      interaction.targetId ? item.id === interaction.targetId : !item.talked,
-    );
+    const npc = location.npcs.find((item) => {
+      if (interaction.targetId && item.id !== interaction.targetId) {
+        return false;
+      }
+      if (item.requiresFlag && !context.flags[item.requiresFlag]) {
+        return false;
+      }
+      return !item.talked || !!interaction.targetId;
+    });
     if (!npc) {
+      return false;
+    }
+    if (npc.requiresFlag && !context.flags[npc.requiresFlag]) {
       return false;
     }
   }

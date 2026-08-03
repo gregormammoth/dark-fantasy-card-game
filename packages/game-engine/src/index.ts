@@ -11,6 +11,7 @@ export {
   isFinalBranch,
 } from './engine/exploration/map';
 export { canPlayAction } from './engine/exploration/actions';
+export { listActiveQuests, listAvailableNpcs, isNpcAvailable } from './engine/exploration/quests';
 export { battleMachine } from './machine/battleMachine';
 export { explorationMachine } from './machine/explorationMachine';
 export {

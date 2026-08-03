@@ -521,7 +521,9 @@ Accept / discover → Active → Objectives progress → Complete / Fail
 - [ ] Engine: accept, progress (flags, talk, kill, reach location, pay money), complete, fail
 - [ ] Wire NPC dialog / location interactions / battle results into quest progress
 - [ ] Player-facing **quest log UI** (list + detail + objectives)
-- [ ] At least 2–3 Hollowfort quests (e.g. rescue, faction ask, boss path)
+- [ ] At least 3 Hollowfort faction quests (see [HOLLOWFORT.md](./HOLLOWFORT.md): kill Warden / Inquisitor / Resurrected Anarchist)
+- [ ] Quests granted only after dialog with Dead Anarchist, Sorcerer (post-Demon), Guard Captain
+- [ ] Exit Gate shows the matching faction NPC when that quest’s boss is dead
 
 ### Money (light inventory)
 
@@ -560,7 +562,9 @@ Quest log is usable mid-run; money appears in inventory and matters for at least
 
 ### Quests & economy in the slice
 
-- [ ] Quest log surfaces active Hollowfort objectives
+- [ ] Quest log surfaces the three faction kill-quests ([HOLLOWFORT.md](./HOLLOWFORT.md))
+- [ ] Quests appear only after dialog (Dead Anarchist / Sorcerer / Guard Captain)
+- [ ] Exit Gate conditional NPCs after matching boss kills
 - [ ] At least one paid / bribe / buy choice using money
 - [ ] Quest completion grants XP, money, and/or unlocks
 

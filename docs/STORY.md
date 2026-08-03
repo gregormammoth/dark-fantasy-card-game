@@ -96,16 +96,18 @@ The central dramatic question:
 
 > When every chain is broken, who do you stand with — the dead who were wronged, the living who still hold keys to the outside world, or only yourself?
 
+Faction quests and gate payoffs (who stands where): [HOLLOWFORT.md](./HOLLOWFORT.md) — Placement + Faction quests.
+
 ### Loyalties (design space)
 
 Three factions pull the protagonist (full cast and bosses in [HOLLOWFORT.md](./HOLLOWFORT.md)):
 
-| Path | Faction | Rough meaning | Route boss if opposed / tasked |
-|------|---------|---------------|--------------------------------|
-| The risen | Anarchists | Aid the resurrected; justice over order | Prison Warden |
-| Order | Guards | Restore control; earn pardon | Dead Anarchist |
-| The ritual | Sorcerer’s followers | Serve or use the mage’s plan | Inquisitor |
-| The escapee | None | Use all sides; get out; answer later | Any gate confrontation |
+| Path | Faction | Quest (after dialog) | Route boss | Gate NPC if boss dead |
+|------|---------|----------------------|------------|------------------------|
+| The risen | Anarchists | Dead Anarchist → kill Warden | Prison Warden | Dead Anarchist |
+| Order | Guards | Guard Captain → kill Resurrected Anarchist | Resurrected Anarchist | Guard Captain |
+| The ritual | Sorcerer’s followers | Sorcerer → kill Inquisitor | Inquisitor | Sorcerer |
+| The escapee | None | Use all sides; get out; answer later | Any gate confrontation | — |
 
 Beta can ship a single clear escape beat with one loyalty fork first, then expand the full three-route bosses.
 
