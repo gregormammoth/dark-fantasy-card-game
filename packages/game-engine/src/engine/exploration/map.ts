@@ -41,6 +41,18 @@ export function isCorridorBlocked(context: ExplorationContext, locationId: strin
   return !context.flags.ritual_corridor_open;
 }
 
+export function isDiningHallPathBlocked(
+  context: ExplorationContext,
+  fromLocationId: string,
+  toLocationId: string,
+): boolean {
+  const pair = [fromLocationId, toLocationId].sort().join(':');
+  if (pair !== 'central_corridor:dining_hall') {
+    return false;
+  }
+  return !context.flags.dining_hall_path_open;
+}
+
 export function getLocation(
   context: ExplorationContext,
   locationId: string,
@@ -107,6 +119,9 @@ export function canMoveTo(context: ExplorationContext, locationId: string): bool
     return false;
   }
   if (isCorridorBlocked(context, locationId)) {
+    return false;
+  }
+  if (isDiningHallPathBlocked(context, current.id, locationId)) {
     return false;
   }
   return true;

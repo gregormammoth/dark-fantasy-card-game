@@ -5,6 +5,7 @@ import { appendExplorationLog } from '../log';
 import {
   trackIngredientVisit,
   tryCompleteGatherIngredientsQuest,
+  resolveDiningWayProgress,
 } from '../quests';
 
 export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
@@ -26,6 +27,7 @@ export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
     }
     next = trackIngredientVisit(next, targetId);
     next = tryCompleteGatherIngredientsQuest(next, targetId);
+    next = resolveDiningWayProgress(next, targetId);
     next = setLocationEncounterQueue(next, targetId);
   }
   return next;

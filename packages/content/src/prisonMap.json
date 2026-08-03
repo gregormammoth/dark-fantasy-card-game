@@ -30,6 +30,12 @@
       "setFlagOnComplete": "ritual_corridor_open"
     },
     {
+      "id": "find_dining_way",
+      "name": "The Locked Mess",
+      "description": "The door from the Central Corridor into the Dining Hall is barred. Find another way — through the Kitchen, or get the Executioner's keyring from the Torture Chamber.",
+      "setFlagOnComplete": "dining_hall_path_open"
+    },
+    {
       "id": "kill_inquisitor",
       "name": "Silence the Inquisitor",
       "description": "The freed Sorcerer wants the Inquisitor destroyed before he finishes his work in the chapel.",
@@ -331,7 +337,7 @@
         "x": 820,
         "y": 450
       },
-      "description": "The fortress's main artery. Torches gutter over churned blood, and every door in Hollowfort seems to open off this one hall.",
+      "description": "The fortress's main artery. Torches gutter over churned blood, and every door in Hollowfort seems to open off this one hall — except the mess door, which stays barred.",
       "image": "/locations/central_corridor.png",
       "interactions": [
         {
@@ -487,11 +493,11 @@
           "id": "executioner",
           "name": "The Executioner",
           "tag": "Broken Man",
-          "description": "He offers a key and a warning about the three doors past the courtyard.",
+          "description": "He offers a keyring that opens the mess door off the corridor.",
           "lines": [
             "I hanged my own bride on the Warden's order. Called it duty, once.",
-            "Three doors past the courtyard: a chapel, a tower, a wing for the politicals. Pick your poison.",
-            "Take the key. I have no more use for doors."
+            "That barred door into the Dining Hall? Staff keyring's on the hook. Take it.",
+            "Three doors past the courtyard: chapel, tower, political wing. Pick your poison."
           ],
           "image": "/characters/executioner.png",
           "talked": false
@@ -499,9 +505,9 @@
       ],
       "loot": [
         {
-          "id": "executioners_key",
-          "name": "Executioner's Key",
-          "description": "Unlocks a hidden passage",
+          "id": "dining_keyring",
+          "name": "Dining Keyring",
+          "description": "Opens the barred door from the Central Corridor into the Dining Hall",
           "claimed": false
         }
       ],
@@ -517,7 +523,7 @@
         {
           "id": "search_torture",
           "action": "SEARCH",
-          "label": "Take the key",
+          "label": "Take the keyring",
           "requiresLoot": true,
           "once": true
         },

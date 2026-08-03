@@ -3,7 +3,7 @@ import type {
   ExplorationContext,
   LocationDefinition,
 } from '@dark-fantasy/shared/types/exploration';
-import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked, isCorridorBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
+import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked, isCorridorBlocked, isDiningHallPathBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
@@ -38,6 +38,11 @@ export function LocationDetailPanel({
   const locked = isLocationLocked(context, location.id);
   const exitBlocked = isExitBlocked(context, location.id);
   const corridorBlocked = isCorridorBlocked(context, location.id);
+  const diningPathBlocked = isDiningHallPathBlocked(
+    context,
+    context.currentLocationId,
+    location.id,
+  );
   const showInfo = status !== 'distant' && !locked;
   const isHere = location.id === context.currentLocationId;
   const canTravel = canMoveTo(context, location.id) && !isHere;
@@ -109,6 +114,12 @@ export function LocationDetailPanel({
         {corridorBlocked && showInfo && (
           <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
             The Sorcerer bars the Central Corridor until his ingredients are delivered — or until he falls.
+          </p>
+        )}
+
+        {diningPathBlocked && showInfo && (
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
+            The Dining Hall door is barred from this side. Go through the Kitchen, or fetch the Executioner's keyring from the Torture Chamber.
           </p>
         )}
 

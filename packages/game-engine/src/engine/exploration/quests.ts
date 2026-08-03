@@ -199,3 +199,65 @@ export function openCorridorByForce(context: ExplorationContext): ExplorationCon
   appendExplorationLog(context, 'The Sorcerer falls. The corridor no longer bars your way.', 'danger');
   return context;
 }
+
+export function grantDiningWayQuest(context: ExplorationContext): ExplorationContext {
+  if (context.flags.dining_hall_path_open) {
+    return context;
+  }
+  return grantQuest(context, 'find_dining_way');
+}
+
+export function giveDiningKeyring(context: ExplorationContext): ExplorationContext {
+  if (context.flags.has_dining_keyring) {
+    return context;
+  }
+  context.flags.has_dining_keyring = true;
+  const loot = context.locations.torture_chamber?.loot.find((item) => item.id === 'dining_keyring');
+  if (loot && !loot.claimed) {
+    loot.claimed = true;
+  }
+  appendExplorationLog(context, 'You take the Dining Keyring.', 'loot');
+  return context;
+}
+
+export function openDiningHallPath(
+  context: ExplorationContext,
+  reason: 'keyring' | 'kitchen',
+): ExplorationContext {
+  if (context.flags.dining_hall_path_open) {
+    return context;
+  }
+  context.flags.dining_hall_path_open = true;
+  completeQuestById(context, 'find_dining_way');
+  if (reason === 'keyring') {
+    appendExplorationLog(
+      context,
+      'The keyring turns. The Dining Hall door off the corridor swings open.',
+      'action',
+    );
+  } else {
+    appendExplorationLog(
+      context,
+      'You reached the Dining Hall through the Kitchen. The corridor door can be forced from this side.',
+      'action',
+    );
+  }
+  return context;
+}
+
+export function resolveDiningWayProgress(
+  context: ExplorationContext,
+  locationId: string,
+): ExplorationContext {
+  let next = context;
+  if (locationId === 'central_corridor') {
+    next = grantDiningWayQuest(next);
+    if (next.flags.has_dining_keyring) {
+      next = openDiningHallPath(next, 'keyring');
+    }
+  }
+  if (locationId === 'dining_hall') {
+    next = openDiningHallPath(next, 'kitchen');
+  }
+  return next;
+}

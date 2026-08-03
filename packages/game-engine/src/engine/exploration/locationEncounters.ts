@@ -8,6 +8,7 @@ import type {
 import { appendExplorationLog } from './log';
 import {
   completeQuestForEnemy,
+  giveDiningKeyring,
   grantQuest,
   isNpcAvailable,
   listAvailableNpcs,
@@ -181,6 +182,9 @@ export function advanceDialog(context: ExplorationContext): ExplorationContext {
     appendExplorationLog(context, `Spoke with ${npc.name}.`, 'action');
     if (npc.grantsQuestId) {
       grantQuest(context, npc.grantsQuestId);
+    }
+    if (npc.id === 'executioner') {
+      giveDiningKeyring(context);
     }
     if (encounter.locationId === 'exit_gate') {
       context.flags.escaped_hollowfort = true;

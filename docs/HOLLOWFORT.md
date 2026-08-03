@@ -92,6 +92,7 @@ Quests are the Beta loyalty hooks. They unlock **only after dialog** with the gr
 |----------------------|------------|------|-----------|---------------|
 | `kill_warden` | Dead Anarchist | After talk in Prison Cell | Defeat the Prison Warden in Warden’s Tower | Warden defeated |
 | `gather_ritual_ingredients` | Sorcerer | After talk in Ritual Room (post-Demon) | Visit Infirmary + Underground Tunnels, return | Both visited and return to Ritual Room |
+| `find_dining_way` | (auto) | On enter Central Corridor | Unlock Dining Hall — via Kitchen route or Executioner keyring | Reach Dining Hall through Kitchen, or return to Corridor with keyring |
 | `kill_inquisitor` | Sorcerer | After ingredients quest completes | Defeat the Inquisitor in the Chapel | Inquisitor defeated |
 | `kill_resurrected_anarchist` | Guard Captain | After talk in Central Courtyard | Defeat the Resurrected Anarchist in the Political Wing | Resurrected Anarchist defeated |
 
@@ -109,6 +110,7 @@ Quests are the Beta loyalty hooks. They unlock **only after dialog** with the gr
 |-------|-------|-------------|
 | Kill Warden | Break the Keys | The Dead Anarchist asks you to end the Warden — the man who kept the cages locked. |
 | Gather Ingredients | Ingredients for the Circle | Dried lavender from the Infirmary; lowcap mushroom from the Tunnels. |
+| Find Dining Way | The Locked Mess | Barred mess door — Kitchen detour or Executioner's keyring. |
 | Kill Inquisitor | Snuff the Holy Fire | The Sorcerer asks you to destroy the Inquisitor before the chapel seals the ritual away. |
 | Kill Resurrected Anarchist | Cut the Rising | The Guard Captain asks you to put down the Resurrected Anarchist before the political wing empties into the yard. |
 
@@ -226,9 +228,10 @@ Prison Cell (Dead Anarchist → quest: kill Warden)
        ├── Underground Tunnels (Giant Rat + lowcap mushroom)
        └── return → Inquisitor quest; Central Corridor opens
             (or fight Sorcerer: 20 HP, +2 barrier/turn)
-  → Central Corridor  ←── empty hub
-       ├── Kitchen (Butcher) → Dining Hall (Fat Prisoner)
-       ├── Torture Chamber (Executioner)
+  → Central Corridor  ←── empty hub (quest: unlock Dining Hall)
+       ├── Kitchen (Butcher) → Dining Hall (Fat Prisoner)   [detour unlocks direct door]
+       ├── Torture Chamber (Executioner → keyring → unlock Dining Hall door)
+       ├── Dining Hall (direct door locked until keyring or Kitchen route)
        ├── Barracks (Guard) → Armory (Knight)
        └── Central Courtyard (Guard Captain → quest: kill Resurrected Anarchist)
               ├── Chapel (Inquisitor)
