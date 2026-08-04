@@ -1,4 +1,5 @@
 import type { CardClass, CardInstance } from './card';
+import type { RngState } from './rng';
 
 export type LocationType =
   | 'start'
@@ -168,10 +169,11 @@ export interface ExplorationContext {
   quests: RunQuest[];
   lastActionMessage: string | null;
   log: ExplorationLogEntry[];
+  rng: RngState;
 }
 
 export type ExplorationEvent =
-  | { type: 'START_EXPLORATION' }
+  | { type: 'START_EXPLORATION'; seed?: number }
   | { type: 'SELECT_LOCATION'; locationId: string }
   | { type: 'CLEAR_SELECTION' }
   | { type: 'SELECT_CARD'; cardInstanceId: string }
@@ -195,7 +197,8 @@ export type ExplorationEvent =
       enemyId?: string;
     }
   | { type: 'ACK_ESCAPE' }
-  | { type: 'RESTART' };
+  | { type: 'SYNC_RNG'; rng: RngState }
+  | { type: 'RESTART'; seed?: number };
 
 export interface ActionOutcomeDefinition {
   message: string;

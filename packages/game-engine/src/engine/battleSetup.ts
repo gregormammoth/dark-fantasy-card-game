@@ -4,10 +4,12 @@ import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { BattleContext, BattleEnemyOverride } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { RngState } from '@dark-fantasy/shared/types/rng';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
 import { PLAYER_PORTRAIT, DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
+import { cloneRng, createRng } from './rng';
 
 const cardRegistry = new Map<string, CardDefinition>();
 
@@ -57,10 +59,12 @@ function buildEnemyDeckIds(deckSize?: number): string[] {
 export function createInitialBattle(
   progression: PlayerProgression = createInitialProgression(),
   enemyOverride?: BattleEnemyOverride,
+  rngState?: RngState,
 ): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
 
+  const rng = rngState ? cloneRng(rngState) : createRng();
   const playerDeck = shuffle(
     buildDeck(
       resolveDeckIds(
@@ -68,8 +72,9 @@ export function createInitialBattle(
         playerCardsData as CardDefinition[],
       ),
     ),
+    rng,
   );
-  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)));
+  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
 
   const playerMaxShield = battleData.player.maxShield ?? 2;
   const enemyMaxShield = battleData.enemy.maxShield ?? 2;
@@ -118,6 +123,7 @@ export function createInitialBattle(
     log: [],
     progression: structuredClone(progression),
     progressionAtBattleStart: structuredClone(progression),
+    rng,
   };
 }
 

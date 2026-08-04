@@ -7,7 +7,7 @@ function reshuffleIfNeeded(context: ExplorationContext): void {
   if (context.deck.length > 0 || context.discard.length === 0) {
     return;
   }
-  context.deck = shuffle(context.discard);
+  context.deck = shuffle(context.discard, context.rng);
   context.discard = [];
   appendExplorationLog(context, 'You reshuffle your discard into your deck.', 'system');
 }

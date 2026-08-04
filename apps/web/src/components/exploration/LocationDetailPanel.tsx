@@ -119,7 +119,7 @@ export function LocationDetailPanel({
 
         {diningPathBlocked && showInfo && (
           <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
-            The Dining Hall door is barred from this side. Go through the Kitchen, or fetch the Executioner's keyring from the Torture Chamber.
+            The Dining Hall door is barred from this side. Go through the Kitchen, or fetch the Executioner&apos;s keyring from the Torture Chamber.
           </p>
         )}
 

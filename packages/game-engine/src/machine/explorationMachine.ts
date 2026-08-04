@@ -17,6 +17,7 @@ import {
   queueDialog,
   resolveLocationBattle,
 } from '../engine/exploration/locationEncounters';
+import { cloneRng } from '../engine/rng';
 
 export const explorationMachine = setup({
   types: {
@@ -24,7 +25,10 @@ export const explorationMachine = setup({
     events: {} as ExplorationEvent,
   },
   actions: {
-    initExploration: assign(() => createInitialExploration()),
+    initExploration: assign(({ event }) => {
+      const seed = event.type === 'START_EXPLORATION' || event.type === 'RESTART' ? event.seed : undefined;
+      return createInitialExploration(seed);
+    }),
     beginTurn: assign(({ context }) => beginExplorationTurn(context)),
     selectLocation: assign(({ context, event }) => {
       if (event.type !== 'SELECT_LOCATION') {
@@ -89,6 +93,14 @@ export const explorationMachine = setup({
       delete next.flags.escaped_hollowfort;
       return next;
     }),
+    syncRng: assign(({ context, event }) => {
+      if (event.type !== 'SYNC_RNG') {
+        return context;
+      }
+      const next = structuredClone(context);
+      next.rng = cloneRng(event.rng);
+      return next;
+    }),
   },
   guards: {
     hasActionsRemaining: ({ context }) => context.actionsRemaining > 0,
@@ -120,6 +132,7 @@ export const explorationMachine = setup({
     FLEE_LOCATION_BATTLE: { actions: 'fleeLocationBattle' },
     RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
     ACK_ESCAPE: { actions: 'ackEscape' },
+    SYNC_RNG: { actions: 'syncRng' },
   },
   states: {
     idle: {

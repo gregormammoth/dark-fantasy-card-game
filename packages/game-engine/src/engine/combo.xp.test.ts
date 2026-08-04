@@ -94,6 +94,7 @@ function makeBattle(hand: CardInstance[], enemyDeck: CardInstance[] = []): Battl
     log: [],
     progression: createInitialProgression(),
     progressionAtBattleStart: createInitialProgression(),
+    rng: { seed: 1, cursor: 0 },
   };
 }
 

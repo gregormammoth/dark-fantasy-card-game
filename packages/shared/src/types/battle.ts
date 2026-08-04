@@ -4,6 +4,7 @@ import type { ActivePlay } from './animation';
 
 import type { EffectTarget } from './effect';
 import type { PlayerProgression } from './progression';
+import type { RngState } from './rng';
 
 export interface DamageResolution {
   target: EffectTarget;
@@ -72,6 +73,7 @@ export interface BattleContext {
   log: BattleLogEntry[];
   progression: PlayerProgression;
   progressionAtBattleStart: PlayerProgression;
+  rng: RngState;
 }
 
 export type BattleEnemyOverride = {
@@ -86,6 +88,7 @@ export type BattleEvent =
       type: 'START_BATTLE';
       progression?: PlayerProgression;
       enemy?: BattleEnemyOverride;
+      rng?: RngState;
     }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
@@ -95,5 +98,6 @@ export type BattleEvent =
       type: 'RESTART';
       progression?: PlayerProgression;
       enemy?: BattleEnemyOverride;
+      rng?: RngState;
     }
   | { type: 'LEAVE_BATTLE' };

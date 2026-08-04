@@ -1,5 +1,6 @@
 import encountersData from '@dark-fantasy/content/encounters.json';
 import type { EncounterDefinition, ExplorationContext } from '@dark-fantasy/shared/types/exploration';
+import type { RngState } from '@dark-fantasy/shared/types/rng';
 import { shuffle } from '../deck';
 import { appendExplorationLog } from './log';
 import { resolveExplorationEffects } from './resolveEffects';
@@ -10,7 +11,7 @@ for (const encounter of encountersData as EncounterDefinition[]) {
   encounterRegistry.set(encounter.id, encounter);
 }
 
-export function buildEncounterDeck(): string[] {
+export function buildEncounterDeck(rng: RngState): string[] {
   const ids: string[] = [];
   for (const encounter of encountersData as EncounterDefinition[]) {
     const weight = encounter.weight ?? 1;
@@ -18,7 +19,7 @@ export function buildEncounterDeck(): string[] {
       ids.push(encounter.id);
     }
   }
-  return shuffle(ids);
+  return shuffle(ids, rng);
 }
 
 export function getEncounterDefinition(id: string): EncounterDefinition | undefined {
@@ -30,7 +31,7 @@ function drawEncounterId(context: ExplorationContext): string | null {
     if (context.encounterDiscard.length === 0) {
       return null;
     }
-    context.encounterDeck = shuffle(context.encounterDiscard);
+    context.encounterDeck = shuffle(context.encounterDiscard, context.rng);
     context.encounterDiscard = [];
     appendExplorationLog(context, 'Encounter deck reshuffled.', 'encounter');
   }

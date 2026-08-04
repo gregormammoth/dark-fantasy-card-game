@@ -3,6 +3,7 @@ import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
 import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
+import { createRng } from '../rng';
 import { buildEncounterDeck } from './encounters';
 import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';
@@ -18,9 +19,12 @@ interface PrisonMapFile {
 
 const mapFile = prisonMapData as PrisonMapFile;
 
-function buildPlayerDeck(): ReturnType<typeof createCardInstance>[] {
+function buildPlayerDeck(
+  rng: ExplorationContext['rng'],
+): ReturnType<typeof createCardInstance>[] {
   return shuffle(
     (playerCardsData as CardDefinition[]).map((definition) => createCardInstance(definition)),
+    rng,
   );
 }
 
@@ -32,10 +36,11 @@ function buildLocations(): Record<string, LocationDefinition> {
   return locations;
 }
 
-export function createInitialExploration(): ExplorationContext {
+export function createInitialExploration(seed?: number): ExplorationContext {
   resetInstanceCounter();
   resetExplorationLogCounter();
 
+  const rng = createRng(seed);
   const locations = buildLocations();
   const startId = mapFile.startLocationId;
   const context: ExplorationContext = {
@@ -45,7 +50,7 @@ export function createInitialExploration(): ExplorationContext {
     currentLocationId: startId,
     selectedLocationId: startId,
     selectedCardInstanceId: null,
-    deck: buildPlayerDeck(),
+    deck: buildPlayerDeck(rng),
     hand: [],
     discard: [],
     actionsRemaining: 4,
@@ -53,7 +58,7 @@ export function createInitialExploration(): ExplorationContext {
     handSize: 4,
     turnCount: 0,
     flags: {},
-    encounterDeck: buildEncounterDeck(),
+    encounterDeck: buildEncounterDeck(rng),
     encounterDiscard: [],
     pendingEncounter: null,
     locationEncounterQueue: [],
@@ -62,6 +67,7 @@ export function createInitialExploration(): ExplorationContext {
     quests: [],
     lastActionMessage: null,
     log: [],
+    rng,
   };
 
   visitLocation(context, startId);
@@ -71,6 +77,7 @@ export function createInitialExploration(): ExplorationContext {
     `You wake in ${locations[startId]?.name ?? 'a cell'} beneath ${mapFile.name}.`,
     'system',
   );
+  appendExplorationLog(context, `Run seed ${context.rng.seed}.`, 'system');
   return context;
 }
 

@@ -160,7 +160,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Quests (logic + UI) | Content stub (`LocationQuest`); no run quest log / UI yet |
 | Money / light inventory | Not started |
 | Save / load + save schema | Not started (Beta target: API + Postgres) |
-| Seeded RNG | Not started (now **required** for Beta) |
+| Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | NestJS API + Postgres | Not started (Beta-critical) |
 | Analytics + feedback | Not started (Beta-critical) |
 | Hollowfort map content | 13 locations + branch bosses + encounter queue (polish ongoing) |
@@ -423,10 +423,10 @@ A player can close the tab (or switch browser) and continue the same Hollowfort 
 
 ### Tasks
 
-- [ ] Engine RNG module with explicit seed
-- [ ] Store seed + cursor on the Run / save
-- [ ] Route card draws, encounters, enemy picks, loot through seeded RNG
-- [ ] Debug / QA: enter seed → reproduce exact run sequence
+- [x] Engine RNG module with explicit seed
+- [x] Store seed + cursor on the Run / save
+- [x] Route card draws, encounters, enemy picks, loot through seeded RNG
+- [x] Debug / QA: enter seed → reproduce exact run sequence
 - [ ] Playwright: fixed seeds for flaky-prone flows
 
 ### Example

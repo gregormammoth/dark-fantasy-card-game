@@ -33,7 +33,7 @@ export const battleMachine = setup({
   actions: {
     initBattle: assign(({ event }) => {
       if (event.type === 'START_BATTLE' || event.type === 'RESTART') {
-        return createInitialBattle(event.progression, event.enemy);
+        return createInitialBattle(event.progression, event.enemy, event.rng);
       }
       return createInitialBattle();
     }),

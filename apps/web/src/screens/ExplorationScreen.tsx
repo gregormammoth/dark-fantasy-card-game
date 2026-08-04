@@ -24,6 +24,7 @@ interface ExplorationScreenProps {
   onStartLocationBattle?: (locationId: string, enemyId: string) => void;
   onOpenPlayer?: () => void;
   onEscapeToWorld?: () => void;
+  runSeed?: number;
 }
 
 export function ExplorationScreen({
@@ -31,6 +32,7 @@ export function ExplorationScreen({
   onStartLocationBattle,
   onOpenPlayer,
   onEscapeToWorld,
+  runSeed,
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
@@ -71,11 +73,14 @@ export function ExplorationScreen({
           Travel room to room. Dialogs and fights trigger on enter. Play cards to move, search,
           and act — then end your turn for the encounter deck.
         </p>
+        {runSeed !== undefined && (
+          <p className="font-mono text-[12px] text-[#8a7f72]">Seed {runSeed}</p>
+        )}
         <button
           type="button"
           onClick={() => {
             void unlock();
-            actor.send({ type: 'START_EXPLORATION' });
+            actor.send({ type: 'START_EXPLORATION', seed: runSeed });
           }}
           className="rounded-[12px] border border-[rgba(201,162,74,.55)] bg-[rgba(224,181,82,.16)] px-8 py-3.5 font-cinzel text-[14px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
         >
@@ -90,6 +95,9 @@ export function ExplorationScreen({
       <div className="relative flex items-center justify-between gap-3">
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON
+        </span>
+        <span className="font-mono text-[10px] tracking-wider text-[#8a7f72]">
+          SEED {context.rng.seed}
         </span>
         <div className="flex items-center gap-2">
           <button

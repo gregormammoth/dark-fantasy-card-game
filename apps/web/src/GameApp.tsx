@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useActorRef } from '@xstate/react';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
-import { createInitialProgression } from '@dark-fantasy/game-engine';
+import { createInitialProgression, normalizeSeed } from '@dark-fantasy/game-engine';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
@@ -20,6 +20,7 @@ import type { MusicScreen } from '@/audio/types';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 
 const worldMap = worldMapData as WorldMapDefinition;
+const SEED_STORAGE_KEY = 'dfcg-run-seed';
 
 interface PendingLocationFight {
   locationId: string;
@@ -33,6 +34,19 @@ function musicForScreen(screen: AppScreen): MusicScreen {
   return screen;
 }
 
+function readClientSeed(): number {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('seed');
+  if (fromUrl && /^\d+$/.test(fromUrl)) {
+    return normalizeSeed(Number(fromUrl));
+  }
+  const stored = window.sessionStorage.getItem(SEED_STORAGE_KEY);
+  if (stored && /^\d+$/.test(stored)) {
+    return normalizeSeed(Number(stored));
+  }
+  return Date.now() >>> 0;
+}
+
 function GameShell() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const [playerReturnScreen, setPlayerReturnScreen] = useState<AppScreen>('world');
@@ -40,13 +54,35 @@ function GameShell() {
   const [pendingLocationFight, setPendingLocationFight] = useState<PendingLocationFight | null>(
     null,
   );
+  const [runSeed, setRunSeed] = useState(() => Date.now() >>> 0);
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
   useScreenMusic(musicForScreen(screen));
 
+  useEffect(() => {
+    const next = readClientSeed();
+    setRunSeed(next);
+    window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+  }, []);
+
   const handleProgressionChange = useCallback((next: PlayerProgression) => {
     setProgression(next);
   }, []);
+
+  const handleRunSeedChange = useCallback((seed: number) => {
+    const next = normalizeSeed(seed);
+    setRunSeed(next);
+    window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+  }, []);
+
+  function resolveRunSeed(): number {
+    const next = readClientSeed();
+    if (next !== runSeed) {
+      setRunSeed(next);
+      window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+    }
+    return next;
+  }
 
   function leaveBattle() {
     if (!battleActor.getSnapshot().matches('idle')) {
@@ -55,6 +91,10 @@ function GameShell() {
   }
 
   function returnToExploration(result?: 'victory' | 'defeat' | 'abort') {
+    const battleSnap = battleActor.getSnapshot();
+    if (pendingLocationFight && !battleSnap.matches('idle')) {
+      explorationActor.send({ type: 'SYNC_RNG', rng: battleSnap.context.rng });
+    }
     if (pendingLocationFight) {
       const won = result === 'victory';
       explorationActor.send({
@@ -66,7 +106,7 @@ function GameShell() {
       setPendingLocationFight(null);
     }
     if (explorationActor.getSnapshot().matches('idle')) {
-      explorationActor.send({ type: 'START_EXPLORATION' });
+      explorationActor.send({ type: 'START_EXPLORATION', seed: resolveRunSeed() });
     }
     setScreen('exploration');
     leaveBattle();
@@ -82,8 +122,9 @@ function GameShell() {
       return;
     }
     if (location.targetScreen === 'battle') {
+      const seed = resolveRunSeed();
       leaveBattle();
-      battleActor.send({ type: 'START_BATTLE', progression });
+      battleActor.send({ type: 'START_BATTLE', progression, rng: { seed, cursor: 0 } });
       setScreen('battle');
     }
   }
@@ -111,6 +152,7 @@ function GameShell() {
         deckSize: enemy.deckSize,
         barrierPerTurn: enemy.barrierPerTurn,
       },
+      rng: exploration.rng,
     });
     setScreen('battle');
   }
@@ -144,6 +186,7 @@ function GameShell() {
         onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
         onEscapeToWorld={() => setScreen('world')}
+        runSeed={runSeed}
       />
     );
   } else if (screen === 'player') {
@@ -158,7 +201,7 @@ function GameShell() {
 
   return (
     <>
-      <SettingsMenu />
+      <SettingsMenu runSeed={runSeed} onRunSeedChange={handleRunSeedChange} />
       {content}
     </>
   );

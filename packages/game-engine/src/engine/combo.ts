@@ -9,6 +9,7 @@ import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
 import { buildAnimationCue, captureBattleSnapshot, clearDamageResult } from './animationCue';
 import { awardCardXp } from './progression/xp';
+import { nextInt } from './rng';
 
 export function addToCombo(battle: BattleContext, cardInstanceId: string): BattleContext {
   const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
@@ -151,14 +152,14 @@ export function resolveEnemyTurn(battle: BattleContext): BattleContext {
       return battle;
     }
     const reshuffled = structuredClone(battle);
-    reshuffled.enemy.deck = shuffle(reshuffled.enemy.discard);
+    reshuffled.enemy.deck = shuffle(reshuffled.enemy.discard, reshuffled.rng);
     reshuffled.enemy.discard = [];
     appendLog(reshuffled, `${reshuffled.enemy.name} reshuffled their discard pile.`, 'system');
     return resolveEnemyTurn(reshuffled);
   }
 
   const next = structuredClone(battle);
-  const index = Math.floor(Math.random() * next.enemy.deck.length);
+  const index = nextInt(next.rng, next.enemy.deck.length);
   const [card] = next.enemy.deck.splice(index, 1);
 
   appendLog(next, `${next.enemy.name} played ${card.definition.name}.`, 'play');

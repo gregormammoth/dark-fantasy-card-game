@@ -22,3 +22,5 @@ export {
   getXpGained,
   getTotalXpGained,
 } from './engine/progression/xp';
+export { createRng, cloneRng, normalizeSeed } from './engine/rng';
+export type { RngState } from './engine/rng';

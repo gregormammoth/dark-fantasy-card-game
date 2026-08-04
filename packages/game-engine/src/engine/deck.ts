@@ -1,4 +1,6 @@
 import type { CardDefinition, CardInstance } from '@dark-fantasy/shared/types/card';
+import type { RngState } from '@dark-fantasy/shared/types/rng';
+import { shuffle as shuffleWithRng } from './rng';
 
 let instanceCounter = 0;
 
@@ -14,13 +16,8 @@ export function resetInstanceCounter(): void {
   instanceCounter = 0;
 }
 
-export function shuffle<T>(array: T[]): T[] {
-  const result = [...array];
-  for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
+export function shuffle<T>(array: T[], rng: RngState): T[] {
+  return shuffleWithRng(array, rng);
 }
 
 export function drawCards(

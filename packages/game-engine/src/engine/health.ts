@@ -2,6 +2,7 @@ import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import type { EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { appendLog, targetLabel } from './battleLog';
+import { nextInt } from './rng';
 
 export function getPlayerHealth(battle: BattleContext): number {
   return battle.player.deck.length + battle.player.hand.length + battle.combo.length;
@@ -48,7 +49,7 @@ function discardFromEnemy(next: BattleContext, count: number): number {
   let discarded = 0;
 
   while (remaining > 0 && next.enemy.deck.length > 0) {
-    const index = Math.floor(Math.random() * next.enemy.deck.length);
+    const index = nextInt(next.rng, next.enemy.deck.length);
     const [card] = next.enemy.deck.splice(index, 1);
     next.enemy.discard.push(card);
     remaining -= 1;
