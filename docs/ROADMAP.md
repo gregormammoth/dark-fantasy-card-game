@@ -159,7 +159,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Reward loop | Fragmented — XP only so far |
 | Quests (logic + UI) | Content stub (`LocationQuest`); no run quest log / UI yet |
 | Money / light inventory | Not started |
-| Save / load + save schema | Not started (Beta target: API + Postgres) |
+| Save / load + save schema | Local resume shipped; cloud save still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | NestJS API + Postgres | Not started (Beta-critical) |
 | Analytics + feedback | Not started (Beta-critical) |
@@ -177,7 +177,7 @@ Update this table as milestones land.
 
 ### Player journey checklist
 
-- [x] Start a new run from `/play` (session; no save yet)
+- [x] Start a new run from `/play` (local autosave resume)
 - [x] Wake / begin in Prison Cell
 - [x] Enter prison exploration from the world map
 - [x] Trigger battle from exploration (location FIGHT / on-enter encounter)
@@ -399,15 +399,22 @@ SaveFile
 
 ### Tasks
 
-- [ ] Spec `GameState` + `SaveFile` types (version fields mandatory)
-- [ ] Serialize / deserialize in the engine or a thin persistence helper
+- [x] Spec `GameState` + `SaveFile` types (version fields mandatory)
+- [x] Serialize / deserialize in the engine or a thin persistence helper
 - [ ] Scaffold `apps/api` (NestJS) + Postgres + deploy target
 - [ ] Guest `playerId` (generate once, store client-side; send on API calls)
 - [ ] API: create / update / get / list saves for a player
 - [ ] Client continue flow against cloud save
-- [ ] Optional `localStorage` cache for faster resume / offline draft
-- [ ] Migration stub or reject incompatible `schemaVersion`
-- [ ] Autosave at safe checkpoints (location change, battle end, unlock)
+- [x] Optional `localStorage` cache for faster resume / offline draft
+- [x] Migration stub or reject incompatible `schemaVersion`
+- [x] Autosave at safe checkpoints (location change, battle end, unlock)
+
+### Local resume (shipped ahead of cloud)
+
+- [x] Persist exploration + progression + seed/cursor in `localStorage`
+- [x] Resume mid-prison run on refresh
+- [x] Settings → Abandon run clears local save
+- [ ] Mid-battle snapshot (refresh returns to fight prompt / exploration)
 
 ### Deliverable
 
@@ -453,7 +460,7 @@ Same seed ⇒ same random sequence ⇒ reproducible bugs and E2E scenarios.
 - [x] Progression carried across battles in the current session
 - [x] Character screen shows live class XP and total XP
 - [x] Battle results show XP gained this fight
-- [ ] Persist via save / load (M4)
+- [x] Persist via local save / load (M4 local); cloud still open
 
 ### Level system (next progression step)
 

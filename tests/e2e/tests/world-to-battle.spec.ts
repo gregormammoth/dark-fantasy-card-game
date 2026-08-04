@@ -1,6 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('world → exploration → battle', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    });
+  });
+
   test('navigates from /play through prison map into location battle', async ({ page }) => {
     await page.goto('/play?seed=4242');
 

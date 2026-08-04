@@ -18,6 +18,7 @@ import { EncounterModal } from '@/components/exploration/EncounterModal';
 import { NpcDialogModal } from '@/components/exploration/NpcDialogModal';
 import { LocationBattleModal } from '@/components/exploration/LocationBattleModal';
 import { ExplorationLog } from '@/components/exploration/ExplorationLog';
+import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
@@ -128,23 +129,63 @@ export function ExplorationScreen({
             {activeQuests.length === 0 && completedQuests.length === 0 && (
               <p className="m-0 text-[12px] text-[#8a7f72]">No quests yet. Talk to faction NPCs.</p>
             )}
-            {activeQuests.map((quest) => (
-              <div
-                key={quest.id}
-                className="rounded-[9px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-2.5 py-2"
-              >
-                <div className="font-cinzel text-[12px] text-[#f0e2c0]">{quest.name}</div>
-                <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">{quest.description}</div>
-                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">ACTIVE</div>
-              </div>
-            ))}
+            {activeQuests.map((quest) => {
+              const steps = getQuestSteps(context, quest);
+              const stepsText = questStepsLabel(steps);
+              return (
+                <div
+                  key={quest.id}
+                  className="rounded-[9px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-2.5 py-2"
+                >
+                  <div className="font-cinzel text-[12px] text-[#f0e2c0]">{quest.name}</div>
+                  <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">
+                    {quest.description}
+                  </div>
+                  <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">
+                    {questLocationLabel(quest)} · ACTIVE
+                  </div>
+                  {stepsText && (
+                    <div className="mt-1 text-[9px] tracking-wider text-[#c9a24a]">{stepsText}</div>
+                  )}
+                  {steps && steps.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      {steps.map((step) => (
+                        <div key={step.id} className="flex items-center gap-2">
+                          <span
+                            className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[2px] border text-[9px]"
+                            style={{
+                              borderColor: step.done ? '#6fae5a' : 'rgba(201,162,74,.35)',
+                              color: step.done ? '#6fae5a' : 'transparent',
+                              background: step.done ? 'rgba(111,174,90,.15)' : 'transparent',
+                            }}
+                          >
+                            {step.done ? '✓' : ''}
+                          </span>
+                          <span
+                            className="text-[10px] leading-snug"
+                            style={{
+                              color: step.done ? '#8a9a7a' : '#b7ab9c',
+                              textDecoration: step.done ? 'line-through' : 'none',
+                            }}
+                          >
+                            {step.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             {completedQuests.map((quest) => (
               <div
                 key={quest.id}
                 className="rounded-[9px] border-l-[3px] border-[#6fae5a] bg-[rgba(111,174,90,.08)] px-2.5 py-2"
               >
                 <div className="font-cinzel text-[12px] text-[#d7e8cf]">{quest.name}</div>
-                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">COMPLETE</div>
+                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">
+                  {questLocationLabel(quest)} · COMPLETE
+                </div>
               </div>
             ))}
           </div>

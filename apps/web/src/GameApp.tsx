@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useActorRef } from '@xstate/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useActorRef, useSelector } from '@xstate/react';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import { createInitialProgression, normalizeSeed } from '@dark-fantasy/game-engine';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { LocalRunState, SavedExplorationPhase } from '@dark-fantasy/shared/types/save';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { SettingsMenu } from '@/components/SettingsMenu';
@@ -18,6 +19,7 @@ import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { clearLocalRun, loadLocalRun, saveLocalRun } from '@/lib/localRunSave';
 
 const worldMap = worldMapData as WorldMapDefinition;
 const SEED_STORAGE_KEY = 'dfcg-run-seed';
@@ -47,6 +49,18 @@ function readClientSeed(): number {
   return Date.now() >>> 0;
 }
 
+function phaseFromSnapshot(snapshot: {
+  matches: (state: 'idle' | 'encounter' | 'playerTurn' | 'playerTurnStart' | 'resolvingEncounter') => boolean;
+}): SavedExplorationPhase {
+  if (snapshot.matches('idle')) {
+    return 'idle';
+  }
+  if (snapshot.matches('encounter')) {
+    return 'encounter';
+  }
+  return 'playerTurn';
+}
+
 function GameShell() {
   const [screen, setScreen] = useState<AppScreen>('world');
   const [playerReturnScreen, setPlayerReturnScreen] = useState<AppScreen>('world');
@@ -55,15 +69,96 @@ function GameShell() {
     null,
   );
   const [runSeed, setRunSeed] = useState(() => Date.now() >>> 0);
+  const [ready, setReady] = useState(false);
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
+  const hasActiveRun = useSelector(explorationActor, (state) => !state.matches('idle'));
+  const explorationContext = useSelector(explorationActor, (state) =>
+    state.matches('idle') ? null : state.context,
+  );
   useScreenMusic(musicForScreen(screen));
 
+  const persistRef = useRef({
+    progression,
+    screen,
+    playerReturnScreen,
+    runSeed,
+    pendingLocationFight,
+  });
+  persistRef.current = {
+    progression,
+    screen,
+    playerReturnScreen,
+    runSeed,
+    pendingLocationFight,
+  };
+
+  const persistRun = useCallback(() => {
+    if (!ready) {
+      return;
+    }
+    const current = persistRef.current;
+    const snap = explorationActor.getSnapshot();
+    const state: LocalRunState = {
+      progression: current.progression,
+      exploration: snap.matches('idle') ? null : structuredClone(snap.context),
+      explorationPhase: phaseFromSnapshot(snap),
+      screen: current.screen,
+      playerReturnScreen: current.playerReturnScreen,
+      runSeed: current.runSeed,
+      pendingLocationFight: current.pendingLocationFight,
+    };
+    saveLocalRun(state);
+  }, [explorationActor, ready]);
+
   useEffect(() => {
-    const next = readClientSeed();
-    setRunSeed(next);
-    window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
-  }, []);
+    const saved = loadLocalRun();
+    if (saved?.state.exploration && saved.state.explorationPhase !== 'idle') {
+      const phase =
+        saved.state.explorationPhase === 'encounter' ? 'encounter' : 'playerTurn';
+      explorationActor.send({
+        type: 'HYDRATE',
+        context: saved.state.exploration,
+        phase,
+      });
+      setProgression(saved.state.progression);
+      setRunSeed(saved.state.runSeed);
+      window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.state.runSeed));
+      setPendingLocationFight(saved.state.pendingLocationFight);
+      setPlayerReturnScreen(
+        saved.state.playerReturnScreen === 'battle' ? 'exploration' : saved.state.playerReturnScreen,
+      );
+      const nextScreen =
+        saved.state.screen === 'battle'
+          ? 'exploration'
+          : saved.state.screen === 'player'
+            ? 'player'
+            : 'exploration';
+      setScreen(nextScreen);
+    } else {
+      const next = readClientSeed();
+      setRunSeed(next);
+      window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+    }
+    setReady(true);
+  }, [explorationActor]);
+
+  useEffect(() => {
+    if (!ready) {
+      return;
+    }
+    persistRun();
+  }, [ready, progression, screen, playerReturnScreen, runSeed, pendingLocationFight, persistRun]);
+
+  useEffect(() => {
+    if (!ready) {
+      return;
+    }
+    const subscription = explorationActor.subscribe(() => {
+      persistRun();
+    });
+    return () => subscription.unsubscribe();
+  }, [explorationActor, persistRun, ready]);
 
   const handleProgressionChange = useCallback((next: PlayerProgression) => {
     setProgression(next);
@@ -74,6 +169,21 @@ function GameShell() {
     setRunSeed(next);
     window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
   }, []);
+
+  const handleAbandonRun = useCallback(() => {
+    clearLocalRun();
+    explorationActor.send({ type: 'RESET' });
+    if (!battleActor.getSnapshot().matches('idle')) {
+      battleActor.send({ type: 'LEAVE_BATTLE' });
+    }
+    setPendingLocationFight(null);
+    setProgression(createInitialProgression());
+    setPlayerReturnScreen('world');
+    setScreen('world');
+    const next = readClientSeed();
+    setRunSeed(next);
+    window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+  }, [battleActor, explorationActor]);
 
   function resolveRunSeed(): number {
     const next = readClientSeed();
@@ -157,6 +267,10 @@ function GameShell() {
     setScreen('battle');
   }
 
+  if (!ready) {
+    return null;
+  }
+
   let content = (
     <WorldMapScreen onEnterLocation={enterLocation} onOpenPlayer={openPlayer} />
   );
@@ -193,6 +307,7 @@ function GameShell() {
     content = (
       <PlayerScreen
         progression={progression}
+        exploration={explorationContext}
         onBack={() => setScreen(playerReturnScreen)}
         backLabel={playerReturnScreen === 'exploration' ? '← Prison Map' : '← World Map'}
       />
@@ -201,7 +316,12 @@ function GameShell() {
 
   return (
     <>
-      <SettingsMenu runSeed={runSeed} onRunSeedChange={handleRunSeedChange} />
+      <SettingsMenu
+        runSeed={runSeed}
+        onRunSeedChange={handleRunSeedChange}
+        onAbandonRun={handleAbandonRun}
+        hasActiveRun={hasActiveRun}
+      />
       {content}
     </>
   );

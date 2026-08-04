@@ -198,6 +198,12 @@ export type ExplorationEvent =
     }
   | { type: 'ACK_ESCAPE' }
   | { type: 'SYNC_RNG'; rng: RngState }
+  | {
+      type: 'HYDRATE';
+      context: ExplorationContext;
+      phase: 'playerTurn' | 'encounter';
+    }
+  | { type: 'RESET' }
   | { type: 'RESTART'; seed?: number };
 
 export interface ActionOutcomeDefinition {

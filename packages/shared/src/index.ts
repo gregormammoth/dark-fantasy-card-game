@@ -8,4 +8,5 @@ export * from './types/explorationEffect';
 export * from './types/log';
 export * from './types/progression';
 export * from './types/rng';
+export * from './types/save';
 export * from './types/world';

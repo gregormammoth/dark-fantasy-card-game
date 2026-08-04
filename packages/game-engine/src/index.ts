@@ -24,3 +24,10 @@ export {
 } from './engine/progression/xp';
 export { createRng, cloneRng, normalizeSeed } from './engine/rng';
 export type { RngState } from './engine/rng';
+export {
+  buildLocalSaveFile,
+  createEmptyLocalRunState,
+  hasResumableRun,
+  parseLocalSave,
+  serializeLocalSave,
+} from './engine/persistence/localSave';

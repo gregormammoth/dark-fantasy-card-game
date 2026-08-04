@@ -101,6 +101,13 @@ export const explorationMachine = setup({
       next.rng = cloneRng(event.rng);
       return next;
     }),
+    hydrateExploration: assign(({ event }) => {
+      if (event.type !== 'HYDRATE') {
+        return createInitialExploration();
+      }
+      return structuredClone(event.context);
+    }),
+    resetExploration: assign(() => createInitialExploration()),
   },
   guards: {
     hasActionsRemaining: ({ context }) => context.actionsRemaining > 0,
@@ -120,6 +127,7 @@ export const explorationMachine = setup({
     },
     hasPendingEncounter: ({ context }) => context.pendingEncounter !== null,
     noActionsRemaining: ({ context }) => context.actionsRemaining <= 0,
+    hydrateToEncounter: ({ event }) => event.type === 'HYDRATE' && event.phase === 'encounter',
   },
 }).createMachine({
   id: 'exploration',
@@ -133,6 +141,10 @@ export const explorationMachine = setup({
     RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
     ACK_ESCAPE: { actions: 'ackEscape' },
     SYNC_RNG: { actions: 'syncRng' },
+    RESET: {
+      target: '.idle',
+      actions: 'resetExploration',
+    },
   },
   states: {
     idle: {
@@ -141,6 +153,17 @@ export const explorationMachine = setup({
           target: 'playerTurnStart',
           actions: 'initExploration',
         },
+        HYDRATE: [
+          {
+            guard: 'hydrateToEncounter',
+            target: 'encounter',
+            actions: 'hydrateExploration',
+          },
+          {
+            target: 'playerTurn',
+            actions: 'hydrateExploration',
+          },
+        ],
       },
     },
     playerTurnStart: {

@@ -4,9 +4,16 @@ import { AudioSettings } from '@/components/AudioSettings';
 interface SettingsMenuProps {
   runSeed: number;
   onRunSeedChange: (seed: number) => void;
+  onAbandonRun?: () => void;
+  hasActiveRun?: boolean;
 }
 
-export function SettingsMenu({ runSeed, onRunSeedChange }: SettingsMenuProps) {
+export function SettingsMenu({
+  runSeed,
+  onRunSeedChange,
+  onAbandonRun,
+  hasActiveRun = false,
+}: SettingsMenuProps) {
   const [open, setOpen] = useState(false);
   const [seedText, setSeedText] = useState(String(runSeed));
   const rootRef = useRef<HTMLDivElement>(null);
@@ -114,6 +121,24 @@ export function SettingsMenu({ runSeed, onRunSeedChange }: SettingsMenuProps) {
               RANDOMIZE
             </button>
           </div>
+          {hasActiveRun && onAbandonRun && (
+            <div className="border-t border-[rgba(201,162,74,.16)] pt-3">
+              <span className="text-[10px] tracking-[.2em] text-[#c9a24a]">RUN</span>
+              <p className="mt-1 text-[11px] leading-snug text-[#8a7f72]">
+                Progress autosaves in this browser. Abandon clears the local run.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  onAbandonRun();
+                  setOpen(false);
+                }}
+                className="mt-2 w-full rounded-md border border-[rgba(224,82,74,.45)] px-2 py-1.5 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
+              >
+                ABANDON RUN
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
