@@ -1,5 +1,6 @@
 import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import improvedCardsData from '@dark-fantasy/content/improvedCards.json';
+import { PLAYER_CLASS_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { PlayerLoadout } from '@dark-fantasy/shared/types/progression';
 import {
@@ -125,6 +126,39 @@ export function toggleDeckCard(loadout: PlayerLoadout, cardId: string): PlayerLo
     ...loadout,
     deckCardIds: [...loadout.deckCardIds, cardId],
   };
+}
+
+const CLASS_ORDER: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
+
+export function countDeckClasses(deckCardIds: string[]): Record<CardClass, number> {
+  const counts: Record<CardClass, number> = {
+    fighter: 0,
+    rogue: 0,
+    wizard: 0,
+    survivor: 0,
+  };
+  for (const id of deckCardIds) {
+    const classId = cardById.get(id)?.class;
+    if (classId) {
+      counts[classId] += 1;
+    }
+  }
+  return counts;
+}
+
+export function getDominantDeckClass(deckCardIds: string[]): CardClass {
+  const counts = countDeckClasses(deckCardIds);
+  let dominant = CLASS_ORDER[0];
+  for (const classId of CLASS_ORDER) {
+    if (counts[classId] > counts[dominant]) {
+      dominant = classId;
+    }
+  }
+  return dominant;
+}
+
+export function getPlayerPortraitForDeck(deckCardIds: string[]): string {
+  return PLAYER_CLASS_PORTRAITS[getDominantDeckClass(deckCardIds)];
 }
 
 export function resolveLoadoutDeckDefinitions(loadout: PlayerLoadout): CardDefinition[] {

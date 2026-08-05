@@ -19,8 +19,6 @@ import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
 import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
-import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
-
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
@@ -242,7 +240,7 @@ export function BattleScreen({
           <div className="relative">
             <div className="h-40 w-[118px] overflow-hidden rounded-[11px] border border-[rgba(201,162,74,.5)] bg-[#151009]">
               <img
-                src={PLAYER_PORTRAIT}
+                src={battle.player.portrait}
                 alt=""
                 className="h-full w-full object-cover object-top"
               />

@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id        String   @id @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  saves     Save[]
+
+  @@map("players")
+}
+
+model Save {
+  id            String   @id @default(uuid()) @db.Uuid
+  playerId      String   @unique @db.Uuid
+  player        Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  schemaVersion Int
+  state         Json
+  savedAt       DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([playerId])
+  @@map("saves")
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  playerId  String?  @db.Uuid
+  name      String
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+model Feedback {
+  id        String   @id @default(uuid()) @db.Uuid
+  playerId  String?  @db.Uuid
+  message   String
+  contact   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("feedback")
+}

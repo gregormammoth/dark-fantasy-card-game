@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, RunQuest } from '@dark-fantasy/shared/types/exploration';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
-import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
 import {
   getClassLevel,
   getClassXp,
+  getPlayerPortraitForDeck,
   getTotalXp,
   getXpIntoLevel,
   unlockImprovedCard,
@@ -124,6 +124,7 @@ export function PlayerScreen({
   }, [allCards]);
 
   const deck = loadout.deckCardIds;
+  const playerPortrait = getPlayerPortraitForDeck(deck);
 
   const deckByClass = Object.fromEntries(PLAYER_CLASSES.map((id) => [id, 0])) as Record<
     CardClass,
@@ -302,7 +303,7 @@ export function PlayerScreen({
               <div className="relative shrink-0">
                 <div className="h-[130px] w-[104px] overflow-hidden rounded">
                   <img
-                    src={PLAYER_PORTRAIT}
+                    src={playerPortrait}
                     alt=""
                     className="h-full w-full object-cover object-top"
                   />
@@ -602,6 +603,7 @@ export function PlayerScreen({
             selectedItem={selectedItem}
             onSelect={setSelectedItemId}
             allItems={items}
+            portrait={playerPortrait}
           />
         )}
       </div>
@@ -781,6 +783,7 @@ function InventoryTab({
   selectedItem,
   onSelect,
   allItems,
+  portrait,
 }: {
   items: QuestItemView[];
   filter: ItemFilter;
@@ -788,6 +791,7 @@ function InventoryTab({
   selectedItem: QuestItemView | null;
   onSelect: (id: string) => void;
   allItems: QuestItemView[];
+  portrait: string;
 }) {
   const keyring = allItems.find((item) => item.id === 'dining_keyring');
   const lavender = allItems.find((item) => item.id === 'dried_lavender');
@@ -919,7 +923,7 @@ function InventoryTab({
           </div>
           <div className="relative h-[340px] w-[180px] overflow-hidden rounded border border-[rgba(201,162,74,.2)] bg-[#0c0908]">
             <img
-              src={PLAYER_PORTRAIT}
+              src={portrait}
               alt=""
               className="h-full w-full object-cover object-top opacity-90"
             />

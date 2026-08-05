@@ -9,7 +9,7 @@ import {
 } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
-import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
 function getOccupantCard(
@@ -349,6 +349,16 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
   const visitedCount = Object.values(context.locations).filter((l) => l.visited).length;
   const totalCount = Object.keys(context.locations).length;
 
+  const playerPortrait = useMemo(
+    () =>
+      getPlayerPortraitForDeck(
+        [...context.deck, ...context.hand, ...context.discard].map(
+          (card) => card.definition.id,
+        ),
+      ),
+    [context.deck, context.hand, context.discard],
+  );
+
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
     if (event.button !== 0) {
       return;
@@ -613,7 +623,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                 {isCurrent && showInfo && (
                   <span className="pointer-events-none absolute -bottom-4 -left-3 z-[7] h-[76px] w-[60px] -rotate-[8deg] overflow-hidden rounded-md border-2 border-[#e0b552] bg-[#0c0908] shadow-[0_16px_28px_-8px_rgba(0,0,0,.9),0_0_0_1px_rgba(0,0,0,.5),0_0_22px_-3px_rgba(224,181,82,.65)]">
                     <img
-                      src={PLAYER_PORTRAIT}
+                      src={playerPortrait}
                       alt=""
                       className="h-full w-full object-cover object-top"
                       draggable={false}
@@ -639,7 +649,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
       >
         <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-[rgba(201,162,74,.25)] bg-[rgba(10,8,7,.72)] py-2 pl-2 pr-4">
           <img
-            src={PLAYER_PORTRAIT}
+            src={playerPortrait}
             alt=""
             className="h-[38px] w-[38px] rounded-full border border-[rgba(201,162,74,.35)] object-cover object-top"
             draggable={false}

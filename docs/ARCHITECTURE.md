@@ -86,10 +86,12 @@ game/
 Current repo state:
 
 - `apps/web` — Next.js 15 App Router: public site + `/play` game client
+- `apps/api` — NestJS thin Beta API (guest players, versioned saves, analytics, feedback) + Prisma/Postgres
 - `packages/game-engine` — battle / exploration engine + XState machines
 - `packages/shared` — shared TypeScript types
 - `packages/content` — card / map / encounter JSON + portraits
-- NestJS `apps/api` and `packages/api-client` are future work
+- `packages/api-client` is future work
+- `docker-compose.yml` — local Postgres for `apps/api`
 
 ---
 

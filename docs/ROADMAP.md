@@ -151,7 +151,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Next.js 15 + `/play` + SEO/SSG | In place (M1 done) |
 | `game-engine` / `shared` / `content` | Extracted; framework-independent |
 | World / Exploration / Battle screens | Connected in session via `GameApp` (not a formal Run yet) |
-| Shared **Run** state | In progress — shared `RunState` now owns progression, loadout, exploration, navigation, seed, and pending fight |
+| Shared **Run** state | Mostly done — shared `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
 | Exploration ↔ Battle continuity | In place for session — location FIGHT → battle → `TO PRISON` |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
@@ -159,11 +159,11 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
-| Save / load + save schema | Local resume shipped; cloud save still open |
+| Save / load + save schema | Local resume shipped; NestJS cloud save endpoints scaffolded |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | Guided tour (map + battle) | Not started |
-| NestJS API + Postgres | Not started (Beta-critical) |
-| Analytics + feedback | Not started (Beta-critical) |
+| NestJS API + Postgres | Scaffolded (`apps/api` + Docker Compose Postgres); client sync still open |
+| Analytics + feedback | API ingest endpoints live; client UI still open |
 | Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
 | Inventory | Money for Beta; full items post-Beta |
 | Automated tests | E2E smoke + world→battle; XP / loadout unit tests |
@@ -211,16 +211,16 @@ CURRENT
 1. XP + progression (levels / unlocks)     ← done (levels + 12 improved cards)
   │
   ▼
-2. Shared Run State                        ← still React session; formalize next
+2. Shared Run State                        ← RunState done; app XState machine deferred
   │
   ▼
 3. Exploration ↔ Battle (same run)         ← done for session
   │
   ▼
-4. Minimal NestJS + Postgres scaffold
+4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
   │
   ▼
-5. Save schema + cloud save / load (API)   ← local resume done; cloud open
+5. Save schema + cloud save / load (API)   ← local + API endpoints; client sync open
   │
   ▼
 6. Seeded RNG (required)                   ← done
@@ -323,7 +323,7 @@ Game
 ### Tasks
 
 - [x] Define `Run` / `GameState` types in shared or engine packages
-- [ ] App-level orchestration machine (World ↔ Exploration ↔ Battle) owning the Run
+- [ ] App-level orchestration machine (World ↔ Exploration ↔ Battle) owning the Run — deferred; React `RunState` + child actors are enough for Beta
 - [x] Carry progression, deck, and flags across screen transitions
 - [x] End battle → return to exploration with the same Run
 - [x] New game creates a fresh Run; continue restores one
@@ -402,9 +402,9 @@ SaveFile
 
 - [x] Spec `GameState` + `SaveFile` types (version fields mandatory)
 - [x] Serialize / deserialize in the engine or a thin persistence helper
-- [ ] Scaffold `apps/api` (NestJS) + Postgres + deploy target
+- [x] Scaffold `apps/api` (NestJS) + Postgres + deploy target (Docker Compose local)
 - [ ] Guest `playerId` (generate once, store client-side; send on API calls)
-- [ ] API: create / update / get / list saves for a player
+- [x] API: create / update / get / list saves for a player (`POST /players`, `GET|PUT /saves/:playerId`)
 - [ ] Client continue flow against cloud save
 - [x] Optional `localStorage` cache for faster resume / offline draft
 - [x] Migration stub or reject incompatible `schemaVersion`
@@ -674,6 +674,7 @@ No ClickHouse, Kafka, or heavy pipeline for Beta.
 
 ### Events (start here)
 
+- [x] API ingest: `POST /analytics/events` (Postgres `analytics_events`)
 - [ ] `game_started`
 - [ ] `session_heartbeat` or duration derived from events
 - [ ] `battle_started`
@@ -690,13 +691,13 @@ No ClickHouse, Kafka, or heavy pipeline for Beta.
 
 - [ ] In-game and/or site form (message + optional email/contact)
 - [ ] Attach `playerId`, build version, optional last location / screen
-- [ ] API stores rows; simple list/export for review (SQL or thin admin route is fine)
+- [x] API stores rows (`POST /feedback`); simple list/export for review still open
 - [ ] Rate-limit + basic spam guard
 
 ### Tasks
 
 - [ ] Event type union + emit helper (client-safe; no gameplay rules)
-- [ ] `analytics.events` + `feedback` tables
+- [x] `analytics.events` + `feedback` tables
 - [ ] Instrument as corresponding mechanics stabilize
 - [ ] Simple query / export / dashboard notes for design decisions
 

@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dark-fantasy-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: darkfantasy
+      POSTGRES_PASSWORD: darkfantasy
+      POSTGRES_DB: darkfantasy
+    volumes:
+      - dark_fantasy_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U darkfantasy -d darkfantasy']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dark_fantasy_pg:

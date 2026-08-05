@@ -12,6 +12,9 @@ import {
 import {
   canUnlockImprovedCard,
   createInitialLoadout,
+  getCardsForClass,
+  getDominantDeckClass,
+  getPlayerPortraitForDeck,
   listImprovedPlayerCards,
   spentLevelsForClass,
   unlockImprovedCard,
@@ -55,5 +58,21 @@ describe('improved card unlocks', () => {
     expect(next?.deckCardIds).toContain(cardId);
     expect(spentLevelsForClass(next!, 'fighter')).toBe(1);
     expect(canUnlockImprovedCard(progression, next!, cardId)).toBe(false);
+  });
+});
+
+describe('deck-driven player portrait', () => {
+  it('picks the class with the most cards in the deck', () => {
+    const wizardIds = getCardsForClass('wizard').map((card) => card.id);
+    const rogueIds = getCardsForClass('rogue').map((card) => card.id);
+    const deck = [...wizardIds, ...rogueIds.slice(0, 1)];
+
+    expect(getDominantDeckClass(deck)).toBe('wizard');
+    expect(getPlayerPortraitForDeck(deck)).toBe('/characters/player_wizard.png');
+  });
+
+  it('falls back to fighter for an empty deck', () => {
+    expect(getDominantDeckClass([])).toBe('fighter');
+    expect(getPlayerPortraitForDeck([])).toBe('/characters/player_fighter.png');
   });
 });

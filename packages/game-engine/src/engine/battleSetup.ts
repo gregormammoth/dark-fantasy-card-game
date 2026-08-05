@@ -8,9 +8,9 @@ import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import type { RngState } from '@dark-fantasy/shared/types/rng';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
-import { PLAYER_PORTRAIT, DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
-import { createInitialLoadout } from './progression/loadout';
+import { createInitialLoadout, getPlayerPortraitForDeck } from './progression/loadout';
 import { cloneRng, createRng } from './rng';
 
 const cardRegistry = new Map<string, CardDefinition>();
@@ -84,7 +84,7 @@ export function createInitialBattle(
 
   return {
     player: {
-      portrait: PLAYER_PORTRAIT,
+      portrait: getPlayerPortraitForDeck(deckIds),
       shield: Math.min(battleData.player.startingShield, playerMaxShield),
       maxShield: playerMaxShield,
       barrier: 0,
