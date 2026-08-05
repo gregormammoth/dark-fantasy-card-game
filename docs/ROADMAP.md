@@ -155,17 +155,18 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Exploration ↔ Battle continuity | In place for session — location FIGHT → battle → `TO PRISON` |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
-| Class levels / unlock curve | Not started |
-| Reward loop | Fragmented — XP only so far |
-| Quests (logic + UI) | Content stub (`LocationQuest`); no run quest log / UI yet |
+| Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards) |
+| Reward loop | Fragmented — XP + level unlocks so far |
+| Quests (logic + UI) | Run quests + Player / map quest log in place; polish ongoing |
 | Money / light inventory | Not started |
 | Save / load + save schema | Local resume shipped; cloud save still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
+| Guided tour (map + battle) | Not started |
 | NestJS API + Postgres | Not started (Beta-critical) |
 | Analytics + feedback | Not started (Beta-critical) |
 | Hollowfort map content | 13 locations + branch bosses + encounter queue (polish ongoing) |
 | Inventory | Money for Beta; full items post-Beta |
-| Automated tests | E2E smoke + world→battle; XP unit tests |
+| Automated tests | E2E smoke + world→battle; XP / loadout unit tests |
 
 Update this table as milestones land.
 
@@ -240,7 +241,7 @@ CURRENT
 11. Analytics events + product stats + feedback form
   │
   ▼
-12. Polish + E2E
+12. Polish + guided tour (map / battle) + E2E
   │
   ▼
 BETA
@@ -708,6 +709,36 @@ You can answer “how many played, how much, where they quit” and read player 
 
 **Horizon:** Red · **Priority:** #10
 
+### Guided tour (first-run coaching)
+
+**Goal:** Players learn exploration + battle in the first minutes **without** a long tutorial wall. Short, dismissible coach marks that fire once per run (or until “Don’t show again”).
+
+Keep lean: spotlight + one sentence + optional “Next”. No separate tutorial mode, no forced practice fight.
+
+#### Exploration map (Hollowfort)
+
+- [ ] First-enter coach: select a room on the map
+- [ ] Select a card in the hand, then Travel / act
+- [ ] End turn → encounter deck reminder
+- [ ] Talk / Fight prompts when an NPC or enemy is present
+- [ ] Quest log / Character entry once a quest or level is available
+- [ ] Persist tour progress with local save (`tour` flags on the run)
+
+#### Battle
+
+- [ ] First-battle coach: add cards to the combo
+- [ ] End turn to resolve
+- [ ] Intent / enemy turn one-liner
+- [ ] HP = cards left (deck as health) callout
+- [ ] Victory / defeat next-step tip (return to prison / load save)
+
+#### Rules
+
+- [ ] Skip / dismiss anytime; “Don’t show again” option
+- [ ] Never block combat input for more than one beat
+- [ ] Seeded / resume-safe (don’t re-show completed steps after load)
+- [ ] No multi-screen tutorial campaign in Beta
+
 ### Audio / UX
 
 - [x] Ambient beds, screen music, combat/UI SFX (see [AUDIO.md](./AUDIO.md))
@@ -725,10 +756,11 @@ You can answer “how many played, how much, where they quit” and read player 
 - [ ] Unit: damage, card effects, deck ops, status, RNG
 - [ ] Integration: exploration ↔ battle, rewards, save/load
 - [ ] E2E: new run → fight → XP → unlock → save/load → boss → escape (seeded)
+- [ ] E2E: first-run tour appears once, dismissible, does not block travel/fight
 
 ### Deliverable
 
-Stable Beta build on Vercel.
+Stable Beta build on Vercel — including a short guided tour for map + battle first steps.
 
 ---
 
@@ -747,6 +779,7 @@ Stable Beta build on Vercel.
 - [ ] Seeded RNG in production builds
 - [ ] ~24–32 player cards · ~10–12 locations · 1 memorable boss
 - [ ] Reward loop + class progression readable without a tutorial wall
+- [ ] Guided tour: exploration map + first battle first-steps (dismissible coach marks)
 - [ ] Quest log + at least 2–3 prison quests
 - [ ] Money in inventory (earn / spend in the slice)
 
@@ -802,8 +835,8 @@ Cards stay primary. Beta already includes **quests + money**; grow item loadouts
 
 ### Game vertical slice
 
-1. Start a new game from `/play` without guidance.
-2. Understand core mechanics within **10–15 minutes**.
+1. Start a new game from `/play` (optional guided tour, never a forced wall).
+2. Understand core mechanics within **10–15 minutes** (tour covers map travel + first fight).
 3. Escape Hollowfort in about **60–90 minutes**.
 4. Experiment with class combinations and feel progression.
 5. Track quests and use money at least once in a meaningful choice.
