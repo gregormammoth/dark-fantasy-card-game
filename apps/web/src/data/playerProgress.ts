@@ -1,66 +1,63 @@
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
-import playerCardsData from '@dark-fantasy/content/playerCards.json';
+import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import {
+  XP_PER_CLASS_LEVEL,
+  IMPROVED_CARD_LEVEL_COST,
+} from '@dark-fantasy/shared/types/progression';
+import {
+  DECK_CAP,
+  availableLevelsForClass,
+  canUnlockImprovedCard,
+  createInitialLoadout,
+  getCardsForClass as engineGetCardsForClass,
+  listAllPlayerCards,
+  spentLevelsForClass,
+} from '@dark-fantasy/game-engine';
 
+export { DECK_CAP, createInitialLoadout };
 export const PLAYER_CLASSES: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
+export const LEVEL_COST = IMPROVED_CARD_LEVEL_COST;
+export const XP_PER_LEVEL = XP_PER_CLASS_LEVEL;
 
-export const DECK_CAP = 30;
-
-export interface CardProgressMeta {
-  cost: number;
-  requirement: string | null;
-  unlocked: boolean;
-}
-
-const playerCards = playerCardsData as CardDefinition[];
-
-function buildCardMeta(): Record<string, CardProgressMeta> {
-  const byClass: Record<CardClass, CardDefinition[]> = {
-    fighter: [],
-    rogue: [],
-    wizard: [],
-    survivor: [],
-  };
-
-  for (const card of playerCards) {
-    if (card.class) {
-      byClass[card.class].push(card);
-    }
-  }
-
-  const meta: Record<string, CardProgressMeta> = {};
-  const baseCosts = [0, 0, 150, 220, 300, 400, 520, 650];
-
-  for (const classId of PLAYER_CLASSES) {
-    byClass[classId].forEach((card, index) => {
-      const unlocked = index < 2;
-      const cost = baseCosts[Math.min(index, baseCosts.length - 1)] ?? 650;
-      const requirement =
-        index >= 5
-          ? `${classId.charAt(0).toUpperCase()}${classId.slice(1)} Level ${Math.max(3, index - 1)}`
-          : null;
-      meta[card.id] = {
-        cost: unlocked ? 0 : cost,
-        requirement,
-        unlocked,
-      };
-    });
-  }
-
-  return meta;
-}
-
-export const cardProgressMeta = buildCardMeta();
+export type CardStatus = 'unlocked' | 'available' | 'locked-xp';
 
 export function getPlayerCardDefinitions(): CardDefinition[] {
-  return playerCards.filter((card) => Boolean(card.class));
+  return listAllPlayerCards();
 }
 
 export function getCardsForClass(classId: CardClass): CardDefinition[] {
-  return getPlayerCardDefinitions().filter((card) => card.class === classId);
+  return engineGetCardsForClass(classId);
 }
 
 export function getDefaultDeckIds(): string[] {
-  return getPlayerCardDefinitions()
-    .filter((card) => cardProgressMeta[card.id]?.unlocked)
-    .map((card) => card.id);
+  return createInitialLoadout().deckCardIds;
+}
+
+export function cardStatusFor(
+  card: CardDefinition,
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+): CardStatus {
+  if (loadout.unlockedCardIds.includes(card.id)) {
+    return 'unlocked';
+  }
+  if (!card.improved) {
+    return 'locked-xp';
+  }
+  if (canUnlockImprovedCard(progression, loadout, card.id)) {
+    return 'available';
+  }
+  return 'locked-xp';
+}
+
+export function classSpendableLevels(
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+  classId: CardClass,
+): number {
+  return availableLevelsForClass(progression, loadout, classId);
+}
+
+export function classSpentLevels(loadout: PlayerLoadout, classId: CardClass): number {
+  return spentLevelsForClass(loadout, classId);
 }

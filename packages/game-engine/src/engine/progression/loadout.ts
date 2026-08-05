@@ -1,0 +1,134 @@
+import playerCardsData from '@dark-fantasy/content/playerCards.json';
+import improvedCardsData from '@dark-fantasy/content/improvedCards.json';
+import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
+import type { PlayerLoadout } from '@dark-fantasy/shared/types/progression';
+import {
+  getAvailableClassLevels,
+  getClassXp,
+  getImprovedUnlockCost,
+} from './xp';
+import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+
+const baseCards = (playerCardsData as CardDefinition[]).map((card) => ({
+  ...card,
+  improved: false,
+}));
+
+const improvedCards = (improvedCardsData as CardDefinition[]).map((card) => ({
+  ...card,
+  improved: true,
+}));
+
+const allCards: CardDefinition[] = [...baseCards, ...improvedCards];
+const cardById = new Map(allCards.map((card) => [card.id, card]));
+
+export const DECK_CAP = 30;
+
+export function listAllPlayerCards(): CardDefinition[] {
+  return allCards;
+}
+
+export function listBasePlayerCards(): CardDefinition[] {
+  return baseCards;
+}
+
+export function listImprovedPlayerCards(): CardDefinition[] {
+  return improvedCards;
+}
+
+export function getPlayerCardById(cardId: string): CardDefinition | undefined {
+  return cardById.get(cardId);
+}
+
+export function getCardsForClass(classId: CardClass): CardDefinition[] {
+  return allCards.filter((card) => card.class === classId);
+}
+
+export function createInitialLoadout(): PlayerLoadout {
+  const unlockedCardIds = baseCards.map((card) => card.id);
+  return {
+    unlockedCardIds,
+    deckCardIds: [...unlockedCardIds],
+  };
+}
+
+export function isCardUnlocked(loadout: PlayerLoadout, cardId: string): boolean {
+  return loadout.unlockedCardIds.includes(cardId);
+}
+
+export function spentLevelsForClass(loadout: PlayerLoadout, classId: CardClass): number {
+  return improvedCards.filter(
+    (card) => card.class === classId && loadout.unlockedCardIds.includes(card.id),
+  ).length;
+}
+
+export function availableLevelsForClass(
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+  classId: CardClass,
+): number {
+  return getAvailableClassLevels(
+    getClassXp(progression, classId),
+    spentLevelsForClass(loadout, classId),
+  );
+}
+
+export function canUnlockImprovedCard(
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+  cardId: string,
+): boolean {
+  const card = cardById.get(cardId);
+  if (!card?.class || !card.improved) {
+    return false;
+  }
+  if (loadout.unlockedCardIds.includes(cardId)) {
+    return false;
+  }
+  return availableLevelsForClass(progression, loadout, card.class) >= getImprovedUnlockCost();
+}
+
+export function unlockImprovedCard(
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+  cardId: string,
+): PlayerLoadout | null {
+  if (!canUnlockImprovedCard(progression, loadout, cardId)) {
+    return null;
+  }
+  if (loadout.deckCardIds.length >= DECK_CAP) {
+    return {
+      unlockedCardIds: [...loadout.unlockedCardIds, cardId],
+      deckCardIds: [...loadout.deckCardIds],
+    };
+  }
+  return {
+    unlockedCardIds: [...loadout.unlockedCardIds, cardId],
+    deckCardIds: [...loadout.deckCardIds, cardId],
+  };
+}
+
+export function toggleDeckCard(loadout: PlayerLoadout, cardId: string): PlayerLoadout {
+  if (!loadout.unlockedCardIds.includes(cardId)) {
+    return loadout;
+  }
+  if (loadout.deckCardIds.includes(cardId)) {
+    return {
+      ...loadout,
+      deckCardIds: loadout.deckCardIds.filter((id) => id !== cardId),
+    };
+  }
+  if (loadout.deckCardIds.length >= DECK_CAP) {
+    return loadout;
+  }
+  return {
+    ...loadout,
+    deckCardIds: [...loadout.deckCardIds, cardId],
+  };
+}
+
+export function resolveLoadoutDeckDefinitions(loadout: PlayerLoadout): CardDefinition[] {
+  return loadout.deckCardIds
+    .map((id) => cardById.get(id))
+    .filter((card): card is CardDefinition => Boolean(card));
+}

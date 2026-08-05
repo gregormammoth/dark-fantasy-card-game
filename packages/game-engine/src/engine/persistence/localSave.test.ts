@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialExploration } from '../exploration/setup';
 import { createInitialProgression } from '../progression/xp';
+import { createInitialLoadout } from '../progression/loadout';
 import {
   buildLocalSaveFile,
   hasResumableRun,
@@ -15,6 +16,7 @@ describe('localSave', () => {
     const exploration = createInitialExploration(4242);
     const state = {
       progression: createInitialProgression(),
+      loadout: createInitialLoadout(),
       exploration,
       explorationPhase: 'playerTurn' as const,
       screen: 'exploration' as const,
@@ -25,6 +27,7 @@ describe('localSave', () => {
     const parsed = parseLocalSave(serializeLocalSave(state));
     expect(parsed).not.toBeNull();
     expect(parsed?.state.runSeed).toBe(4242);
+    expect(parsed?.state.loadout.deckCardIds.length).toBeGreaterThan(0);
     expect(parsed?.state.exploration?.rng.seed).toBe(4242);
     expect(hasResumableRun(parsed!.state)).toBe(true);
   });
@@ -32,6 +35,7 @@ describe('localSave', () => {
   it('rejects incompatible schema versions', () => {
     const file = buildLocalSaveFile({
       progression: createInitialProgression(),
+      loadout: createInitialLoadout(),
       exploration: null,
       explorationPhase: 'idle',
       screen: 'world',

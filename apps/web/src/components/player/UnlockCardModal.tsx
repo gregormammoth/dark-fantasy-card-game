@@ -3,9 +3,9 @@ interface UnlockCardModalProps {
   className: string;
   color: string;
   borderColor: string;
-  cost: number;
-  currentXp: number;
-  afterXp: number;
+  costLevels: number;
+  availableLevels: number;
+  afterLevels: number;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -15,9 +15,9 @@ export function UnlockCardModal({
   className,
   color,
   borderColor,
-  cost,
-  currentXp,
-  afterXp,
+  costLevels,
+  availableLevels,
+  afterLevels,
   onConfirm,
   onCancel,
 }: UnlockCardModalProps) {
@@ -27,7 +27,7 @@ export function UnlockCardModal({
         className="w-[360px] animate-[modalIn_.18s_ease-out] rounded-[14px] bg-[linear-gradient(180deg,#181211,#100c0b)] px-7 py-[26px] shadow-[0_40px_90px_-20px_#000]"
         style={{ border: `1px solid ${borderColor}` }}
       >
-        <div className="text-[10px] tracking-[.2em] text-[#8a7f72]">UNLOCK CARD</div>
+        <div className="text-[10px] tracking-[.2em] text-[#8a7f72]">UNLOCK IMPROVED CARD</div>
         <div className="mt-1.5 font-cinzel text-[20px]" style={{ color }}>
           {name}?
         </div>
@@ -35,16 +35,16 @@ export function UnlockCardModal({
           <div className="flex justify-between">
             <span>Cost</span>
             <span className="text-[#e8ddcf]">
-              {cost} {className} XP
+              {costLevels} {className} Level{costLevels === 1 ? '' : 's'}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Current XP</span>
-            <span className="text-[#e8ddcf]">{currentXp}</span>
+            <span>Available levels</span>
+            <span className="text-[#e8ddcf]">{availableLevels}</span>
           </div>
           <div className="flex justify-between border-t border-[rgba(201,162,74,.14)] pt-2">
             <span>After purchase</span>
-            <span className="text-[#e0b552]">{afterXp}</span>
+            <span className="text-[#e0b552]">{afterLevels}</span>
           </div>
         </div>
         <div className="mt-[22px] flex gap-2.5">
@@ -53,7 +53,7 @@ export function UnlockCardModal({
             onClick={onConfirm}
             className="flex-1 rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] py-[11px] font-cinzel text-[13px] tracking-[.08em] text-[#f3e2d6] transition hover:brightness-110"
           >
-            UNLOCK CARD
+            ADD TO DECK
           </button>
           <button
             type="button"

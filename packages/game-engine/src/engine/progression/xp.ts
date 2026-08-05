@@ -1,5 +1,9 @@
 import type { CardClass } from '@dark-fantasy/shared/types/card';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import {
+  IMPROVED_CARD_LEVEL_COST,
+  XP_PER_CLASS_LEVEL,
+} from '@dark-fantasy/shared/types/progression';
 
 const PLAYER_CLASSES: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
 
@@ -35,6 +39,22 @@ export function awardCardXp(
 
 export function getClassXp(progression: PlayerProgression, classId: CardClass): number {
   return progression.classes[classId]?.xp ?? 0;
+}
+
+export function getClassLevel(xp: number): number {
+  return Math.floor(Math.max(0, xp) / XP_PER_CLASS_LEVEL);
+}
+
+export function getXpIntoLevel(xp: number): number {
+  return Math.max(0, xp) % XP_PER_CLASS_LEVEL;
+}
+
+export function getAvailableClassLevels(totalXp: number, spentLevels: number): number {
+  return Math.max(0, getClassLevel(totalXp) - Math.max(0, spentLevels));
+}
+
+export function getImprovedUnlockCost(): number {
+  return IMPROVED_CARD_LEVEL_COST;
 }
 
 export function getTotalXp(progression: PlayerProgression): number {

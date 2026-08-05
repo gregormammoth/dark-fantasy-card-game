@@ -173,7 +173,7 @@ export interface ExplorationContext {
 }
 
 export type ExplorationEvent =
-  | { type: 'START_EXPLORATION'; seed?: number }
+  | { type: 'START_EXPLORATION'; seed?: number; deckCardIds?: string[] }
   | { type: 'SELECT_LOCATION'; locationId: string }
   | { type: 'CLEAR_SELECTION' }
   | { type: 'SELECT_CARD'; cardInstanceId: string }
@@ -204,7 +204,7 @@ export type ExplorationEvent =
       phase: 'playerTurn' | 'encounter';
     }
   | { type: 'RESET' }
-  | { type: 'RESTART'; seed?: number };
+  | { type: 'RESTART'; seed?: number; deckCardIds?: string[] };
 
 export interface ActionOutcomeDefinition {
   message: string;

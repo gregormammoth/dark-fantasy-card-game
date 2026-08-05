@@ -1,0 +1,194 @@
+[
+  {
+    "id": "improved_fighter_crushing_blow",
+    "name": "Crushing Blow",
+    "class": "fighter",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "damage",
+        "value": 5
+      }
+    ],
+    "description": "Deal 5 damage.",
+    "improved": true
+  },
+  {
+    "id": "improved_fighter_warpath",
+    "name": "Warpath",
+    "class": "fighter",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "bonusDamagePerAttackCard",
+        "value": 1
+      },
+      {
+        "type": "damage",
+        "value": 3
+      }
+    ],
+    "description": "Deal 3 damage. +1 for each other Attack card in your combo.",
+    "improved": true
+  },
+  {
+    "id": "improved_fighter_iron_wall",
+    "name": "Iron Wall",
+    "class": "fighter",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "shield",
+        "value": 4
+      }
+    ],
+    "description": "Gain 4 Shield.",
+    "improved": true
+  },
+  {
+    "id": "improved_rogue_venom_needle",
+    "name": "Venom Needle",
+    "class": "rogue",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "poison",
+        "damagePerTurn": 2,
+        "duration": 4
+      }
+    ],
+    "description": "Apply Poison (2 damage each turn for 4 turns).",
+    "improved": true
+  },
+  {
+    "id": "improved_rogue_assassinate",
+    "name": "Assassinate",
+    "class": "rogue",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "bonusIfFirstAttack",
+        "damage": 3
+      },
+      {
+        "type": "damage",
+        "value": 3
+      }
+    ],
+    "description": "Deal 3 damage. If it's the first attack of the battle, deal 6 instead.",
+    "improved": true
+  },
+  {
+    "id": "improved_rogue_phantom_step",
+    "name": "Phantom Step",
+    "class": "rogue",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "reduceDamagePercent",
+        "value": 75
+      }
+    ],
+    "description": "Reduce incoming damage by 75%.",
+    "improved": true
+  },
+  {
+    "id": "improved_wizard_arcane_lance",
+    "name": "Arcane Lance",
+    "class": "wizard",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "ignoreShield"
+      },
+      {
+        "type": "damage",
+        "value": 4
+      }
+    ],
+    "description": "Deal 4 damage ignoring shields.",
+    "improved": true
+  },
+  {
+    "id": "improved_wizard_ward_lattice",
+    "name": "Ward Lattice",
+    "class": "wizard",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "barrier",
+        "value": 5
+      }
+    ],
+    "description": "Gain 5 Barrier until end of round.",
+    "improved": true
+  },
+  {
+    "id": "improved_wizard_cascade_ward",
+    "name": "Cascade Ward",
+    "class": "wizard",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "bonusBarrierPerDefenseCard",
+        "value": 1
+      },
+      {
+        "type": "barrier",
+        "value": 3
+      }
+    ],
+    "description": "Gain 3 Barrier +1 for each other Defense card in your combo.",
+    "improved": true
+  },
+  {
+    "id": "improved_survivor_blood_fury",
+    "name": "Blood Fury",
+    "class": "survivor",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "bonusIfLowerHp",
+        "damage": 3,
+        "thresholdPercent": 50
+      },
+      {
+        "type": "damage",
+        "value": 3
+      }
+    ],
+    "description": "Deal 3 damage. If your HP is below 50%, deal 6 instead.",
+    "improved": true
+  },
+  {
+    "id": "improved_survivor_second_wind",
+    "name": "Second Wind",
+    "class": "survivor",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "recoverDiscard",
+        "count": 3
+      }
+    ],
+    "description": "Return 3 cards from your discard pile to your hand.",
+    "improved": true
+  },
+  {
+    "id": "improved_survivor_undying",
+    "name": "Undying",
+    "class": "survivor",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "restoreMaxShields"
+      },
+      {
+        "type": "shield",
+        "value": 1
+      }
+    ],
+    "description": "Restore Shield to maximum, then gain 1 Shield.",
+    "improved": true
+  }
+]

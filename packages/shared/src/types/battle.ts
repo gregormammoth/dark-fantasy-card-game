@@ -89,6 +89,7 @@ export type BattleEvent =
       progression?: PlayerProgression;
       enemy?: BattleEnemyOverride;
       rng?: RngState;
+      playerDeckIds?: string[];
     }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
@@ -99,5 +100,6 @@ export type BattleEvent =
       progression?: PlayerProgression;
       enemy?: BattleEnemyOverride;
       rng?: RngState;
+      playerDeckIds?: string[];
     }
   | { type: 'LEAVE_BATTLE' };

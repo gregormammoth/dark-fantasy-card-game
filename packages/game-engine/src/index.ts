@@ -18,10 +18,30 @@ export {
   awardCardXp,
   createInitialProgression,
   getClassXp,
+  getClassLevel,
+  getXpIntoLevel,
+  getAvailableClassLevels,
+  getImprovedUnlockCost,
   getTotalXp,
   getXpGained,
   getTotalXpGained,
 } from './engine/progression/xp';
+export {
+  DECK_CAP,
+  availableLevelsForClass,
+  canUnlockImprovedCard,
+  createInitialLoadout,
+  getCardsForClass,
+  getPlayerCardById,
+  isCardUnlocked,
+  listAllPlayerCards,
+  listBasePlayerCards,
+  listImprovedPlayerCards,
+  spentLevelsForClass,
+  toggleDeckCard,
+  unlockImprovedCard,
+  resolveLoadoutDeckDefinitions,
+} from './engine/progression/loadout';
 export { createRng, cloneRng, normalizeSeed } from './engine/rng';
 export type { RngState } from './engine/rng';
 export {
@@ -31,3 +51,4 @@ export {
   parseLocalSave,
   serializeLocalSave,
 } from './engine/persistence/localSave';
+export { rebuildExplorationDeck } from './engine/exploration/setup';

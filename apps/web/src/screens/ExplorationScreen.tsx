@@ -33,6 +33,7 @@ interface ExplorationScreenProps {
   onOpenPlayer?: () => void;
   onEscapeToWorld?: () => void;
   runSeed?: number;
+  deckCardIds?: string[];
 }
 
 export function ExplorationScreen({
@@ -41,6 +42,7 @@ export function ExplorationScreen({
   onOpenPlayer,
   onEscapeToWorld,
   runSeed,
+  deckCardIds,
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
@@ -91,7 +93,7 @@ export function ExplorationScreen({
           onClick={() => {
             sessionStorage.removeItem(QUEST_TOAST_SNAP_KEY);
             void unlock();
-            actor.send({ type: 'START_EXPLORATION', seed: runSeed });
+            actor.send({ type: 'START_EXPLORATION', seed: runSeed, deckCardIds });
           }}
           className="rounded-[12px] border border-[rgba(201,162,74,.55)] bg-[rgba(224,181,82,.16)] px-8 py-3.5 font-cinzel text-[14px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
         >

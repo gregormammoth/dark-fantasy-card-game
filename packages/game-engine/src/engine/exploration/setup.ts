@@ -1,5 +1,4 @@
 import prisonMapData from '@dark-fantasy/content/prisonMap.json';
-import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
 import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
@@ -9,6 +8,7 @@ import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';
 import { drawUntilHandSize } from './hand';
 import { setLocationEncounterQueue } from './locationEncounters';
+import { createInitialLoadout, getPlayerCardById } from '../progression/loadout';
 
 interface PrisonMapFile {
   id: string;
@@ -19,11 +19,15 @@ interface PrisonMapFile {
 
 const mapFile = prisonMapData as PrisonMapFile;
 
-function buildPlayerDeck(
+function buildPlayerDeckFromIds(
+  deckCardIds: string[],
   rng: ExplorationContext['rng'],
 ): ReturnType<typeof createCardInstance>[] {
+  const definitions = deckCardIds
+    .map((id) => getPlayerCardById(id))
+    .filter((card): card is CardDefinition => Boolean(card));
   return shuffle(
-    (playerCardsData as CardDefinition[]).map((definition) => createCardInstance(definition)),
+    definitions.map((definition) => createCardInstance(definition)),
     rng,
   );
 }
@@ -36,7 +40,10 @@ function buildLocations(): Record<string, LocationDefinition> {
   return locations;
 }
 
-export function createInitialExploration(seed?: number): ExplorationContext {
+export function createInitialExploration(
+  seed?: number,
+  deckCardIds: string[] = createInitialLoadout().deckCardIds,
+): ExplorationContext {
   resetInstanceCounter();
   resetExplorationLogCounter();
 
@@ -50,7 +57,7 @@ export function createInitialExploration(seed?: number): ExplorationContext {
     currentLocationId: startId,
     selectedLocationId: startId,
     selectedCardInstanceId: null,
-    deck: buildPlayerDeck(rng),
+    deck: buildPlayerDeckFromIds(deckCardIds, rng),
     hand: [],
     discard: [],
     actionsRemaining: 4,
@@ -79,6 +86,27 @@ export function createInitialExploration(seed?: number): ExplorationContext {
   );
   appendExplorationLog(context, `Run seed ${context.rng.seed}.`, 'system');
   return context;
+}
+
+export function rebuildExplorationDeck(
+  context: ExplorationContext,
+  deckCardIds: string[],
+): ExplorationContext {
+  const next = structuredClone(context);
+  next.hand = next.hand.filter((card) => deckCardIds.includes(card.definition.id));
+  next.discard = next.discard.filter((card) => deckCardIds.includes(card.definition.id));
+  if (
+    next.selectedCardInstanceId &&
+    !next.hand.some((card) => card.instanceId === next.selectedCardInstanceId)
+  ) {
+    next.selectedCardInstanceId = null;
+  }
+  const heldIds = new Set(
+    [...next.hand, ...next.discard].map((card) => card.definition.id),
+  );
+  const drawIds = deckCardIds.filter((id) => !heldIds.has(id));
+  next.deck = buildPlayerDeckFromIds(drawIds, next.rng);
+  return next;
 }
 
 export function beginExplorationTurn(context: ExplorationContext): ExplorationContext {

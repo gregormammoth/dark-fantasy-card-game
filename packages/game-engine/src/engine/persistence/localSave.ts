@@ -5,8 +5,9 @@ import type {
 } from '@dark-fantasy/shared/types/save';
 import { LOCAL_SAVE_SCHEMA_VERSION } from '@dark-fantasy/shared/types/save';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
-import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { createInitialProgression } from '../progression/xp';
+import { createInitialLoadout } from '../progression/loadout';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -24,6 +25,18 @@ function isProgression(value: unknown): value is PlayerProgression {
     }
   }
   return true;
+}
+
+function isLoadout(value: unknown): value is PlayerLoadout {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return (
+    Array.isArray(value.unlockedCardIds) &&
+    Array.isArray(value.deckCardIds) &&
+    value.unlockedCardIds.every((id) => typeof id === 'string') &&
+    value.deckCardIds.every((id) => typeof id === 'string')
+  );
 }
 
 function isRng(value: unknown): boolean {
@@ -55,6 +68,7 @@ function isPhase(value: unknown): value is SavedExplorationPhase {
 export function createEmptyLocalRunState(runSeed: number): LocalRunState {
   return {
     progression: createInitialProgression(),
+    loadout: createInitialLoadout(),
     exploration: null,
     explorationPhase: 'idle',
     screen: 'world',
@@ -82,7 +96,8 @@ export function parseLocalSave(raw: string): LocalSaveFile | null {
     if (!isRecord(parsed)) {
       return null;
     }
-    if (parsed.schemaVersion !== LOCAL_SAVE_SCHEMA_VERSION) {
+    const schemaVersion = parsed.schemaVersion;
+    if (schemaVersion !== 1 && schemaVersion !== LOCAL_SAVE_SCHEMA_VERSION) {
       return null;
     }
     if (typeof parsed.savedAt !== 'string' || !isRecord(parsed.state)) {
@@ -131,11 +146,13 @@ export function parseLocalSave(raw: string): LocalSaveFile | null {
         enemyId: state.pendingLocationFight.enemyId,
       };
     }
+    const loadout = isLoadout(state.loadout) ? state.loadout : createInitialLoadout();
     return {
       schemaVersion: LOCAL_SAVE_SCHEMA_VERSION,
       savedAt: parsed.savedAt,
       state: {
         progression: state.progression,
+        loadout,
         exploration: state.exploration,
         explorationPhase: state.explorationPhase,
         screen: state.screen,

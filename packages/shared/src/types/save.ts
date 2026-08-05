@@ -1,7 +1,7 @@
 import type { ExplorationContext } from './exploration';
-import type { PlayerProgression } from './progression';
+import type { PlayerLoadout, PlayerProgression } from './progression';
 
-export const LOCAL_SAVE_SCHEMA_VERSION = 1;
+export const LOCAL_SAVE_SCHEMA_VERSION = 2;
 
 export type SavedAppScreen = 'world' | 'exploration' | 'battle' | 'player';
 
@@ -14,6 +14,7 @@ export interface PendingLocationFightSave {
 
 export interface LocalRunState {
   progression: PlayerProgression;
+  loadout: PlayerLoadout;
   exploration: ExplorationContext | null;
   explorationPhase: SavedExplorationPhase;
   screen: SavedAppScreen;

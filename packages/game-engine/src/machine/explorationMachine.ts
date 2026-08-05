@@ -27,8 +27,13 @@ export const explorationMachine = setup({
   },
   actions: {
     initExploration: assign(({ event }) => {
-      const seed = event.type === 'START_EXPLORATION' || event.type === 'RESTART' ? event.seed : undefined;
-      return createInitialExploration(seed);
+      const seed =
+        event.type === 'START_EXPLORATION' || event.type === 'RESTART' ? event.seed : undefined;
+      const deckCardIds =
+        event.type === 'START_EXPLORATION' || event.type === 'RESTART'
+          ? event.deckCardIds
+          : undefined;
+      return createInitialExploration(seed, deckCardIds);
     }),
     beginTurn: assign(({ context }) => beginExplorationTurn(context)),
     selectLocation: assign(({ context, event }) => {

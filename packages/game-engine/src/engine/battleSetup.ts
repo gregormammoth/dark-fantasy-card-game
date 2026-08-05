@@ -1,4 +1,5 @@
 import playerCardsData from '@dark-fantasy/content/playerCards.json';
+import improvedCardsData from '@dark-fantasy/content/improvedCards.json';
 import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
 import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
@@ -9,12 +10,17 @@ import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './
 import { resetLogCounter, appendLog } from './battleLog';
 import { PLAYER_PORTRAIT, DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
+import { createInitialLoadout } from './progression/loadout';
 import { cloneRng, createRng } from './rng';
 
 const cardRegistry = new Map<string, CardDefinition>();
 
 for (const card of playerCardsData) {
-  cardRegistry.set(card.id, card as CardDefinition);
+  cardRegistry.set(card.id, { ...(card as CardDefinition), improved: false });
+}
+
+for (const card of improvedCardsData) {
+  cardRegistry.set(card.id, { ...(card as CardDefinition), improved: true });
 }
 
 for (const card of enemyCardsData) {
@@ -60,20 +66,17 @@ export function createInitialBattle(
   progression: PlayerProgression = createInitialProgression(),
   enemyOverride?: BattleEnemyOverride,
   rngState?: RngState,
+  playerDeckIds?: string[],
 ): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
 
   const rng = rngState ? cloneRng(rngState) : createRng();
-  const playerDeck = shuffle(
-    buildDeck(
-      resolveDeckIds(
-        battleData.player.deck as string[] | 'all',
-        playerCardsData as CardDefinition[],
-      ),
-    ),
-    rng,
-  );
+  const deckIds =
+    playerDeckIds && playerDeckIds.length > 0
+      ? playerDeckIds
+      : createInitialLoadout().deckCardIds;
+  const playerDeck = shuffle(buildDeck(deckIds), rng);
   const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
 
   const playerMaxShield = battleData.player.maxShield ?? 2;

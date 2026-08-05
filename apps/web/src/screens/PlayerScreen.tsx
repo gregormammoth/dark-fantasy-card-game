@@ -1,9 +1,16 @@
 import { useMemo, useState } from 'react';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, RunQuest } from '@dark-fantasy/shared/types/exploration';
-import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
-import { getClassXp, getTotalXp } from '@dark-fantasy/game-engine';
+import {
+  getClassLevel,
+  getClassXp,
+  getTotalXp,
+  getXpIntoLevel,
+  unlockImprovedCard,
+  toggleDeckCard,
+} from '@dark-fantasy/game-engine';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { classThemes, getCardEffectSummary, getCardType } from '@/lib/cardTheme';
 import {
@@ -15,20 +22,24 @@ import {
 } from '@/lib/questUi';
 import {
   DECK_CAP,
+  LEVEL_COST,
   PLAYER_CLASSES,
-  cardProgressMeta,
+  XP_PER_LEVEL,
+  cardStatusFor,
+  classSpendableLevels,
   getCardsForClass,
-  getDefaultDeckIds,
   getPlayerCardDefinitions,
+  type CardStatus,
 } from '@/data/playerProgress';
 
-type CardStatus = 'unlocked' | 'available' | 'locked' | 'locked-xp';
 type TabId = 'character' | 'quests' | 'inventory';
 type QuestFilter = 'all' | 'active' | 'completed';
 type ItemFilter = 'all' | 'key' | 'ingredient';
 
 interface PlayerScreenProps {
   progression: PlayerProgression;
+  loadout: PlayerLoadout;
+  onLoadoutChange: (loadout: PlayerLoadout) => void;
   exploration?: ExplorationContext | null;
   onBack: () => void;
   backLabel?: string;
@@ -36,28 +47,6 @@ interface PlayerScreenProps {
 
 function classLabel(classId: CardClass): string {
   return classThemes[classId].label[0] + classThemes[classId].label.slice(1).toLowerCase();
-}
-
-function cardStatus(
-  cardId: string,
-  classXp: number,
-  unlockedOverride: Record<string, boolean>,
-): CardStatus {
-  const meta = cardProgressMeta[cardId];
-  if (!meta) {
-    return 'locked';
-  }
-  const unlocked = unlockedOverride[cardId] ?? meta.unlocked;
-  if (unlocked) {
-    return 'unlocked';
-  }
-  if (meta.requirement) {
-    return 'locked';
-  }
-  if (meta.cost <= classXp) {
-    return 'available';
-  }
-  return 'locked-xp';
 }
 
 function typeLabel(definition: CardDefinition): string {
@@ -71,10 +60,9 @@ function typeColor(definition: CardDefinition): string {
 function statusCopy(
   status: CardStatus,
   inDeck: boolean,
-  metaCost: number,
-  selectedXp: number,
-  requirement: string | null,
+  availableLevels: number,
   accent: string,
+  improved: boolean,
 ): { label: string; color: string } {
   if (status === 'unlocked') {
     return {
@@ -83,22 +71,24 @@ function statusCopy(
     };
   }
   if (status === 'available') {
-    return { label: `Unlock — ${metaCost} XP`, color: accent };
-  }
-  if (status === 'locked-xp') {
     return {
-      label: `Needs ${metaCost} XP (have ${selectedXp})`,
+      label: `Unlock — ${LEVEL_COST} Level`,
+      color: accent,
+    };
+  }
+  if (improved) {
+    return {
+      label: `Needs ${LEVEL_COST} Level (have ${availableLevels})`,
       color: '#8a7f72',
     };
   }
-  return {
-    label: requirement ? `Requires ${requirement}` : 'Locked',
-    color: '#8a7f72',
-  };
+  return { label: 'Locked', color: '#8a7f72' };
 }
 
 export function PlayerScreen({
   progression,
+  loadout,
+  onLoadoutChange,
   exploration = null,
   onBack,
   backLabel = '← World Map',
@@ -109,8 +99,6 @@ export function PlayerScreen({
   const [selectedCardByClass, setSelectedCardByClass] = useState<Partial<Record<CardClass, string>>>(
     {},
   );
-  const [unlockedOverride, setUnlockedOverride] = useState<Record<string, boolean>>({});
-  const [deck, setDeck] = useState<string[]>(() => getDefaultDeckIds());
   const [confirmCardId, setConfirmCardId] = useState<string | null>(null);
   const [questFilter, setQuestFilter] = useState<QuestFilter>('all');
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
@@ -135,23 +123,7 @@ export function PlayerScreen({
     return map;
   }, [allCards]);
 
-  function spentXp(classId: CardClass): number {
-    let spent = 0;
-    for (const card of getCardsForClass(classId)) {
-      const meta = cardProgressMeta[card.id];
-      if (!meta) {
-        continue;
-      }
-      if (unlockedOverride[card.id] && !meta.unlocked) {
-        spent += meta.cost;
-      }
-    }
-    return spent;
-  }
-
-  function currentXp(classId: CardClass): number {
-    return Math.max(0, getClassXp(progression, classId) - spentXp(classId));
-  }
+  const deck = loadout.deckCardIds;
 
   const deckByClass = Object.fromEntries(PLAYER_CLASSES.map((id) => [id, 0])) as Record<
     CardClass,
@@ -169,10 +141,10 @@ export function PlayerScreen({
     .slice(0, 2)
     .map((id) => classLabel(id));
   const totalXp = getTotalXp(progression);
-  const overallLevel = Math.max(1, Math.floor(totalXp / 50) + 1);
+  const overallLevel = Math.max(1, getClassLevel(totalXp) + 1);
 
   const selectedTheme = classThemes[selectedClassId];
-  const selectedXp = currentXp(selectedClassId);
+  const selectedAvailableLevels = classSpendableLevels(progression, loadout, selectedClassId);
   const selectedCards = getCardsForClass(selectedClassId);
   const selectedCardId =
     selectedCardByClass[selectedClassId] &&
@@ -181,24 +153,25 @@ export function PlayerScreen({
       : selectedCards[0]?.id ?? null;
   const activeCard = selectedCardId ? cardById[selectedCardId] : null;
   const activeStatus = activeCard
-    ? cardStatus(activeCard.id, selectedXp, unlockedOverride)
-    : 'locked';
+    ? cardStatusFor(activeCard, progression, loadout)
+    : 'locked-xp';
   const activeInDeck = activeCard ? deck.includes(activeCard.id) : false;
-  const activeMeta = activeCard ? cardProgressMeta[activeCard.id] : null;
   const activeStatusView = activeCard
     ? statusCopy(
         activeStatus,
         activeInDeck,
-        activeMeta?.cost ?? 0,
-        selectedXp,
-        activeMeta?.requirement ?? null,
+        selectedAvailableLevels,
         selectedTheme.accent,
+        Boolean(activeCard.improved),
       )
     : { label: '', color: '#8a7f72' };
 
   const confirmCard = confirmCardId ? cardById[confirmCardId] : null;
   const confirmClassId = confirmCardId ? cardClassById[confirmCardId] : null;
-  const confirmMeta = confirmCardId ? cardProgressMeta[confirmCardId] : null;
+  const confirmAvailable =
+    confirmClassId != null
+      ? classSpendableLevels(progression, loadout, confirmClassId)
+      : 0;
 
   const quests = exploration?.quests ?? [];
   const filteredQuests = quests.filter(
@@ -228,15 +201,9 @@ export function PlayerScreen({
     if (!card.class) {
       return;
     }
-    const status = cardStatus(card.id, currentXp(card.class), unlockedOverride);
+    const status = cardStatusFor(card, progression, loadout);
     if (status === 'unlocked') {
-      setDeck((current) =>
-        current.includes(card.id)
-          ? current.filter((id) => id !== card.id)
-          : current.length < DECK_CAP
-            ? [...current, card.id]
-            : current,
-      );
+      onLoadoutChange(toggleDeckCard(loadout, card.id));
       return;
     }
     if (status === 'available') {
@@ -248,12 +215,15 @@ export function PlayerScreen({
     if (!confirmCardId) {
       return;
     }
-    setUnlockedOverride((current) => ({ ...current, [confirmCardId]: true }));
+    const next = unlockImprovedCard(progression, loadout, confirmCardId);
+    if (next) {
+      onLoadoutChange(next);
+    }
     setConfirmCardId(null);
   }
 
   function actionButton(card: CardDefinition) {
-    const status = cardStatus(card.id, selectedXp, unlockedOverride);
+    const status = cardStatusFor(card, progression, loadout);
     const inDeck = deck.includes(card.id);
     if (status === 'unlocked') {
       return {
@@ -266,7 +236,7 @@ export function PlayerScreen({
     }
     if (status === 'available') {
       return {
-        label: `UNLOCK · ${activeMeta?.cost ?? 0} XP`,
+        label: `UNLOCK · ${LEVEL_COST} LVL`,
         border: `${selectedTheme.accent}88`,
         bg: `${selectedTheme.accent}28`,
         color: selectedTheme.accent,
@@ -377,29 +347,49 @@ export function PlayerScreen({
               {PLAYER_CLASSES.map((classId) => {
                 const theme = classThemes[classId];
                 const earned = getClassXp(progression, classId);
-                const level = Math.max(1, Math.floor(earned / 100) + 1);
-                const xpNext = level * 100;
+                const level = getClassLevel(earned);
+                const xpInto = getXpIntoLevel(earned);
+                const unclaimedCount = classSpendableLevels(progression, loadout, classId);
                 const selected = classId === selectedClassId;
+                const xpPct = Math.max(0, Math.min(100, Math.round((xpInto / XP_PER_LEVEL) * 100)));
                 return (
                   <button
                     key={classId}
                     type="button"
                     onClick={() => setSelectedClassId(classId)}
-                    className="flex flex-1 items-baseline justify-between rounded-[5px] border px-4 py-3 transition"
+                    className="flex flex-1 flex-col gap-[7px] rounded-[5px] border px-4 py-3 text-left transition hover:brightness-110"
                     style={{
                       background: selected ? `${theme.accent}14` : 'rgba(0,0,0,.2)',
                       borderColor: selected ? theme.accent : 'rgba(201,162,74,.2)',
                     }}
                   >
-                    <span
-                      className="font-cinzel text-[14px] tracking-wide"
-                      style={{ color: theme.accent }}
-                    >
-                      {classLabel(classId)}
-                    </span>
-                    <span className="text-[11px] text-[#8a7f72]">
-                      LV {level} · {earned}/{xpNext} XP
-                    </span>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="flex items-center gap-[7px]">
+                        <span
+                          className="font-cinzel text-[14px] tracking-wide"
+                          style={{ color: theme.accent }}
+                        >
+                          {classLabel(classId)}
+                        </span>
+                        {unclaimedCount > 0 && (
+                          <span
+                            className="rounded-[3px] px-1.5 py-0.5 font-cinzel text-[9px] tracking-wide text-[#1a1208]"
+                            style={{ background: theme.accent }}
+                          >
+                            +{unclaimedCount}
+                          </span>
+                        )}
+                      </span>
+                      <span className="shrink-0 text-[11px] text-[#8a7f72]">
+                        LV {level} · {xpInto}/{XP_PER_LEVEL} XP
+                      </span>
+                    </div>
+                    <div className="h-1.5 overflow-hidden rounded-sm bg-[rgba(0,0,0,.4)]">
+                      <div
+                        className="h-full transition-[width] duration-300"
+                        style={{ width: `${xpPct}%`, background: theme.accent }}
+                      />
+                    </div>
                   </button>
                 );
               })}
@@ -419,18 +409,16 @@ export function PlayerScreen({
                   </span>
                 </div>
                 {selectedCards.map((definition) => {
-                  const status = cardStatus(definition.id, selectedXp, unlockedOverride);
+                  const status = cardStatusFor(definition, progression, loadout);
                   const inDeck = deck.includes(definition.id);
-                  const meta = cardProgressMeta[definition.id];
                   const selected = definition.id === selectedCardId;
-                  const locked = status === 'locked' || status === 'locked-xp';
+                  const locked = status === 'locked-xp';
                   const copy = statusCopy(
                     status,
                     inDeck,
-                    meta?.cost ?? 0,
-                    selectedXp,
-                    meta?.requirement ?? null,
+                    selectedAvailableLevels,
                     selectedTheme.accent,
+                    Boolean(definition.improved),
                   );
                   const imageSrc =
                     definition.image ??
@@ -468,6 +456,7 @@ export function PlayerScreen({
                         className="flex-1 pl-1.5 font-cinzel text-[13px]"
                         style={{ color: locked ? '#6a6058' : selected ? '#e0b552' : '#f0dfcb' }}
                       >
+                        {definition.improved ? '★ ' : ''}
                         {definition.name}
                       </span>
                       <span
@@ -507,7 +496,7 @@ export function PlayerScreen({
                         className="h-full w-full object-cover"
                         style={{
                           filter:
-                            activeStatus === 'locked' || activeStatus === 'locked-xp'
+                            activeStatus === 'locked-xp'
                               ? 'grayscale(1) brightness(.55)'
                               : 'none',
                         }}
@@ -521,7 +510,13 @@ export function PlayerScreen({
                     </span>
                   </div>
                   <div className="flex flex-col gap-2.5 px-[18px] py-4">
-                    <div className="font-cinzel text-[17px] text-[#f0dfcb]">{activeCard.name}</div>
+                    <div className="font-cinzel text-[17px] text-[#f0dfcb]">
+                      {activeCard.improved ? '★ ' : ''}
+                      {activeCard.name}
+                    </div>
+                    {activeCard.improved && (
+                      <div className="text-[10px] tracking-[.16em] text-[#c9a24a]">IMPROVED · 1 LEVEL</div>
+                    )}
                     <div className="text-[12px] text-[#a99c8d]">
                       {getCardEffectSummary(activeCard)}
                     </div>
@@ -611,15 +606,15 @@ export function PlayerScreen({
         )}
       </div>
 
-      {confirmCard && confirmClassId && confirmMeta && (
+      {confirmCard && confirmClassId && (
         <UnlockCardModal
           name={confirmCard.name}
           className={classLabel(confirmClassId)}
           color={classThemes[confirmClassId].accent}
           borderColor={`${classThemes[confirmClassId].accent}66`}
-          cost={confirmMeta.cost}
-          currentXp={currentXp(confirmClassId)}
-          afterXp={currentXp(confirmClassId) - confirmMeta.cost}
+          costLevels={LEVEL_COST}
+          availableLevels={confirmAvailable}
+          afterLevels={Math.max(0, confirmAvailable - LEVEL_COST)}
           onConfirm={confirmUnlock}
           onCancel={() => setConfirmCardId(null)}
         />

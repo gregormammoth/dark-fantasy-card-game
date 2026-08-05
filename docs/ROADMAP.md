@@ -468,8 +468,8 @@ Same seed ⇒ same random sequence ⇒ reproducible bugs and E2E scenarios.
 XP → Class Level → Unlockable cards → Spend XP → Deck changes
 ```
 
-- [ ] Independent class levels from XP thresholds
-- [ ] Unlock new cards by class level / XP spend (tighten rules vs current demo unlock UI)
+- [x] Independent class levels from XP thresholds (10 XP = 1 level per class)
+- [x] Unlock new cards by class level / XP spend (tighten rules vs current demo unlock UI)
 - [ ] Passive bonuses (only if they serve the slice — keep lean)
 - [ ] Avoid heavy level-curve tuning until analytics / playtests inform pace
 
@@ -477,6 +477,7 @@ XP → Class Level → Unlockable cards → Spend XP → Deck changes
 
 - [x] Character screen deck composition (add / remove, deck cap)
 - [x] Unlock cards by spending class XP (UI exists — bind to real rules)
+- [x] Twelve improved cards available on Character screen (1 level each)
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
 
