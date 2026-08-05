@@ -7,7 +7,27 @@ import {
   isLocationLocked,
   isCorridorBlocked,
 } from '@dark-fantasy/game-engine/engine/exploration/map';
+import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
+import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
+import { PLAYER_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
+
+function getOccupantCard(
+  context: ExplorationContext,
+  location: LocationDefinition,
+): { image: string; border: string } | null {
+  const enemy = location.enemies.find(
+    (item) => !item.defeated && isEnemyAvailable(context, item) && item.image,
+  );
+  if (enemy?.image) {
+    return { image: enemy.image, border: '#ff6a5c' };
+  }
+  const npc = location.npcs.find((item) => isNpcAvailable(context, item) && item.image);
+  if (npc?.image) {
+    return { image: npc.image, border: '#8fb0e0' };
+  }
+  return null;
+}
 
 interface PrisonMapProps {
   context: ExplorationContext;
@@ -247,7 +267,12 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
             const isReachable = status === 'reachable' && !locked;
             const isDistant = status === 'distant';
             const showInfo = !isDistant && !locked;
-            const hasThreat = location.enemies.some((enemy) => !enemy.defeated);
+            const liveEnemy = location.enemies.find(
+              (enemy) => !enemy.defeated && isEnemyAvailable(context, enemy),
+            );
+            const hasThreat = !!liveEnemy;
+            const occupant = showInfo ? getOccupantCard(context, location) : null;
+            const showQuestBadge = showInfo && !!location.quest;
 
             return (
               <button
@@ -260,7 +285,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                     currentId === location.id ? null : currentId,
                   )
                 }
-                className="absolute z-[3] overflow-hidden rounded-xl transition-[filter,transform,box-shadow] duration-[180ms] hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]"
+                className="absolute z-[3] overflow-visible rounded-md transition-[filter,transform,box-shadow] duration-[180ms] hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]"
                 style={{
                   left: location.position.x - w / 2,
                   top: location.position.y - h / 2,
@@ -283,61 +308,83 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
                   background: '#1a1512',
                 }}
               >
-                {showInfo && location.image && (
-                  <img
-                    src={location.image}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover"
-                    draggable={false}
-                  />
-                )}
-                {(isDistant || locked) && (
-                  <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(0,0,0,.5)_0_8px,rgba(0,0,0,.3)_8px_16px)]" />
-                )}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: showInfo
-                      ? 'linear-gradient(180deg, rgba(10,8,7,0) 30%, rgba(9,7,6,.92) 100%), linear-gradient(0deg, rgba(0,0,0,.15), rgba(0,0,0,.15))'
-                      : 'linear-gradient(160deg, rgba(20,17,15,.9), rgba(10,8,7,.94))',
-                  }}
-                />
-                <div className="relative z-[2] flex h-full flex-col items-center justify-center gap-1 px-1.5">
-                  <span
-                    className="inline-block"
+                <div className="absolute inset-0 z-[1] overflow-hidden rounded-md">
+                  {showInfo && location.image && (
+                    <img
+                      src={location.image}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover"
+                      draggable={false}
+                    />
+                  )}
+                  {(isDistant || locked) && (
+                    <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(0,0,0,.5)_0_8px,rgba(0,0,0,.3)_8px_16px)]" />
+                  )}
+                  <div
+                    className="absolute inset-0"
                     style={{
-                      width: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
-                      height: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
-                      background: color,
-                      clipPath: 'polygon(50% 0,100% 50%,50% 100%,0 50%)',
-                      boxShadow: `0 0 14px -2px ${color}`,
+                      background: showInfo
+                        ? 'linear-gradient(180deg, rgba(10,8,7,0) 30%, rgba(9,7,6,.92) 100%), linear-gradient(0deg, rgba(0,0,0,.15), rgba(0,0,0,.15))'
+                        : 'linear-gradient(160deg, rgba(20,17,15,.9), rgba(10,8,7,.94))',
                     }}
                   />
-                  <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
-                    {locked ? 'SEALED' : showInfo ? location.name : '???'}
-                  </span>
-                  {hasThreat && showInfo && (
-                    <span className="text-[9px] tracking-[.14em] text-[#ff8f85] [text-shadow:0_1px_4px_#000]">
-                      {location.enemies.find((e) => !e.defeated)?.tier}
+                  <div className="relative z-[2] flex h-full flex-col items-center justify-center gap-1 px-1.5">
+                    <span
+                      className="inline-block"
+                      style={{
+                        width: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
+                        height: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
+                        background: color,
+                        clipPath: 'polygon(50% 0,100% 50%,50% 100%,0 50%)',
+                        boxShadow: `0 0 14px -2px ${color}`,
+                      }}
+                    />
+                    <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
+                      {locked ? 'SEALED' : showInfo ? location.name : '???'}
                     </span>
+                    {hasThreat && showInfo && (
+                      <span className="text-[9px] tracking-[.14em] text-[#ff8f85] [text-shadow:0_1px_4px_#000]">
+                        {liveEnemy?.tier}
+                      </span>
+                    )}
+                  </div>
+                  {isReachable && (
+                    <div className="pointer-events-none absolute inset-0 z-[5] animate-[reachPulse_2.4s_ease-in-out_infinite] rounded-md" />
+                  )}
+                  {isCurrent && (
+                    <div className="pointer-events-none absolute inset-0 z-[5] animate-[herepulse_1.8s_ease-in-out_infinite] rounded-md border-2 border-[#e0b552] shadow-[inset_0_0_0_2px_rgba(224,181,82,.3)]" />
                   )}
                 </div>
-                {hasThreat && showInfo && (
-                  <span className="absolute left-1.5 top-1.5 z-[4] flex h-6 w-6 animate-[tpulse_2s_ease-in-out_infinite] items-center justify-center rounded-md border-2 border-[#ff6a5c] bg-[rgba(120,16,14,.92)]">
-                    <span className="absolute h-0.5 w-3 rotate-45 bg-[#ffd9d2]" />
-                    <span className="absolute h-0.5 w-3 -rotate-45 bg-[#ffd9d2]" />
+                {showQuestBadge && (
+                  <span className="absolute left-1.5 top-1.5 z-[4] h-[13px] w-[13px] animate-[qpulse_2s_ease-in-out_infinite] rounded-full border-2 border-[#12100f] bg-[#e0b552]" />
+                )}
+                {occupant && (
+                  <span
+                    className="pointer-events-none absolute -right-[9px] -top-[11px] z-[6] h-[56px] w-[44px] rotate-[7deg] overflow-hidden rounded-md border-2 bg-[#0c0908] shadow-[0_8px_18px_-6px_rgba(0,0,0,.85),0_0_0_1px_rgba(0,0,0,.4)]"
+                    style={{ borderColor: occupant.border }}
+                  >
+                    <img
+                      src={occupant.image}
+                      alt=""
+                      className="h-full w-full object-cover object-top"
+                      draggable={false}
+                    />
                   </span>
                 )}
-                {isReachable && (
-                  <div className="pointer-events-none absolute inset-0 z-[5] animate-[reachPulse_2.4s_ease-in-out_infinite] rounded-xl" />
+                {isCurrent && showInfo && (
+                  <span className="pointer-events-none absolute -bottom-4 -left-3 z-[7] h-[76px] w-[60px] -rotate-[8deg] overflow-hidden rounded-md border-2 border-[#e0b552] bg-[#0c0908] shadow-[0_16px_28px_-8px_rgba(0,0,0,.9),0_0_0_1px_rgba(0,0,0,.5),0_0_22px_-3px_rgba(224,181,82,.65)]">
+                    <img
+                      src={PLAYER_PORTRAIT}
+                      alt=""
+                      className="h-full w-full object-cover object-top"
+                      draggable={false}
+                    />
+                  </span>
                 )}
                 {isCurrent && (
-                  <>
-                    <div className="pointer-events-none absolute inset-0 z-[5] animate-[herepulse_1.8s_ease-in-out_infinite] rounded-xl border-2 border-[#e0b552] shadow-[inset_0_0_0_2px_rgba(224,181,82,.3)]" />
-                    <div className="pointer-events-none absolute left-1/2 top-[-19px] z-[6] flex -translate-x-1/2 animate-[herebob_1.6s_ease-in-out_infinite] flex-col items-center gap-[3px]">
-                      <span className="h-[9px] w-[9px] animate-[lanternFlicker_1.3s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,#ffe1a8,#e0b552_60%,transparent_100%)] shadow-[0_0_10px_3px_rgba(224,181,82,.8)]" />
-                    </div>
-                  </>
+                  <div className="pointer-events-none absolute left-1/2 top-[-19px] z-[6] flex -translate-x-1/2 animate-[herebob_1.6s_ease-in-out_infinite] flex-col items-center gap-[3px]">
+                    <span className="h-[9px] w-[9px] animate-[lanternFlicker_1.3s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,#ffe1a8,#e0b552_60%,transparent_100%)] shadow-[0_0_10px_3px_rgba(224,181,82,.8)]" />
+                  </div>
                 )}
               </button>
             );
@@ -352,9 +399,12 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         style={{ right: hasSelection ? 390 : 20 }}
       >
         <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-[rgba(201,162,74,.25)] bg-[rgba(10,8,7,.72)] py-2 pl-2 pr-4">
-          <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full border border-[rgba(201,162,74,.35)] bg-[#1a1512] font-cinzel text-[10px] text-[#e0b552]">
-            UP
-          </div>
+          <img
+            src={PLAYER_PORTRAIT}
+            alt=""
+            className="h-[38px] w-[38px] rounded-full border border-[rgba(201,162,74,.35)] object-cover object-top"
+            draggable={false}
+          />
           <div className="flex flex-col gap-0.5">
             <span className="font-cinzel text-[12px] tracking-wide text-[#e8ddcf]">
               Unnamed Prisoner
@@ -372,7 +422,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         </span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[10px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.82)] p-2.5">
+      <div className="pointer-events-none absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.82)] p-2.5">
         <span className="text-[8px] tracking-[.2em] text-[#8a7f72]">
           HOLLOWFORT — FIRST FORTRESS
         </span>

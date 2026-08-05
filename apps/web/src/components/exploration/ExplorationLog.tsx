@@ -19,8 +19,8 @@ export function ExplorationLog({ entries }: ExplorationLogProps) {
     <div className="rounded-[12px] border border-[rgba(201,162,74,.16)] bg-[rgba(10,8,7,.72)] p-3">
       <div className="mb-2 text-[9px] tracking-[.22em] text-[#8a7f72]">RECENT EVENTS</div>
       <div className="flex max-h-[140px] flex-col gap-1.5 overflow-y-auto">
-        {recent.map((entry) => (
-          <div key={entry.id} className={`text-[12px] leading-snug ${kindColor[entry.kind]}`}>
+        {recent.map((entry, index) => (
+          <div key={`${entry.id}-${index}`} className={`text-[12px] leading-snug ${kindColor[entry.kind]}`}>
             {entry.message}
           </div>
         ))}

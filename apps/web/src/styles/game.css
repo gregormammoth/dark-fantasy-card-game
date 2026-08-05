@@ -196,6 +196,16 @@ body {
   }
 }
 
+@keyframes qpulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(224, 181, 82, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(224, 181, 82, 0);
+  }
+}
+
 @keyframes slidein {
   from {
     transform: translateX(24px);

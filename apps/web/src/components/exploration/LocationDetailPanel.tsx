@@ -9,6 +9,12 @@ import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/que
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 
+const LOOT_IMAGES: Record<string, string> = {
+  dining_keyring: '/items/dining_keyring.png',
+  dried_lavender: '/items/dried_lavender.png',
+  lowcap_mushroom: '/items/lowcap_mushroom.png',
+};
+
 interface LocationDetailPanelProps {
   context: ExplorationContext;
   location: LocationDefinition | null;
@@ -130,7 +136,7 @@ export function LocationDetailPanel({
               {chips.map((chip, index) => (
                 <span
                   key={`${chip.label}-${index}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] text-[#e8ddcf]"
+                  className="inline-flex items-center gap-1.5 rounded border px-2.5 py-1 text-[11px] text-[#e8ddcf]"
                   style={{
                     background: 'rgba(255,255,255,.04)',
                     borderColor: `${chip.color}55`,
@@ -150,13 +156,13 @@ export function LocationDetailPanel({
         {showInfo && availableNpcs.map((npc) => (
           <div
             key={npc.id}
-            className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.1)] px-3 py-2.5"
+            className="flex items-center gap-3 rounded-[5px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.1)] px-3 py-2.5"
           >
             {npc.image ? (
               <img
                 src={npc.image}
                 alt=""
-                className="h-[38px] w-[38px] shrink-0 rounded-full border border-[rgba(91,134,196,.35)] object-cover object-top"
+                className="h-[52px] w-[52px] shrink-0 rounded-full border border-[rgba(91,134,196,.4)] object-cover object-top"
                 draggable={false}
               />
             ) : null}
@@ -170,7 +176,7 @@ export function LocationDetailPanel({
               <button
                 type="button"
                 onClick={() => onTalk(location.id, npc.id)}
-                className="shrink-0 rounded-lg border border-[rgba(91,134,196,.5)] bg-[rgba(91,134,196,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#cfe0fa] transition hover:brightness-110"
+                className="shrink-0 rounded-[5px] border border-[rgba(91,134,196,.5)] bg-[rgba(91,134,196,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#cfe0fa] transition hover:brightness-110"
               >
                 TALK
               </button>
@@ -179,15 +185,20 @@ export function LocationDetailPanel({
         ))}
 
         {activeEnemy && showInfo && (
-          <div className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#d6443a] bg-[rgba(214,68,58,.1)] px-3 py-2.5">
+          <div className="flex items-center gap-3 rounded-[5px] border-l-[3px] border-[#d6443a] bg-[rgba(214,68,58,.1)] px-3 py-2.5">
             {activeEnemy.image ? (
               <img
                 src={activeEnemy.image}
                 alt=""
-                className="h-[38px] w-[38px] shrink-0 rounded-[6px] border border-[rgba(224,82,74,.4)] object-cover object-top"
+                className="h-[52px] w-[52px] shrink-0 rounded-[5px] border border-[rgba(224,82,74,.4)] object-cover object-top"
                 draggable={false}
               />
-            ) : null}
+            ) : (
+              <span className="relative flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[5px] border border-[#ff6a5c] bg-[rgba(120,16,14,.9)]">
+                <span className="absolute h-0.5 w-[11px] rotate-45 bg-[#ffd9d2]" />
+                <span className="absolute h-0.5 w-[11px] -rotate-45 bg-[#ffd9d2]" />
+              </span>
+            )}
             <div className="flex-1">
               <div className="text-[13px] text-[#ffd9d2]">{activeEnemy.name}</div>
               <div className="mt-0.5 text-[10px] tracking-wider text-[#c99]">{activeEnemy.tier}</div>
@@ -196,7 +207,7 @@ export function LocationDetailPanel({
               <button
                 type="button"
                 onClick={() => onFight(location.id, activeEnemy.id)}
-                className="shrink-0 rounded-lg border border-[rgba(224,82,74,.5)] bg-[rgba(224,82,74,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
+                className="shrink-0 rounded-[5px] border border-[rgba(224,82,74,.5)] bg-[rgba(224,82,74,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
               >
                 FIGHT
               </button>
@@ -205,13 +216,11 @@ export function LocationDetailPanel({
         )}
 
         {showInfo && location.quest && (
-          <div className="flex items-start gap-3 rounded-[10px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-3 py-2.5">
-            <span className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rotate-45 border-2 border-[#e0b552]" />
-            <div>
-              <div className="text-[13px] text-[#f0e2c0]">{location.quest.name}</div>
-              <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">
-                {location.quest.description}
-              </div>
+          <div className="flex flex-col gap-1.5 rounded-[5px] border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-4 py-3.5">
+            <span className="font-cinzel text-[9px] tracking-[.2em] text-[#6b5a38]">QUEST</span>
+            <div className="font-cinzel text-[14px] text-[#2b2116]">{location.quest.name}</div>
+            <div className="text-[12px] leading-relaxed text-[#3a2c1a]">
+              {location.quest.description}
             </div>
           </div>
         )}
@@ -219,15 +228,35 @@ export function LocationDetailPanel({
         {showInfo && unclaimedLoot.length > 0 && (
           <div className="flex flex-col gap-2">
             <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">LOOT</span>
-            {unclaimedLoot.map((loot) => (
-              <div
-                key={loot.id}
-                className="rounded-[10px] border border-[rgba(201,162,74,.28)] bg-[#12100f] px-3 py-2"
-              >
-                <div className="font-cinzel text-[12px] text-[#e8ddcf]">{loot.name}</div>
-                <div className="mt-1 text-[10px] text-[#a99]">{loot.description}</div>
-              </div>
-            ))}
+            <div className="flex flex-wrap gap-2">
+              {unclaimedLoot.map((loot) => {
+                const image = LOOT_IMAGES[loot.id];
+                return (
+                  <div
+                    key={loot.id}
+                    className="w-[140px] overflow-hidden rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[#12100f]"
+                  >
+                    <div className="relative h-[88px] bg-[#1a1512]">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt=""
+                          className="h-full w-full object-cover"
+                          draggable={false}
+                        />
+                      ) : null}
+                      <span className="absolute left-1.5 top-1.5 rounded-[3px] bg-[rgba(201,162,74,.9)] px-1.5 py-0.5 text-[7px] tracking-wider text-[#1a1208]">
+                        ITEM
+                      </span>
+                    </div>
+                    <div className="border-t-2 border-[#c9a24a] px-2.5 py-2">
+                      <div className="font-cinzel text-[12px] text-[#e8ddcf]">{loot.name}</div>
+                      <div className="mt-1 text-[10px] text-[#a99]">{loot.description}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -255,7 +284,7 @@ export function LocationDetailPanel({
                       targetId: interaction.targetId,
                     })
                   }
-                  className="rounded-[10px] border border-[rgba(201,162,74,.3)] px-3 py-2.5 text-left font-cinzel text-[12px] tracking-wide text-[#e8ddcf] transition enabled:hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-[5px] border border-[rgba(201,162,74,.3)] px-3 py-2.5 text-left font-cinzel text-[12px] tracking-wide text-[#e8ddcf] transition enabled:hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {interaction.label}
                   <span className="mt-1 block text-[10px] tracking-[.14em] text-[#8a7f72]">
@@ -278,13 +307,13 @@ export function LocationDetailPanel({
             type="button"
             disabled={!hasCard || context.actionsRemaining <= 0}
             onClick={() => onTravel(location.id)}
-            className="flex-1 rounded-[10px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.22),rgba(90,23,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex-1 rounded-[5px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.22),rgba(90,23,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
             TRAVEL HERE
           </button>
         )}
         {isHere && (
-          <span className="flex-1 rounded-[10px] border border-[rgba(224,181,82,.4)] px-3 py-3 text-center text-[11px] tracking-wider text-[#e0b552]">
+          <span className="flex-1 rounded-[5px] border border-[rgba(224,181,82,.4)] px-3 py-3 text-center text-[11px] tracking-wider text-[#e0b552]">
             ◆ YOU ARE HERE
           </span>
         )}
@@ -293,7 +322,7 @@ export function LocationDetailPanel({
             type="button"
             disabled={!hasCard || context.actionsRemaining <= 0 || !canMoveTo(context, location.id)}
             onClick={() => onTravel(location.id)}
-            className="flex-1 rounded-[10px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex-1 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             RETURN HERE
           </button>
@@ -301,7 +330,7 @@ export function LocationDetailPanel({
         <button
           type="button"
           onClick={onClose}
-          className="w-[46px] rounded-[10px] border border-[rgba(201,162,74,.24)] text-[#8a7f72] transition hover:text-[#e8ddcf]"
+          className="w-[46px] rounded-[5px] border border-[rgba(201,162,74,.24)] text-[#8a7f72] transition hover:text-[#e8ddcf]"
         >
           ✕
         </button>
@@ -310,7 +339,7 @@ export function LocationDetailPanel({
         <button
           type="button"
           onClick={onEscape}
-          className="mx-[22px] mb-5 w-[calc(100%-44px)] rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
+          className="mx-[22px] mb-5 w-[calc(100%-44px)] rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
         >
           ESCAPE HOLLOWFORT →
         </button>

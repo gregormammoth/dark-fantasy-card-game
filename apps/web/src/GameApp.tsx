@@ -6,6 +6,7 @@ import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import { createInitialProgression, normalizeSeed } from '@dark-fantasy/game-engine';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import type { LocalRunState, SavedExplorationPhase } from '@dark-fantasy/shared/types/save';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
@@ -27,6 +28,13 @@ const SEED_STORAGE_KEY = 'dfcg-run-seed';
 interface PendingLocationFight {
   locationId: string;
   enemyId: string;
+}
+
+interface BattleCheckpoint {
+  exploration: ExplorationContext;
+  explorationPhase: SavedExplorationPhase;
+  progression: PlayerProgression;
+  runSeed: number;
 }
 
 function musicForScreen(screen: AppScreen): MusicScreen {
@@ -68,6 +76,7 @@ function GameShell() {
   const [pendingLocationFight, setPendingLocationFight] = useState<PendingLocationFight | null>(
     null,
   );
+  const [battleCheckpoint, setBattleCheckpoint] = useState<BattleCheckpoint | null>(null);
   const [runSeed, setRunSeed] = useState(() => Date.now() >>> 0);
   const [ready, setReady] = useState(false);
   const explorationActor = useActorRef(explorationMachine);
@@ -177,6 +186,7 @@ function GameShell() {
       battleActor.send({ type: 'LEAVE_BATTLE' });
     }
     setPendingLocationFight(null);
+    setBattleCheckpoint(null);
     setProgression(createInitialProgression());
     setPlayerReturnScreen('world');
     setScreen('world');
@@ -215,11 +225,46 @@ function GameShell() {
       });
       setPendingLocationFight(null);
     }
+    setBattleCheckpoint(null);
     if (explorationActor.getSnapshot().matches('idle')) {
       explorationActor.send({ type: 'START_EXPLORATION', seed: resolveRunSeed() });
     }
     setScreen('exploration');
     leaveBattle();
+  }
+
+  function resumeFromBattleCheckpoint() {
+    const saved = battleCheckpoint ?? (() => {
+      const file = loadLocalRun();
+      if (!file?.state.exploration || file.state.explorationPhase === 'idle') {
+        return null;
+      }
+      return {
+        exploration: file.state.exploration,
+        explorationPhase: file.state.explorationPhase,
+        progression: file.state.progression,
+        runSeed: file.state.runSeed,
+      } satisfies BattleCheckpoint;
+    })();
+
+    if (!saved) {
+      returnToExploration('abort');
+      return;
+    }
+
+    explorationActor.send({ type: 'RESET' });
+    explorationActor.send({
+      type: 'HYDRATE',
+      context: structuredClone(saved.exploration),
+      phase: saved.explorationPhase === 'encounter' ? 'encounter' : 'playerTurn',
+    });
+    setProgression(structuredClone(saved.progression));
+    setRunSeed(saved.runSeed);
+    window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.runSeed));
+    setPendingLocationFight(null);
+    setBattleCheckpoint(null);
+    leaveBattle();
+    setScreen('exploration');
   }
 
   function enterLocation(locationId: string) {
@@ -245,12 +290,29 @@ function GameShell() {
   }
 
   function startLocationBattle(locationId: string, enemyId: string) {
-    const exploration = explorationActor.getSnapshot().context;
+    const snap = explorationActor.getSnapshot();
+    const exploration = snap.context;
     const location = exploration.locations[locationId];
     const enemy = location?.enemies.find((item) => item.id === enemyId);
     if (!enemy) {
       return;
     }
+    const checkpoint: BattleCheckpoint = {
+      exploration: structuredClone(exploration),
+      explorationPhase: phaseFromSnapshot(snap),
+      progression: structuredClone(progression),
+      runSeed,
+    };
+    setBattleCheckpoint(checkpoint);
+    saveLocalRun({
+      progression: checkpoint.progression,
+      exploration: checkpoint.exploration,
+      explorationPhase: checkpoint.explorationPhase,
+      screen: 'exploration',
+      playerReturnScreen: 'exploration',
+      runSeed: checkpoint.runSeed,
+      pendingLocationFight: null,
+    });
     setPendingLocationFight({ locationId, enemyId });
     leaveBattle();
     battleActor.send({
@@ -291,6 +353,9 @@ function GameShell() {
                 : 'abort',
           );
         }}
+        onDefeatResume={resumeFromBattleCheckpoint}
+        onDefeatRestart={handleAbandonRun}
+        canResumeFromSave={battleCheckpoint !== null}
       />
     );
   } else if (screen === 'exploration') {

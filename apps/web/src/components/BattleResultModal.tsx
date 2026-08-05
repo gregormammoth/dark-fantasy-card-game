@@ -29,6 +29,9 @@ interface BattleResultModalProps {
   xpGained: Record<CardClass, number>;
   totalXpGained: number;
   onReturnToExploration: () => void;
+  onResumeFromSave?: () => void;
+  onStartOver?: () => void;
+  canResumeFromSave?: boolean;
 }
 
 export function BattleResultModal({
@@ -39,6 +42,9 @@ export function BattleResultModal({
   xpGained,
   totalXpGained,
   onReturnToExploration,
+  onResumeFromSave,
+  onStartOver,
+  canResumeFromSave = false,
 }: BattleResultModalProps) {
   const { play } = useAudio();
   const accent = victory ? '#e0b552' : '#e0524a';
@@ -54,6 +60,7 @@ export function BattleResultModal({
       color: classThemes[classId].accent,
     }),
   );
+  const showGameOverChoices = !victory && onResumeFromSave && onStartOver;
 
   useEffect(() => {
     play('modal_open');
@@ -83,7 +90,9 @@ export function BattleResultModal({
             background: `radial-gradient(360px 160px at 50% -20%, ${glow}, transparent 70%)`,
           }}
         >
-          <span className="text-[11px] tracking-[.4em] text-[#8a7f72]">BATTLE OVER</span>
+          <span className="text-[11px] tracking-[.4em] text-[#8a7f72]">
+            {showGameOverChoices ? 'GAME OVER' : 'BATTLE OVER'}
+          </span>
           <div
             className="my-1.5 font-cinzel text-[52px] tracking-[.14em]"
             style={{ color: accent, textShadow: `0 0 34px ${glow}` }}
@@ -91,6 +100,11 @@ export function BattleResultModal({
             {victory ? 'VICTORY' : 'DEFEAT'}
           </div>
           <span className="text-sm text-[#b7ab9c]">{subtitle}</span>
+          {showGameOverChoices && (
+            <p className="mx-auto mt-3 max-w-[380px] text-[12px] leading-relaxed text-[#8a7f72]">
+              Resume from your last prison checkpoint, or abandon this run and begin again.
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-4 gap-px bg-[rgba(201,162,74,.12)]">
@@ -128,14 +142,34 @@ export function BattleResultModal({
           </div>
         </div>
 
-        <div className="flex gap-3 px-6 pt-[18px] pb-6">
-          <button
-            type="button"
-            onClick={onReturnToExploration}
-            className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
-          >
-            TO PRISON
-          </button>
+        <div className="flex flex-col gap-2.5 px-6 pt-[18px] pb-6 sm:flex-row">
+          {showGameOverChoices ? (
+            <>
+              <button
+                type="button"
+                disabled={!canResumeFromSave}
+                onClick={onResumeFromSave}
+                className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.1em] text-[#e0b552] transition-[filter] hover:brightness-[1.15] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                LOAD SAVE
+              </button>
+              <button
+                type="button"
+                onClick={onStartOver}
+                className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(224,82,74,.5)] bg-[linear-gradient(180deg,rgba(224,82,74,.16),rgba(60,18,14,.3))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.1em] text-[#ffd9d2] transition-[filter] hover:brightness-[1.15]"
+              >
+                NEW RUN
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={onReturnToExploration}
+              className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
+            >
+              TO PRISON
+            </button>
+          )}
         </div>
       </motion.div>
     </motion.div>

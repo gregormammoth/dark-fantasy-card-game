@@ -17,6 +17,7 @@ import {
   queueDialog,
   resolveLocationBattle,
 } from '../engine/exploration/locationEncounters';
+import { syncExplorationLogCounter } from '../engine/exploration/log';
 import { cloneRng } from '../engine/rng';
 
 export const explorationMachine = setup({
@@ -105,7 +106,9 @@ export const explorationMachine = setup({
       if (event.type !== 'HYDRATE') {
         return createInitialExploration();
       }
-      return structuredClone(event.context);
+      const next = structuredClone(event.context);
+      syncExplorationLogCounter(next.log);
+      return next;
     }),
     resetExploration: assign(() => createInitialExploration()),
   },

@@ -18,7 +18,14 @@ import { EncounterModal } from '@/components/exploration/EncounterModal';
 import { NpcDialogModal } from '@/components/exploration/NpcDialogModal';
 import { LocationBattleModal } from '@/components/exploration/LocationBattleModal';
 import { ExplorationLog } from '@/components/exploration/ExplorationLog';
+import {
+  ExplorationToasts,
+  useExplorationToasts,
+  useQuestToastWatcher,
+} from '@/components/exploration/ExplorationToasts';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
+
+const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
 
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
@@ -39,6 +46,8 @@ export function ExplorationScreen({
   const context = snapshot.context;
   const { unlock } = useAudio();
   const [questLogOpen, setQuestLogOpen] = useState(false);
+  const { toasts, pushToast, dismissToast } = useExplorationToasts();
+  useQuestToastWatcher(context.quests, context.flags, pushToast);
   const isIdle = snapshot.matches('idle');
   const selected = context.selectedLocationId
     ? context.locations[context.selectedLocationId] ?? null
@@ -80,6 +89,7 @@ export function ExplorationScreen({
         <button
           type="button"
           onClick={() => {
+            sessionStorage.removeItem(QUEST_TOAST_SNAP_KEY);
             void unlock();
             actor.send({ type: 'START_EXPLORATION', seed: runSeed });
           }}
@@ -93,6 +103,7 @@ export function ExplorationScreen({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
+      <ExplorationToasts toasts={toasts} onDismiss={dismissToast} />
       <div className="relative flex items-center justify-between gap-3">
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON
@@ -104,7 +115,7 @@ export function ExplorationScreen({
           <button
             type="button"
             onClick={() => setQuestLogOpen((open) => !open)}
-            className="relative flex items-center gap-2 rounded-[10px] border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] px-3.5 py-2 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)]"
+            className="relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] px-3.5 py-2 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)]"
           >
             QUEST LOG
             {activeQuests.length > 0 && (
@@ -117,17 +128,17 @@ export function ExplorationScreen({
             <button
               type="button"
               onClick={onOpenPlayer}
-              className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
+              className="rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
             >
               CHARACTER
             </button>
           )}
         </div>
         {questLogOpen && (
-          <div className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-2.5 overflow-y-auto rounded-[12px] border border-[rgba(201,162,74,.28)] bg-[rgba(12,9,8,.96)] p-3.5 shadow-[0_24px_60px_-14px_#000]">
-            <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">ACTIVE THREADS</span>
+          <div className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-2.5 overflow-y-auto rounded-md border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] p-3.5 shadow-[0_24px_60px_-14px_#000] animate-[slidein_.18s_ease-out]">
+            <span className="font-cinzel text-[10px] tracking-[.24em] text-[#6b5a38]">ACTIVE THREADS</span>
             {activeQuests.length === 0 && completedQuests.length === 0 && (
-              <p className="m-0 text-[12px] text-[#8a7f72]">No quests yet. Talk to faction NPCs.</p>
+              <p className="m-0 text-[12px] text-[#4a3b22]">No quests yet. Talk to faction NPCs.</p>
             )}
             {activeQuests.map((quest) => {
               const steps = getQuestSteps(context, quest);
@@ -135,17 +146,17 @@ export function ExplorationScreen({
               return (
                 <div
                   key={quest.id}
-                  className="rounded-[9px] border-l-[3px] border-[#e0b552] bg-[rgba(224,181,82,.08)] px-2.5 py-2"
+                  className="rounded border-l-[3px] border-[#e0b552] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
                 >
-                  <div className="font-cinzel text-[12px] text-[#f0e2c0]">{quest.name}</div>
-                  <div className="mt-1 text-[11px] leading-snug text-[#b7ab9c]">
+                  <div className="font-cinzel text-[12px] text-[#2b2116]">{quest.name}</div>
+                  <div className="mt-1 text-[11px] leading-snug text-[#4a3b22]">
                     {quest.description}
                   </div>
-                  <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">
+                  <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
                     {questLocationLabel(quest)} · ACTIVE
                   </div>
                   {stepsText && (
-                    <div className="mt-1 text-[9px] tracking-wider text-[#c9a24a]">{stepsText}</div>
+                    <div className="mt-1 text-[9px] tracking-wider text-[#6b5a38]">{stepsText}</div>
                   )}
                   {steps && steps.length > 0 && (
                     <div className="mt-2 flex flex-col gap-1.5">
@@ -154,9 +165,9 @@ export function ExplorationScreen({
                           <span
                             className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[2px] border text-[9px]"
                             style={{
-                              borderColor: step.done ? '#6fae5a' : 'rgba(201,162,74,.35)',
-                              color: step.done ? '#6fae5a' : 'transparent',
-                              background: step.done ? 'rgba(111,174,90,.15)' : 'transparent',
+                              borderColor: step.done ? '#4a7a3a' : 'rgba(60,45,20,.35)',
+                              color: step.done ? '#4a7a3a' : 'transparent',
+                              background: step.done ? 'rgba(74,122,58,.15)' : 'transparent',
                             }}
                           >
                             {step.done ? '✓' : ''}
@@ -164,7 +175,7 @@ export function ExplorationScreen({
                           <span
                             className="text-[10px] leading-snug"
                             style={{
-                              color: step.done ? '#8a9a7a' : '#b7ab9c',
+                              color: step.done ? '#5a6a4a' : '#4a3b22',
                               textDecoration: step.done ? 'line-through' : 'none',
                             }}
                           >
@@ -180,10 +191,10 @@ export function ExplorationScreen({
             {completedQuests.map((quest) => (
               <div
                 key={quest.id}
-                className="rounded-[9px] border-l-[3px] border-[#6fae5a] bg-[rgba(111,174,90,.08)] px-2.5 py-2"
+                className="rounded border-l-[3px] border-[#4a7a3a] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
               >
-                <div className="font-cinzel text-[12px] text-[#d7e8cf]">{quest.name}</div>
-                <div className="mt-1.5 text-[9px] tracking-wider text-[#8a7f72]">
+                <div className="font-cinzel text-[12px] text-[#2b2116]">{quest.name}</div>
+                <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
                   {questLocationLabel(quest)} · COMPLETE
                 </div>
               </div>
@@ -232,7 +243,7 @@ export function ExplorationScreen({
       </div>
 
       {context.lastActionMessage && (
-        <div className="rounded-[10px] border border-[rgba(201,162,74,.2)] bg-[rgba(224,181,82,.08)] px-4 py-2 text-[13px] text-[#e8ddcf]">
+        <div className="rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(224,181,82,.08)] px-4 py-2 text-[13px] text-[#e8ddcf]">
           {context.lastActionMessage}
         </div>
       )}

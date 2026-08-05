@@ -28,6 +28,9 @@ interface BattleScreenProps {
   progression: PlayerProgression;
   onProgressionChange: (progression: PlayerProgression) => void;
   onReturnToExploration: () => void;
+  onDefeatResume?: () => void;
+  onDefeatRestart?: () => void;
+  canResumeFromSave?: boolean;
 }
 
 interface StackSpendState {
@@ -70,6 +73,9 @@ export function BattleScreen({
   progression,
   onProgressionChange,
   onReturnToExploration,
+  onDefeatResume,
+  onDefeatRestart,
+  canResumeFromSave = false,
 }: BattleScreenProps) {
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
@@ -336,6 +342,9 @@ export function BattleScreen({
           xpGained={xpGained}
           totalXpGained={totalXpGained}
           onReturnToExploration={onReturnToExploration}
+          onResumeFromSave={onDefeatResume}
+          onStartOver={onDefeatRestart}
+          canResumeFromSave={canResumeFromSave}
         />
       )}
     </div>
