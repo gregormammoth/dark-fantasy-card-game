@@ -522,6 +522,7 @@ function GameShell() {
     content = (
       <BattleScreen
         actor={battleActor}
+        playerId={profile.playerId}
         progression={progression}
         onProgressionChange={handleProgressionChange}
         onReturnToExploration={() => {
@@ -543,6 +544,7 @@ function GameShell() {
     content = (
       <ExplorationScreen
         actor={explorationActor}
+        playerId={profile.playerId}
         onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
         onEscapeToWorld={() => {

@@ -13,6 +13,8 @@ import {
   toggleDeckCard,
 } from '@dark-fantasy/game-engine';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
+import { CoachMark } from '@/components/tour/CoachMark';
+import { useCoachStep } from '@/components/tour/useCoachStep';
 import { classThemes, getCardEffectSummary, getCardType } from '@/lib/cardTheme';
 import {
   getQuestSteps,
@@ -107,6 +109,7 @@ export function PlayerScreen({
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
   const [itemFilter, setItemFilter] = useState<ItemFilter>('all');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const progressionCoach = useCoachStep(profile.playerId, 'progression', activeTab === 'character');
 
   const cardById = useMemo(() => {
     const map: Record<string, CardDefinition> = {};
@@ -260,6 +263,14 @@ export function PlayerScreen({
 
   return (
     <div className="flex min-h-[100dvh] justify-center px-6 py-8 text-[#e8ddcf] sm:px-10">
+      {progressionCoach.show && (
+        <CoachMark
+          title="LEVEL UP & REFORGE"
+          body="Winning fights earns class XP. Spend levels to unlock improved cards, then add or remove cards to reshape your deck — your deck also decides your battle portrait."
+          placement="top"
+          onDismiss={progressionCoach.dismiss}
+        />
+      )}
       <div className="flex w-full max-w-[1400px] flex-col gap-5">
         <div className="flex items-center justify-between pr-12">
           <button

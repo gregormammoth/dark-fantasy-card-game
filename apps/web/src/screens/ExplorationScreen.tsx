@@ -24,12 +24,15 @@ import {
   useExplorationToasts,
   useQuestToastWatcher,
 } from '@/components/exploration/ExplorationToasts';
+import { CoachMark } from '@/components/tour/CoachMark';
+import { useCoachStep } from '@/components/tour/useCoachStep';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
 
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
+  playerId: string;
   onStartLocationBattle?: (locationId: string, enemyId: string) => void;
   onOpenPlayer?: () => void;
   onEscapeToWorld?: () => void;
@@ -40,6 +43,7 @@ interface ExplorationScreenProps {
 
 export function ExplorationScreen({
   actor,
+  playerId,
   onStartLocationBattle,
   onOpenPlayer,
   onEscapeToWorld,
@@ -71,6 +75,14 @@ export function ExplorationScreen({
     locationEncounter?.type === 'battle'
       ? getBattleEnemy(context, locationEncounter)
       : null;
+
+  const dialogActive = Boolean(dialogNpc) && dialogLines.length > 0;
+  const dialogCoach = useCoachStep(playerId, 'dialog', dialogActive);
+  const moveCoach = useCoachStep(
+    playerId,
+    'move',
+    !isIdle && !dialogActive && !battleEnemy && !snapshot.matches('encounter'),
+  );
 
   useEffect(() => {
     if (context.flags.escaped_hollowfort && onEscapeToWorld) {
@@ -109,6 +121,22 @@ export function ExplorationScreen({
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
       <ExplorationToasts toasts={toasts} onDismiss={dismissToast} />
+      {moveCoach.show && (
+        <CoachMark
+          title="EXPLORE THE PRISON"
+          body="Pick a card from your hand below, then choose a room and press TRAVEL HERE. Each action costs a card — end your turn to draw the encounter deck."
+          placement="top"
+          onDismiss={moveCoach.dismiss}
+        />
+      )}
+      {dialogCoach.show && (
+        <CoachMark
+          title="TALKING TO SURVIVORS"
+          body="Read what they say and press CONTINUE. Some conversations hand you quests — check the QUEST LOG afterward."
+          placement="top"
+          onDismiss={dialogCoach.dismiss}
+        />
+      )}
       <div className="relative flex items-center justify-between gap-3">
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           HOLLOWFORT PRISON

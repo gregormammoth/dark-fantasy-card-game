@@ -164,7 +164,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Money / light inventory | Not started |
 | Save / load + save schema | Cloud save/load wired (`GET|PUT /saves/:playerId`); mid-battle snapshot still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
-| Guided tour (map + battle) | Not started |
+| Guided tour (map + battle) | First pass — 5 coach marks (character, dialog, move, battle, progression), per-player persisted; enemy/quest/HP tips + settings toggle open |
 | NestJS API + Postgres | Live locally (`apps/api` + Docker Compose); players / saves / analytics / feedback |
 | Analytics + feedback | Core client events instrumented; feedback form UI still open; no rollup queries yet |
 | Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
@@ -759,32 +759,43 @@ You can answer “how many played, how much, where they quit” and read player 
 
 ### Guided tour (first-run coaching)
 
-**Goal:** Players learn exploration + battle in the first minutes **without** a long tutorial wall. Short, dismissible coach marks that fire once per run (or until “Don’t show again”).
+**Goal:** Players learn exploration + battle in the first minutes **without** a long tutorial wall. Short, dismissible coach marks that fire once per player (or until “Don’t show again”).
 
 Keep lean: spotlight + one sentence + optional “Next”. No separate tutorial mode, no forced practice fight.
 
+**Status:** First pass shipped — 5 dismissible coach marks (`CoachMark` + `useCoachStep`), non-blocking, persisted per player in `localStorage` (`dfcg-tour-v1`); character step uses a global flag (no profile yet).
+
+#### Character creation
+
+- [x] Welcome coach: name + look, deck decides class portrait
+
 #### Exploration map (Hollowfort)
 
-- [ ] First-enter coach: select a room on the map
-- [ ] Select a card in the hand, then Travel / act
-- [ ] End turn → encounter deck reminder
-- [ ] Talk / Fight prompts when an NPC or enemy is present
+- [x] First-turn coach: select a card, pick a room, Travel here
+- [x] End turn → encounter deck reminder (folded into travel coach)
+- [x] Talk prompt when an NPC dialog opens (quest-log hint)
+- [ ] Fight prompt when an enemy is present
 - [ ] Quest log / Character entry once a quest or level is available
-- [ ] Persist tour progress with local save (`tour` flags on the run)
+- [x] Persist tour progress (per-player `localStorage`, resume-safe)
 
 #### Battle
 
-- [ ] First-battle coach: add cards to the combo
-- [ ] End turn to resolve
+- [x] First-battle coach: stack cards into the combo + preview
+- [x] End turn to resolve (same coach)
 - [ ] Intent / enemy turn one-liner
 - [ ] HP = cards left (deck as health) callout
 - [ ] Victory / defeat next-step tip (return to prison / load save)
 
+#### Cards / level update
+
+- [x] Player screen coach: earn class XP, unlock improved cards, reshape deck
+
 #### Rules
 
-- [ ] Skip / dismiss anytime; “Don’t show again” option
-- [ ] Never block combat input for more than one beat
-- [ ] Seeded / resume-safe (don’t re-show completed steps after load)
+- [x] Skip / dismiss anytime (single “Got it” per mark)
+- [ ] Global “Don’t show again” toggle in settings
+- [x] Never block combat input for more than one beat (marks are non-blocking overlays)
+- [x] Seeded / resume-safe (don’t re-show completed steps after load)
 - [ ] No multi-screen tutorial campaign in Beta
 
 ### Audio / UX
@@ -828,7 +839,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
 - [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
 - [ ] Reward loop + class progression readable without a tutorial wall
-- [ ] Guided tour: exploration map + first battle first-steps (dismissible coach marks)
+- [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests
 - [ ] Money in inventory (earn / spend in the slice)
 

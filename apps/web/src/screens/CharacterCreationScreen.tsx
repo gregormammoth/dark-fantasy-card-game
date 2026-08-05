@@ -3,6 +3,8 @@
 import { useState, type FormEvent } from 'react';
 import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
+import { CoachMark } from '@/components/tour/CoachMark';
+import { isCharacterCoachSeen, markCharacterCoachSeen } from '@/lib/tour';
 
 interface CharacterCreationScreenProps {
   onCreate: (name: string, gender: PlayerGender) => Promise<PlayerProfile>;
@@ -13,6 +15,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
   const [gender, setGender] = useState<PlayerGender>('woman');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [coachSeen, setCoachSeen] = useState(() => isCharacterCoachSeen());
   const trimmedName = name.trim();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -32,6 +35,18 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
 
   return (
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#090706] px-5 py-10 text-[#e8ddcf]">
+      {!coachSeen && (
+        <CoachMark
+          title="WELCOME, PRISONER"
+          body="Name your prisoner and pick their look. Your character follows you through every escape — your deck decides which class portrait you wear in battle."
+          placement="center"
+          dismissLabel="BEGIN"
+          onDismiss={() => {
+            markCharacterCoachSeen();
+            setCoachSeen(true);
+          }}
+        />
+      )}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(122,90,190,.13),transparent_42%),radial-gradient(circle_at_50%_85%,rgba(201,162,74,.08),transparent_34%)]" />
       <form
         onSubmit={submit}

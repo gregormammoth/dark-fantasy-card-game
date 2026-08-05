@@ -19,10 +19,13 @@ import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
 import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
+import { CoachMark } from '@/components/tour/CoachMark';
+import { useCoachStep } from '@/components/tour/useCoachStep';
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
   actor: BattleActor;
+  playerId: string;
   progression: PlayerProgression;
   onProgressionChange: (progression: PlayerProgression) => void;
   onReturnToExploration: () => void;
@@ -68,6 +71,7 @@ function formatTurnLabel(state: string): string {
 
 export function BattleScreen({
   actor,
+  playerId,
   progression,
   onProgressionChange,
   onReturnToExploration,
@@ -96,6 +100,7 @@ export function BattleScreen({
   const isDefeat = state === 'defeat';
   const isAnimating = state === 'animatingPlayerCard' || state === 'animatingEnemyCard';
   const isResolving = isAnimating || state === 'resolvingPlayerCombo';
+  const battleCoach = useCoachStep(playerId, 'battle', isPlayerTurn);
 
   useEffect(() => {
     if (state === 'idle') {
@@ -268,6 +273,14 @@ export function BattleScreen({
 
   return (
     <div className="relative min-h-screen overflow-visible px-7 py-6 font-spectral text-[#e8ddcf]">
+      {battleCoach.show && (
+        <CoachMark
+          title="STACK YOUR COMBO"
+          body="Tap cards from your hand to stack them into a combo — the preview shows the damage and shield you'll deal. When you're set, press END TURN to unleash it."
+          placement="top"
+          onDismiss={battleCoach.dismiss}
+        />
+      )}
       <div className="relative z-0 mx-auto flex w-full max-w-[1240px] flex-col gap-4">
         <TopBar turnLabel={formatTurnLabel(state)} logEntries={battle.log} />
 
