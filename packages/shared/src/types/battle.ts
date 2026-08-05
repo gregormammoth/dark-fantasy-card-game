@@ -3,6 +3,7 @@ import type { BattleLogEntry } from './log';
 import type { ActivePlay } from './animation';
 
 import type { EffectTarget } from './effect';
+import type { PlayerGender } from './player';
 import type { PlayerProgression } from './progression';
 import type { RngState } from './rng';
 
@@ -90,6 +91,7 @@ export type BattleEvent =
       enemy?: BattleEnemyOverride;
       rng?: RngState;
       playerDeckIds?: string[];
+      playerGender?: PlayerGender;
     }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
@@ -101,5 +103,6 @@ export type BattleEvent =
       enemy?: BattleEnemyOverride;
       rng?: RngState;
       playerDeckIds?: string[];
+      playerGender?: PlayerGender;
     }
   | { type: 'LEAVE_BATTLE' };

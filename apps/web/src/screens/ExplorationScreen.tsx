@@ -3,6 +3,7 @@ import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
+import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import {
   getActiveLocationEncounter,
   getBattleEnemy,
@@ -34,6 +35,7 @@ interface ExplorationScreenProps {
   onEscapeToWorld?: () => void;
   runSeed?: number;
   deckCardIds?: string[];
+  playerGender: PlayerGender;
 }
 
 export function ExplorationScreen({
@@ -43,6 +45,7 @@ export function ExplorationScreen({
   onEscapeToWorld,
   runSeed,
   deckCardIds,
+  playerGender,
 }: ExplorationScreenProps) {
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
@@ -208,6 +211,7 @@ export function ExplorationScreen({
       <div className="relative">
         <PrisonMap
           context={context}
+          playerGender={playerGender}
           onSelect={(locationId) => actor.send({ type: 'SELECT_LOCATION', locationId })}
         />
         <LocationDetailPanel

@@ -5,6 +5,7 @@ import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { BattleContext, BattleEnemyOverride } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import type { RngState } from '@dark-fantasy/shared/types/rng';
 import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
@@ -67,6 +68,7 @@ export function createInitialBattle(
   enemyOverride?: BattleEnemyOverride,
   rngState?: RngState,
   playerDeckIds?: string[],
+  playerGender?: PlayerGender,
 ): BattleContext {
   resetInstanceCounter();
   resetLogCounter();
@@ -84,7 +86,7 @@ export function createInitialBattle(
 
   return {
     player: {
-      portrait: getPlayerPortraitForDeck(deckIds),
+      portrait: getPlayerPortraitForDeck(deckIds, playerGender),
       shield: Math.min(battleData.player.startingShield, playerMaxShield),
       maxShield: playerMaxShield,
       barrier: 0,

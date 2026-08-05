@@ -7,8 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PlayerGender {
+  man
+  woman
+}
+
 model Player {
   id        String   @id @db.Uuid
+  name      String   @db.VarChar(24)
+  gender    PlayerGender
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   saves     Save[]

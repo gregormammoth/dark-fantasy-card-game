@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { ExplorationContext, LocationDefinition, LocationStatus } from '@dark-fantasy/shared/types/exploration';
+import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import {
   getLocationStatus,
   isLocationVisible,
@@ -31,6 +32,7 @@ function getOccupantCard(
 
 interface PrisonMapProps {
   context: ExplorationContext;
+  playerGender: PlayerGender;
   onSelect: (locationId: string) => void;
 }
 
@@ -71,7 +73,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-export function PrisonMap({ context, onSelect }: PrisonMapProps) {
+export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -355,8 +357,9 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
         [...context.deck, ...context.hand, ...context.discard].map(
           (card) => card.definition.id,
         ),
+        playerGender,
       ),
-    [context.deck, context.hand, context.discard],
+    [context.deck, context.hand, context.discard, playerGender],
   );
 
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {

@@ -1,7 +1,8 @@
 import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import improvedCardsData from '@dark-fantasy/content/improvedCards.json';
-import { PLAYER_CLASS_PORTRAITS } from '@dark-fantasy/content/portraits';
+import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
+import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import type { PlayerLoadout } from '@dark-fantasy/shared/types/progression';
 import {
   getAvailableClassLevels,
@@ -157,8 +158,11 @@ export function getDominantDeckClass(deckCardIds: string[]): CardClass {
   return dominant;
 }
 
-export function getPlayerPortraitForDeck(deckCardIds: string[]): string {
-  return PLAYER_CLASS_PORTRAITS[getDominantDeckClass(deckCardIds)];
+export function getPlayerPortraitForDeck(
+  deckCardIds: string[],
+  gender: PlayerGender = 'man',
+): string {
+  return PLAYER_GENDER_PORTRAITS[gender][getDominantDeckClass(deckCardIds)];
 }
 
 export function resolveLoadoutDeckDefinitions(loadout: PlayerLoadout): CardDefinition[] {

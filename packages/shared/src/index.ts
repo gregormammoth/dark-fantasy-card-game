@@ -6,6 +6,7 @@ export * from './types/effect';
 export * from './types/exploration';
 export * from './types/explorationEffect';
 export * from './types/log';
+export * from './types/player';
 export * from './types/progression';
 export * from './types/rng';
 export * from './types/run';

@@ -14,6 +14,7 @@ import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/type
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import type { LocalRunState, SavedExplorationPhase } from '@dark-fantasy/shared/types/save';
 import type { RunState } from '@dark-fantasy/shared/types/run';
+import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { SettingsMenu } from '@/components/SettingsMenu';
@@ -21,12 +22,14 @@ import { BattleScreen } from '@/screens/BattleScreen';
 import { ExplorationScreen } from '@/screens/ExplorationScreen';
 import { PlayerScreen } from '@/screens/PlayerScreen';
 import { WorldMapScreen } from '@/screens/WorldMapScreen';
+import { CharacterCreationScreen } from '@/screens/CharacterCreationScreen';
 import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { clearLocalRun, loadLocalRun, saveLocalRun } from '@/lib/localRunSave';
+import { createPlayerProfile, loadPlayerProfile } from '@/lib/playerProfile';
 
 const worldMap = worldMapData as WorldMapDefinition;
 const SEED_STORAGE_KEY = 'dfcg-run-seed';
@@ -73,6 +76,7 @@ function phaseFromSnapshot(snapshot: {
 
 function GameShell() {
   const [run, setRun] = useState<RunState>(() => createRun(Date.now() >>> 0));
+  const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [battleCheckpoint, setBattleCheckpoint] = useState<BattleCheckpoint | null>(null);
   const [ready, setReady] = useState(false);
   const explorationActor = useActorRef(explorationMachine);
@@ -109,6 +113,7 @@ function GameShell() {
   }, [explorationActor, ready]);
 
   useEffect(() => {
+    setProfile(loadPlayerProfile());
     const saved = loadLocalRun();
     if (saved?.state.exploration && saved.state.explorationPhase !== 'idle') {
       const phase =
@@ -302,6 +307,7 @@ function GameShell() {
         type: 'START_BATTLE',
         progression,
         playerDeckIds: loadout.deckCardIds,
+        playerGender: profile?.gender,
         rng: { seed, cursor: 0 },
       });
       setRun((current) => ({ ...current, screen: 'battle' }));
@@ -352,6 +358,7 @@ function GameShell() {
       type: 'START_BATTLE',
       progression,
       playerDeckIds: loadout.deckCardIds,
+      playerGender: profile?.gender,
       enemy: {
         name: enemy.name,
         portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
@@ -364,6 +371,18 @@ function GameShell() {
 
   if (!ready) {
     return null;
+  }
+
+  if (!profile) {
+    return (
+      <CharacterCreationScreen
+        onCreate={async (name: string, gender: PlayerGender) => {
+          const next = await createPlayerProfile(name, gender);
+          setProfile(next);
+          return next;
+        }}
+      />
+    );
   }
 
   let content = (
@@ -400,6 +419,7 @@ function GameShell() {
         onEscapeToWorld={() => setRun((current) => ({ ...current, screen: 'world' }))}
         runSeed={runSeed}
         deckCardIds={loadout.deckCardIds}
+        playerGender={profile.gender}
       />
     );
   } else if (screen === 'player') {
@@ -407,6 +427,7 @@ function GameShell() {
       <PlayerScreen
         progression={progression}
         loadout={loadout}
+        profile={profile}
         onLoadoutChange={handleLoadoutChange}
         exploration={explorationContext}
         onBack={() => setRun((current) => ({ ...current, screen: playerReturnScreen }))}

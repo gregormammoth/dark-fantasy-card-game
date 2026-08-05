@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, RunQuest } from '@dark-fantasy/shared/types/exploration';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { PlayerProfile } from '@dark-fantasy/shared/types/player';
 import {
   getClassLevel,
   getClassXp,
@@ -39,6 +40,7 @@ type ItemFilter = 'all' | 'key' | 'ingredient';
 interface PlayerScreenProps {
   progression: PlayerProgression;
   loadout: PlayerLoadout;
+  profile: PlayerProfile;
   onLoadoutChange: (loadout: PlayerLoadout) => void;
   exploration?: ExplorationContext | null;
   onBack: () => void;
@@ -88,6 +90,7 @@ function statusCopy(
 export function PlayerScreen({
   progression,
   loadout,
+  profile,
   onLoadoutChange,
   exploration = null,
   onBack,
@@ -124,7 +127,7 @@ export function PlayerScreen({
   }, [allCards]);
 
   const deck = loadout.deckCardIds;
-  const playerPortrait = getPlayerPortraitForDeck(deck);
+  const playerPortrait = getPlayerPortraitForDeck(deck, profile.gender);
 
   const deckByClass = Object.fromEntries(PLAYER_CLASSES.map((id) => [id, 0])) as Record<
     CardClass,
@@ -312,7 +315,7 @@ export function PlayerScreen({
               </div>
               <div className="flex flex-1 flex-col justify-center gap-2.5">
                 <div>
-                  <div className="font-cinzel text-[22px] text-[#f0dfcb]">Unknown Prisoner</div>
+                  <div className="font-cinzel text-[22px] text-[#f0dfcb]">{profile.name}</div>
                   <div className="mt-0.5 text-[12px] italic text-[#8a7f72]">
                     Escaped from Hollowfort
                   </div>
