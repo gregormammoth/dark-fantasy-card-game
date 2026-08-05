@@ -1,7 +1,7 @@
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
+import { apiFetch } from '@/lib/api';
 
 const PLAYER_PROFILE_STORAGE_KEY = 'dfcg-player-profile-v1';
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 function isPlayerProfile(value: unknown): value is PlayerProfile {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
@@ -32,19 +32,18 @@ export function savePlayerProfile(profile: PlayerProfile): void {
   window.localStorage.setItem(PLAYER_PROFILE_STORAGE_KEY, JSON.stringify(profile));
 }
 
+export function clearPlayerProfile(): void {
+  window.localStorage.removeItem(PLAYER_PROFILE_STORAGE_KEY);
+}
+
 export async function createPlayerProfile(
   name: string,
   gender: PlayerGender,
 ): Promise<PlayerProfile> {
-  const response = await fetch(`${API_URL}/players`, {
+  const value = await apiFetch<unknown>('/players', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, gender }),
   });
-  if (!response.ok) {
-    throw new Error('Could not create player');
-  }
-  const value: unknown = await response.json();
   if (!isPlayerProfile(value)) {
     throw new Error('Invalid player response');
   }

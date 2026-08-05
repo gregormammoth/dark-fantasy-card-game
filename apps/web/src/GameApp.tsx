@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useActorRef, useSelector } from '@xstate/react';
+import type { ActorRefFrom } from 'xstate';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import {
@@ -28,11 +29,13 @@ import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
-import { clearLocalRun, loadLocalRun, saveLocalRun } from '@/lib/localRunSave';
+import { trackEvent } from '@/lib/analytics';
 import { createPlayerProfile, loadPlayerProfile } from '@/lib/playerProfile';
+import { clearCloudRun, loadCloudRun, saveCloudRun } from '@/lib/runSave';
 
 const worldMap = worldMapData as WorldMapDefinition;
 const SEED_STORAGE_KEY = 'dfcg-run-seed';
+const SAVE_DEBOUNCE_MS = 600;
 
 interface BattleCheckpoint {
   exploration: ExplorationContext;
@@ -74,6 +77,18 @@ function phaseFromSnapshot(snapshot: {
   return 'playerTurn';
 }
 
+function buildPersistState(
+  current: RunState,
+  explorationActor: ActorRefFrom<typeof explorationMachine>,
+): LocalRunState {
+  const snap = explorationActor.getSnapshot();
+  return {
+    ...current,
+    exploration: snap.matches('idle') ? null : structuredClone(snap.context),
+    explorationPhase: phaseFromSnapshot(snap),
+  };
+}
+
 function GameShell() {
   const [run, setRun] = useState<RunState>(() => createRun(Date.now() >>> 0));
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
@@ -97,56 +112,138 @@ function GameShell() {
 
   const persistRef = useRef(run);
   persistRef.current = run;
+  const profileRef = useRef(profile);
+  profileRef.current = profile;
+  const saveTimerRef = useRef<number | null>(null);
+  const sessionTrackedRef = useRef(false);
 
-  const persistRun = useCallback(() => {
-    if (!ready) {
+  const flushSave = useCallback(async (state: LocalRunState) => {
+    const currentProfile = profileRef.current;
+    if (!currentProfile) {
       return;
     }
-    const current = persistRef.current;
-    const snap = explorationActor.getSnapshot();
-    const state: LocalRunState = {
-      ...current,
-      exploration: snap.matches('idle') ? null : structuredClone(snap.context),
-      explorationPhase: phaseFromSnapshot(snap),
-    };
-    saveLocalRun(state);
-  }, [explorationActor, ready]);
+    try {
+      await saveCloudRun(currentProfile.playerId, state);
+    } catch {
+      return;
+    }
+  }, []);
+
+  const persistRun = useCallback(
+    (options?: { immediate?: boolean }) => {
+      if (!ready || !profileRef.current) {
+        return;
+      }
+      const state = buildPersistState(persistRef.current, explorationActor);
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+      if (options?.immediate) {
+        void flushSave(state);
+        return;
+      }
+      saveTimerRef.current = window.setTimeout(() => {
+        saveTimerRef.current = null;
+        void flushSave(state);
+      }, SAVE_DEBOUNCE_MS);
+    },
+    [explorationActor, flushSave, ready],
+  );
 
   useEffect(() => {
-    setProfile(loadPlayerProfile());
-    const saved = loadLocalRun();
-    if (saved?.state.exploration && saved.state.explorationPhase !== 'idle') {
-      const phase =
-        saved.state.explorationPhase === 'encounter' ? 'encounter' : 'playerTurn';
-      explorationActor.send({
-        type: 'HYDRATE',
-        context: saved.state.exploration,
-        phase,
-      });
-      window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.state.runSeed));
-      const nextScreen =
-        saved.state.screen === 'battle'
-          ? 'exploration'
-          : saved.state.screen === 'player'
-            ? 'player'
-            : 'exploration';
-      setRun({
-        ...saved.state,
-        loadout: saved.state.loadout ?? createInitialLoadout(),
-        screen: nextScreen,
-        playerReturnScreen:
-          saved.state.playerReturnScreen === 'battle'
-            ? 'exploration'
-            : saved.state.playerReturnScreen,
-        pendingLocationFight: saved.state.pendingLocationFight,
-      });
-    } else {
-      const next = readClientSeed();
-      setRun((current) => ({ ...current, runSeed: next }));
-      window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+    let cancelled = false;
+
+    async function bootstrap() {
+      const existing = loadPlayerProfile();
+      setProfile(existing);
+      if (!existing) {
+        const next = readClientSeed();
+        setRun((current) => ({ ...current, runSeed: next }));
+        window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+        if (!cancelled) {
+          setReady(true);
+        }
+        return;
+      }
+
+      try {
+        const saved = await loadCloudRun(existing.playerId);
+        if (cancelled) {
+          return;
+        }
+        if (saved?.state.exploration && saved.state.explorationPhase !== 'idle') {
+          const phase =
+            saved.state.explorationPhase === 'encounter' ? 'encounter' : 'playerTurn';
+          explorationActor.send({
+            type: 'HYDRATE',
+            context: saved.state.exploration,
+            phase,
+          });
+          window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.state.runSeed));
+          const nextScreen =
+            saved.state.screen === 'battle'
+              ? 'exploration'
+              : saved.state.screen === 'player'
+                ? 'player'
+                : 'exploration';
+          setRun({
+            ...saved.state,
+            loadout: saved.state.loadout ?? createInitialLoadout(),
+            screen: nextScreen,
+            playerReturnScreen:
+              saved.state.playerReturnScreen === 'battle'
+                ? 'exploration'
+                : saved.state.playerReturnScreen,
+            pendingLocationFight: saved.state.pendingLocationFight,
+          });
+        } else if (saved?.state) {
+          window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.state.runSeed));
+          setRun({
+            ...saved.state,
+            loadout: saved.state.loadout ?? createInitialLoadout(),
+            screen: saved.state.screen === 'battle' ? 'world' : saved.state.screen,
+            playerReturnScreen:
+              saved.state.playerReturnScreen === 'battle'
+                ? 'world'
+                : saved.state.playerReturnScreen,
+            pendingLocationFight: null,
+          });
+        } else {
+          const next = readClientSeed();
+          setRun((current) => ({ ...current, runSeed: next }));
+          window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+        }
+      } catch {
+        if (cancelled) {
+          return;
+        }
+        const next = readClientSeed();
+        setRun((current) => ({ ...current, runSeed: next }));
+        window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
+      }
+
+      if (!cancelled) {
+        setReady(true);
+      }
     }
-    setReady(true);
+
+    void bootstrap();
+    return () => {
+      cancelled = true;
+    };
   }, [explorationActor]);
+
+  useEffect(() => {
+    if (!ready || !profile || sessionTrackedRef.current) {
+      return;
+    }
+    sessionTrackedRef.current = true;
+    trackEvent('session_started', profile.playerId, {
+      screen,
+      hasActiveRun,
+    });
+  }, [ready, profile, screen, hasActiveRun]);
 
   useEffect(() => {
     if (!ready) {
@@ -154,6 +251,14 @@ function GameShell() {
     }
     persistRun();
   }, [ready, run, persistRun]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!ready) {
@@ -175,6 +280,13 @@ function GameShell() {
 
   const handleLoadoutChange = useCallback(
     (next: PlayerLoadout) => {
+      const previous = new Set(persistRef.current.loadout.unlockedCardIds);
+      const unlocked = next.unlockedCardIds.filter((id) => !previous.has(id));
+      if (unlocked.length > 0 && profileRef.current) {
+        for (const cardId of unlocked) {
+          trackEvent('card_unlocked', profileRef.current.playerId, { cardId });
+        }
+      }
       setRun((current) => ({ ...current, loadout: next }));
       const snap = explorationActor.getSnapshot();
       if (!snap.matches('idle')) {
@@ -196,13 +308,24 @@ function GameShell() {
   }, []);
 
   const handleAbandonRun = useCallback(() => {
-    clearLocalRun();
+    const currentProfile = profileRef.current;
+    const next = readClientSeed();
+    if (currentProfile) {
+      trackEvent('run_abandoned', currentProfile.playerId, {
+        screen: persistRef.current.screen,
+        runSeed: persistRef.current.runSeed,
+      });
+      void clearCloudRun(currentProfile.playerId, next);
+    }
+    if (saveTimerRef.current !== null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
     explorationActor.send({ type: 'RESET' });
     if (!battleActor.getSnapshot().matches('idle')) {
       battleActor.send({ type: 'LEAVE_BATTLE' });
     }
     setBattleCheckpoint(null);
-    const next = readClientSeed();
     setRun(createRun(next));
     window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
   }, [battleActor, explorationActor]);
@@ -224,6 +347,13 @@ function GameShell() {
 
   function returnToExploration(result?: 'victory' | 'defeat' | 'abort') {
     const battleSnap = battleActor.getSnapshot();
+    if (pendingLocationFight && profile) {
+      trackEvent('battle_finished', profile.playerId, {
+        result: result ?? 'abort',
+        locationId: pendingLocationFight.locationId,
+        enemyId: pendingLocationFight.enemyId,
+      });
+    }
     if (pendingLocationFight && !battleSnap.matches('idle')) {
       explorationActor.send({ type: 'SYNC_RNG', rng: battleSnap.context.rng });
     }
@@ -253,20 +383,7 @@ function GameShell() {
   }
 
   function resumeFromBattleCheckpoint() {
-    const saved = battleCheckpoint ?? (() => {
-      const file = loadLocalRun();
-      if (!file?.state.exploration || file.state.explorationPhase === 'idle') {
-        return null;
-      }
-      return {
-        exploration: file.state.exploration,
-        explorationPhase: file.state.explorationPhase,
-        progression: file.state.progression,
-        loadout: file.state.loadout ?? createInitialLoadout(),
-        runSeed: file.state.runSeed,
-      } satisfies BattleCheckpoint;
-    })();
-
+    const saved = battleCheckpoint;
     if (!saved) {
       returnToExploration('abort');
       return;
@@ -302,6 +419,9 @@ function GameShell() {
     }
     if (location.targetScreen === 'battle') {
       const seed = resolveRunSeed();
+      if (profile) {
+        trackEvent('battle_started', profile.playerId, { locationId, source: 'world' });
+      }
       leaveBattle();
       battleActor.send({
         type: 'START_BATTLE',
@@ -338,7 +458,7 @@ function GameShell() {
       runSeed,
     };
     setBattleCheckpoint(checkpoint);
-    saveLocalRun({
+    const checkpointState: LocalRunState = {
       progression: checkpoint.progression,
       loadout: checkpoint.loadout,
       exploration: checkpoint.exploration,
@@ -347,7 +467,15 @@ function GameShell() {
       playerReturnScreen: 'exploration',
       runSeed: checkpoint.runSeed,
       pendingLocationFight: null,
-    });
+    };
+    if (profile) {
+      trackEvent('battle_started', profile.playerId, {
+        locationId,
+        enemyId,
+        source: 'exploration',
+      });
+      void saveCloudRun(profile.playerId, checkpointState);
+    }
     setRun((current) => ({
       ...current,
       pendingLocationFight: { locationId, enemyId },
@@ -378,6 +506,7 @@ function GameShell() {
       <CharacterCreationScreen
         onCreate={async (name: string, gender: PlayerGender) => {
           const next = await createPlayerProfile(name, gender);
+          trackEvent('player_created', next.playerId, { gender });
           setProfile(next);
           return next;
         }}
@@ -416,7 +545,10 @@ function GameShell() {
         actor={explorationActor}
         onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
-        onEscapeToWorld={() => setRun((current) => ({ ...current, screen: 'world' }))}
+        onEscapeToWorld={() => {
+          trackEvent('escape_to_world', profile.playerId, { runSeed });
+          setRun((current) => ({ ...current, screen: 'world' }));
+        }}
         runSeed={runSeed}
         deckCardIds={loadout.deckCardIds}
         playerGender={profile.gender}
