@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { ExplorationContext, LocationDefinition, LocationStatus } from '@dark-fantasy/shared/types/exploration';
 import {
   getLocationStatus,
@@ -41,8 +41,11 @@ function markerColor(location: LocationDefinition, status: LocationStatus): stri
   return locationTypeColors[location.type];
 }
 
-const MAP_WIDTH = 1840;
+const MAP_WIDTH = 2240;
 const MAP_HEIGHT = 900;
+const MAP_ZOOM = 1.55;
+const PANEL_WIDTH = 370;
+const DRAG_THRESHOLD = 14;
 
 const dustMotes = Array.from({ length: 10 }, (_, i) => ({
   x: (i * 97) % 100,
@@ -53,11 +56,92 @@ const dustMotes = Array.from({ length: 10 }, (_, i) => ({
   delay: (i * 0.5) % 5,
 }));
 
+function clamp(value: number, min: number, max: number): number {
+  if (max < min) {
+    return (min + max) / 2;
+  }
+  return Math.max(min, Math.min(max, value));
+}
+
 export function PrisonMap({ context, onSelect }: PrisonMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const [focusAnimating, setFocusAnimating] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    origX: number;
+    origY: number;
+    moved: boolean;
+  } | null>(null);
+  const panLimitsRef = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
+
+  const hasSelection = !!context.selectedLocationId;
+  const current = context.locations[context.currentLocationId];
+
+  const layout = useMemo(() => {
+    if (viewport.w <= 0 || viewport.h <= 0) {
+      return { width: 0, height: 0, zoom: 1, minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    }
+    const fit = Math.max(viewport.w / MAP_WIDTH, viewport.h / MAP_HEIGHT);
+    const zoom = fit * MAP_ZOOM;
+    const width = MAP_WIDTH * zoom;
+    const height = MAP_HEIGHT * zoom;
+    return {
+      width,
+      height,
+      zoom,
+      minX: viewport.w - width,
+      maxX: 0,
+      minY: viewport.h - height,
+      maxY: 0,
+    };
+  }, [viewport.w, viewport.h]);
+
+  panLimitsRef.current = {
+    minX: layout.minX,
+    maxX: layout.maxX,
+    minY: layout.minY,
+    maxY: layout.maxY,
+  };
+
+  const centerOnPlayer = useCallback(
+    (animate: boolean) => {
+      if (viewport.w <= 0 || viewport.h <= 0 || layout.zoom <= 0) {
+        return;
+      }
+      const panelInset = hasSelection ? PANEL_WIDTH : 0;
+      const centerX = (viewport.w - panelInset) / 2;
+      const centerY = viewport.h / 2;
+      const focusX = current?.position.x ?? MAP_WIDTH / 2;
+      const focusY = current?.position.y ?? MAP_HEIGHT / 2;
+      const next = {
+        x: clamp(centerX - focusX * layout.zoom, layout.minX, layout.maxX),
+        y: clamp(centerY - focusY * layout.zoom, layout.minY, layout.maxY),
+      };
+      if (animate) {
+        setFocusAnimating(true);
+        window.setTimeout(() => setFocusAnimating(false), 480);
+      }
+      setPan(next);
+    },
+    [
+      viewport.w,
+      viewport.h,
+      layout.zoom,
+      layout.minX,
+      layout.maxX,
+      layout.minY,
+      layout.maxY,
+      hasSelection,
+      current?.position.x,
+      current?.position.y,
+    ],
+  );
 
   useEffect(() => {
     const node = viewportRef.current;
@@ -74,23 +158,16 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
     return () => observer.disconnect();
   }, []);
 
-  const stage = useMemo(() => {
-    if (viewport.w <= 0 || viewport.h <= 0) {
-      return { width: 0, height: 0, cover: 1, panX: 0, panY: 0 };
-    }
-    const cover = Math.max(viewport.w / MAP_WIDTH, viewport.h / MAP_HEIGHT);
-    const width = MAP_WIDTH * cover;
-    const height = MAP_HEIGHT * cover;
-    const overflowX = Math.max(0, width - viewport.w);
-    const overflowY = Math.max(0, height - viewport.h);
-    return {
-      width,
-      height,
-      cover,
-      panX: -overflowX / 2 - (parallax.x * overflowX) / 2,
-      panY: -overflowY / 2 - (parallax.y * overflowY) / 2,
-    };
-  }, [viewport.w, viewport.h, parallax.x, parallax.y]);
+  useEffect(() => {
+    centerOnPlayer(true);
+  }, [context.currentLocationId, centerOnPlayer]);
+
+  useEffect(() => {
+    setPan((currentPan) => ({
+      x: clamp(currentPan.x, layout.minX, layout.maxX),
+      y: clamp(currentPan.y, layout.minY, layout.maxY),
+    }));
+  }, [layout.minX, layout.maxX, layout.minY, layout.maxY, hasSelection]);
 
   const allVisible = useMemo(
     () =>
@@ -160,33 +237,79 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
 
   const visitedCount = Object.values(context.locations).filter((l) => l.visited).length;
   const totalCount = Object.keys(context.locations).length;
-  const hasSelection = !!context.selectedLocationId;
-  const current = context.locations[context.currentLocationId];
 
-  function onMapMove(event: MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const px = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const py = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-    setParallax({
-      x: Math.max(-1, Math.min(1, px)),
-      y: Math.max(-1, Math.min(1, py)),
+  function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) {
+      return;
+    }
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      origX: pan.x,
+      origY: pan.y,
+      moved: false,
+    };
+  }
+
+  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
+      drag.moved = true;
+      setDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    if (!drag.moved) {
+      return;
+    }
+    const limits = panLimitsRef.current;
+    setPan({
+      x: clamp(drag.origX + dx, limits.minX, limits.maxX),
+      y: clamp(drag.origY + dy, limits.minY, limits.maxY),
     });
+  }
+
+  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    dragRef.current = null;
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }
+
+  function selectLocation(locationId: string) {
+    onSelect(locationId);
   }
 
   return (
     <div
       ref={viewportRef}
-      className="relative h-[660px] overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[radial-gradient(1000px_700px_at_24%_10%,#241a14,#0c0908_68%)]"
-      onMouseMove={onMapMove}
-      onMouseLeave={() => setParallax({ x: 0, y: 0 })}
+      className={`relative h-[660px] overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[radial-gradient(1000px_700px_at_24%_10%,#241a14,#0c0908_68%)] ${
+        dragging ? 'cursor-grabbing' : 'cursor-grab'
+      }`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
     >
       <div
         className="absolute left-0 top-0 will-change-transform"
         style={{
-          width: stage.width || '100%',
-          height: stage.height || '100%',
-          transform: `translate3d(${stage.panX}px, ${stage.panY}px, 0)`,
-          transition: 'transform 140ms ease-out',
+          width: layout.width || '100%',
+          height: layout.height || '100%',
+          transform: `translate3d(${pan.x}px, ${pan.y}px, 0)`,
+          transition: focusAnimating && !dragging
+            ? 'transform 460ms cubic-bezier(.22,.7,.25,1)'
+            : 'none',
         }}
       >
         <div
@@ -194,7 +317,7 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
           style={{
             width: MAP_WIDTH,
             height: MAP_HEIGHT,
-            transform: `scale(${stage.cover})`,
+            transform: `scale(${layout.zoom})`,
           }}
         >
           <img
@@ -278,14 +401,16 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
               <button
                 key={location.id}
                 type="button"
-                onClick={() => onSelect(location.id)}
+                data-map-room="true"
+                onClick={() => selectLocation(location.id)}
+                onPointerDown={(event) => event.stopPropagation()}
                 onMouseEnter={() => setHoveredId(location.id)}
                 onMouseLeave={() =>
                   setHoveredId((currentId) =>
                     currentId === location.id ? null : currentId,
                   )
                 }
-                className="absolute z-[3] overflow-visible rounded-md transition-[filter,transform,box-shadow] duration-[180ms] hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]"
+                className="absolute z-[3] cursor-pointer overflow-visible rounded-md transition-[filter,transform,box-shadow] duration-[180ms] hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]"
                 style={{
                   left: location.position.x - w / 2,
                   top: location.position.y - h / 2,
