@@ -151,7 +151,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Next.js 15 + `/play` + SEO/SSG | In place (M1 done) |
 | `game-engine` / `shared` / `content` | Extracted; framework-independent |
 | World / Exploration / Battle screens | Connected in session via `GameApp` (not a formal Run yet) |
-| Shared **Run** state | Not started (progression + exploration flags held in React) |
+| Shared **Run** state | In progress — shared `RunState` now owns progression, loadout, exploration, navigation, seed, and pending fight |
 | Exploration ↔ Battle continuity | In place for session — location FIGHT → battle → `TO PRISON` |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
@@ -322,11 +322,11 @@ Game
 
 ### Tasks
 
-- [ ] Define `Run` / `GameState` types in shared or engine packages
+- [x] Define `Run` / `GameState` types in shared or engine packages
 - [ ] App-level orchestration machine (World ↔ Exploration ↔ Battle) owning the Run
-- [ ] Carry progression, deck, and flags across screen transitions
-- [ ] End battle → return to exploration with the same Run
-- [ ] New game creates a fresh Run; continue restores one
+- [x] Carry progression, deck, and flags across screen transitions
+- [x] End battle → return to exploration with the same Run
+- [x] New game creates a fresh Run; continue restores one
 
 ### Deliverable
 

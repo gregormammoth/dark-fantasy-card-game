@@ -78,6 +78,10 @@ export function createEmptyLocalRunState(runSeed: number): LocalRunState {
   };
 }
 
+export function createRun(runSeed: number): LocalRunState {
+  return createEmptyLocalRunState(runSeed);
+}
+
 export function buildLocalSaveFile(state: LocalRunState): LocalSaveFile {
   return {
     schemaVersion: LOCAL_SAVE_SCHEMA_VERSION,

@@ -6,13 +6,14 @@ import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import {
   createInitialLoadout,
-  createInitialProgression,
+  createRun,
   normalizeSeed,
   rebuildExplorationDeck,
 } from '@dark-fantasy/game-engine';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import type { LocalRunState, SavedExplorationPhase } from '@dark-fantasy/shared/types/save';
+import type { RunState } from '@dark-fantasy/shared/types/run';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
 import { SettingsMenu } from '@/components/SettingsMenu';
@@ -29,11 +30,6 @@ import { clearLocalRun, loadLocalRun, saveLocalRun } from '@/lib/localRunSave';
 
 const worldMap = worldMapData as WorldMapDefinition;
 const SEED_STORAGE_KEY = 'dfcg-run-seed';
-
-interface PendingLocationFight {
-  locationId: string;
-  enemyId: string;
-}
 
 interface BattleCheckpoint {
   exploration: ExplorationContext;
@@ -76,15 +72,8 @@ function phaseFromSnapshot(snapshot: {
 }
 
 function GameShell() {
-  const [screen, setScreen] = useState<AppScreen>('world');
-  const [playerReturnScreen, setPlayerReturnScreen] = useState<AppScreen>('world');
-  const [progression, setProgression] = useState<PlayerProgression>(createInitialProgression);
-  const [loadout, setLoadout] = useState<PlayerLoadout>(createInitialLoadout);
-  const [pendingLocationFight, setPendingLocationFight] = useState<PendingLocationFight | null>(
-    null,
-  );
+  const [run, setRun] = useState<RunState>(() => createRun(Date.now() >>> 0));
   const [battleCheckpoint, setBattleCheckpoint] = useState<BattleCheckpoint | null>(null);
-  const [runSeed, setRunSeed] = useState(() => Date.now() >>> 0);
   const [ready, setReady] = useState(false);
   const explorationActor = useActorRef(explorationMachine);
   const battleActor = useActorRef(battleMachine);
@@ -92,24 +81,18 @@ function GameShell() {
   const explorationContext = useSelector(explorationActor, (state) =>
     state.matches('idle') ? null : state.context,
   );
+  const {
+    progression,
+    loadout,
+    screen,
+    playerReturnScreen,
+    runSeed,
+    pendingLocationFight,
+  } = run;
   useScreenMusic(musicForScreen(screen));
 
-  const persistRef = useRef({
-    progression,
-    loadout,
-    screen,
-    playerReturnScreen,
-    runSeed,
-    pendingLocationFight,
-  });
-  persistRef.current = {
-    progression,
-    loadout,
-    screen,
-    playerReturnScreen,
-    runSeed,
-    pendingLocationFight,
-  };
+  const persistRef = useRef(run);
+  persistRef.current = run;
 
   const persistRun = useCallback(() => {
     if (!ready) {
@@ -118,14 +101,9 @@ function GameShell() {
     const current = persistRef.current;
     const snap = explorationActor.getSnapshot();
     const state: LocalRunState = {
-      progression: current.progression,
-      loadout: current.loadout,
+      ...current,
       exploration: snap.matches('idle') ? null : structuredClone(snap.context),
       explorationPhase: phaseFromSnapshot(snap),
-      screen: current.screen,
-      playerReturnScreen: current.playerReturnScreen,
-      runSeed: current.runSeed,
-      pendingLocationFight: current.pendingLocationFight,
     };
     saveLocalRun(state);
   }, [explorationActor, ready]);
@@ -140,24 +118,26 @@ function GameShell() {
         context: saved.state.exploration,
         phase,
       });
-      setProgression(saved.state.progression);
-      setLoadout(saved.state.loadout ?? createInitialLoadout());
-      setRunSeed(saved.state.runSeed);
       window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.state.runSeed));
-      setPendingLocationFight(saved.state.pendingLocationFight);
-      setPlayerReturnScreen(
-        saved.state.playerReturnScreen === 'battle' ? 'exploration' : saved.state.playerReturnScreen,
-      );
       const nextScreen =
         saved.state.screen === 'battle'
           ? 'exploration'
           : saved.state.screen === 'player'
             ? 'player'
             : 'exploration';
-      setScreen(nextScreen);
+      setRun({
+        ...saved.state,
+        loadout: saved.state.loadout ?? createInitialLoadout(),
+        screen: nextScreen,
+        playerReturnScreen:
+          saved.state.playerReturnScreen === 'battle'
+            ? 'exploration'
+            : saved.state.playerReturnScreen,
+        pendingLocationFight: saved.state.pendingLocationFight,
+      });
     } else {
       const next = readClientSeed();
-      setRunSeed(next);
+      setRun((current) => ({ ...current, runSeed: next }));
       window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
     }
     setReady(true);
@@ -168,25 +148,29 @@ function GameShell() {
       return;
     }
     persistRun();
-  }, [ready, progression, loadout, screen, playerReturnScreen, runSeed, pendingLocationFight, persistRun]);
+  }, [ready, run, persistRun]);
 
   useEffect(() => {
     if (!ready) {
       return;
     }
-    const subscription = explorationActor.subscribe(() => {
-      persistRun();
+    const subscription = explorationActor.subscribe((snapshot) => {
+      setRun((current) => ({
+        ...current,
+        exploration: snapshot.matches('idle') ? null : snapshot.context,
+        explorationPhase: phaseFromSnapshot(snapshot),
+      }));
     });
     return () => subscription.unsubscribe();
-  }, [explorationActor, persistRun, ready]);
+  }, [explorationActor, ready]);
 
   const handleProgressionChange = useCallback((next: PlayerProgression) => {
-    setProgression(next);
+    setRun((current) => ({ ...current, progression: next }));
   }, []);
 
   const handleLoadoutChange = useCallback(
     (next: PlayerLoadout) => {
-      setLoadout(next);
+      setRun((current) => ({ ...current, loadout: next }));
       const snap = explorationActor.getSnapshot();
       if (!snap.matches('idle')) {
         const phase = snap.matches('encounter') ? 'encounter' : 'playerTurn';
@@ -202,7 +186,7 @@ function GameShell() {
 
   const handleRunSeedChange = useCallback((seed: number) => {
     const next = normalizeSeed(seed);
-    setRunSeed(next);
+    setRun((current) => ({ ...current, runSeed: next }));
     window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
   }, []);
 
@@ -212,21 +196,16 @@ function GameShell() {
     if (!battleActor.getSnapshot().matches('idle')) {
       battleActor.send({ type: 'LEAVE_BATTLE' });
     }
-    setPendingLocationFight(null);
     setBattleCheckpoint(null);
-    setProgression(createInitialProgression());
-    setLoadout(createInitialLoadout());
-    setPlayerReturnScreen('world');
-    setScreen('world');
     const next = readClientSeed();
-    setRunSeed(next);
+    setRun(createRun(next));
     window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
   }, [battleActor, explorationActor]);
 
   function resolveRunSeed(): number {
     const next = readClientSeed();
     if (next !== runSeed) {
-      setRunSeed(next);
+      setRun((current) => ({ ...current, runSeed: next }));
       window.sessionStorage.setItem(SEED_STORAGE_KEY, String(next));
     }
     return next;
@@ -251,7 +230,6 @@ function GameShell() {
         locationId: pendingLocationFight.locationId,
         enemyId: pendingLocationFight.enemyId,
       });
-      setPendingLocationFight(null);
     }
     setBattleCheckpoint(null);
     if (explorationActor.getSnapshot().matches('idle')) {
@@ -261,7 +239,11 @@ function GameShell() {
         deckCardIds: loadout.deckCardIds,
       });
     }
-    setScreen('exploration');
+    setRun((current) => ({
+      ...current,
+      screen: 'exploration',
+      pendingLocationFight: null,
+    }));
     leaveBattle();
   }
 
@@ -291,14 +273,17 @@ function GameShell() {
       context: structuredClone(saved.exploration),
       phase: saved.explorationPhase === 'encounter' ? 'encounter' : 'playerTurn',
     });
-    setProgression(structuredClone(saved.progression));
-    setLoadout(structuredClone(saved.loadout));
-    setRunSeed(saved.runSeed);
     window.sessionStorage.setItem(SEED_STORAGE_KEY, String(saved.runSeed));
-    setPendingLocationFight(null);
     setBattleCheckpoint(null);
     leaveBattle();
-    setScreen('exploration');
+    setRun((current) => ({
+      ...current,
+      progression: structuredClone(saved.progression),
+      loadout: structuredClone(saved.loadout),
+      screen: 'exploration',
+      runSeed: saved.runSeed,
+      pendingLocationFight: null,
+    }));
   }
 
   function enterLocation(locationId: string) {
@@ -319,13 +304,16 @@ function GameShell() {
         playerDeckIds: loadout.deckCardIds,
         rng: { seed, cursor: 0 },
       });
-      setScreen('battle');
+      setRun((current) => ({ ...current, screen: 'battle' }));
     }
   }
 
   function openPlayer() {
-    setPlayerReturnScreen(screen === 'player' ? 'world' : screen);
-    setScreen('player');
+    setRun((current) => ({
+      ...current,
+      playerReturnScreen: current.screen === 'player' ? 'world' : current.screen,
+      screen: 'player',
+    }));
   }
 
   function startLocationBattle(locationId: string, enemyId: string) {
@@ -354,7 +342,11 @@ function GameShell() {
       runSeed: checkpoint.runSeed,
       pendingLocationFight: null,
     });
-    setPendingLocationFight({ locationId, enemyId });
+    setRun((current) => ({
+      ...current,
+      pendingLocationFight: { locationId, enemyId },
+      screen: 'battle',
+    }));
     leaveBattle();
     battleActor.send({
       type: 'START_BATTLE',
@@ -368,7 +360,6 @@ function GameShell() {
       },
       rng: exploration.rng,
     });
-    setScreen('battle');
   }
 
   if (!ready) {
@@ -406,7 +397,7 @@ function GameShell() {
         actor={explorationActor}
         onStartLocationBattle={startLocationBattle}
         onOpenPlayer={openPlayer}
-        onEscapeToWorld={() => setScreen('world')}
+        onEscapeToWorld={() => setRun((current) => ({ ...current, screen: 'world' }))}
         runSeed={runSeed}
         deckCardIds={loadout.deckCardIds}
       />
@@ -418,7 +409,7 @@ function GameShell() {
         loadout={loadout}
         onLoadoutChange={handleLoadoutChange}
         exploration={explorationContext}
-        onBack={() => setScreen(playerReturnScreen)}
+        onBack={() => setRun((current) => ({ ...current, screen: playerReturnScreen }))}
         backLabel={playerReturnScreen === 'exploration' ? '← Prison Map' : '← World Map'}
       />
     );

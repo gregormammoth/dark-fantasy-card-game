@@ -47,6 +47,7 @@ export type { RngState } from './engine/rng';
 export {
   buildLocalSaveFile,
   createEmptyLocalRunState,
+  createRun,
   hasResumableRun,
   parseLocalSave,
   serializeLocalSave,

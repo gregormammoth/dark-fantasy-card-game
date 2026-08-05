@@ -1,27 +1,18 @@
-import type { ExplorationContext } from './exploration';
-import type { PlayerLoadout, PlayerProgression } from './progression';
+import type {
+  PendingLocationFight,
+  RunExplorationPhase,
+  RunState,
+} from './run';
 
 export const LOCAL_SAVE_SCHEMA_VERSION = 2;
 
 export type SavedAppScreen = 'world' | 'exploration' | 'battle' | 'player';
 
-export type SavedExplorationPhase = 'idle' | 'playerTurn' | 'encounter';
+export type SavedExplorationPhase = RunExplorationPhase;
 
-export interface PendingLocationFightSave {
-  locationId: string;
-  enemyId: string;
-}
+export type PendingLocationFightSave = PendingLocationFight;
 
-export interface LocalRunState {
-  progression: PlayerProgression;
-  loadout: PlayerLoadout;
-  exploration: ExplorationContext | null;
-  explorationPhase: SavedExplorationPhase;
-  screen: SavedAppScreen;
-  playerReturnScreen: SavedAppScreen;
-  runSeed: number;
-  pendingLocationFight: PendingLocationFightSave | null;
-}
+export type LocalRunState = RunState;
 
 export interface LocalSaveFile {
   schemaVersion: number;
