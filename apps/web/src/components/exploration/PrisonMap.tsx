@@ -43,9 +43,17 @@ function markerColor(location: LocationDefinition, status: LocationStatus): stri
 
 const MAP_WIDTH = 2240;
 const MAP_HEIGHT = 900;
-const MAP_ZOOM = 1.55;
+const ZOOM_DEFAULT = 1.55;
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 2.45;
+const ZOOM_STEP = 0.2;
 const PANEL_WIDTH = 370;
 const DRAG_THRESHOLD = 14;
+const CAMERA_EASE_MS = 360;
+
+function easeOutCubic(t: number): number {
+  return 1 - (1 - t) ** 3;
+}
 
 const dustMotes = Array.from({ length: 10 }, (_, i) => ({
   x: (i * 97) % 100,
@@ -67,8 +75,8 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState(ZOOM_DEFAULT);
   const [dragging, setDragging] = useState(false);
-  const [focusAnimating, setFocusAnimating] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     pointerId: number;
@@ -79,28 +87,82 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
     moved: boolean;
   } | null>(null);
   const panLimitsRef = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
+  const centerOnPlayerRef = useRef<(animate: boolean) => void>(() => undefined);
+  const didInitialCenterRef = useRef(false);
+  const cameraAnimFrameRef = useRef<number | null>(null);
+  const cameraLiveRef = useRef({ zoomLevel: ZOOM_DEFAULT, pan: { x: 0, y: 0 } });
+  const zoomTargetRef = useRef(ZOOM_DEFAULT);
+
+  function cancelCameraAnimation() {
+    if (cameraAnimFrameRef.current !== null) {
+      cancelAnimationFrame(cameraAnimFrameRef.current);
+      cameraAnimFrameRef.current = null;
+    }
+  }
+
+  function setCameraImmediate(nextZoom: number, nextPan: { x: number; y: number }) {
+    cancelCameraAnimation();
+    zoomTargetRef.current = nextZoom;
+    cameraLiveRef.current = { zoomLevel: nextZoom, pan: nextPan };
+    setZoomLevel(nextZoom);
+    setPan(nextPan);
+  }
+
+  function animateCameraTo(nextZoom: number, nextPan: { x: number; y: number }) {
+    cancelCameraAnimation();
+    zoomTargetRef.current = nextZoom;
+    const from = {
+      zoomLevel: cameraLiveRef.current.zoomLevel,
+      pan: { ...cameraLiveRef.current.pan },
+    };
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / CAMERA_EASE_MS);
+      const e = easeOutCubic(t);
+      const zoom = from.zoomLevel + (nextZoom - from.zoomLevel) * e;
+      const next = {
+        x: from.pan.x + (nextPan.x - from.pan.x) * e,
+        y: from.pan.y + (nextPan.y - from.pan.y) * e,
+      };
+      cameraLiveRef.current = { zoomLevel: zoom, pan: next };
+      setZoomLevel(zoom);
+      setPan(next);
+      if (t < 1) {
+        cameraAnimFrameRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      cameraAnimFrameRef.current = null;
+      cameraLiveRef.current = { zoomLevel: nextZoom, pan: nextPan };
+      setZoomLevel(nextZoom);
+      setPan(nextPan);
+    };
+
+    cameraAnimFrameRef.current = requestAnimationFrame(tick);
+  }
 
   const hasSelection = !!context.selectedLocationId;
   const current = context.locations[context.currentLocationId];
 
   const layout = useMemo(() => {
     if (viewport.w <= 0 || viewport.h <= 0) {
-      return { width: 0, height: 0, zoom: 1, minX: 0, maxX: 0, minY: 0, maxY: 0 };
+      return { width: 0, height: 0, zoom: 1, fit: 1, minX: 0, maxX: 0, minY: 0, maxY: 0 };
     }
     const fit = Math.max(viewport.w / MAP_WIDTH, viewport.h / MAP_HEIGHT);
-    const zoom = fit * MAP_ZOOM;
+    const zoom = fit * zoomLevel;
     const width = MAP_WIDTH * zoom;
     const height = MAP_HEIGHT * zoom;
     return {
       width,
       height,
       zoom,
+      fit,
       minX: viewport.w - width,
       maxX: 0,
       minY: viewport.h - height,
       maxY: 0,
     };
-  }, [viewport.w, viewport.h]);
+  }, [viewport.w, viewport.h, zoomLevel]);
 
   panLimitsRef.current = {
     minX: layout.minX,
@@ -111,37 +173,72 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
 
   const centerOnPlayer = useCallback(
     (animate: boolean) => {
-      if (viewport.w <= 0 || viewport.h <= 0 || layout.zoom <= 0) {
+      if (viewport.w <= 0 || viewport.h <= 0 || layout.fit <= 0) {
         return;
       }
+      const liveZoomLevel = cameraLiveRef.current.zoomLevel;
+      const zoom = layout.fit * liveZoomLevel;
+      const width = MAP_WIDTH * zoom;
+      const height = MAP_HEIGHT * zoom;
+      const minX = viewport.w - width;
+      const minY = viewport.h - height;
       const panelInset = hasSelection ? PANEL_WIDTH : 0;
       const centerX = (viewport.w - panelInset) / 2;
       const centerY = viewport.h / 2;
       const focusX = current?.position.x ?? MAP_WIDTH / 2;
       const focusY = current?.position.y ?? MAP_HEIGHT / 2;
       const next = {
-        x: clamp(centerX - focusX * layout.zoom, layout.minX, layout.maxX),
-        y: clamp(centerY - focusY * layout.zoom, layout.minY, layout.maxY),
+        x: clamp(centerX - focusX * zoom, minX, 0),
+        y: clamp(centerY - focusY * zoom, minY, 0),
       };
       if (animate) {
-        setFocusAnimating(true);
-        window.setTimeout(() => setFocusAnimating(false), 480);
+        animateCameraTo(liveZoomLevel, next);
+      } else {
+        setCameraImmediate(liveZoomLevel, next);
       }
-      setPan(next);
     },
     [
       viewport.w,
       viewport.h,
-      layout.zoom,
-      layout.minX,
-      layout.maxX,
-      layout.minY,
-      layout.maxY,
+      layout.fit,
       hasSelection,
       current?.position.x,
       current?.position.y,
     ],
   );
+
+  centerOnPlayerRef.current = centerOnPlayer;
+
+  function applyZoom(delta: number) {
+    const level = clamp(zoomTargetRef.current + delta, ZOOM_MIN, ZOOM_MAX);
+    if (Math.abs(level - zoomTargetRef.current) < 0.001) {
+      return;
+    }
+    if (viewport.w <= 0 || viewport.h <= 0 || layout.fit <= 0) {
+      setCameraImmediate(level, cameraLiveRef.current.pan);
+      return;
+    }
+    const live = cameraLiveRef.current;
+    const panelInset = hasSelection ? PANEL_WIDTH : 0;
+    const centerX = (viewport.w - panelInset) / 2;
+    const centerY = viewport.h / 2;
+    const liveZoom = layout.fit * live.zoomLevel;
+    const worldX = (centerX - live.pan.x) / liveZoom;
+    const worldY = (centerY - live.pan.y) / liveZoom;
+    const nextZoom = layout.fit * level;
+    const nextWidth = MAP_WIDTH * nextZoom;
+    const nextHeight = MAP_HEIGHT * nextZoom;
+    const minX = viewport.w - nextWidth;
+    const minY = viewport.h - nextHeight;
+    animateCameraTo(level, {
+      x: clamp(centerX - worldX * nextZoom, minX, 0),
+      y: clamp(centerY - worldY * nextZoom, minY, 0),
+    });
+  }
+
+  useEffect(() => {
+    return () => cancelCameraAnimation();
+  }, []);
 
   useEffect(() => {
     const node = viewportRef.current;
@@ -159,14 +256,28 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
   }, []);
 
   useEffect(() => {
-    centerOnPlayer(true);
-  }, [context.currentLocationId, centerOnPlayer]);
+    centerOnPlayerRef.current(true);
+  }, [context.currentLocationId]);
 
   useEffect(() => {
-    setPan((currentPan) => ({
-      x: clamp(currentPan.x, layout.minX, layout.maxX),
-      y: clamp(currentPan.y, layout.minY, layout.maxY),
-    }));
+    if (viewport.w > 0 && viewport.h > 0 && !didInitialCenterRef.current) {
+      didInitialCenterRef.current = true;
+      centerOnPlayerRef.current(false);
+    }
+  }, [viewport.w, viewport.h]);
+
+  useEffect(() => {
+    if (cameraAnimFrameRef.current !== null) {
+      return;
+    }
+    setPan((currentPan) => {
+      const next = {
+        x: clamp(currentPan.x, layout.minX, layout.maxX),
+        y: clamp(currentPan.y, layout.minY, layout.maxY),
+      };
+      cameraLiveRef.current = { ...cameraLiveRef.current, pan: next };
+      return next;
+    });
   }, [layout.minX, layout.maxX, layout.minY, layout.maxY, hasSelection]);
 
   const allVisible = useMemo(
@@ -242,12 +353,17 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
     if (event.button !== 0) {
       return;
     }
+    cancelCameraAnimation();
+    const live = cameraLiveRef.current;
+    zoomTargetRef.current = live.zoomLevel;
+    setZoomLevel(live.zoomLevel);
+    setPan(live.pan);
     dragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      origX: pan.x,
-      origY: pan.y,
+      origX: live.pan.x,
+      origY: live.pan.y,
       moved: false,
     };
   }
@@ -268,10 +384,12 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
       return;
     }
     const limits = panLimitsRef.current;
-    setPan({
+    const next = {
       x: clamp(drag.origX + dx, limits.minX, limits.maxX),
       y: clamp(drag.origY + dy, limits.minY, limits.maxY),
-    });
+    };
+    cameraLiveRef.current = { ...cameraLiveRef.current, pan: next };
+    setPan(next);
   }
 
   function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
@@ -302,22 +420,18 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
       onPointerCancel={endDrag}
     >
       <div
-        className="absolute left-0 top-0 will-change-transform"
+        className="absolute left-0 top-0 origin-top-left will-change-transform"
         style={{
-          width: layout.width || '100%',
-          height: layout.height || '100%',
-          transform: `translate3d(${pan.x}px, ${pan.y}px, 0)`,
-          transition: focusAnimating && !dragging
-            ? 'transform 460ms cubic-bezier(.22,.7,.25,1)'
-            : 'none',
+          width: MAP_WIDTH,
+          height: MAP_HEIGHT,
+          transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${layout.zoom})`,
         }}
       >
         <div
-          className="absolute left-0 top-0 origin-top-left"
+          className="absolute left-0 top-0"
           style={{
             width: MAP_WIDTH,
             height: MAP_HEIGHT,
-            transform: `scale(${layout.zoom})`,
           }}
         >
           <img
@@ -580,6 +694,44 @@ export function PrisonMap({ context, onSelect }: PrisonMapProps) {
             />
           )}
         </div>
+      </div>
+
+      <div
+        className="pointer-events-none absolute bottom-5 z-[9] flex flex-col gap-1.5 transition-[right] duration-200"
+        style={{ right: hasSelection ? 390 : 20 }}
+      >
+        <div className="pointer-events-auto flex flex-col overflow-hidden rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.88)] shadow-[0_12px_28px_-12px_#000]">
+          <button
+            type="button"
+            aria-label="Zoom in"
+            disabled={zoomLevel >= ZOOM_MAX - 0.001}
+            onClick={() => applyZoom(ZOOM_STEP)}
+            onPointerDown={(event) => event.stopPropagation()}
+            className="flex h-9 w-9 items-center justify-center border-b border-[rgba(201,162,74,.16)] font-cinzel text-[18px] text-[#e0b552] transition hover:bg-[rgba(224,181,82,.12)] disabled:cursor-not-allowed disabled:opacity-35"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            aria-label="Zoom out"
+            disabled={zoomLevel <= ZOOM_MIN + 0.001}
+            onClick={() => applyZoom(-ZOOM_STEP)}
+            onPointerDown={(event) => event.stopPropagation()}
+            className="flex h-9 w-9 items-center justify-center font-cinzel text-[18px] text-[#e0b552] transition hover:bg-[rgba(224,181,82,.12)] disabled:cursor-not-allowed disabled:opacity-35"
+          >
+            −
+          </button>
+        </div>
+        <button
+          type="button"
+          aria-label="Center on player"
+          title="Center on player"
+          onClick={() => centerOnPlayer(true)}
+          onPointerDown={(event) => event.stopPropagation()}
+          className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.88)] text-[#e0b552] shadow-[0_12px_28px_-12px_#000] transition hover:bg-[rgba(224,181,82,.12)]"
+        >
+          <span className="h-2.5 w-2.5 rounded-full border-2 border-[#e0b552] bg-[radial-gradient(circle,#ffe1a8,#e0b552_70%,transparent_100%)] shadow-[0_0_8px_2px_rgba(224,181,82,.55)]" />
+        </button>
       </div>
     </div>
   );
