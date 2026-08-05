@@ -56,6 +56,8 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - **Seeded RNG** (required before Beta)
 - Hollowfort Prison story vertical slice
 - ~24–32 excellent player cards + 10–12 locations
+- **Enemy pacing** — early fights teach; later fights (elites / bosses) punish
+- **Enemy diversity** — distinct card groups / archetypes (warrior, rogue, wizard, monster, undead, …)
 - **Minimal NestJS API + Postgres** (saves, analytics events, feedback)
 - **Product analytics** (players, sessions, play time, funnel)
 - **Feedback form** (in-game / site → stored + reviewable)
@@ -150,23 +152,26 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | pnpm + Turborepo monorepo | In place |
 | Next.js 15 + `/play` + SEO/SSG | In place (M1 done) |
 | `game-engine` / `shared` / `content` | Extracted; framework-independent |
-| World / Exploration / Battle screens | Connected in session via `GameApp` (not a formal Run yet) |
-| Shared **Run** state | Mostly done — shared `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
-| Exploration ↔ Battle continuity | In place for session — location FIGHT → battle → `TO PRISON` |
+| World / Exploration / Battle screens | Connected via `GameApp` + shared `RunState` |
+| Shared **Run** state | Done — `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
+| Character creation | Done — name + gender → `POST /players` → guest `playerId` |
+| Exploration ↔ Battle continuity | In place — location FIGHT → battle → `TO PRISON` |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
-| Save / load + save schema | Local resume shipped; NestJS cloud save endpoints scaffolded |
+| Save / load + save schema | Cloud save/load wired (`GET|PUT /saves/:playerId`); mid-battle snapshot still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | Guided tour (map + battle) | Not started |
-| NestJS API + Postgres | Scaffolded (`apps/api` + Docker Compose Postgres); client sync still open |
-| Analytics + feedback | API ingest endpoints live; client UI still open |
+| NestJS API + Postgres | Live locally (`apps/api` + Docker Compose); players / saves / analytics / feedback |
+| Analytics + feedback | Core client events instrumented; feedback form UI still open; no rollup queries yet |
 | Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
+| Enemy balance / diversity | Not started — shared enemy card pool; no early→late curve or archetypes yet |
+| Portraits / card art | Class+gender player portraits; 24 player card covers |
 | Inventory | Money for Beta; full items post-Beta |
-| Automated tests | E2E smoke + world→battle; XP / loadout unit tests |
+| Automated tests | E2E smoke + world→battle; XP / loadout unit tests (E2E needs guest+API bootstrap) |
 
 Update this table as milestones land.
 
@@ -178,7 +183,7 @@ Update this table as milestones land.
 
 ### Player journey checklist
 
-- [x] Start a new run from `/play` (local autosave resume)
+- [x] Start a new run from `/play` (character creation → cloud autosave resume)
 - [x] Wake / begin in Prison Cell
 - [x] Enter prison exploration from the world map
 - [x] Trigger battle from exploration (location FIGHT / on-enter encounter)
@@ -220,7 +225,7 @@ CURRENT
 4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
   │
   ▼
-5. Save schema + cloud save / load (API)   ← local + API endpoints; client sync open
+5. Save schema + cloud save / load (API)   ← done (guest player + client sync)
   │
   ▼
 6. Seeded RNG (required)                   ← done
@@ -235,10 +240,10 @@ CURRENT
 9. Prison story vertical slice             ← playable escape path done; polish open
   │
   ▼
-10. Content: ~24–32 cards · 10–12 locations ← locations done; card count growing
+10. Content: cards · locations · enemy pacing ← locations/cards present; enemy curve + archetypes open
   │
   ▼
-11. Analytics events + product stats + feedback form
+11. Analytics events + product stats + feedback form ← core events live; feedback UI / queries open
   │
   ▼
 12. Polish + guided tour (map / battle) + E2E
@@ -276,7 +281,7 @@ Full auth, profiles, leaderboards, and **full item inventory** stay **after** th
 ### Preserve existing game (framework-independent)
 
 - [x] Game Engine / Battle / Exploration / Deck / XState / Content packs
-- [ ] Save System (when added — see M4 cloud save)
+- [x] Save System (cloud save / load via NestJS; see M4)
 
 ### SEO & content SSG
 
@@ -403,19 +408,20 @@ SaveFile
 - [x] Spec `GameState` + `SaveFile` types (version fields mandatory)
 - [x] Serialize / deserialize in the engine or a thin persistence helper
 - [x] Scaffold `apps/api` (NestJS) + Postgres + deploy target (Docker Compose local)
-- [ ] Guest `playerId` (generate once, store client-side; send on API calls)
-- [x] API: create / update / get / list saves for a player (`POST /players`, `GET|PUT /saves/:playerId`)
-- [ ] Client continue flow against cloud save
-- [x] Optional `localStorage` cache for faster resume / offline draft
+- [x] Guest `playerId` (character creation → `POST /players` with name/gender; store client-side; send on API calls)
+- [x] API: create / update / get saves for a player (`POST /players`, `GET|PUT /saves/:playerId`)
+- [x] Client continue flow against cloud save (`loadCloudRun` / `saveCloudRun`)
+- [ ] Optional `localStorage` cache for faster resume / offline draft (deferred; cloud is primary)
 - [x] Migration stub or reject incompatible `schemaVersion`
-- [x] Autosave at safe checkpoints (location change, battle end, unlock)
+- [x] Autosave at safe checkpoints (debounced run changes + pre-battle flush)
 
-### Local resume (shipped ahead of cloud)
+### Resume / abandon
 
-- [x] Persist exploration + progression + seed/cursor in `localStorage`
-- [x] Resume mid-prison run on refresh
-- [x] Settings → Abandon run clears local save
+- [x] Persist exploration + progression + seed/cursor via cloud save
+- [x] Resume mid-prison run on refresh (same browser / same `playerId`)
+- [x] Settings → Abandon run clears cloud save (writes empty run)
 - [ ] Mid-battle snapshot (refresh returns to fight prompt / exploration)
+- [ ] Cross-device continue without copying guest `playerId` (post-auth)
 
 ### Deliverable
 
@@ -461,7 +467,7 @@ Same seed ⇒ same random sequence ⇒ reproducible bugs and E2E scenarios.
 - [x] Progression carried across battles in the current session
 - [x] Character screen shows live class XP and total XP
 - [x] Battle results show XP gained this fight
-- [x] Persist via local save / load (M4 local); cloud still open
+- [x] Persist via cloud save / load (M4)
 
 ### Level system (next progression step)
 
@@ -606,11 +612,42 @@ Current roster in `prisonMap.json` (see also [HOLLOWFORT.md](./HOLLOWFORT.md) �
 - [ ] Story events (dialog present; deeper beats pending)
 - [ ] Quest hooks where the location owns an objective
 
+### Enemy pacing & diversity (Hollowfort)
+
+**Goal:** Early rooms teach the combat loop; later rooms and bosses feel like different threats, not the same deck with more HP.
+
+#### Difficulty curve
+
+- [ ] Tag enemies by power band (`intro` / `common` / `elite` / `boss`) mapped to prison depth
+- [ ] Early fights (Prison Cell → Cell Block / early corridors): smaller decks, telegraphed attacks, low shield/barrier
+- [ ] Mid prison: mixed threats, status effects, light defence
+- [ ] Late / branch bosses: larger decks, stronger defence, signature tools
+- [ ] Tune `deckSize`, starting shield/barrier, and card pools per band (not one global enemy deck for all)
+
+#### Enemy card groups / archetypes
+
+Ideally each enemy draws from a named group (or small mix), not one shared pool:
+
+| Group | Feel | Examples in Hollowfort |
+|-------|------|------------------------|
+| Warrior / Guard | Shields, heavy strikes | Guard, Knight, Guard Captain |
+| Rogue / Cutthroat | Poison, first-strike, evasion | Crazy Prisoner, Dead Anarchist |
+| Wizard / Ritualist | Barrier, pierce, control | Sorcerer, Inquisitor |
+| Monster / Beast | Raw damage, pack pressure | Giant Rat, Demon |
+| Undead / Bound | Persist, drain, grim defence | Resurrected Anarchist |
+| Brute / Survivor scrap | High HP trades, messy defence | Fat Prisoner, Butcher, Prison Warden |
+
+- [ ] Content schema: `enemyGroup` / `cardPoolIds` on enemy definitions
+- [ ] Split `enemyCards.json` into group pools (start lean: 4–6 cards per group)
+- [ ] Assign each Hollowfort enemy a primary group (+ optional splash cards)
+- [ ] Bosses get a unique signature card or two on top of their group
+- [ ] Player-facing telegraph: intent / portrait / tier already hint the group
+
 Public Regions / Lore site pages may mirror this via SSG without embedding engine code.
 
 ### Deliverable
 
-A finished narrative vertical slice of Hollowfort Prison.
+A finished narrative vertical slice of Hollowfort Prison — with fights that ramp in power and feel distinct by enemy type.
 
 ---
 
@@ -618,9 +655,9 @@ A finished narrative vertical slice of Hollowfort Prison.
 
 **Horizon:** Red · **Priority:** #8
 
-**Goal:** Prove class identity with a **tight** set of excellent cards — not a large mediocre pile.
+**Goal:** Prove class identity with a **tight** set of excellent player cards — and give enemies their own readable card identities (see M7 pacing).
 
-### Target for Beta
+### Target for Beta (player)
 
 | Class | Cards |
 |-------|------:|
@@ -632,7 +669,7 @@ A finished narrative vertical slice of Hollowfort Prison.
 
 Then expand: 32 → 50 → 80 → 120 after the system feels right.
 
-### Tasks
+### Tasks (player)
 
 - [x] Fighter, Rogue, Wizard, Survivor as class ids + XP paths
 - [x] Attack / defence effects + combos
@@ -640,9 +677,16 @@ Then expand: 32 → 50 → 80 → 120 after the system feels right.
 - [ ] Utility / event / equipment categories only if the slice needs them
 - [ ] Synergies / rarity / upgrades — lean for Beta; expand post-Beta
 
+### Tasks (enemy cards — pairs with M7)
+
+- [ ] Replace the single shared enemy deck with group pools (warrior, rogue, wizard, monster, undead, brute, …)
+- [ ] Early-pool cards are weaker / simpler than late-pool cards
+- [ ] Bosses mix group identity + 1–2 exclusive cards
+- [ ] Keep total enemy card count lean for Beta (~20–30 across groups, not a second player library)
+
 ### Deliverable
 
-Four readable class identities players can feel within one prison run.
+Four readable player class identities **and** enemies that play differently across the prison run.
 
 ---
 
@@ -675,16 +719,17 @@ No ClickHouse, Kafka, or heavy pipeline for Beta.
 ### Events (start here)
 
 - [x] API ingest: `POST /analytics/events` (Postgres `analytics_events`)
-- [ ] `game_started`
+- [x] `player_created` (character registry)
+- [x] `session_started`
 - [ ] `session_heartbeat` or duration derived from events
-- [ ] `battle_started`
-- [ ] `battle_finished`
+- [x] `battle_started`
+- [x] `battle_finished`
 - [ ] `card_played` — `{ cardId, classId, locationId, battleId }`
-- [ ] `card_unlocked`
+- [x] `card_unlocked`
 - [ ] `location_entered`
 - [ ] `player_died`
 - [ ] `boss_defeated`
-- [ ] `game_completed`
+- [x] `escape_to_world` / `run_abandoned` (completion / drop signals)
 - [ ] `feedback_submitted`
 
 ### Feedback form
@@ -696,9 +741,10 @@ No ClickHouse, Kafka, or heavy pipeline for Beta.
 
 ### Tasks
 
-- [ ] Event type union + emit helper (client-safe; no gameplay rules)
+- [x] Event type union + emit helper (`apps/web/src/lib/analytics.ts`)
 - [x] `analytics.events` + `feedback` tables
-- [ ] Instrument as corresponding mechanics stabilize
+- [x] Instrument core funnel events (create / session / battle / unlock / escape / abandon)
+- [ ] Deeper instrumentation (`card_played`, locations, boss, duration)
 - [ ] Simple query / export / dashboard notes for design decisions
 
 ### Deliverable
@@ -775,14 +821,15 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [ ] Hollowfort Prison vertical slice playable end-to-end
 - [x] Public site + `/play` (repo ready)
 - [ ] Deployed web + API (Vercel / Railway / similar)
-- [ ] Cloud save / load working (guest player id)
-- [ ] Analytics ingest + product stats queries
+- [x] Cloud save / load working (guest player id + name/gender)
+- [ ] Analytics ingest + product stats queries (ingest live; queries / duration still open)
 - [ ] Feedback form live and stored
 - [ ] Seeded RNG in production builds
-- [ ] ~24–32 player cards · ~10–12 locations · 1 memorable boss
+- [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
+- [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
 - [ ] Reward loop + class progression readable without a tutorial wall
 - [ ] Guided tour: exploration map + first battle first-steps (dismissible coach marks)
-- [ ] Quest log + at least 2–3 prison quests
+- [x] Quest log + at least 2–3 prison quests
 - [ ] Money in inventory (earn / spend in the slice)
 
 ### Explicitly out of Beta scope (Green)
@@ -843,8 +890,9 @@ Cards stay primary. Beta already includes **quests + money**; grow item loadouts
 4. Experiment with class combinations and feel progression.
 5. Track quests and use money at least once in a meaningful choice.
 6. Defeat the prison boss and return to the world map.
-7. Finish without major bugs or disconnected systems.
-8. Leave curious about the next region.
+7. Feel the prison escalate: early fights are fair teachers; bosses feel like different threats.
+8. Finish without major bugs or disconnected systems.
+9. Leave curious about the next region.
 
 ### Platform
 
@@ -861,6 +909,7 @@ Cards stay primary. Beta already includes **quests + money**; grow item loadouts
 - Building full auth + profiles + leaderboards before the prison loop is fun
 - Expanding **full item inventory** before card progression, quests, and money feel good
 - Inflating to 40–60 cards before ~24–32 feel distinct
+- Shipping Hollowfort with one shared enemy deck and flat difficulty (no early→late curve, no archetypes)
 - Treating Exploration and Battle as separate demos
 - Shipping without seeded RNG or versioned cloud saves
 - Building a warehouse / ClickHouse stack for a handful of Beta events
