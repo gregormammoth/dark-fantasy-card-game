@@ -155,16 +155,16 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Exploration ↔ Battle continuity | In place for session — location FIGHT → battle → `TO PRISON` |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
-| Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards) |
-| Reward loop | Fragmented — XP + level unlocks so far |
-| Quests (logic + UI) | Run quests + Player / map quest log in place; polish ongoing |
+| Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
+| Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
+| Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
 | Save / load + save schema | Local resume shipped; cloud save still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | Guided tour (map + battle) | Not started |
 | NestJS API + Postgres | Not started (Beta-critical) |
 | Analytics + feedback | Not started (Beta-critical) |
-| Hollowfort map content | 13 locations + branch bosses + encounter queue (polish ongoing) |
+| Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
 | Inventory | Money for Beta; full items post-Beta |
 | Automated tests | E2E smoke + world→battle; XP / loadout unit tests |
 
@@ -184,15 +184,15 @@ Update this table as milestones land.
 - [x] Trigger battle from exploration (location FIGHT / on-enter encounter)
 - [x] Enter battle carrying app-level progression
 - [x] Earn class XP from successful card plays
-- [ ] Improve deck (unlock / rebuild) mid-run
+- [x] Improve deck (unlock / rebuild) mid-run
 - [x] Return to exploration after battle (`TO PRISON`) with XP intact
 - [x] Open Player and see updated class XP
-- [ ] Fight again with a meaningfully different deck
-- [ ] Track and complete at least one quest from the quest log
+- [x] Fight again with a meaningfully different deck
+- [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
-- [ ] Escape Hollowfort (Exit Gate CTA not wired to world yet)
-- [ ] Reach the world map via escape (manual `THE REALM` exists)
+- [x] Escape Hollowfort (Exit Gate → world)
+- [x] Reach the world map via escape
 
 ### Slice success
 
@@ -208,34 +208,34 @@ Work in this order unless a dependency forces otherwise. Analytics may be instru
 CURRENT
   │
   ▼
-1. XP + progression (levels / unlocks)     ← XP award+UI done; levels next
+1. XP + progression (levels / unlocks)     ← done (levels + 12 improved cards)
   │
   ▼
-2. Shared Run State
+2. Shared Run State                        ← still React session; formalize next
   │
   ▼
-3. Exploration ↔ Battle (same run)         ← session loop largely done
+3. Exploration ↔ Battle (same run)         ← done for session
   │
   ▼
 4. Minimal NestJS + Postgres scaffold
   │
   ▼
-5. Save schema + cloud save / load (API)
+5. Save schema + cloud save / load (API)   ← local resume done; cloud open
   │
   ▼
-6. Seeded RNG (required)
+6. Seeded RNG (required)                   ← done
   │
   ▼
-7. Reward loop
+7. Reward loop                             ← XP/unlocks exist; formal grant API open
   │
   ▼
-8. Quests (logic + UI) + money (light inventory)
+8. Quests (logic + UI) + money             ← quests done; money open
   │
   ▼
-9. Prison story vertical slice
+9. Prison story vertical slice             ← playable escape path done; polish open
   │
   ▼
-10. Content: ~24–32 cards · 10–12 locations
+10. Content: ~24–32 cards · 10–12 locations ← locations done; card count growing
   │
   ▼
 11. Analytics events + product stats + feedback form
@@ -470,15 +470,16 @@ XP → Class Level → Unlockable cards → Spend XP → Deck changes
 ```
 
 - [x] Independent class levels from XP thresholds (10 XP = 1 level per class)
-- [x] Unlock new cards by class level / XP spend (tighten rules vs current demo unlock UI)
+- [x] Unlock new cards by spending free class levels (1 level per improved card)
 - [ ] Passive bonuses (only if they serve the slice — keep lean)
 - [ ] Avoid heavy level-curve tuning until analytics / playtests inform pace
 
 ### Deck growth
 
 - [x] Character screen deck composition (add / remove, deck cap)
-- [x] Unlock cards by spending class XP (UI exists — bind to real rules)
+- [x] Unlock cards by spending free class levels (bound to loadout + battles)
 - [x] Twelve improved cards available on Character screen (1 level each)
+- [x] Mid-run unlock rebuilds exploration/battle deck for the next fight
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
 
@@ -519,20 +520,20 @@ Players specialise or hybridise through cards — and each fight changes what th
 
 ### Quests (engine + UI)
 
-Content already has a thin `LocationQuest` stub on locations; Beta needs a real quest system on the Run.
-
 ```text
 Accept / discover → Active → Objectives progress → Complete / Fail
 ```
 
-- [ ] Quest definition content (id, title, description, objectives, rewards, prerequisites)
-- [ ] Run quest state: available / active / completed / failed
-- [ ] Engine: accept, progress (flags, talk, kill, reach location, pay money), complete, fail
-- [ ] Wire NPC dialog / location interactions / battle results into quest progress
-- [ ] Player-facing **quest log UI** (list + detail + objectives)
-- [ ] At least 3 Hollowfort faction quests (see [HOLLOWFORT.md](./HOLLOWFORT.md): kill Warden / Inquisitor / Resurrected Anarchist)
-- [ ] Quests granted only after dialog with Dead Anarchist, Sorcerer (post-Demon), Guard Captain
-- [ ] Exit Gate shows the matching faction NPC when that quest’s boss is dead
+- [x] Quest definition content (id, title, description, objectives, rewards, prerequisites)
+- [x] Run quest state: active / completed (failed still optional)
+- [x] Engine: grant, progress (flags, talk, kill, reach location), complete
+- [x] Wire NPC dialog / location interactions / battle results into quest progress
+- [x] Player-facing **quest log UI** (Player screen list + detail + objectives; map toasts)
+- [x] At least 3 Hollowfort faction quests (kill Warden / Inquisitor / Resurrected Anarchist)
+- [x] Quests granted only after dialog with Dead Anarchist, Sorcerer (post-Demon), Guard Captain
+- [x] Exit Gate shows the matching faction NPC when that quest’s boss is dead
+- [ ] Fail states / pay-money quest progress (when money exists)
+- [ ] Quest reward XP / money grants unified through Run reward API
 
 ### Money (light inventory)
 
@@ -546,7 +547,7 @@ Out of Beta scope for inventory: weapons, armour, potions, trinkets as a full eq
 
 ### Deliverable
 
-Quest log is usable mid-run; money appears in inventory and matters for at least one prison choice or reward.
+Quest log is usable mid-run (**done**). Money appears in inventory and matters for at least one prison choice or reward (**open**).
 
 ---
 
@@ -566,16 +567,16 @@ Quest log is usable mid-run; money appears in inventory and matters for at least
 - [ ] Find money / card reward (full equipment inventory still post-Beta)
 - [x] Reach courtyard
 - [x] Defeat prison boss (one of three sealed branches)
-- [ ] Escape Hollowfort (gate unlock works; escape → world not wired)
-- [ ] Reach world map via escape
+- [x] Escape Hollowfort (Exit Gate OPEN → `escaped_hollowfort` → world)
+- [x] Reach world map via escape
 
 ### Quests & economy in the slice
 
-- [ ] Quest log surfaces the three faction kill-quests ([HOLLOWFORT.md](./HOLLOWFORT.md))
-- [ ] Quests appear only after dialog (Dead Anarchist / Sorcerer / Guard Captain)
-- [ ] Exit Gate conditional NPCs after matching boss kills
+- [x] Quest log surfaces the three faction kill-quests ([HOLLOWFORT.md](./HOLLOWFORT.md))
+- [x] Quests appear only after dialog (Dead Anarchist / Sorcerer / Guard Captain)
+- [x] Exit Gate conditional NPCs after matching boss kills
 - [ ] At least one paid / bribe / buy choice using money
-- [ ] Quest completion grants XP, money, and/or unlocks
+- [ ] Quest completion grants XP, money, and/or unlocks (completion works; reward grant polish open)
 
 ### Locations (handcrafted, ~10–12)
 
@@ -863,4 +864,4 @@ Cards stay primary. Beta already includes **quests + money**; grow item loadouts
 - Shipping without seeded RNG or versioned cloud saves
 - Building a warehouse / ClickHouse stack for a handful of Beta events
 - Skipping product analytics and feedback because “content first”
-- Shipping Hollowfort without a usable quest log if story asks depend on tracked objectives
+- Shipping Hollowfort without money mattering at least once (quests/escape path already ship)
