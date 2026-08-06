@@ -183,7 +183,10 @@
     "cardsHealth": "CARDS · HEALTH",
     "cardsShort": "CARDS",
     "endTurnLine1": "END",
-    "endTurnLine2": "TURN"
+    "endTurnLine2": "TURN",
+    "log": "LOG",
+    "round": "ROUND {count}",
+    "deckTypes": "CARD TYPES IN ITS DECK"
   },
   "player": {
     "questLog": "QUEST LOG",

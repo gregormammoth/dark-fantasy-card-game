@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
+import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { getPlayerHealth, getEnemyHealth } from '@dark-fantasy/game-engine/engine/health';
 import { previewCombo } from '@dark-fantasy/game-engine/engine/comboPreview';
-import { getEnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
 import { getTotalXpGained, getXpGained } from '@dark-fantasy/game-engine';
 import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
@@ -44,6 +44,48 @@ interface StackSpendState {
 interface SpendState {
   enemy: StackSpendState | null;
   player: StackSpendState | null;
+}
+
+type EnemyCardTypeTone = 'damage' | 'shield' | 'poison' | 'pierce';
+
+function getEnemyCardTypes(battle: BattleContext, t: TranslateFn): Array<{ label: string; tone: EnemyCardTypeTone }> {
+  const seen = new Set<EnemyCardTypeTone>();
+  const items: Array<{ label: string; tone: EnemyCardTypeTone }> = [];
+  const cards = [...battle.enemy.deck, ...battle.enemy.discard];
+
+  for (const card of cards) {
+    for (const effect of card.definition.effects) {
+      let tone: EnemyCardTypeTone | null = null;
+      if (effect.type === 'damage') {
+        tone = 'damage';
+      } else if (effect.type === 'shield' || effect.type === 'barrier') {
+        tone = 'shield';
+      } else if (effect.type === 'poison') {
+        tone = 'poison';
+      } else if (effect.type === 'ignoreShield') {
+        tone = 'pierce';
+      }
+
+      if (!tone || seen.has(tone)) {
+        continue;
+      }
+
+      seen.add(tone);
+      items.push({
+        tone,
+        label:
+          tone === 'damage'
+            ? t('battle.intentAttack')
+            : tone === 'shield'
+              ? t('battle.intentDefend')
+              : tone === 'poison'
+                ? t('battle.intentPoison')
+                : t('battle.ignoresShield'),
+      });
+    }
+  }
+
+  return items;
 }
 
 function formatTurnLabel(state: string, t: TranslateFn): string {
@@ -127,10 +169,7 @@ export function BattleScreen({
     () => (isPlayerTurn ? previewCombo(battle) : null),
     [battle, isPlayerTurn],
   );
-  const enemyIntent = useMemo(
-    () => (isPlayerTurn ? getEnemyIntent(battle) : null),
-    [battle, isPlayerTurn],
-  );
+  const enemyCardTypes = useMemo(() => getEnemyCardTypes(battle, t), [battle, t]);
 
   const audioPhase = isVictory
     ? 'victory'
@@ -285,7 +324,12 @@ export function BattleScreen({
         />
       )}
       <div className="relative z-0 mx-auto flex w-full max-w-[1240px] flex-col gap-4">
-        <TopBar turnLabel={formatTurnLabel(state, t)} logEntries={battle.log} emptyLogLabel={t('battle.battleBegins')} />
+        <TopBar
+          turnLabel={formatTurnLabel(state, t)}
+          logEntries={battle.log}
+          emptyLogLabel={t('battle.battleBegins')}
+          roundCount={battle.battleStats.turnCount}
+        />
 
         {battle.activePlay && isAnimating && (
           <BattlePlayAnimation
@@ -304,7 +348,7 @@ export function BattleScreen({
           shield={battle.enemy.shield}
           barrier={battle.enemy.barrier}
           poison={battle.enemyPoison}
-          intent={enemyIntent}
+          cardTypes={enemyCardTypes}
           spendingIndices={spendState.enemy?.indices}
           spendMode={spendState.enemy?.mode}
           isHit={hitTarget === 'enemy'}

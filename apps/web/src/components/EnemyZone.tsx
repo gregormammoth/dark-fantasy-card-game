@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
 import type { PoisonState } from '@dark-fantasy/shared/types/battle';
-import type { EnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
 import { useTranslation } from '@/i18n/useTranslation';
 import { CardStack } from './CardStack';
-import { AttackIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
+import { PoisonIcon, ShieldIcon } from './EffectIcons';
+
+interface EnemyCardTypeChip {
+  label: string;
+  tone: 'damage' | 'shield' | 'poison' | 'pierce';
+}
 
 interface EnemyZoneProps {
   name: string;
@@ -13,7 +17,7 @@ interface EnemyZoneProps {
   shield: number;
   barrier?: number;
   poison: PoisonState | null;
-  intent: EnemyIntent | null;
+  cardTypes?: EnemyCardTypeChip[];
   spendingIndices?: Set<number>;
   spendMode?: 'burn' | 'draw';
   isHit?: boolean;
@@ -50,7 +54,7 @@ export function EnemyZone({
   shield,
   barrier = 0,
   poison,
-  intent,
+  cardTypes = [],
   spendingIndices,
   spendMode = 'burn',
   isHit = false,
@@ -100,28 +104,51 @@ export function EnemyZone({
           <span className="text-xs tracking-[.24em] text-[#c56a5f]">{t('battle.dreadborne')}</span>
         </div>
 
-        {intent && (
-          <div
-            className="animate-intentpulse flex max-w-[560px] items-center gap-4 rounded-[14px] px-5 py-4"
-            style={{
-              background: 'linear-gradient(180deg,rgba(80,20,17,.55),rgba(30,12,11,.4))',
-            }}
-          >
-            <div className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center">
-              <AttackIcon className="inline-block h-[34px] w-[30px]" />
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="text-[10px] tracking-[.28em] text-[#e8a49b]">{t('battle.incomingAttack')}</span>
-              <div className="flex items-baseline gap-2.5">
-                <span className="font-cinzel text-[30px] leading-none text-[#ffd9d2]">
-                  {intent.damage}
-                </span>
-                <span className="font-cinzel text-lg text-[#f0c0b8]">{intent.cardName}</span>
-              </div>
-            </div>
-            <span className="max-w-[150px] text-right text-xs leading-snug text-[#c99]">
-              {t('battle.burnsAfterShield', { count: intent.cardsBurned })}
+        {cardTypes.length > 0 && (
+          <div className="flex max-w-[600px] flex-col gap-2.5">
+            <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">
+              {t('battle.deckTypes')}
             </span>
+            <div className="flex flex-wrap gap-2.5">
+              {cardTypes.map((item) => {
+                const styles = {
+                  damage: {
+                    bg: 'rgba(224,82,74,.12)',
+                    border: 'rgba(224,82,74,.4)',
+                    color: '#f0dfcb',
+                  },
+                  shield: {
+                    bg: 'rgba(91,134,196,.1)',
+                    border: 'rgba(91,134,196,.35)',
+                    color: '#dce8fa',
+                  },
+                  poison: {
+                    bg: 'rgba(111,174,90,.1)',
+                    border: 'rgba(111,174,90,.35)',
+                    color: '#d9f1cf',
+                  },
+                  pierce: {
+                    bg: 'rgba(201,162,74,.1)',
+                    border: 'rgba(201,162,74,.35)',
+                    color: '#f0dfcb',
+                  },
+                }[item.tone];
+
+                return (
+                  <span
+                    key={`${item.tone}-${item.label}`}
+                    className="rounded-[6px] border px-3 py-2 text-[10px] tracking-[.14em]"
+                    style={{
+                      background: styles.bg,
+                      borderColor: styles.border,
+                      color: styles.color,
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         )}
 
