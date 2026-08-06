@@ -10,8 +10,8 @@ interface HandProps {
 
 export function Hand({ cards, onAddToCombo, disabled }: HandProps) {
   return (
-    <div className="flex flex-1 items-end justify-center" style={{ height: 200 }}>
-      <div className="flex items-end">
+    <div className='flex flex-1 items-end justify-center overflow-visible pb-1' style={{ height: 200 }}>
+      <div className='flex items-end overflow-visible'>
         <AnimatePresence mode="popLayout">
           {cards.map((card, index) => (
             <Card

@@ -157,6 +157,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Shared **Run** state | Done — `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
 | Character creation | Done — name + gender → `POST /players` → guest `playerId` |
 | Exploration ↔ Battle continuity | In place — location FIGHT → battle → `TO PRISON` |
+| Exploration action economy + encounter pressure | Not started — map still needs a clear 3–4 action/card loop, encounter pressure, and battle handoff from exploration state |
 | Battle core | Partial — playable |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
@@ -195,6 +196,7 @@ Update this table as milestones land.
 - [x] Return to exploration after battle (`TO PRISON`) with XP intact
 - [x] Open Player and see updated class XP
 - [x] Fight again with a meaningfully different deck
+- [ ] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
@@ -221,7 +223,7 @@ CURRENT
 2. Shared Run State                        ← RunState done; app XState machine deferred
   │
   ▼
-3. Exploration ↔ Battle (same run)         ← done for session
+3. Exploration ↔ Battle (same run)         ← session loop done; action economy + battle handoff open
   │
   ▼
 4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
@@ -358,6 +360,12 @@ Exploration and battle are no longer separate runtimes.
 - [x] Battle result returns to exploration (`TO PRISON`, not a dead-end modal island)
 - [x] Polish outcomes, locks, and once-flags for the prison slice (`finalBranchId`, talked NPCs, remove defeated enemies)
 - [x] Locked locations (sealed final branches + Exit Gate until chosen boss cleared)
+- [ ] Complete the exploration action economy so spending cards on the map is clear, fast, and convenient
+- [ ] Tune the default prison turn cadence to roughly **3–4 actions / cards** before an encounter fires, with room for content-driven variation
+- [ ] Make encounters pressure the current card state in meaningful ways (shuffle, discard, burn, remove, or otherwise disturb cards instead of acting like a cosmetic timer)
+- [ ] Carry the player into battle with the current exploration hand / deck state so saved cards become tactical battle resources
+- [ ] Let encounter outcomes also touch battle readiness by consuming, shuffling, or denying cards the player was trying to preserve
+- [ ] Surface this clearly in the UI: actions remaining, encounter timing, and which cards are being risked by spending or holding
 
 ### Deliverable
 
@@ -365,7 +373,7 @@ Exploration and battle are no longer separate runtimes.
 Exploration → Fight → Battle → Result → Exploration
 ```
 
-Session loop works. Formal shared **Run** ownership remains Milestone 2.
+Session loop works. Formal shared **Run** ownership remains Milestone 2, and exploration card spending should feed directly into battle readiness.
 
 ---
 

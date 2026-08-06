@@ -1,10 +1,17 @@
 import { motion } from 'framer-motion';
 import type { CSSProperties, ReactNode } from 'react';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
-import { getCardEffectSummary, getCardTheme, getCardType } from '@/lib/cardTheme';
+import {
+  cardLayout,
+  getCardEffectIconType,
+  getCardEffectSummary,
+  getCardEffectTextColor,
+  getCardHeight,
+  getCardTheme,
+} from '@/lib/cardTheme';
 import { useAudio } from '@/audio/useAudio';
 import { useHoverSound } from '@/audio/useHoverSound';
-import { AttackIcon, BarrierIcon, ShieldIcon } from './EffectIcons';
+import { CardEffectIcon } from './EffectIcons';
 
 interface CardProps {
   card: CardInstance;
@@ -21,12 +28,26 @@ interface CardProps {
   footer?: ReactNode;
 }
 
+function getHandOverlap(total: number): number {
+  if (total <= 3) {
+    return -12;
+  }
+  if (total <= 5) {
+    return -16;
+  }
+  return -20;
+}
+
 function getHandStyle(index: number, total: number): CSSProperties {
+  const overlap = getHandOverlap(total);
+
   if (total <= 1) {
     return {
       transform: 'rotate(0deg) translateY(2px)',
       transformOrigin: 'bottom center',
-      marginRight: total === 1 ? 0 : -24,
+      marginRight: 0,
+      zIndex: 1,
+      position: 'relative',
     };
   }
 
@@ -38,7 +59,9 @@ function getHandStyle(index: number, total: number): CSSProperties {
   return {
     transform: `rotate(${rot}deg) translateY(${y}px)`,
     transformOrigin: 'bottom center',
-    marginRight: index < total - 1 ? -24 : 0,
+    marginRight: index < total - 1 ? overlap : 0,
+    zIndex: index + 1,
+    position: 'relative',
   };
 }
 
@@ -58,13 +81,12 @@ export function Card({
 }: CardProps) {
   const { definition } = card;
   const theme = getCardTheme(definition);
-  const cardType = getCardType(definition);
+  const effectIconType = getCardEffectIconType(definition);
+  const effectColor = getCardEffectTextColor(effectIconType);
   const summary = getCardEffectSummary(definition);
   const imageSrc = definition.image ?? (definition.class ? `/cards/${definition.id}.png` : undefined);
   const isHand = variant === 'hand';
-  const isCollection = variant === 'collection';
-  const width = isHand ? 152 : 150;
-  const imageHeight = isHand ? 116 : isCollection ? 116 : 96;
+  const cardHeight = getCardHeight();
   const { play } = useAudio();
   const hover = useHoverSound('card_hover', 0.2);
 
@@ -80,15 +102,16 @@ export function Card({
       onPointerEnter={hover.onPointerEnter}
       onPointerLeave={hover.onPointerLeave}
       disabled={disabled || locked}
-      initial={isCollection ? false : { opacity: 0, y: 24, scale: 0.9 }}
+      initial={variant === 'collection' ? false : { opacity: 0, y: 24, scale: 0.9 }}
       animate={{ opacity: locked ? 0.55 : 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.85, y: -12 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`ember-card group flex shrink-0 flex-col overflow-hidden rounded-[11px] bg-[#12100f] text-left transition-[transform,box-shadow] duration-[180ms] ease-out ${
         disabled || locked ? 'cursor-not-allowed' : 'cursor-pointer'
-      } ${isHand ? 'hover:z-20' : ''} ${isCollection && !locked ? 'hover:-translate-y-1' : ''}`}
+      } ${isHand ? 'hover:z-30' : ''} ${variant === 'collection' && !locked ? 'hover:-translate-y-1' : ''}`}
       style={{
-        width,
+        width: cardLayout.width,
+        height: cardHeight,
         border: `1px solid ${
           inDeck ? theme.accent : locked ? 'rgba(201,162,74,.1)' : theme.border
         }`,
@@ -97,7 +120,10 @@ export function Card({
         ...(isHand ? getHandStyle(handIndex, handTotal) : {}),
       }}
     >
-      <div className="relative shrink-0 overflow-hidden bg-[#0c0908]" style={{ height: imageHeight }}>
+      <div
+        className="relative shrink-0 overflow-hidden bg-[#0c0908]"
+        style={{ height: cardLayout.imageHeight }}
+      >
         {imageSrc ? (
           <img
             src={imageSrc}
@@ -128,11 +154,7 @@ export function Card({
         )}
         {!locked && !inDeck && (
           <span className="absolute top-[7px] right-[7px]">
-            {cardType === 'attack' ? (
-              <AttackIcon className="inline-block h-[14px] w-3" />
-            ) : (
-              <ShieldIcon className="inline-block h-[14px] w-3" />
-            )}
+            <CardEffectIcon type={effectIconType} size="corner" />
           </span>
         )}
         {locked && (
@@ -149,21 +171,20 @@ export function Card({
           </span>
         )}
       </div>
-      <div className="px-2.5 py-2" style={{ borderTop: `2px solid ${theme.accent}` }}>
-        <div className="font-cinzel text-[13px] text-[#f0dfcb]">{definition.name}</div>
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#eaa]">
-          {cardType === 'attack' ? (
-            <AttackIcon className="inline-block h-2.5 w-2" />
-          ) : definition.effects.some((effect) => effect.type === 'barrier') ? (
-            <BarrierIcon className="inline-block h-2.5 w-2.5" />
-          ) : (
-            <ShieldIcon className="inline-block h-2.5 w-2.5" />
-          )}
-          <span className="leading-tight">{summary}</span>
+      <div
+        className="flex min-h-0 flex-1 flex-col px-2.5 py-2"
+        style={{ borderTop: `2px solid ${theme.accent}`, height: cardLayout.footerHeight }}
+      >
+        <div className="line-clamp-2 font-cinzel text-[13px] leading-tight text-[#f0dfcb]">
+          {definition.name}
+        </div>
+        <div className="mt-1 flex min-h-0 flex-1 items-start gap-1.5 text-[11px]" style={{ color: effectColor }}>
+          <CardEffectIcon type={effectIconType} size="footer" />
+          <span className="line-clamp-2 min-w-0 leading-tight">{summary}</span>
         </div>
         {(statusLabel || footer) && (
           <div
-            className="mt-2 text-[11px] tracking-[.04em]"
+            className="mt-auto truncate text-[11px] tracking-[.04em]"
             style={{ color: statusColor ?? '#8a7f72' }}
           >
             {footer ?? statusLabel}

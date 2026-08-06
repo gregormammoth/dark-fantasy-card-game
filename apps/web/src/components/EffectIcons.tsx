@@ -1,76 +1,90 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { Diamond, Droplets, Hexagon, RotateCcw, Shield, Sword } from 'lucide-react';
+import type { CardEffectIconType } from '@/lib/cardTheme';
 
 interface IconProps {
   className?: string;
   style?: CSSProperties;
 }
 
+function iconStyle(color: string, style?: CSSProperties): CSSProperties {
+  return {
+    color,
+    filter: `drop-shadow(0 0 6px ${color}66)`,
+    ...style,
+  };
+}
+
 export function AttackIcon({ className, style }: IconProps) {
-  return (
-    <span
-      className={className}
-      style={{
-        background: 'linear-gradient(#f0705f,#c1362c)',
-        clipPath: 'polygon(50% 0,100% 32%,72% 100%,28% 100%,0 32%)',
-        boxShadow: '0 0 16px -3px #e0524a',
-        ...style,
-      }}
-    />
-  );
+  return <Sword className={className} style={iconStyle('#e0524a', style)} strokeWidth={2.2} />;
 }
 
 export function ShieldIcon({ className, style }: IconProps) {
-  return (
-    <span
-      className={className}
-      style={{
-        background: '#5b86c4',
-        clipPath: 'polygon(50% 0,100% 22%,100% 62%,50% 100%,0 62%,0 22%)',
-        boxShadow: '0 0 10px -3px #5b86c4',
-        ...style,
-      }}
-    />
-  );
+  return <Shield className={className} style={iconStyle('#5b86c4', style)} strokeWidth={2.1} />;
 }
 
 export function BarrierIcon({ className, style }: IconProps) {
-  return (
-    <span
-      className={className}
-      style={{
-        background: '#9a7ae0',
-        clipPath: 'polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)',
-        boxShadow: '0 0 10px -3px #9a7ae0',
-        ...style,
-      }}
-    />
-  );
+  return <Hexagon className={className} style={iconStyle('#9a7ae0', style)} strokeWidth={2.1} />;
 }
 
 export function PoisonIcon({ className, style }: IconProps) {
-  return (
-    <span
-      className={className}
-      style={{
-        background: '#6fae5a',
-        borderRadius: '0 50% 50% 50%',
-        transform: 'rotate(45deg)',
-        boxShadow: '0 0 9px -2px #6fae5a',
-        ...style,
-      }}
-    />
-  );
+  return <Droplets className={className} style={iconStyle('#6fae5a', style)} strokeWidth={2.1} />;
 }
 
 export function PierceIcon({ className, style }: IconProps) {
-  return (
-    <span
-      className={className}
-      style={{
-        border: '2px solid #c9a24a',
-        transform: 'rotate(45deg)',
-        ...style,
-      }}
-    />
-  );
+  return <Diamond className={className} style={iconStyle('#c9a24a', style)} strokeWidth={2.1} />;
+}
+
+export function RecoverIcon({ className, style }: IconProps) {
+  return <RotateCcw className={className} style={iconStyle('#c9a24a', style)} strokeWidth={2.1} />;
+}
+
+const effectIconSizes = {
+  corner: {
+    attack: 'inline-block h-[14px] w-3',
+    shield: 'inline-block h-[14px] w-3',
+    barrier: 'inline-block h-[14px] w-3.5',
+    poison: 'inline-block h-[14px] w-3',
+    pierce: 'inline-block h-3.5 w-3.5',
+    recover: 'inline-block text-[13px]',
+  },
+  footer: {
+    attack: 'inline-block h-2.5 w-2 shrink-0',
+    shield: 'inline-block h-2.5 w-2.5 shrink-0',
+    barrier: 'inline-block h-2.5 w-2.5 shrink-0',
+    poison: 'inline-block h-2.5 w-2.5 shrink-0',
+    pierce: 'inline-block h-2.5 w-2.5 shrink-0',
+    recover: 'inline-block shrink-0 text-[11px]',
+  },
+} as const;
+
+function renderEffectIcon(type: CardEffectIconType, size: 'corner' | 'footer'): ReactNode {
+  const className = effectIconSizes[size][type];
+
+  switch (type) {
+    case 'attack':
+      return <AttackIcon className={className} />;
+    case 'shield':
+      return <ShieldIcon className={className} />;
+    case 'barrier':
+      return <BarrierIcon className={className} />;
+    case 'poison':
+      return <PoisonIcon className={className} />;
+    case 'pierce':
+      return <PierceIcon className={className} />;
+    case 'recover':
+      return <RecoverIcon className={className} />;
+    default:
+      return <AttackIcon className={className} />;
+  }
+}
+
+export function CardEffectIcon({
+  type,
+  size = 'footer',
+}: {
+  type: CardEffectIconType;
+  size?: 'corner' | 'footer';
+}) {
+  return renderEffectIcon(type, size);
 }

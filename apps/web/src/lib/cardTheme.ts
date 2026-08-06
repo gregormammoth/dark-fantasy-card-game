@@ -111,3 +111,75 @@ export function getCardEffectSummary(definition: CardDefinition): string {
 export function getCardType(definition: CardDefinition): CardType {
   return definition.type ?? 'attack';
 }
+
+export type CardEffectIconType =
+  | 'attack'
+  | 'shield'
+  | 'barrier'
+  | 'poison'
+  | 'pierce'
+  | 'recover';
+
+export const cardLayout = {
+  width: 152,
+  imageHeight: 116,
+  footerHeight: 68,
+} as const;
+
+export function getCardHeight(): number {
+  return cardLayout.imageHeight + cardLayout.footerHeight;
+}
+
+export function getCardEffectIconType(definition: CardDefinition): CardEffectIconType {
+  const effectTypes = definition.effects.map((effect) => effect.type);
+
+  if (effectTypes.includes('ignoreShield')) {
+    return 'pierce';
+  }
+  if (effectTypes.includes('poison')) {
+    return 'poison';
+  }
+  if (
+    effectTypes.includes('damage') ||
+    effectTypes.includes('bonusDamagePerAttackCard') ||
+    effectTypes.includes('bonusIfLowerHp') ||
+    effectTypes.includes('bonusIfFirstAttack')
+  ) {
+    return 'attack';
+  }
+  if (effectTypes.includes('barrier') || effectTypes.includes('bonusBarrierPerDefenseCard')) {
+    return 'barrier';
+  }
+  if (
+    effectTypes.includes('shield') ||
+    effectTypes.includes('restoreMaxShields') ||
+    effectTypes.includes('bonusShieldPerDefenseCard') ||
+    effectTypes.includes('reduceDamagePercent')
+  ) {
+    return 'shield';
+  }
+  if (effectTypes.includes('recoverDiscard')) {
+    return 'recover';
+  }
+
+  return getCardType(definition) === 'attack' ? 'attack' : 'shield';
+}
+
+export function getCardEffectTextColor(iconType: CardEffectIconType): string {
+  switch (iconType) {
+    case 'attack':
+      return '#eaa';
+    case 'pierce':
+      return '#ecd9b0';
+    case 'poison':
+      return '#b8dca8';
+    case 'shield':
+      return '#a8c4e8';
+    case 'barrier':
+      return '#c4b0e8';
+    case 'recover':
+      return '#d4b872';
+    default:
+      return '#a99c8d';
+  }
+}

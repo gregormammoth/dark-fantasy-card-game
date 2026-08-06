@@ -53,13 +53,13 @@ export function ExplorationHandBar({
             {t('exploration.discard', { count: context.discard.length })}
           </span>
         </div>
-        <div className="flex h-[150px] items-end">
+        <div className='flex h-[184px] items-end overflow-visible pb-1'>
           {context.hand.map((card, index) => {
             const selected = context.selectedCardInstanceId === card.instanceId;
             return (
               <div
                 key={card.instanceId}
-                className={selected ? 'relative z-10 -translate-y-3' : ''}
+                className={`shrink-0 ${selected ? 'relative z-30 -translate-y-3' : ''}`}
               >
                 <Card
                   card={card}
