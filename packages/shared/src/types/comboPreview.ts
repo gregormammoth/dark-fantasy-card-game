@@ -13,6 +13,8 @@ export interface ComboPreview {
 export function isComboPreviewEmpty(preview: ComboPreview): boolean {
   return (
     preview.damageToEnemy === 0 &&
+    preview.enemyShieldBlocked === 0 &&
+    preview.totalDamageToEnemy === 0 &&
     preview.shieldGain === 0 &&
     preview.barrierGain === 0 &&
     preview.cardsRecovered === 0 &&

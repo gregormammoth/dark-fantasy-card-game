@@ -3,6 +3,7 @@ import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
 import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
 import { createRng } from '../rng';
+import { reconcilePlayerCardPiles } from '../playerPiles';
 import { buildEncounterDeck } from './encounters';
 import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';
@@ -93,19 +94,25 @@ export function rebuildExplorationDeck(
   deckCardIds: string[],
 ): ExplorationContext {
   const next = structuredClone(context);
-  next.hand = next.hand.filter((card) => deckCardIds.includes(card.definition.id));
-  next.discard = next.discard.filter((card) => deckCardIds.includes(card.definition.id));
+  const reconciled = reconcilePlayerCardPiles(
+    {
+      hand: next.hand,
+      deck: next.deck,
+      discard: next.discard,
+    },
+    deckCardIds,
+    getPlayerCardById,
+    next.rng,
+  );
+  next.hand = reconciled.hand;
+  next.deck = reconciled.deck;
+  next.discard = reconciled.discard;
   if (
     next.selectedCardInstanceId &&
     !next.hand.some((card) => card.instanceId === next.selectedCardInstanceId)
   ) {
     next.selectedCardInstanceId = null;
   }
-  const heldIds = new Set(
-    [...next.hand, ...next.discard].map((card) => card.definition.id),
-  );
-  const drawIds = deckCardIds.filter((id) => !heldIds.has(id));
-  next.deck = buildPlayerDeckFromIds(drawIds, next.rng);
   return next;
 }
 

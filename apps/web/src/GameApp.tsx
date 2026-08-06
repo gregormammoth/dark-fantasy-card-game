@@ -290,16 +290,23 @@ function GameShell() {
           trackEvent('card_unlocked', profileRef.current.playerId, { cardId });
         }
       }
-      setRun((current) => ({ ...current, loadout: next }));
       const snap = explorationActor.getSnapshot();
       if (!snap.matches('idle')) {
         const phase = snap.matches('encounter') ? 'encounter' : 'playerTurn';
+        const rebuilt = rebuildExplorationDeck(snap.context, next.deckCardIds);
         explorationActor.send({
           type: 'HYDRATE',
-          context: rebuildExplorationDeck(snap.context, next.deckCardIds),
+          context: rebuilt,
           phase,
         });
+        setRun((current) => ({
+          ...current,
+          loadout: next,
+          exploration: rebuilt,
+        }));
+        return;
       }
+      setRun((current) => ({ ...current, loadout: next }));
     },
     [explorationActor],
   );
@@ -496,6 +503,7 @@ function GameShell() {
       screen: 'battle',
     }));
     leaveBattle();
+    const live = explorationActor.getSnapshot().context;
     battleActor.send({
       type: 'START_BATTLE',
       progression,
@@ -507,11 +515,11 @@ function GameShell() {
         deckSize: enemy.deckSize,
         barrierPerTurn: enemy.barrierPerTurn,
       },
-      rng: exploration.rng,
+      rng: live.rng,
       playerPiles: {
-        hand: exploration.hand,
-        deck: exploration.deck,
-        discard: exploration.discard,
+        hand: live.hand,
+        deck: live.deck,
+        discard: live.discard,
       },
     });
   }

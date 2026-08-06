@@ -51,6 +51,7 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - Shared **Run** state (one continuous playthrough)
 - Exploration ↔ Battle with the same run
 - Class XP → levels → unlocks → deck changes
+- **Flexible deck cap + max shield** as progression stats (not fixed forever at content defaults)
 - **Reward loop** (action → reward → progression → new options)
 - **Quests** (engine logic + player-facing quest log / UI)
 - **Money** in a light inventory (earn / spend; not full item loadout)
@@ -58,6 +59,7 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - **Seeded RNG** (required before Beta)
 - Hollowfort Prison story vertical slice
 - ~24–32 excellent player cards + 10–12 locations
+- Exploration **encounters that disturb cards** (shuffle / discard / add) **and/or shields** (increase / decrease)
 - **Enemy pacing** — early fights teach; later fights (elites / bosses) punish
 - **Enemy diversity** — distinct card groups / archetypes (warrior, rogue, wizard, monster, undead, …)
 - **Minimal NestJS API + Postgres** (saves, analytics events, feedback)
@@ -143,7 +145,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 9. New regions should require minimal engine changes and primarily consist of new content.
 10. Prefer incremental, testable refactoring over large architectural rewrites.
 11. Prefer proving the **vertical slice**; ship only the **thin** backend Beta needs (saves, analytics, feedback).
-12. Cards, classes, XP, and deckbuilding stay primary; Beta inventory is **money + quest state**, not a full item RPG.
+12. Cards, classes, XP, and deckbuilding stay primary; Beta inventory is **money + quest state**, not a full item RPG. **Deck cap** and **max shield** are progression stats, not forever-fixed content constants.
 13. Analytics answers product questions (who played, how long, where they drop) — not vanity dashboards.
 
 ---
@@ -159,10 +161,11 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Shared **Run** state | Done — `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
 | Character creation | Done — name + gender → `POST /players` → guest `playerId` |
 | Exploration ↔ Battle continuity | In place — location FIGHT → battle with carried piles → victory syncs piles back; encounter pressure / card disturbance still open |
-| Exploration action economy + encounter pressure | Partial — 4 actions/turn exist; clear spend loop / encounter pressure / UI timing still open |
-| Battle core | Partial — playable; conditional combo bonuses use combo-start HP (order-independent; preview matches resolve) |
+| Exploration action economy + encounter pressure | Partial — 4 actions/turn exist; encounters should disturb cards (shuffle / discard / add) and/or shields (↑/↓); UI timing still open |
+| Battle core | Partial — playable; conditional combo bonuses order-independent; deck/shield caps still fixed content defaults |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
+| Progression stats (deck cap / max shield) | Not started — `DECK_CAP` and battle `maxShield` are fixed; should grow with player progression |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
@@ -201,6 +204,8 @@ Update this table as milestones land.
 - [x] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
+- [ ] Grow **deck cap** and **max shield** through progression (not hard-coded forever)
+- [ ] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
 - [x] Escape Hollowfort (Exit Gate → world)
 - [x] Reach the world map via escape
@@ -225,7 +230,7 @@ CURRENT
 2. Shared Run State                        ← RunState done; app XState machine deferred
   │
   ▼
-3. Exploration ↔ Battle (same run)         ← session loop + hand/deck handoff done; encounter pressure open
+3. Exploration ↔ Battle (same run)         ← handoff done; encounter card/shield pressure open
   │
   ▼
 4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
@@ -237,7 +242,7 @@ CURRENT
 6. Seeded RNG (required)                   ← done
   │
   ▼
-7. Reward loop                             ← XP/unlocks exist; formal grant API open
+7. Reward loop + flexible deck/shield caps ← XP/unlocks exist; grant API + progressive caps open
   │
   ▼
 8. Quests (logic + UI) + money             ← quests done; money open
@@ -261,7 +266,7 @@ CURRENT
 BETA
 ```
 
-Full auth, profiles, leaderboards, and **full item inventory** stay **after** this path. Beta money + quests are in scope. The Beta API is intentionally thin.
+Full auth, profiles, leaderboards, and **full item inventory** stay **after** this path. Beta money + quests are in scope. Progressive **deck cap** and **max shield** are Beta progression, not Green item RPG. The Beta API is intentionally thin.
 
 ---
 
@@ -364,10 +369,11 @@ Exploration and battle are no longer separate runtimes.
 - [x] Locked locations (sealed final branches + Exit Gate until chosen boss cleared)
 - [ ] Complete the exploration action economy so spending cards on the map is clear, fast, and convenient
 - [ ] Tune the default prison turn cadence to roughly **3–4 actions / cards** before an encounter fires, with room for content-driven variation
-- [ ] Make encounters pressure the current card state in meaningful ways (shuffle, discard, burn, remove, or otherwise disturb cards instead of acting like a cosmetic timer)
+- [ ] Make encounters **disturb cards** in meaningful ways: **shuffle**, **discard**, and/or **add** cards (not a cosmetic timer)
+- [ ] Make encounters also pressure **shields**: **increase** or **decrease** current / max shield when that serves the beat
 - [x] Carry the player into battle with the current exploration hand / deck state so saved cards become tactical battle resources
-- [ ] Let encounter outcomes also touch battle readiness by consuming, shuffling, or denying cards the player was trying to preserve
-- [ ] Surface this clearly in the UI: actions remaining, encounter timing, and which cards are being risked by spending or holding
+- [ ] Let encounter outcomes also touch battle readiness by consuming, shuffling, denying, or injecting cards the player was trying to preserve
+- [ ] Surface this clearly in the UI: actions remaining, encounter timing, and which cards / shields are being risked
 - [x] Align combo logic for conditional bonuses (e.g. `bonusIfLowerHp`) — order-independent; preview matches resolve
 
 ### Deliverable
@@ -496,12 +502,18 @@ XP → Class Level → Unlockable cards → Spend XP → Deck changes
 - [ ] Passive bonuses (only if they serve the slice — keep lean)
 - [ ] Avoid heavy level-curve tuning until analytics / playtests inform pace
 
-### Deck growth
+### Deck growth & combat caps (progression)
+
+Today `DECK_CAP` (loadout) and battle `maxShield` (from `battle.json`) are fixed. For Beta they should be **player progression stats** that can rise (and occasionally fall) through rewards, levels, encounters, or story beats.
 
 - [x] Character screen deck composition (add / remove, deck cap)
 - [x] Unlock cards by spending free class levels (bound to loadout + battles)
 - [x] Twelve improved cards available on Character screen (1 level each)
 - [x] Mid-run unlock rebuilds exploration/battle deck for the next fight
+- [ ] Move **deck cap** off a hard constant into Run / progression (base value + modifiers; Character UI enforces the live cap)
+- [ ] Move **max shield** (and starting shield if needed) off fixed `battle.json` defaults into Run / progression so battles and exploration use the same caps
+- [ ] At least one clear progression path that raises deck cap and/or max shield in Hollowfort (level reward, quest reward, money purchase, or encounter boon)
+- [ ] Encounters / events can temporarily or permanently change shield (and optionally deck pressure) without hard-coding only in battle setup
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
 
@@ -523,14 +535,14 @@ Win battle
   → Next battle feels different
 ```
 
-- [ ] Define reward grant API on the Run (XP, unlocks, flags, money, optional card offers)
+- [ ] Define reward grant API on the Run (XP, unlocks, flags, money, deck-cap / max-shield deltas, optional card offers)
 - [ ] Battle end applies rewards into the Run (not only UI counters)
-- [ ] At least one non-XP reward path for the prison slice (card offer, money, or story unlock)
+- [ ] At least one non-XP reward path for the prison slice (card offer, money, deck/shield upgrade, or story unlock)
 - [ ] Reward reveal UX (can be simple for Beta)
 
 ### Deliverable
 
-Players specialise or hybridise through cards — and each fight changes what they can do next.
+Players specialise or hybridise through cards — and each fight changes what they can do next. Deck size and shield ceiling can grow with the run.
 
 ---
 
@@ -908,6 +920,8 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
 - [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
 - [ ] Reward loop + class progression readable without a tutorial wall
+- [ ] Progressive **deck cap** + **max shield** (live Run stats; at least one Hollowfort upgrade path)
+- [ ] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)
 - [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests

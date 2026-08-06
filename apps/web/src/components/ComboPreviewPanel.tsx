@@ -44,11 +44,15 @@ export function ComboPreviewPanel({
         <span className="text-[10px] text-[#6f6659]">{cardLabel}</span>
       </div>
 
-      {preview.damageToEnemy > 0 && (
+      {preview.totalDamageToEnemy > 0 && (
         <PreviewRow
           tone="damage"
           icon={<AttackIcon className="inline-block h-[22px] w-5 shrink-0" />}
-          title={t('battle.cardsBurnFromEnemy', { count: preview.damageToEnemy })}
+          title={
+            preview.damageToEnemy > 0
+              ? t('battle.cardsBurnFromEnemy', { count: preview.damageToEnemy })
+              : t('battle.damageOnly', { damage: preview.totalDamageToEnemy })
+          }
           detail={
             preview.enemyShieldBlocked > 0
               ? t('battle.damageMinusShield', {

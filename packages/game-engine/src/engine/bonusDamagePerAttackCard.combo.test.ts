@@ -150,4 +150,54 @@ describe('bonusDamagePerAttackCard order', () => {
     expect(resolvedA.enemyPoison).not.toBeNull();
     expect(resolvedB.enemyPoison).not.toBeNull();
   });
+
+  it('deals base damage when Battle Momentum is alone in the combo', () => {
+    const momentum = makeCard('momentum', {
+      type: 'attack',
+      effects: [
+        { type: 'bonusDamagePerAttackCard', value: 1 },
+        { type: 'damage', value: 2 },
+      ],
+    });
+
+    let battle = makeBattle([momentum]);
+    battle = addToCombo(battle, 'momentum_instance');
+
+    const preview = previewCombo(battle);
+    expect(preview?.totalDamageToEnemy).toBe(2);
+    expect(preview?.damageToEnemy).toBe(2);
+
+    let played = beginPlayerResolution(structuredClone(battle));
+    played = resolveNextComboCard(played);
+    expect(played.activePlay?.cue.incomingDamage).toBe(2);
+    expect(played.activePlay?.cue.damageToEnemy).toBe(2);
+    expect(20 - getEnemyHealth(played)).toBe(2);
+  });
+
+  it('counts shield-blocked Battle Momentum damage in combo preview', () => {
+    const momentum = makeCard('momentum', {
+      type: 'attack',
+      effects: [
+        { type: 'bonusDamagePerAttackCard', value: 1 },
+        { type: 'damage', value: 2 },
+      ],
+    });
+
+    let battle = makeBattle([momentum]);
+    battle.enemy.shield = 2;
+    battle = addToCombo(battle, 'momentum_instance');
+
+    const preview = previewCombo(battle);
+    expect(preview?.totalDamageToEnemy).toBe(2);
+    expect(preview?.damageToEnemy).toBe(0);
+    expect(preview?.enemyShieldBlocked).toBe(2);
+
+    let played = beginPlayerResolution(structuredClone(battle));
+    played = resolveNextComboCard(played);
+    expect(played.activePlay?.cue.incomingDamage).toBe(2);
+    expect(played.activePlay?.cue.shieldBlocked).toBe(2);
+    expect(played.activePlay?.cue.damageToEnemy).toBeUndefined();
+    expect(played.enemy.shield).toBe(0);
+    expect(getEnemyHealth(played)).toBe(20);
+  });
 });

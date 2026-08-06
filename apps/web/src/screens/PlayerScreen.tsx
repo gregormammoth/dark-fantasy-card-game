@@ -502,7 +502,7 @@ export function PlayerScreen({
                   className="w-[300px] shrink-0 overflow-hidden rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]"
                   style={{ border: `1px solid ${selectedTheme.accent}55` }}
                 >
-                  <div className="relative h-[150px] bg-[#0c0908]">
+                  <div className="relative h-[300px] bg-[#0c0908]">
                     {(activeCard.image ??
                       (activeCard.class ? `/cards/${activeCard.id}.png` : undefined)) && (
                       <img

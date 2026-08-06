@@ -22,6 +22,7 @@ import { resetLogCounter, appendLog } from './battleLog';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
 import { createInitialLoadout, getPlayerPortraitForDeck } from './progression/loadout';
+import { reconcilePlayerCardPiles } from './playerPiles';
 import { cloneRng, createRng } from './rng';
 
 const cardRegistry = new Map<string, CardDefinition>();
@@ -94,11 +95,18 @@ export function createInitialBattle(
   let playerDiscard: CardInstance[] = [];
 
   if (playerPiles) {
-    playerHand = structuredClone(playerPiles.hand);
-    playerDeck = shuffle(
-      [...structuredClone(playerPiles.deck), ...structuredClone(playerPiles.discard)],
+    const reconciled = reconcilePlayerCardPiles(
+      {
+        hand: structuredClone(playerPiles.hand),
+        deck: structuredClone(playerPiles.deck),
+        discard: structuredClone(playerPiles.discard),
+      },
+      deckIds,
+      (id) => cardRegistry.get(id),
       rng,
     );
+    playerHand = reconciled.hand;
+    playerDeck = shuffle([...reconciled.deck, ...reconciled.discard], rng);
     playerDiscard = [];
     syncInstanceCounterFromCards([...playerHand, ...playerDeck]);
   } else {

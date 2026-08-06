@@ -266,6 +266,10 @@ Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 =
 
 ## Player Card Reference
 
+Each class has **3 attack + 3 defense** across base + improved cards.
+
+### Base
+
 | Card | Class | Type | Effect |
 |------|-------|------|--------|
 | Heavy Strike | Fighter | Attack | 3 damage |
@@ -279,8 +283,24 @@ Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 =
 | Barrier Mastery | Wizard | Defense | +1 barrier per other Defense in combo; +2 barrier |
 | Last Stand | Survivor | Attack | +2 damage if below 50% HP; 2 damage |
 | Second Chance | Survivor | Defense | Recover 2 cards from discard |
+| Survival Instinct | Survivor | Defense | Restore max shield if empty |
 
----
+### Improved (unlocks)
+
+| Card | Class | Type | Effect |
+|------|-------|------|--------|
+| Crushing Blow | Fighter | Attack | 4 damage |
+| Warpath | Fighter | Defense | +2 shield; 25% damage reduction |
+| Iron Wall | Fighter | Defense | +3 shield |
+| Assassinate | Rogue | Attack | +2 if first attack combo; 3 damage |
+| Venom Needle | Rogue | Defense | Poison 2×2; 25% damage reduction |
+| Phantom Step | Rogue | Defense | 75% damage reduction |
+| Arcane Lance | Wizard | Attack | Ignore shield; 3 damage |
+| Cascade Bolt | Wizard | Attack | +1 per other Attack in combo; 2 damage |
+| Ward Lattice | Wizard | Defense | +4 barrier |
+| Blood Fury | Survivor | Attack | +3 if below 50% HP; 3 damage |
+| Second Wind | Survivor | Attack | Recover 2 from discard; 2 damage |
+| Undying | Survivor | Defense | Restore max shield, then +1 shield |
 
 ## Enemy Card Reference
 

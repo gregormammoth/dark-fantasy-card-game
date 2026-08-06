@@ -13,6 +13,7 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
   const initialBarrier = battle.player.barrier;
   const initialHandSize = battle.player.hand.length;
   const initialEnemyShield = battle.enemy.shield;
+  const initialEnemyBarrier = battle.enemy.barrier;
 
   let sim = structuredClone(battle);
   sim.log = [];
@@ -46,10 +47,11 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
 
   const damageToEnemy = Math.max(0, initialEnemyHealth - getEnemyHealth(sim));
   const enemyShieldBlocked = Math.max(0, initialEnemyShield - sim.enemy.shield);
+  const enemyBarrierBlocked = Math.max(0, initialEnemyBarrier - sim.enemy.barrier);
 
   const preview: ComboPreview = {
     damageToEnemy,
-    totalDamageToEnemy: damageToEnemy + enemyShieldBlocked,
+    totalDamageToEnemy: damageToEnemy + enemyShieldBlocked + enemyBarrierBlocked,
     enemyShieldBlocked,
     shieldGain: Math.max(0, sim.player.shield - initialShield),
     barrierGain: Math.max(0, sim.player.barrier - initialBarrier),

@@ -105,12 +105,17 @@ function buildPills(cue: AnimationCue): Array<{
     icon: ReactNode;
   }> = [];
 
-  if (cue.source === 'player' && cue.cardType === 'attack' && cue.damageToEnemy !== undefined) {
-    pills.push({
-      label: `-${cue.damageToEnemy} INCOMING`,
-      tone: 'damage',
-      icon: <AttackIcon className="inline-block h-3.5 w-3 shrink-0" />,
-    });
+  if (cue.source === 'player' && cue.cardType === 'attack') {
+    const dealt =
+      cue.incomingDamage ??
+      (cue.damageToEnemy ?? 0) + (cue.shieldBlocked ?? 0) + (cue.barrierBlocked ?? 0);
+    if (dealt > 0) {
+      pills.push({
+        label: `-${dealt} DAMAGE`,
+        tone: 'damage',
+        icon: <AttackIcon className="inline-block h-3.5 w-3 shrink-0" />,
+      });
+    }
   }
 
   if (cue.source === 'enemy' && cue.cardType === 'attack' && cue.incomingDamage !== undefined) {
@@ -126,9 +131,9 @@ function buildPills(cue: AnimationCue): Array<{
     (cue.shieldBlocked ?? 0) +
     (cue.barrierBlocked ?? 0);
 
-  if (cue.source === 'enemy' && reducedTotal > 0) {
+  if (reducedTotal > 0) {
     pills.push({
-      label: `${reducedTotal} REDUCED`,
+      label: `${reducedTotal} BLOCKED`,
       tone: 'reduced',
       icon: <ShieldIcon className="inline-block h-[14px] w-3 shrink-0" />,
     });
@@ -170,7 +175,7 @@ function buildPills(cue: AnimationCue): Array<{
     for (const effect of definition.effects) {
       if (effect.type === 'bonusDamagePerAttackCard') {
         pills.push({
-          label: `+${effect.value ?? 0} ATTACK POWER`,
+          label: `+${effect.value ?? 0} / OTHER ATTACK`,
           tone: 'power',
           icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#e0b552] shadow-[0_0_8px_#e0b552]" />,
         });

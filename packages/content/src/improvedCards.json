@@ -7,28 +7,28 @@
     "effects": [
       {
         "type": "damage",
-        "value": 5
+        "value": 4
       }
     ],
-    "description": "Deal 5 damage.",
+    "description": "Deal 4 damage.",
     "improved": true
   },
   {
     "id": "improved_fighter_warpath",
     "name": "Warpath",
     "class": "fighter",
-    "type": "attack",
+    "type": "defense",
     "effects": [
       {
-        "type": "bonusDamagePerAttackCard",
-        "value": 1
+        "type": "shield",
+        "value": 2
       },
       {
-        "type": "damage",
-        "value": 3
+        "type": "reduceDamagePercent",
+        "value": 25
       }
     ],
-    "description": "Deal 3 damage. +1 for each other Attack card in your combo.",
+    "description": "Gain 2 Shield. Reduce incoming damage by 25%.",
     "improved": true
   },
   {
@@ -39,25 +39,25 @@
     "effects": [
       {
         "type": "shield",
-        "value": 4
+        "value": 3
       }
     ],
-    "description": "Gain 4 Shield.",
+    "description": "Gain 3 Shield.",
     "improved": true
   },
   {
     "id": "improved_rogue_venom_needle",
     "name": "Venom Needle",
     "class": "rogue",
-    "type": "attack",
+    "type": "defense",
     "effects": [
       {
         "type": "poison",
         "damagePerTurn": 2,
-        "duration": 4
+        "duration": 2
       }
     ],
-    "description": "Apply Poison (2 damage each turn for 4 turns).",
+    "description": "Apply Poison (2 damage each turn for 2 turns). Reduce incoming damage by 25%.",
     "improved": true
   },
   {
@@ -68,14 +68,14 @@
     "effects": [
       {
         "type": "bonusIfFirstAttack",
-        "damage": 3
+        "damage": 2
       },
       {
         "type": "damage",
         "value": 3
       }
     ],
-    "description": "Deal 3 damage. If this is the first attack combo of the battle, deal 6 instead.",
+    "description": "Deal 3 damage. If this is the first attack combo of the battle, deal 5 instead.",
     "improved": true
   },
   {
@@ -103,10 +103,10 @@
       },
       {
         "type": "damage",
-        "value": 4
+        "value": 3
       }
     ],
-    "description": "Deal 4 damage ignoring shields.",
+    "description": "Deal 3 damage ignoring shields.",
     "improved": true
   },
   {
@@ -117,28 +117,31 @@
     "effects": [
       {
         "type": "barrier",
-        "value": 5
+        "value": 4
       }
     ],
-    "description": "Gain 5 Barrier until end of round.",
+    "description": "Gain 4 Barrier until end of round.",
     "improved": true
   },
   {
     "id": "improved_wizard_cascade_ward",
-    "name": "Cascade Ward",
+    "name": "Cascade Bolt",
     "class": "wizard",
-    "type": "defense",
+    "type": "attack",
     "effects": [
       {
-        "type": "bonusBarrierPerDefenseCard",
+        "type": "ignoreShield"
+      },
+      {
+        "type": "bonusDamagePerAttackCard",
         "value": 1
       },
       {
-        "type": "barrier",
-        "value": 3
+        "type": "damage",
+        "value": 2
       }
     ],
-    "description": "Gain 3 Barrier +1 for each other Defense card in your combo.",
+    "description": "Deal 2 damage. +1 for each other Attack card in your combo.",
     "improved": true
   },
   {
@@ -149,7 +152,7 @@
     "effects": [
       {
         "type": "bonusIfLowerHp",
-        "damage": 3,
+        "damage": 2,
         "thresholdPercent": 50
       },
       {
@@ -164,14 +167,18 @@
     "id": "improved_survivor_second_wind",
     "name": "Second Wind",
     "class": "survivor",
-    "type": "defense",
+    "type": "attack",
     "effects": [
       {
         "type": "recoverDiscard",
-        "count": 3
+        "count": 2
+      },
+      {
+        "type": "damage",
+        "value": 2
       }
     ],
-    "description": "Return 3 cards from your discard pile to your hand.",
+    "description": "Return 2 cards from your discard pile to your hand, then deal 2 damage.",
     "improved": true
   },
   {
@@ -181,11 +188,12 @@
     "type": "defense",
     "effects": [
       {
-        "type": "restoreMaxShields"
+        "type": "recoverDiscard",
+        "count": 2
       },
       {
         "type": "shield",
-        "value": 1
+        "value": 2
       }
     ],
     "description": "Restore Shield to maximum, then gain 1 Shield.",

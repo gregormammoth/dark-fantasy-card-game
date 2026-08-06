@@ -166,6 +166,7 @@ export const explorationMachine = setup({
     ACK_ESCAPE: { actions: 'ackEscape' },
     SYNC_RNG: { actions: 'syncRng' },
     SYNC_PLAYER_CARDS: { actions: 'syncPlayerCards' },
+    HYDRATE: { actions: 'hydrateExploration' },
     RESET: {
       target: '.idle',
       actions: 'resetExploration',
