@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { AnimationCue } from '@dark-fantasy/shared/types/animation';
+import { getCardDefinition } from '@dark-fantasy/game-engine/engine/battleSetup';
 import { classThemes, enemyTheme } from '@/lib/cardTheme';
+import { getCardEffectSummary } from '@/lib/cardTheme';
 import type { CardClass } from '@dark-fantasy/shared/types/card';
 import { useAudio } from '@/audio/useAudio';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
@@ -24,49 +26,179 @@ function getTheme(cue: AnimationCue) {
   return cue.source === 'enemy' ? enemyTheme : classThemes.fighter;
 }
 
-function EffectRow({
+function Pill({
   icon,
-  title,
-  detail,
+  label,
   tone,
 }: {
   icon: ReactNode;
-  title: ReactNode;
-  detail?: string;
-  tone: 'damage' | 'pierce' | 'poison' | 'shield' | 'barrier' | 'reduced' | 'blocked';
+  label: string;
+  tone: 'damage' | 'pierce' | 'poison' | 'shield' | 'barrier' | 'reduced' | 'power';
 }) {
   const styles = {
-    damage: { bg: 'rgba(224,82,74,.12)', border: '#e0524a', title: '#ffd9d2', detail: '#a98' },
-    pierce: { bg: 'rgba(201,162,74,.1)', border: '#c9a24a', title: '#ecd9b0', detail: '#8a7f72' },
-    poison: { bg: 'rgba(111,174,90,.12)', border: '#6fae5a', title: '#c8ecb8', detail: '#7a8a6a' },
-    shield: { bg: 'rgba(91,134,196,.12)', border: '#5b86c4', title: '#cfe0f5', detail: '#7f92ac' },
-    barrier: { bg: 'rgba(154,122,224,.12)', border: '#9a7ae0', title: '#ddd0f5', detail: '#8a7f9a' },
-    reduced: { bg: 'rgba(111,174,90,.1)', border: '#6fae5a', title: '#c8ecb8', detail: '#7a8a6a' },
-    blocked: { bg: 'rgba(201,162,74,.08)', border: '#c9a24a', title: '#ecd9b0', detail: '#8a7f72' },
+    damage: { bg: 'rgba(88,21,22,.62)', border: 'rgba(214,68,58,.34)', text: '#ffd9d2' },
+    pierce: { bg: 'rgba(82,58,18,.56)', border: 'rgba(201,162,74,.34)', text: '#ecd9b0' },
+    poison: { bg: 'rgba(29,62,27,.62)', border: 'rgba(111,174,90,.34)', text: '#c8ecb8' },
+    shield: { bg: 'rgba(24,41,76,.62)', border: 'rgba(91,134,196,.34)', text: '#cfe0f5' },
+    barrier: { bg: 'rgba(53,32,90,.62)', border: 'rgba(154,122,224,.34)', text: '#ddd0f5' },
+    reduced: { bg: 'rgba(29,62,27,.62)', border: 'rgba(111,174,90,.34)', text: '#c8ecb8' },
+    power: { bg: 'rgba(82,58,18,.56)', border: 'rgba(201,162,74,.34)', text: '#ecd9b0' },
   }[tone];
 
   return (
     <motion.div
-      className="flex min-w-[220px] items-center gap-3 rounded-[9px] px-2.5 py-2 backdrop-blur-sm"
-      style={{ background: styles.bg, borderLeft: `3px solid ${styles.border}` }}
-      initial={{ opacity: 0, x: tone === 'damage' ? 12 : -12 }}
+      className="flex min-w-[132px] items-center gap-2 rounded-[7px] border px-3 py-1.5 backdrop-blur-sm"
+      style={{ background: styles.bg, borderColor: styles.border }}
+      initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration }}
+      transition={{ duration: 0.3 }}
     >
-      {icon}
-      <div className="min-w-0 flex-1">
-        <div className="text-sm" style={{ color: styles.title }}>
-          {title}
-        </div>
-        {detail && (
-          <div className="text-[10px]" style={{ color: styles.detail }}>
-            {detail}
-          </div>
-        )}
-      </div>
+      <span className="shrink-0">{icon}</span>
+      <span className="text-[11px] tracking-[.04em]" style={{ color: styles.text }}>
+        {label}
+      </span>
     </motion.div>
   );
+}
+
+function Outcome({
+  label,
+  tone,
+}: {
+  label: string;
+  tone: 'damage' | 'blocked';
+}) {
+  return (
+    <motion.div
+      className="absolute top-1/2 left-[56%] z-30 -translate-y-1/2"
+      initial={{ opacity: 0, x: -16, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 18 }}
+      transition={{ duration: 0.35 }}
+    >
+      <span
+        className="font-cinzel text-[62px] leading-none tracking-[.03em]"
+        style={{
+          color: tone === 'blocked' ? '#d8c8bb' : '#f3c7c1',
+          textShadow:
+            tone === 'blocked'
+              ? '0 0 20px rgba(216,200,187,.35)'
+              : '0 0 22px rgba(224,82,74,.35)',
+        }}
+      >
+        {label}
+      </span>
+    </motion.div>
+  );
+}
+
+function buildPills(cue: AnimationCue): Array<{
+  label: string;
+  tone: 'damage' | 'pierce' | 'poison' | 'shield' | 'barrier' | 'reduced' | 'power';
+  icon: ReactNode;
+}> {
+  const definition = getCardDefinition(cue.cardId);
+  const pills: Array<{
+    label: string;
+    tone: 'damage' | 'pierce' | 'poison' | 'shield' | 'barrier' | 'reduced' | 'power';
+    icon: ReactNode;
+  }> = [];
+
+  if (cue.source === 'player' && cue.cardType === 'attack' && cue.damageToEnemy !== undefined) {
+    pills.push({
+      label: `-${cue.damageToEnemy} INCOMING`,
+      tone: 'damage',
+      icon: <AttackIcon className="inline-block h-3.5 w-3 shrink-0" />,
+    });
+  }
+
+  if (cue.source === 'enemy' && cue.cardType === 'attack' && cue.incomingDamage !== undefined) {
+    pills.push({
+      label: `${cue.incomingDamage} INCOMING`,
+      tone: 'damage',
+      icon: <AttackIcon className="inline-block h-3.5 w-3 shrink-0" />,
+    });
+  }
+
+  const reducedTotal =
+    (cue.damageReduced ?? 0) +
+    (cue.shieldBlocked ?? 0) +
+    (cue.barrierBlocked ?? 0);
+
+  if (cue.source === 'enemy' && reducedTotal > 0) {
+    pills.push({
+      label: `${reducedTotal} REDUCED`,
+      tone: 'reduced',
+      icon: <ShieldIcon className="inline-block h-[14px] w-3 shrink-0" />,
+    });
+  }
+
+  if (cue.shieldGained) {
+    pills.push({
+      label: `+${cue.shieldGained} SHIELD GAINED`,
+      tone: 'shield',
+      icon: <ShieldIcon className="inline-block h-[14px] w-3 shrink-0" />,
+    });
+  }
+
+  if (cue.barrierGained) {
+    pills.push({
+      label: `+${cue.barrierGained} BARRIER GAINED`,
+      tone: 'barrier',
+      icon: <BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />,
+    });
+  }
+
+  if (cue.poisonAppliedTo) {
+    pills.push({
+      label: 'POISON APPLIED',
+      tone: 'poison',
+      icon: <PoisonIcon className="inline-block h-[14px] w-[14px] shrink-0" />,
+    });
+  }
+
+  if (cue.ignoresShield) {
+    pills.push({
+      label: 'PIERCE',
+      tone: 'pierce',
+      icon: <PierceIcon className="inline-block h-3.5 w-3.5 shrink-0" />,
+    });
+  }
+
+  if (definition) {
+    for (const effect of definition.effects) {
+      if (effect.type === 'bonusDamagePerAttackCard') {
+        pills.push({
+          label: `+${effect.value ?? 0} ATTACK POWER`,
+          tone: 'power',
+          icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#e0b552] shadow-[0_0_8px_#e0b552]" />,
+        });
+      }
+      if (effect.type === 'reduceDamagePercent') {
+        pills.push({
+          label: `${effect.value ?? 0}% DAMAGE REDUCED`,
+          tone: 'reduced',
+          icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#6fae5a] shadow-[0_0_8px_#6fae5a]" />,
+        });
+      }
+    }
+  } else {
+    const summary = getCardEffectSummary({
+      id: cue.cardId,
+      name: cue.cardName,
+      effects: [],
+    } as never);
+    if (summary) {
+      pills.push({
+        label: summary.toUpperCase(),
+        tone: 'power',
+        icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#e0b552] shadow-[0_0_8px_#e0b552]" />,
+      });
+    }
+  }
+
+  return pills.slice(0, 3);
 }
 
 function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
@@ -85,15 +217,15 @@ function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
       initial={{
         opacity: 0,
         scale: 0.82,
-        left: fromPlayer ? '42%' : '12%',
-        top: fromPlayer ? '62%' : '14%',
+        left: fromPlayer ? '40%' : '44%',
+        top: fromPlayer ? '60%' : '20%',
         rotate: fromPlayer ? -8 : 8,
       }}
       animate={{
         opacity: phase === 'done' ? 0 : 1,
-        scale: phase === 'impact' ? 1.06 : 1,
-        left: phase === 'play' ? (fromPlayer ? '42%' : '12%') : fromPlayer ? '58%' : '42%',
-        top: phase === 'play' ? (fromPlayer ? '62%' : '14%') : fromPlayer ? '18%' : '58%',
+        scale: phase === 'impact' ? 1.04 : 1,
+        left: phase === 'play' ? (fromPlayer ? '40%' : '44%') : '47%',
+        top: phase === 'play' ? (fromPlayer ? '60%' : '20%') : '39%',
         rotate: phase === 'impact' ? 0 : fromPlayer ? -4 : 4,
       }}
       transition={{ type: 'spring', stiffness: 280, damping: 26 }}
@@ -132,101 +264,6 @@ function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
   );
 }
 
-function DamageBreakdown({
-  cue,
-  side,
-}: {
-  cue: AnimationCue;
-  side: 'player' | 'enemy';
-}) {
-  const isPlayerHit = side === 'player';
-  const cardsLost = isPlayerHit ? cue.damageToPlayer : cue.damageToEnemy;
-  const fullyBlocked =
-    (cue.incomingDamage ?? 0) > 0 &&
-    !cardsLost &&
-    ((cue.shieldBlocked ?? 0) > 0 || (cue.barrierBlocked ?? 0) > 0);
-
-  return (
-    <motion.div
-      className={`absolute z-30 flex flex-col gap-2 ${isPlayerHit ? 'bottom-[22%] left-[4%]' : 'top-[16%] right-[4%]'}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {cue.incomingDamage !== undefined && cue.incomingDamage > 0 && (
-        <EffectRow
-          tone="damage"
-          icon={<AttackIcon className="inline-block h-[22px] w-5 shrink-0" />}
-          title={
-            <>
-              <b className="font-cinzel text-[17px]">{cue.incomingDamage}</b> incoming
-            </>
-          }
-        />
-      )}
-      {isPlayerHit && cue.barrierBlocked !== undefined && cue.barrierBlocked > 0 && (
-        <EffectRow
-          tone="barrier"
-          icon={<BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />}
-          title={
-            <>
-              <b className="font-cinzel">{cue.barrierBlocked}</b> blocked by barrier
-            </>
-          }
-        />
-      )}
-      {cue.shieldBlocked !== undefined && cue.shieldBlocked > 0 && (
-        <EffectRow
-          tone="shield"
-          icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" />}
-          title={
-            <>
-              <b className="font-cinzel">{cue.shieldBlocked}</b> blocked by shield
-            </>
-          }
-        />
-      )}
-      {isPlayerHit && cue.damageReduced !== undefined && cue.damageReduced > 0 && (
-        <EffectRow
-          tone="reduced"
-          icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" style={{ background: '#6fae5a' }} />}
-          title={
-            <>
-              <b className="font-cinzel">{cue.damageReduced}</b> reduced
-            </>
-          }
-        />
-      )}
-      {cue.ignoresShield && !isPlayerHit && (
-        <EffectRow
-          tone="pierce"
-          icon={<PierceIcon className="inline-block h-4 w-4 shrink-0" />}
-          title="Ignores shield"
-          detail="Attack pierces armor"
-        />
-      )}
-      {fullyBlocked && (
-        <EffectRow
-          tone="blocked"
-          icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" />}
-          title="Fully blocked"
-        />
-      )}
-      {cardsLost !== undefined && cardsLost > 0 && (
-        <motion.p
-          className="font-cinzel text-[36px] leading-none text-[#f0b3aa]"
-          style={{ textShadow: '0 0 24px rgba(214,68,58,.65)' }}
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration, delay: 0.08 }}
-        >
-          −{cardsLost} {cardsLost === 1 ? 'card' : 'cards'}
-        </motion.p>
-      )}
-    </motion.div>
-  );
-}
-
 export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAnimationProps) {
   const [phase, setPhase] = useState<Phase>('play');
   const onImpactRef = useRef(onImpact);
@@ -242,12 +279,11 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
   const isPlayerAttack = cue.source === 'player' && isAttack;
   const isEnemyAttack = cue.source === 'enemy' && isAttack;
   const isDefense = cue.cardType === 'defense';
-  const hasHitEffects =
-    (cue.incomingDamage ?? 0) > 0 ||
-    (cue.damageToPlayer ?? 0) > 0 ||
-    (cue.damageToEnemy ?? 0) > 0 ||
-    (cue.shieldBlocked ?? 0) > 0 ||
-    (cue.barrierBlocked ?? 0) > 0;
+  const pills = buildPills(cue);
+  const cardsLost =
+    cue.source === 'player'
+      ? cue.enemyDeckCardsLost ?? cue.damageToEnemy ?? 0
+      : cue.playerDeckCardsLost ?? cue.damageToPlayer ?? 0;
 
   useEffect(() => {
     setPhase('play');
@@ -293,7 +329,6 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
     isPlayerAttack,
     isEnemyAttack,
     isDefense,
-    hasHitEffects,
     cue.source,
     cue.enemyDeckCardsLost,
     cue.damageToEnemy,
@@ -323,83 +358,25 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         <PlayCard cue={cue} phase={phase} />
 
         <AnimatePresence>
-          {phase === 'impact' && isPlayerAttack && (
+          {phase === 'impact' && pills.length > 0 && (
             <motion.div
-              key="slash-player"
-              className="absolute top-[24%] left-[38%] z-10 h-[3px] w-52 origin-left rounded-full"
-              style={{
-                background: 'linear-gradient(90deg, #e0524a, #f0902a 55%, transparent)',
-                boxShadow: '0 0 28px rgba(224,82,74,.85)',
-              }}
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
+              key="pills"
+              className="absolute top-1/2 left-[31%] z-30 flex -translate-y-1/2 flex-col gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-            />
-          )}
-          {phase === 'impact' && isEnemyAttack && (
-            <motion.div
-              key="slash-enemy"
-              className="absolute bottom-[30%] left-[38%] z-10 h-[3px] w-52 origin-left rounded-full"
-              style={{
-                background: 'linear-gradient(90deg, transparent, #c1362c 45%, #e0524a)',
-                boxShadow: '0 0 28px rgba(224,82,74,.85)',
-              }}
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-            />
-          )}
-
-          {phase === 'impact' && isDefense && Boolean(cue.shieldGained) && (
-            <div key="gain-shield" className="absolute bottom-[24%] left-[4%] z-30">
-              <EffectRow
-                tone="shield"
-                icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" />}
-                title={
-                  <>
-                    Gain <b className="font-cinzel">+{cue.shieldGained}</b> shield
-                  </>
-                }
-              />
-            </div>
-          )}
-
-          {phase === 'impact' && isDefense && Boolean(cue.barrierGained) && (
-            <div key="gain-barrier" className="absolute bottom-[24%] left-[4%] z-30">
-              <EffectRow
-                tone="barrier"
-                icon={<BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />}
-                title={
-                  <>
-                    Gain <b className="font-cinzel">+{cue.barrierGained}</b> barrier
-                  </>
-                }
-                detail="until end of round"
-              />
-            </div>
-          )}
-
-          {phase === 'impact' && cue.poisonAppliedTo && (
-            <div
-              key={`poison-${cue.poisonAppliedTo}`}
-              className={`absolute z-30 ${cue.poisonAppliedTo === 'enemy' ? 'top-[16%] right-[4%]' : 'bottom-[22%] left-[4%]'}`}
             >
-              <EffectRow
-                tone="poison"
-                icon={<PoisonIcon className="inline-block h-5 w-[18px] shrink-0" />}
-                title="Poison applied"
-                detail="bypasses shield & barrier"
-              />
-            </div>
+              {pills.map((pill) => (
+                <Pill key={`${pill.tone}-${pill.label}`} icon={pill.icon} label={pill.label} tone={pill.tone} />
+              ))}
+            </motion.div>
           )}
 
-          {phase === 'impact' && isPlayerAttack && hasHitEffects && (
-            <DamageBreakdown key="damage-enemy" cue={cue} side="enemy" />
-          )}
-          {phase === 'impact' && isEnemyAttack && hasHitEffects && (
-            <DamageBreakdown key="damage-player" cue={cue} side="player" />
+          {phase === 'impact' && isAttack && (
+            <Outcome
+              label={`-${cardsLost} CARDS`}
+              tone={cardsLost === 0 ? 'blocked' : 'damage'}
+            />
           )}
         </AnimatePresence>
       </div>
