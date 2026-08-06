@@ -1,4 +1,5 @@
 import type { WorldLocationCategory } from '@dark-fantasy/shared/types/world';
+import type { MessageKey, TranslateFn } from '@/i18n/types';
 
 export interface CategoryMeta {
   label: string;
@@ -16,6 +17,10 @@ export const worldCategoryMeta: Record<WorldLocationCategory, CategoryMeta> = {
   danger: { label: 'CEMETERY', color: '#8a4a9e' },
   poi: { label: 'POINT OF INTEREST', color: '#7ab8c4' },
 };
+
+export function getWorldCategoryLabel(category: WorldLocationCategory, t: TranslateFn): string {
+  return t(`world.categories.${category}` as MessageKey);
+}
 
 export function iconSizeForCategory(category: WorldLocationCategory): number {
   if (category === 'capital' || category === 'fortress' || category === 'kingdom') {

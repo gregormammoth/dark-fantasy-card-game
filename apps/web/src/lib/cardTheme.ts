@@ -1,4 +1,5 @@
 import type { CardClass, CardDefinition, CardType } from '@dark-fantasy/shared/types/card';
+import type { TranslateFn, MessageKey } from '@/i18n/types';
 
 export interface ClassTheme {
   label: string;
@@ -46,6 +47,10 @@ export const enemyTheme: ClassTheme = {
   badge: 'rgba(190,50,45,.92)',
   glow: 'rgba(214,68,58,.6)',
 };
+
+export function getClassLabel(classId: CardClass, t: TranslateFn): string {
+  return t(`classes.${classId}` as MessageKey).toUpperCase();
+}
 
 export function getCardTheme(definition: CardDefinition): ClassTheme {
   if (definition.class) {

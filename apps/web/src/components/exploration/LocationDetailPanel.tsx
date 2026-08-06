@@ -1,3 +1,5 @@
+'use client';
+
 import type {
   ExplorationActionType,
   ExplorationContext,
@@ -8,6 +10,7 @@ import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/acti
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const LOOT_IMAGES: Record<string, string> = {
   dining_keyring: '/items/dining_keyring.png',
@@ -36,6 +39,7 @@ export function LocationDetailPanel({
   onFight,
   onEscape,
 }: LocationDetailPanelProps) {
+  const { t } = useTranslation();
   if (!location) {
     return null;
   }
@@ -64,13 +68,13 @@ export function LocationDetailPanel({
   const chips = locked
     ? []
     : [
-        ...availableEnemies.map(() => ({ label: 'Combat', color: activityColors.combat })),
-        ...unclaimedLoot.map(() => ({ label: 'Loot', color: activityColors.loot })),
-        ...availableNpcs.map(() => ({ label: 'NPC', color: activityColors.npc })),
-        ...(location.quest ? [{ label: 'Quest', color: activityColors.quest }] : []),
+        ...availableEnemies.map(() => ({ label: t('location.chipCombat'), color: activityColors.combat })),
+        ...unclaimedLoot.map(() => ({ label: t('location.chipLoot'), color: activityColors.loot })),
+        ...availableNpcs.map(() => ({ label: t('location.chipNpc'), color: activityColors.npc })),
+        ...(location.quest ? [{ label: t('location.chipQuest'), color: activityColors.quest }] : []),
         ...location.interactions
           .filter((item) => item.action === 'REST' && !item.completed)
-          .map(() => ({ label: 'Rest', color: activityColors.rest })),
+          .map(() => ({ label: t('location.chipRest'), color: activityColors.rest })),
       ];
 
   return (
@@ -91,13 +95,13 @@ export function LocationDetailPanel({
             style={{ color: locked ? '#5a534a' : locationTypeColors[location.type] }}
           >
             {locked
-              ? 'BRANCH SEALED'
+              ? t('location.branchSealed')
               : showInfo
                 ? location.subtitle.toUpperCase()
-                : 'UNKNOWN CHAMBER'}
+                : t('location.unknownChamber')}
           </span>
           <div className="mt-1 font-cinzel text-[22px] leading-tight text-[#f3ead8] [text-shadow:0_2px_8px_#000]">
-            {locked ? 'SEALED' : showInfo ? location.name : '???'}
+            {locked ? t('location.sealed') : showInfo ? location.name : t('location.unknown')}
           </div>
         </div>
       </div>
@@ -105,33 +109,27 @@ export function LocationDetailPanel({
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
         <p className="m-0 text-[13px] italic leading-relaxed text-[#c7bba9]">
           {locked
-            ? 'You committed to another path out of Hollowfort. This door will not open again.'
+            ? t('location.branchLockedDesc')
             : showInfo
               ? location.description
-              : 'This part of the prison is still unexplored. Find a path through a nearby room first.'}
+              : t('location.unexploredDesc')}
         </p>
 
         {exitBlocked && showInfo && (
-          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
-            Defeat the boss on your chosen path before the Exit Gate will open.
-          </p>
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">{t('location.exitBlocked')}</p>
         )}
 
         {corridorBlocked && showInfo && (
-          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
-            The Sorcerer bars the Central Corridor until his ingredients are delivered — or until he falls.
-          </p>
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">{t('location.corridorBlocked')}</p>
         )}
 
         {diningPathBlocked && showInfo && (
-          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">
-            The Dining Hall door is barred from this side. Go through the Kitchen, or fetch the Executioner&apos;s keyring from the Torture Chamber.
-          </p>
+          <p className="m-0 text-[12px] leading-relaxed text-[#ff8f85]">{t('location.diningBlocked')}</p>
         )}
 
         {showInfo && chips.length > 0 && (
           <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">AVAILABLE HERE</span>
+            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">{t('location.availableHere')}</span>
             <div className="flex flex-wrap gap-2">
               {chips.map((chip, index) => (
                 <span
@@ -169,7 +167,7 @@ export function LocationDetailPanel({
             <div className="flex-1">
               <div className="text-[13px] text-[#d7e2f2]">{npc.name}</div>
               <div className="mt-0.5 text-[10px] tracking-wider text-[#9fb3d6]">
-                {(npc.tag ?? 'NPC').toUpperCase()}
+                {(npc.tag ?? t('common.npc')).toUpperCase()}
               </div>
             </div>
             {isHere && onTalk && (
@@ -178,7 +176,7 @@ export function LocationDetailPanel({
                 onClick={() => onTalk(location.id, npc.id)}
                 className="shrink-0 rounded-[5px] border border-[rgba(91,134,196,.5)] bg-[rgba(91,134,196,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#cfe0fa] transition hover:brightness-110"
               >
-                TALK
+                {t('location.talk')}
               </button>
             )}
           </div>
@@ -209,7 +207,7 @@ export function LocationDetailPanel({
                 onClick={() => onFight(location.id, activeEnemy.id)}
                 className="shrink-0 rounded-[5px] border border-[rgba(224,82,74,.5)] bg-[rgba(224,82,74,.15)] px-2.5 py-2 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
               >
-                FIGHT
+                {t('location.fight')}
               </button>
             )}
           </div>
@@ -217,7 +215,7 @@ export function LocationDetailPanel({
 
         {showInfo && location.quest && (
           <div className="flex flex-col gap-1.5 rounded-[5px] border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-4 py-3.5">
-            <span className="font-cinzel text-[9px] tracking-[.2em] text-[#6b5a38]">QUEST</span>
+            <span className="font-cinzel text-[9px] tracking-[.2em] text-[#6b5a38]">{t('common.quest')}</span>
             <div className="font-cinzel text-[14px] text-[#2b2116]">{location.quest.name}</div>
             <div className="text-[12px] leading-relaxed text-[#3a2c1a]">
               {location.quest.description}
@@ -227,7 +225,7 @@ export function LocationDetailPanel({
 
         {showInfo && unclaimedLoot.length > 0 && (
           <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">LOOT</span>
+            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">{t('location.loot')}</span>
             <div className="flex flex-wrap gap-2">
               {unclaimedLoot.map((loot) => {
                 const image = LOOT_IMAGES[loot.id];
@@ -246,7 +244,7 @@ export function LocationDetailPanel({
                         />
                       ) : null}
                       <span className="absolute left-1.5 top-1.5 rounded-[3px] bg-[rgba(201,162,74,.9)] px-1.5 py-0.5 text-[7px] tracking-wider text-[#1a1208]">
-                        ITEM
+                        {t('common.item')}
                       </span>
                     </div>
                     <div className="border-t-2 border-[#c9a24a] px-2.5 py-2">
@@ -263,7 +261,7 @@ export function LocationDetailPanel({
         {isHere && showInfo && (
           <div className="flex flex-col gap-2">
             <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">
-              {hasCard ? 'PLAY A CARD TO ACT' : 'SELECT A CARD FIRST'}
+              {hasCard ? t('location.playCardToAct') : t('location.selectCardFirst')}
             </span>
             {availableInteractions.map((interaction) => {
               const enabled =
@@ -289,13 +287,13 @@ export function LocationDetailPanel({
                   {interaction.label}
                   <span className="mt-1 block text-[10px] tracking-[.14em] text-[#8a7f72]">
                     {interaction.action}
-                    {interaction.locked ? ' · LOCKED' : ''}
+                    {interaction.locked ? t('location.interactionLocked') : ''}
                   </span>
                 </button>
               );
             })}
             {availableInteractions.length === 0 && (
-              <span className="text-[12px] text-[#8a7f72]">No interactions left here.</span>
+              <span className="text-[12px] text-[#8a7f72]">{t('location.noInteractions')}</span>
             )}
           </div>
         )}
@@ -309,12 +307,12 @@ export function LocationDetailPanel({
             onClick={() => onTravel(location.id)}
             className="flex-1 rounded-[5px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.22),rgba(90,23,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            TRAVEL HERE
+            {t('location.travelHere')}
           </button>
         )}
         {isHere && (
           <span className="flex-1 rounded-[5px] border border-[rgba(224,181,82,.4)] px-3 py-3 text-center text-[11px] tracking-wider text-[#e0b552]">
-            ◆ YOU ARE HERE
+            {t('location.youAreHere')}
           </span>
         )}
         {!isHere && status === 'visited' && !canTravel && (
@@ -324,7 +322,7 @@ export function LocationDetailPanel({
             onClick={() => onTravel(location.id)}
             className="flex-1 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            RETURN HERE
+            {t('location.returnHere')}
           </button>
         )}
         <button
@@ -341,7 +339,7 @@ export function LocationDetailPanel({
           onClick={onEscape}
           className="mx-[22px] mb-5 w-[calc(100%-44px)] rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
         >
-          ESCAPE HOLLOWFORT →
+          {t('location.escape')}
         </button>
       )}
     </div>

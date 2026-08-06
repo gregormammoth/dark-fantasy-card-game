@@ -1,4 +1,7 @@
+'use client';
+
 import type { LocationEnemy } from '@dark-fantasy/shared/types/exploration';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface LocationBattleModalProps {
   enemy: LocationEnemy;
@@ -6,6 +9,8 @@ interface LocationBattleModalProps {
 }
 
 export function LocationBattleModal({ enemy, onFight }: LocationBattleModalProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed inset-0 z-[60] flex animate-[fadeIn_.15s_ease-out] items-center justify-center bg-[rgba(6,5,4,.8)] p-6 backdrop-blur-[3px]">
       <div className="flex w-full max-w-[600px] animate-[modalIn_.18s_ease-out] overflow-hidden rounded-2xl border border-[rgba(224,82,74,.45)] bg-[linear-gradient(180deg,#1c1211,#100c0b)] shadow-[0_40px_90px_-20px_#000]">
@@ -36,7 +41,7 @@ export function LocationBattleModal({ enemy, onFight }: LocationBattleModalProps
               onClick={onFight}
               className="flex-1 rounded-[10px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.24),rgba(90,23,19,.3))] py-[13px] font-cinzel text-[13px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
             >
-              FIGHT
+              {t('locationBattle.fight')}
             </button>
           </div>
         </div>

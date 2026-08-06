@@ -11,6 +11,7 @@ import {
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
+import { useTranslation } from '@/i18n/useTranslation';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
 function getOccupantCard(
@@ -33,6 +34,7 @@ function getOccupantCard(
 interface PrisonMapProps {
   context: ExplorationContext;
   playerGender: PlayerGender;
+  playerName: string;
   onSelect: (locationId: string) => void;
 }
 
@@ -73,7 +75,8 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
+export function PrisonMap({ context, playerGender, playerName, onSelect }: PrisonMapProps) {
+  const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -592,7 +595,7 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
                       }}
                     />
                     <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
-                      {locked ? 'SEALED' : showInfo ? location.name : '???'}
+                      {locked ? t('location.sealed') : showInfo ? location.name : t('location.unknown')}
                     </span>
                     {hasThreat && showInfo && (
                       <span className="text-[9px] tracking-[.14em] text-[#ff8f85] [text-shadow:0_1px_4px_#000]">
@@ -659,10 +662,14 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
           />
           <div className="flex flex-col gap-0.5">
             <span className="font-cinzel text-[12px] tracking-wide text-[#e8ddcf]">
-              Unnamed Prisoner
+              {playerName || t('exploration.unnamedPrisoner')}
             </span>
             <span className="text-[11px] text-[#b7ab9c]">
-              Actions {context.actionsRemaining}/{context.maxActions} · Turn {context.turnCount}
+              {t('exploration.actionsTurn', {
+                remaining: context.actionsRemaining,
+                max: context.maxActions,
+                turn: context.turnCount,
+              })}
             </span>
           </div>
         </div>
@@ -670,13 +677,13 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
           {context.mapName.toUpperCase().replace(/\s+/g, '\u00a0')}
         </span>
         <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
-          {visitedCount} / {totalCount} EXPLORED
+          {t('exploration.exploredCount', { visited: visitedCount, total: totalCount })}
         </span>
       </div>
 
       <div className="pointer-events-none absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.82)] p-2.5">
         <span className="text-[8px] tracking-[.2em] text-[#8a7f72]">
-          HOLLOWFORT — FIRST FORTRESS
+          {t('exploration.mapRegionLabel')}
         </span>
         <div className="relative mt-1.5 h-[98px] w-full rounded-md border border-dashed border-[rgba(201,162,74,.2)]">
           {allVisible.map((location) => {
@@ -716,7 +723,7 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
         <div className="pointer-events-auto flex flex-col overflow-hidden rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.88)] shadow-[0_12px_28px_-12px_#000]">
           <button
             type="button"
-            aria-label="Zoom in"
+            aria-label={t('exploration.zoomIn')}
             disabled={zoomLevel >= ZOOM_MAX - 0.001}
             onClick={() => applyZoom(ZOOM_STEP)}
             onPointerDown={(event) => event.stopPropagation()}
@@ -726,7 +733,7 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
           </button>
           <button
             type="button"
-            aria-label="Zoom out"
+            aria-label={t('exploration.zoomOut')}
             disabled={zoomLevel <= ZOOM_MIN + 0.001}
             onClick={() => applyZoom(-ZOOM_STEP)}
             onPointerDown={(event) => event.stopPropagation()}
@@ -737,8 +744,8 @@ export function PrisonMap({ context, playerGender, onSelect }: PrisonMapProps) {
         </div>
         <button
           type="button"
-          aria-label="Center on player"
-          title="Center on player"
+          aria-label={t('exploration.centerOnPlayer')}
+          title={t('exploration.centerOnPlayer')}
           onClick={() => centerOnPlayer(true)}
           onPointerDown={(event) => event.stopPropagation()}
           className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.88)] text-[#e0b552] shadow-[0_12px_28px_-12px_#000] transition hover:bg-[rgba(224,181,82,.12)]"

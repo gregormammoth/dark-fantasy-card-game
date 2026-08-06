@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AudioSettings } from '@/components/AudioSettings';
+import { LanguageSettings } from '@/components/LanguageSettings';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface SettingsMenuProps {
   runSeed: number;
@@ -14,6 +16,7 @@ export function SettingsMenu({
   onAbandonRun,
   hasActiveRun = false,
 }: SettingsMenuProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [seedText, setSeedText] = useState(String(runSeed));
   const rootRef = useRef<HTMLDivElement>(null);
@@ -67,7 +70,7 @@ export function SettingsMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        aria-label="Settings"
+        aria-label={t('settings.ariaLabel')}
         className="flex h-10 w-10 items-center justify-center rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.9)] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)] hover:text-[#f0c979]"
       >
         <svg
@@ -86,12 +89,11 @@ export function SettingsMenu({
       </button>
       {open && (
         <div className="absolute right-0 top-12 flex w-[260px] flex-col gap-3 rounded-[12px] border border-[rgba(201,162,74,.28)] bg-[rgba(12,9,8,.96)] p-3 shadow-[0_24px_60px_-14px_#000]">
+          <LanguageSettings />
           <AudioSettings />
           <div className="border-t border-[rgba(201,162,74,.16)] pt-3">
-            <span className="text-[10px] tracking-[.2em] text-[#c9a24a]">RUN SEED</span>
-            <p className="mt-1 text-[11px] leading-snug text-[#8a7f72]">
-              Same seed → same draws and fights. Applies on the next prison start.
-            </p>
+            <span className="text-[10px] tracking-[.2em] text-[#c9a24a]">{t('settings.runSeed')}</span>
+            <p className="mt-1 text-[11px] leading-snug text-[#8a7f72]">{t('settings.runSeedHint')}</p>
             <div className="mt-2 flex gap-2">
               <input
                 type="text"
@@ -110,7 +112,7 @@ export function SettingsMenu({
                 onClick={applySeed}
                 className="rounded-md border border-[rgba(201,162,74,.4)] px-2.5 py-1.5 font-cinzel text-[10px] tracking-wider text-[#e0b552] transition hover:brightness-110"
               >
-                SET
+                {t('settings.set')}
               </button>
             </div>
             <button
@@ -118,15 +120,13 @@ export function SettingsMenu({
               onClick={randomizeSeed}
               className="mt-2 w-full rounded-md border border-[rgba(201,162,74,.2)] px-2 py-1.5 text-[10px] tracking-wider text-[#8a7f72] transition hover:text-[#c9a24a]"
             >
-              RANDOMIZE
+              {t('settings.randomize')}
             </button>
           </div>
           {hasActiveRun && onAbandonRun && (
             <div className="border-t border-[rgba(201,162,74,.16)] pt-3">
-              <span className="text-[10px] tracking-[.2em] text-[#c9a24a]">RUN</span>
-              <p className="mt-1 text-[11px] leading-snug text-[#8a7f72]">
-                Progress autosaves in this browser. Abandon clears the local run.
-              </p>
+              <span className="text-[10px] tracking-[.2em] text-[#c9a24a]">{t('settings.run')}</span>
+              <p className="mt-1 text-[11px] leading-snug text-[#8a7f72]">{t('settings.runHint')}</p>
               <button
                 type="button"
                 onClick={() => {
@@ -135,7 +135,7 @@ export function SettingsMenu({
                 }}
                 className="mt-2 w-full rounded-md border border-[rgba(224,82,74,.45)] px-2 py-1.5 font-cinzel text-[10px] tracking-wider text-[#ffd9d2] transition hover:brightness-110"
               >
-                ABANDON RUN
+                {t('settings.abandonRun')}
               </button>
             </div>
           )}

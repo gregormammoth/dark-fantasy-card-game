@@ -1,5 +1,8 @@
+'use client';
+
 import { AnimatePresence } from 'framer-motion';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
+import { useTranslation } from '@/i18n/useTranslation';
 import { Card } from './Card';
 
 interface ComboProps {
@@ -9,16 +12,18 @@ interface ComboProps {
 }
 
 export function Combo({ cards, onRemoveCard, disabled }: ComboProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2.5">
-        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">YOUR COMBO</span>
-        <span className="text-[11px] text-[#6f6659]">resolves left → right</span>
+        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.yourCombo')}</span>
+        <span className="text-[11px] text-[#6f6659]">{t('battle.comboResolves')}</span>
       </div>
       <div className="flex min-h-[180px] flex-wrap gap-3.5">
         <AnimatePresence mode="popLayout">
           {cards.length === 0 ? (
-            <p className="self-center text-sm text-[#5a5147]">Add cards from your hand</p>
+            <p className="self-center text-sm text-[#5a5147]">{t('battle.addCardsToCombo')}</p>
           ) : (
             cards.map((card) => (
               <Card

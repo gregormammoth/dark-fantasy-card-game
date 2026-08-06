@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { PoisonState } from '@dark-fantasy/shared/types/battle';
 import type { EnemyIntent } from '@dark-fantasy/game-engine/engine/enemyIntent';
+import { useTranslation } from '@/i18n/useTranslation';
 import { CardStack } from './CardStack';
 import { AttackIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
@@ -54,6 +55,7 @@ export function EnemyZone({
   spendMode = 'burn',
   isHit = false,
 }: EnemyZoneProps) {
+  const { t } = useTranslation();
   const spendCount = spendingIndices?.size ?? 0;
   const displayHealth = health + (spendMode === 'burn' ? spendCount : 0);
   return (
@@ -95,7 +97,7 @@ export function EnemyZone({
           >
             {name}
           </span>
-          <span className="text-xs tracking-[.24em] text-[#c56a5f]">DREADBORNE</span>
+          <span className="text-xs tracking-[.24em] text-[#c56a5f]">{t('battle.dreadborne')}</span>
         </div>
 
         {intent && (
@@ -109,7 +111,7 @@ export function EnemyZone({
               <AttackIcon className="inline-block h-[34px] w-[30px]" />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="text-[10px] tracking-[.28em] text-[#e8a49b]">INCOMING ATTACK</span>
+              <span className="text-[10px] tracking-[.28em] text-[#e8a49b]">{t('battle.incomingAttack')}</span>
               <div className="flex items-baseline gap-2.5">
                 <span className="font-cinzel text-[30px] leading-none text-[#ffd9d2]">
                   {intent.damage}
@@ -118,8 +120,7 @@ export function EnemyZone({
               </div>
             </div>
             <span className="max-w-[150px] text-right text-xs leading-snug text-[#c99]">
-              burns <b className="text-[#ffd9d2]">{intent.cardsBurned}</b> of your cards after
-              shield
+              {t('battle.burnsAfterShield', { count: intent.cardsBurned })}
             </span>
           </div>
         )}
@@ -127,18 +128,18 @@ export function EnemyZone({
         <div className="flex items-center gap-4 text-[13px] text-[#b7ab9c]">
           <span className="inline-flex items-center gap-1.5">
             <ShieldIcon className="inline-block h-[17px] w-[15px]" />
-            Shield{' '}
+            {t('battle.shieldLabel')}{' '}
             <b className="font-cinzel text-[#dbe6f5]">{shield}</b>
           </span>
           {barrier > 0 && (
             <span className="inline-flex items-center gap-1.5 text-[#c4b0ef]">
-              ✦ Barrier <b className="font-cinzel text-[#ddd0f5]">{barrier}</b>
+              ✦ {t('battle.barrierLabel')} <b className="font-cinzel text-[#ddd0f5]">{barrier}</b>
             </span>
           )}
           {poison && (
             <span className="inline-flex items-center gap-1.5 text-[#8fce7a]">
               <PoisonIcon className="inline-block h-[15px] w-[13px]" />
-              Poisoned{' '}
+              {t('battle.poisonedLabel')}{' '}
               <b className="font-cinzel text-[#c0e8b0]">
                 {poison.damagePerTurn}×{poison.remainingTurns}
               </b>
@@ -161,7 +162,7 @@ export function EnemyZone({
           >
             {displayHealth}
           </span>
-          <span className="mt-1 text-[10px] tracking-[.22em] text-[#8a7f72]">CARDS · HEALTH</span>
+          <span className="mt-1 text-[10px] tracking-[.22em] text-[#8a7f72]">{t('battle.cardsHealth')}</span>
         </div>
       </div>
     </motion.section>

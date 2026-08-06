@@ -1,4 +1,7 @@
+'use client';
+
 import type { ExplorationLogEntry } from '@dark-fantasy/shared/types/exploration';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface ExplorationLogProps {
   entries: ExplorationLogEntry[];
@@ -14,10 +17,11 @@ const kindColor: Record<ExplorationLogEntry['kind'], string> = {
 };
 
 export function ExplorationLog({ entries }: ExplorationLogProps) {
+  const { t } = useTranslation();
   const recent = entries.slice(-8).reverse();
   return (
     <div className="rounded-[12px] border border-[rgba(201,162,74,.16)] bg-[rgba(10,8,7,.72)] p-3">
-      <div className="mb-2 text-[9px] tracking-[.22em] text-[#8a7f72]">RECENT EVENTS</div>
+      <div className="mb-2 text-[9px] tracking-[.22em] text-[#8a7f72]">{t('exploration.recentEvents')}</div>
       <div className="flex max-h-[140px] flex-col gap-1.5 overflow-y-auto">
         {recent.map((entry, index) => (
           <div key={`${entry.id}-${index}`} className={`text-[12px] leading-snug ${kindColor[entry.kind]}`}>
@@ -25,7 +29,7 @@ export function ExplorationLog({ entries }: ExplorationLogProps) {
           </div>
         ))}
         {recent.length === 0 && (
-          <div className="text-[12px] text-[#8a7f72]">No events yet.</div>
+          <div className="text-[12px] text-[#8a7f72]">{t('exploration.noEventsYet')}</div>
         )}
       </div>
     </div>

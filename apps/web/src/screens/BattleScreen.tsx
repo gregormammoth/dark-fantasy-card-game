@@ -21,6 +21,8 @@ import { EndTurnButton } from '@/components/EndTurnButton';
 import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
+import { useTranslation } from '@/i18n/useTranslation';
+import type { TranslateFn } from '@/i18n/types';
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
@@ -44,29 +46,29 @@ interface SpendState {
   player: StackSpendState | null;
 }
 
-function formatTurnLabel(state: string): string {
+function formatTurnLabel(state: string, t: TranslateFn): string {
   if (state === 'playerTurn') {
-    return 'YOUR TURN';
+    return t('battle.yourTurn');
   }
   if (state === 'animatingPlayerCard' || state === 'resolvingPlayerCombo') {
-    return 'RESOLVING COMBO';
+    return t('battle.resolvingCombo');
   }
   if (state === 'animatingEnemyCard' || state === 'enemyTurn') {
-    return 'ENEMY TURN';
+    return t('battle.enemyTurn');
   }
   if (state === 'playerTurnStart') {
-    return 'TURN START';
+    return t('battle.turnStart');
   }
   if (state === 'endOfRound') {
-    return 'END OF ROUND';
+    return t('battle.endOfRound');
   }
   if (state === 'victory') {
-    return 'VICTORY';
+    return t('battle.victory');
   }
   if (state === 'defeat') {
-    return 'DEFEAT';
+    return t('battle.defeat');
   }
-  return 'BATTLE';
+  return t('battle.battle');
 }
 
 export function BattleScreen({
@@ -79,6 +81,7 @@ export function BattleScreen({
   onDefeatRestart,
   canResumeFromSave = false,
 }: BattleScreenProps) {
+  const { t } = useTranslation();
   const snapshot = useSelector(actor, (s) => s);
   const { context: battle, value } = snapshot;
   const { play, unlock } = useAudio();
@@ -253,19 +256,19 @@ export function BattleScreen({
           </div>
           <div>
             <h1 className="font-cinzel text-2xl tracking-[.36em] text-[#b8917f]">
-              DARK FANTASY DUEL
+              {t('battle.duelTitle')}
             </h1>
-            <p className="mt-3 text-sm text-[#6f6659]">A card battle against the Shadow Beast</p>
+            <p className="mt-3 text-sm text-[#6f6659]">{t('battle.duelSubtitle')}</p>
           </div>
           <EndTurnButton
             onClick={() => {
               void unlock();
               actor.send({ type: 'START_BATTLE', progression });
             }}
-            line1="START"
-            line2="BATTLE"
+            line1={t('battle.startLine1')}
+            line2={t('battle.startLine2')}
           />
-          <span className="text-[11px] tracking-[.14em] text-[#5a5147]">Face the Shadow Beast</span>
+          <span className="text-[11px] tracking-[.14em] text-[#5a5147]">{t('battle.startHint')}</span>
         </div>
       </div>
     );
@@ -275,14 +278,14 @@ export function BattleScreen({
     <div className="relative min-h-screen overflow-visible px-7 py-6 font-spectral text-[#e8ddcf]">
       {battleCoach.show && (
         <CoachMark
-          title="STACK YOUR COMBO"
-          body="Tap cards from your hand to stack them into a combo — the preview shows the damage and shield you'll deal. When you're set, press END TURN to unleash it."
+          title={t('tour.battleTitle')}
+          body={t('tour.battleBody')}
           placement="top"
           onDismiss={battleCoach.dismiss}
         />
       )}
       <div className="relative z-0 mx-auto flex w-full max-w-[1240px] flex-col gap-4">
-        <TopBar turnLabel={formatTurnLabel(state)} logEntries={battle.log} />
+        <TopBar turnLabel={formatTurnLabel(state, t)} logEntries={battle.log} emptyLogLabel={t('battle.battleBegins')} />
 
         {battle.activePlay && isAnimating && (
           <BattlePlayAnimation

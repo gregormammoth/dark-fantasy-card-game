@@ -26,6 +26,7 @@ import {
 } from '@/components/exploration/ExplorationToasts';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
+import { useTranslation } from '@/i18n/useTranslation';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
@@ -39,6 +40,7 @@ interface ExplorationScreenProps {
   runSeed?: number;
   deckCardIds?: string[];
   playerGender: PlayerGender;
+  playerName: string;
 }
 
 export function ExplorationScreen({
@@ -50,7 +52,9 @@ export function ExplorationScreen({
   runSeed,
   deckCardIds,
   playerGender,
+  playerName,
 }: ExplorationScreenProps) {
+  const { t } = useTranslation();
   const snapshot = useSelector(actor, (state) => state);
   const context = snapshot.context;
   const { unlock } = useAudio();
@@ -94,14 +98,11 @@ export function ExplorationScreen({
   if (isIdle) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-        <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">LOCATION MAP</div>
-        <h1 className="font-cinzel text-4xl text-[#f3ead8]">Hollowfort Prison</h1>
-        <p className="max-w-md text-[15px] leading-relaxed text-[#b7ab9c]">
-          Travel room to room. Dialogs and fights trigger on enter. Play cards to move, search,
-          and act — then end your turn for the encounter deck.
-        </p>
+        <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">{t('exploration.locationMap')}</div>
+        <h1 className="font-cinzel text-4xl text-[#f3ead8]">{t('exploration.prisonTitle')}</h1>
+        <p className="max-w-md text-[15px] leading-relaxed text-[#b7ab9c]">{t('exploration.prisonIntro')}</p>
         {runSeed !== undefined && (
-          <p className="font-mono text-[12px] text-[#8a7f72]">Seed {runSeed}</p>
+          <p className="font-mono text-[12px] text-[#8a7f72]">{t('exploration.seed', { seed: runSeed })}</p>
         )}
         <button
           type="button"
@@ -112,7 +113,7 @@ export function ExplorationScreen({
           }}
           className="rounded-[12px] border border-[rgba(201,162,74,.55)] bg-[rgba(224,181,82,.16)] px-8 py-3.5 font-cinzel text-[14px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
         >
-          ENTER THE PRISON
+          {t('exploration.enterPrison')}
         </button>
       </div>
     );
@@ -123,26 +124,26 @@ export function ExplorationScreen({
       <ExplorationToasts toasts={toasts} onDismiss={dismissToast} />
       {moveCoach.show && (
         <CoachMark
-          title="EXPLORE THE PRISON"
-          body="Pick a card from your hand below, then choose a room and press TRAVEL HERE. Each action costs a card — end your turn to draw the encounter deck."
+          title={t('tour.exploreTitle')}
+          body={t('tour.exploreBody')}
           placement="top"
           onDismiss={moveCoach.dismiss}
         />
       )}
       {dialogCoach.show && (
         <CoachMark
-          title="TALKING TO SURVIVORS"
-          body="Read what they say and press CONTINUE. Some conversations hand you quests — check the QUEST LOG afterward."
+          title={t('tour.dialogTitle')}
+          body={t('tour.dialogBody')}
           placement="top"
           onDismiss={dialogCoach.dismiss}
         />
       )}
       <div className="relative flex items-center justify-between gap-3">
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
-          HOLLOWFORT PRISON
+          {t('exploration.header')}
         </span>
         <span className="font-mono text-[10px] tracking-wider text-[#8a7f72]">
-          SEED {context.rng.seed}
+          {t('exploration.seedLabel', { seed: context.rng.seed })}
         </span>
         <div className="flex items-center gap-2">
           <button
@@ -150,7 +151,7 @@ export function ExplorationScreen({
             onClick={() => setQuestLogOpen((open) => !open)}
             className="relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] px-3.5 py-2 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)]"
           >
-            QUEST LOG
+            {t('exploration.questLog')}
             {activeQuests.length > 0 && (
               <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]">
                 {activeQuests.length}
@@ -163,19 +164,21 @@ export function ExplorationScreen({
               onClick={onOpenPlayer}
               className="rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
             >
-              CHARACTER
+              {t('common.character')}
             </button>
           )}
         </div>
         {questLogOpen && (
           <div className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-2.5 overflow-y-auto rounded-md border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] p-3.5 shadow-[0_24px_60px_-14px_#000] animate-[slidein_.18s_ease-out]">
-            <span className="font-cinzel text-[10px] tracking-[.24em] text-[#6b5a38]">ACTIVE THREADS</span>
+            <span className="font-cinzel text-[10px] tracking-[.24em] text-[#6b5a38]">
+              {t('exploration.activeThreads')}
+            </span>
             {activeQuests.length === 0 && completedQuests.length === 0 && (
-              <p className="m-0 text-[12px] text-[#4a3b22]">No quests yet. Talk to faction NPCs.</p>
+              <p className="m-0 text-[12px] text-[#4a3b22]">{t('exploration.noQuestsYet')}</p>
             )}
             {activeQuests.map((quest) => {
-              const steps = getQuestSteps(context, quest);
-              const stepsText = questStepsLabel(steps);
+              const steps = getQuestSteps(context, quest, t);
+              const stepsText = questStepsLabel(steps, t);
               return (
                 <div
                   key={quest.id}
@@ -186,7 +189,7 @@ export function ExplorationScreen({
                     {quest.description}
                   </div>
                   <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
-                    {questLocationLabel(quest)} · ACTIVE
+                    {questLocationLabel(quest, t)} · {t('exploration.active')}
                   </div>
                   {stepsText && (
                     <div className="mt-1 text-[9px] tracking-wider text-[#6b5a38]">{stepsText}</div>
@@ -228,7 +231,7 @@ export function ExplorationScreen({
               >
                 <div className="font-cinzel text-[12px] text-[#2b2116]">{quest.name}</div>
                 <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
-                  {questLocationLabel(quest)} · COMPLETE
+                  {questLocationLabel(quest, t)} · {t('exploration.complete')}
                 </div>
               </div>
             ))}
@@ -240,6 +243,7 @@ export function ExplorationScreen({
         <PrisonMap
           context={context}
           playerGender={playerGender}
+          playerName={playerName}
           onSelect={(locationId) => actor.send({ type: 'SELECT_LOCATION', locationId })}
         />
         <LocationDetailPanel
@@ -294,7 +298,9 @@ export function ExplorationScreen({
           npc={dialogNpc}
           line={dialogLines[dialogIndex] ?? dialogLines[0]!}
           progress={`${dialogIndex + 1} / ${dialogLines.length}`}
-          nextLabel={dialogIndex + 1 >= dialogLines.length ? 'CLOSE' : 'CONTINUE'}
+          nextLabel={
+            dialogIndex + 1 >= dialogLines.length ? t('common.close') : t('common.continue')
+          }
           onNext={() => actor.send({ type: 'ADVANCE_DIALOG' })}
         />
       )}

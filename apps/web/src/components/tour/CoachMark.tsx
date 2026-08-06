@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useTranslation } from '@/i18n/useTranslation';
 
 type CoachPlacement = 'top' | 'bottom' | 'center';
 
@@ -25,6 +26,8 @@ export function CoachMark({
   placement = 'top',
   dismissLabel = 'GOT IT',
 }: CoachMarkProps) {
+  const { t } = useTranslation();
+  const resolvedDismiss = dismissLabel === 'GOT IT' ? t('common.gotIt') : dismissLabel;
   return (
     <div
       className={`pointer-events-none fixed inset-0 z-[90] flex justify-center px-5 ${placementClass[placement]}`}
@@ -43,7 +46,7 @@ export function CoachMark({
             onClick={onDismiss}
             className="rounded-[6px] border border-[rgba(201,162,74,.5)] bg-[rgba(224,181,82,.14)] px-3.5 py-1.5 font-cinzel text-[11px] tracking-[.16em] text-[#e0b552] transition hover:brightness-110"
           >
-            {dismissLabel}
+            {resolvedDismiss}
           </button>
         </div>
       </div>

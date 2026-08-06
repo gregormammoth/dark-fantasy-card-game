@@ -1,18 +1,22 @@
 import type { BattleLogEntry } from '@dark-fantasy/shared/types/log';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface TopBarProps {
   turnLabel: string;
   logEntries: BattleLogEntry[];
+  emptyLogLabel?: string;
 }
 
-export function TopBar({ turnLabel, logEntries }: TopBarProps) {
+export function TopBar({ turnLabel, logEntries, emptyLogLabel }: TopBarProps) {
+  const { t } = useTranslation();
+  const emptyLabel = emptyLogLabel ?? t('battle.battleBegins');
   const logSnippet =
     logEntries.length > 0
       ? logEntries
           .slice(-3)
           .map((entry) => entry.message)
           .join(' · ')
-      : 'Battle begins';
+      : emptyLabel;
 
   return (
     <div className="flex items-center justify-between gap-5">
@@ -20,7 +24,7 @@ export function TopBar({ turnLabel, logEntries }: TopBarProps) {
         ◆ {turnLabel}
       </span>
       <span className="font-cinzel text-[15px] tracking-[.36em] text-[#b8917f]">
-        DARK&nbsp;FANTASY&nbsp;DUEL
+        {t('battle.duelTitle').replace(/\s+/g, '\u00a0')}
       </span>
       <span
         className="max-w-[360px] truncate text-[11px] tracking-[.02em] text-[#5a5147]"

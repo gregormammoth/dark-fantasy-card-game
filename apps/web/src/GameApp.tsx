@@ -18,6 +18,8 @@ import type { RunState } from '@dark-fantasy/shared/types/run';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
+import { LocaleProvider } from '@/i18n/LocaleProvider';
+import { useTranslation } from '@/i18n/useTranslation';
 import { SettingsMenu } from '@/components/SettingsMenu';
 import { BattleScreen } from '@/screens/BattleScreen';
 import { ExplorationScreen } from '@/screens/ExplorationScreen';
@@ -90,6 +92,7 @@ function buildPersistState(
 }
 
 function GameShell() {
+  const { t } = useTranslation();
   const [run, setRun] = useState<RunState>(() => createRun(Date.now() >>> 0));
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [battleCheckpoint, setBattleCheckpoint] = useState<BattleCheckpoint | null>(null);
@@ -554,6 +557,7 @@ function GameShell() {
         runSeed={runSeed}
         deckCardIds={loadout.deckCardIds}
         playerGender={profile.gender}
+        playerName={profile.name}
       />
     );
   } else if (screen === 'player') {
@@ -565,7 +569,9 @@ function GameShell() {
         onLoadoutChange={handleLoadoutChange}
         exploration={explorationContext}
         onBack={() => setRun((current) => ({ ...current, screen: playerReturnScreen }))}
-        backLabel={playerReturnScreen === 'exploration' ? '← Prison Map' : '← World Map'}
+        backLabel={
+          playerReturnScreen === 'exploration' ? t('player.backPrison') : t('player.backWorld')
+        }
       />
     );
   }
@@ -585,8 +591,10 @@ function GameShell() {
 
 export function GameApp() {
   return (
-    <AudioProvider>
-      <GameShell />
-    </AudioProvider>
+    <LocaleProvider>
+      <AudioProvider>
+        <GameShell />
+      </AudioProvider>
+    </LocaleProvider>
   );
 }

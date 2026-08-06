@@ -5,14 +5,14 @@ import { JsonLd } from '@/components/site/JsonLd';
 import { siteConfig } from '@/lib/site';
 
 const cinzel = Cinzel({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['500', '600', '700'],
   variable: '--font-cinzel',
   display: 'swap',
 });
 
 const spectral = Spectral({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['300', '400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-spectral',

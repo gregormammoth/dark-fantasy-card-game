@@ -1,7 +1,10 @@
+'use client';
+
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldLocationDefinition, WorldMapDefinition } from '@dark-fantasy/shared/types/world';
-import { iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
+import { getWorldCategoryLabel, iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
+import { useTranslation } from '@/i18n/useTranslation';
 import { WorldMapClouds } from '@/components/world/WorldMapClouds';
 
 const worldMap = worldMapData as WorldMapDefinition;
@@ -12,6 +15,7 @@ interface WorldMapScreenProps {
 }
 
 export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreenProps) {
+  const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState<string | null>(worldMap.startLocationId);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
@@ -65,10 +69,10 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
       }
       seen.add(location.category);
       const meta = worldCategoryMeta[location.category];
-      items.push({ label: meta.label, color: meta.color });
+      items.push({ label: getWorldCategoryLabel(location.category, t), color: meta.color });
     }
     return items;
-  }, [locations]);
+  }, [locations, t]);
 
   const smokeSpots = [
     { x: (270 / worldMap.mapWidth) * 100, y: 62.5 },
@@ -172,7 +176,7 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
         </span>
         {isCurrent && (
           <span className="animate-[herebob_1.6s_ease-in-out_infinite] whitespace-nowrap rounded-md bg-[#e0b552] px-1.5 py-0.5 font-cinzel text-[9px] tracking-[.14em] text-[#1a1208]">
-            YOU ARE HERE
+            {t('world.youAreHere')}
           </span>
         )}
       </button>
@@ -186,10 +190,10 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
           <span className="truncate font-cinzel text-[18px] tracking-wider text-[#e8ddcf]">
             {worldMap.name}
           </span>
-          <span className="text-[11px] text-[#8a7f72]">Choose a region to explore</span>
+          <span className="text-[11px] text-[#8a7f72]">{t('world.chooseRegion')}</span>
         </div>
         <span className="shrink-0 font-cinzel text-[14px] tracking-[.3em] text-[#b8917f]">
-          FAST TRAVEL
+          {t('world.fastTravel')}
         </span>
         <div className="flex shrink-0 items-center gap-3 pr-12">
           {onOpenPlayer && (
@@ -198,11 +202,11 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
               onClick={onOpenPlayer}
               className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
             >
-              CHARACTER
+              {t('common.character')}
             </button>
           )}
           <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
-            {enabledCount} / {locations.length} AVAILABLE
+            {t('world.available', { enabled: enabledCount, total: locations.length })}
           </span>
         </div>
       </div>
@@ -365,7 +369,7 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
                 className="text-[10px] tracking-[.24em]"
                 style={{ color: worldCategoryMeta[selected.category].color }}
               >
-                {worldCategoryMeta[selected.category].label}
+                {getWorldCategoryLabel(selected.category, t)}
               </span>
               <div className="mt-1.5 font-cinzel text-[21px] leading-tight text-[#f3ead8]">
                 {selected.name}
@@ -387,7 +391,7 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
               )}
               {!selected.enabled && (
                 <div className="rounded-[10px] border border-[rgba(201,162,74,.2)] bg-[rgba(255,255,255,.03)] px-3 py-2.5 text-[12px] leading-relaxed text-[#8a7f72]">
-                  This region is sealed for now. Escape the Prison Fortress first.
+                  {t('world.sealedMessage')}
                 </div>
               )}
             </div>
@@ -398,11 +402,11 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
                   onClick={() => onEnterLocation(selected.id)}
                   className="flex-1 rounded-[10px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110"
                 >
-                  ENTER REGION
+                  {t('world.enterRegion')}
                 </button>
               ) : (
                 <span className="flex-1 rounded-[10px] border border-[rgba(201,162,74,.2)] px-3 py-3 text-center text-[11px] tracking-wider text-[#8a7f72]">
-                  LOCKED
+                  {t('world.locked')}
                 </span>
               )}
               <button

@@ -1,10 +1,13 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import type { CardClass } from '@dark-fantasy/shared/types/card';
 import type { BattleLogEntry } from '@dark-fantasy/shared/types/log';
 import type { BattleStats } from '@dark-fantasy/shared/types/battle';
 import { useAudio } from '@/audio/useAudio';
-import { classThemes } from '@/lib/cardTheme';
+import { classThemes, getClassLabel } from '@/lib/cardTheme';
+import { useTranslation } from '@/i18n/useTranslation';
 import { PLAYER_CLASSES } from '@/data/playerProgress';
 
 const logColors: Record<BattleLogEntry['kind'], string> = {
@@ -46,17 +49,18 @@ export function BattleResultModal({
   onStartOver,
   canResumeFromSave = false,
 }: BattleResultModalProps) {
+  const { t } = useTranslation();
   const { play } = useAudio();
   const accent = victory ? '#e0b552' : '#e0524a';
   const glow = victory ? 'rgba(224,181,82,.28)' : 'rgba(224,82,74,.3)';
   const subtitle = victory
-    ? `${enemyName} has been vanquished.`
-    : `You have fallen to ${enemyName}.`;
+    ? t('battle.enemyVanquished', { enemy: enemyName })
+    : t('battle.youHaveFallen', { enemy: enemyName });
   const classGains = PLAYER_CLASSES.filter((classId) => xpGained[classId] > 0).map(
     (classId) => ({
       classId,
       amount: xpGained[classId],
-      label: classThemes[classId].label,
+      label: getClassLabel(classId, t),
       color: classThemes[classId].accent,
     }),
   );
@@ -91,27 +95,27 @@ export function BattleResultModal({
           }}
         >
           <span className="text-[11px] tracking-[.4em] text-[#8a7f72]">
-            {showGameOverChoices ? 'GAME OVER' : 'BATTLE OVER'}
+            {showGameOverChoices ? t('battle.gameOver') : t('battle.battleOver')}
           </span>
           <div
             className="my-1.5 font-cinzel text-[52px] tracking-[.14em]"
             style={{ color: accent, textShadow: `0 0 34px ${glow}` }}
           >
-            {victory ? 'VICTORY' : 'DEFEAT'}
+            {victory ? t('battle.victory') : t('battle.defeat')}
           </div>
           <span className="text-sm text-[#b7ab9c]">{subtitle}</span>
           {showGameOverChoices && (
             <p className="mx-auto mt-3 max-w-[380px] text-[12px] leading-relaxed text-[#8a7f72]">
-              Resume from your last prison checkpoint, or abandon this run and begin again.
+              {t('battle.defeatHint')}
             </p>
           )}
         </div>
 
         <div className="grid grid-cols-4 gap-px bg-[rgba(201,162,74,.12)]">
-          <StatCell label="TURNS" value={stats.turnCount} color="#e8ddcf" />
-          <StatCell label="CARDS BURNED" value={stats.cardsBurnedToEnemy} color="#f0b3aa" />
-          <StatCell label="CARDS LOST" value={stats.cardsLostByPlayer} color="#e0b552" />
-          <StatCell label="XP" value={`+${totalXpGained}`} color="#7ecb6a" />
+          <StatCell label={t('battle.turns')} value={stats.turnCount} color="#e8ddcf" />
+          <StatCell label={t('battle.cardsBurned')} value={stats.cardsBurnedToEnemy} color="#f0b3aa" />
+          <StatCell label={t('battle.cardsLost')} value={stats.cardsLostByPlayer} color="#e0b552" />
+          <StatCell label={t('battle.xp')} value={`+${totalXpGained}`} color="#7ecb6a" />
         </div>
 
         {classGains.length > 0 && (
@@ -125,7 +129,7 @@ export function BattleResultModal({
         )}
 
         <div className="px-6 pt-[18px] pb-1.5">
-          <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">COMBAT LOG</span>
+          <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.combatLog')}</span>
           <div className="mt-3 flex max-h-[172px] flex-col gap-2 overflow-y-auto pr-1.5">
             {logEntries.map((entry) => (
               <div
@@ -151,14 +155,14 @@ export function BattleResultModal({
                 onClick={onResumeFromSave}
                 className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.1em] text-[#e0b552] transition-[filter] hover:brightness-[1.15] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                LOAD SAVE
+                {t('battle.loadSave')}
               </button>
               <button
                 type="button"
                 onClick={onStartOver}
                 className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(224,82,74,.5)] bg-[linear-gradient(180deg,rgba(224,82,74,.16),rgba(60,18,14,.3))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.1em] text-[#ffd9d2] transition-[filter] hover:brightness-[1.15]"
               >
-                NEW RUN
+                {t('battle.newRun')}
               </button>
             </>
           ) : (
@@ -167,7 +171,7 @@ export function BattleResultModal({
               onClick={onReturnToExploration}
               className="flex-1 cursor-pointer rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),rgba(40,28,18,.28))] px-[13px] py-[13px] font-cinzel text-sm tracking-[.14em] text-[#e0b552] transition-[filter] hover:brightness-[1.15]"
             >
-              TO PRISON
+              {t('battle.toPrison')}
             </button>
           )}
         </div>

@@ -1,4 +1,5 @@
 import type { ExplorationContext, RunQuest } from '@dark-fantasy/shared/types/exploration';
+import type { MessageKey, TranslateFn } from '@/i18n/types';
 
 export interface QuestStepView {
   id: string;
@@ -18,36 +19,37 @@ export interface QuestItemView {
   image: string;
 }
 
-const QUEST_LOCATION_LABEL: Record<string, string> = {
-  kill_warden: 'Prison Cell',
-  gather_ritual_ingredients: 'Ritual Room',
-  find_dining_way: 'Central Corridor',
-  kill_inquisitor: 'Ritual Room',
-  kill_resurrected_anarchist: 'Central Courtyard',
-};
+const QUEST_LOCATION_KEYS = {
+  kill_warden: 'questUi.locationKillWarden',
+  gather_ritual_ingredients: 'questUi.locationGatherIngredients',
+  find_dining_way: 'questUi.locationFindDining',
+  kill_inquisitor: 'questUi.locationKillInquisitor',
+  kill_resurrected_anarchist: 'questUi.locationKillAnarchist',
+} as const;
 
-export function questLocationLabel(quest: RunQuest): string {
-  return QUEST_LOCATION_LABEL[quest.id] ?? quest.targetLocationId ?? 'Hollowfort';
+export function questLocationLabel(quest: RunQuest, t: TranslateFn): string {
+  const key = QUEST_LOCATION_KEYS[quest.id as keyof typeof QUEST_LOCATION_KEYS];
+  if (key) {
+    return t(key as MessageKey);
+  }
+  return quest.targetLocationId ?? t('common.hollowfort');
 }
 
 export function getQuestSteps(
   context: ExplorationContext | null,
   quest: RunQuest,
+  t: TranslateFn,
 ): QuestStepView[] | null {
   const flags = context?.flags ?? {};
   if (quest.id === 'gather_ritual_ingredients') {
     const lavender = Boolean(flags.ingredient_lavender);
     const mushroom = Boolean(flags.ingredient_mushroom);
     return [
-      { id: 'lavender', label: 'Find dried lavender — Infirmary', done: lavender },
-      {
-        id: 'mushroom',
-        label: 'Find a lowcap mushroom — Underground Tunnels',
-        done: mushroom,
-      },
+      { id: 'lavender', label: t('questUi.stepLavender'), done: lavender },
+      { id: 'mushroom', label: t('questUi.stepMushroom'), done: mushroom },
       {
         id: 'return',
-        label: 'Return to the Sorcerer in the Ritual Room',
+        label: t('questUi.stepReturnSorcerer'),
         done: quest.status === 'completed',
       },
     ];
@@ -56,12 +58,12 @@ export function getQuestSteps(
     return [
       {
         id: 'keyring',
-        label: "Find the Executioner's Keyring — Torture Chamber",
+        label: t('questUi.stepKeyring'),
         done: Boolean(flags.has_dining_keyring),
       },
       {
         id: 'open',
-        label: 'Open the Dining Hall path',
+        label: t('questUi.stepOpenDining'),
         done: Boolean(flags.dining_hall_path_open) || quest.status === 'completed',
       },
     ];
@@ -69,12 +71,12 @@ export function getQuestSteps(
   return null;
 }
 
-export function questStepsLabel(steps: QuestStepView[] | null): string | null {
+export function questStepsLabel(steps: QuestStepView[] | null, t: TranslateFn): string | null {
   if (!steps || steps.length === 0) {
     return null;
   }
   const done = steps.filter((step) => step.done).length;
-  return `${done} / ${steps.length} STEPS`;
+  return t('common.steps', { done, total: steps.length });
 }
 
 function lootClaimed(context: ExplorationContext, lootId: string): boolean {
@@ -83,7 +85,7 @@ function lootClaimed(context: ExplorationContext, lootId: string): boolean {
   );
 }
 
-export function listQuestItems(context: ExplorationContext | null): QuestItemView[] {
+export function listQuestItems(context: ExplorationContext | null, t: TranslateFn): QuestItemView[] {
   const flags = context?.flags ?? {};
   const keyring =
     Boolean(flags.has_dining_keyring) ||
@@ -98,38 +100,35 @@ export function listQuestItems(context: ExplorationContext | null): QuestItemVie
   return [
     {
       id: 'dining_keyring',
-      name: "Executioner's Keyring",
+      name: t('questUi.itemKeyringName'),
       category: 'key',
-      tag: 'KEY ITEM',
+      tag: t('questUi.itemKeyringTag'),
       obtained: keyring,
-      location: keyring ? 'FOUND · TORTURE CHAMBER' : 'NOT YET FOUND · TORTURE CHAMBER',
-      questName: 'The Locked Mess',
-      description:
-        "Taken from the Executioner's belt. Fits the door between the Central Corridor and the Dining Hall.",
+      location: keyring ? t('questUi.itemKeyringFound') : t('questUi.itemKeyringNotFound'),
+      questName: t('questUi.itemKeyringQuest'),
+      description: t('questUi.itemKeyringDesc'),
       image: '/items/dining_keyring.png',
     },
     {
       id: 'dried_lavender',
-      name: 'Dried Lavender',
+      name: t('questUi.itemLavenderName'),
       category: 'ingredient',
-      tag: 'INGREDIENT',
+      tag: t('questUi.itemLavenderTag'),
       obtained: lavender,
-      location: lavender ? 'FOUND · INFIRMARY' : 'NOT YET FOUND · INFIRMARY',
-      questName: 'Ingredients for the Circle',
-      description: 'A ritual ingredient the Sorcerer needs to steady the wards beneath Hollowfort.',
+      location: lavender ? t('questUi.itemLavenderFound') : t('questUi.itemLavenderNotFound'),
+      questName: t('questUi.itemLavenderQuest'),
+      description: t('questUi.itemLavenderDesc'),
       image: '/items/dried_lavender.png',
     },
     {
       id: 'lowcap_mushroom',
-      name: 'Lowcap Mushroom',
+      name: t('questUi.itemMushroomName'),
       category: 'ingredient',
-      tag: 'INGREDIENT',
+      tag: t('questUi.itemMushroomTag'),
       obtained: mushroom,
-      location: mushroom
-        ? 'FOUND · UNDERGROUND TUNNELS'
-        : 'NOT YET FOUND · UNDERGROUND TUNNELS',
-      questName: 'Ingredients for the Circle',
-      description: "Glows faintly blue. The Sorcerer wants it to bind the wards he's repairing.",
+      location: mushroom ? t('questUi.itemMushroomFound') : t('questUi.itemMushroomNotFound'),
+      questName: t('questUi.itemMushroomQuest'),
+      description: t('questUi.itemMushroomDesc'),
       image: '/items/lowcap_mushroom.png',
     },
   ];

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
 import { CoachMark } from '@/components/tour/CoachMark';
+import { useTranslation } from '@/i18n/useTranslation';
 import { isCharacterCoachSeen, markCharacterCoachSeen } from '@/lib/tour';
 
 interface CharacterCreationScreenProps {
@@ -11,6 +12,7 @@ interface CharacterCreationScreenProps {
 }
 
 export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [gender, setGender] = useState<PlayerGender>('woman');
   const [submitting, setSubmitting] = useState(false);
@@ -28,7 +30,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
     try {
       await onCreate(trimmedName, gender);
     } catch {
-      setError('The registry is unavailable. Start the API and try again.');
+      setError(t('character.apiError'));
       setSubmitting(false);
     }
   }
@@ -37,10 +39,10 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#090706] px-5 py-10 text-[#e8ddcf]">
       {!coachSeen && (
         <CoachMark
-          title="WELCOME, PRISONER"
-          body="Name your prisoner and pick their look. Your character follows you through every escape — your deck decides which class portrait you wear in battle."
+          title={t('tour.welcomeTitle')}
+          body={t('tour.welcomeBody')}
           placement="center"
-          dismissLabel="BEGIN"
+          dismissLabel={t('common.begin')}
           onDismiss={() => {
             markCharacterCoachSeen();
             setCoachSeen(true);
@@ -62,27 +64,25 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
         </section>
 
         <section className="flex flex-col justify-center px-7 py-10 sm:px-10">
-          <div className="text-[10px] tracking-[.34em] text-[#c9a24a]">HOLLOWFORT REGISTRY</div>
-          <h1 className="mt-3 font-cinzel text-3xl text-[#f0dfcb]">Name the prisoner</h1>
-          <p className="mt-3 max-w-md text-sm leading-6 text-[#8f8377]">
-            Your identity will follow you beyond the prison walls.
-          </p>
+          <div className="text-[10px] tracking-[.34em] text-[#c9a24a]">{t('character.registry')}</div>
+          <h1 className="mt-3 font-cinzel text-3xl text-[#f0dfcb]">{t('character.title')}</h1>
+          <p className="mt-3 max-w-md text-sm leading-6 text-[#8f8377]">{t('character.subtitle')}</p>
 
           <label className="mt-9 text-[10px] tracking-[.2em] text-[#a99a8b]" htmlFor="player-name">
-            NAME
+            {t('character.nameLabel')}
           </label>
           <input
             id="player-name"
             value={name}
             onChange={(event) => setName(event.target.value.slice(0, 24))}
-            placeholder="Enter a name"
+            placeholder={t('character.namePlaceholder')}
             autoComplete="off"
             autoFocus
             className="mt-2 h-12 rounded-md border border-[rgba(201,162,74,.3)] bg-[#0d0a09] px-4 font-cinzel text-base text-[#f0dfcb] outline-none transition placeholder:font-sans placeholder:text-[#554d46] focus:border-[#c9a24a]"
           />
           <div className="mt-1 text-right text-[9px] text-[#625850]">{trimmedName.length}/24</div>
 
-          <div className="mt-6 text-[10px] tracking-[.2em] text-[#a99a8b]">CHARACTER</div>
+          <div className="mt-6 text-[10px] tracking-[.2em] text-[#a99a8b]">{t('character.characterLabel')}</div>
           <div className="mt-2 grid grid-cols-2 gap-3">
             {(['woman', 'man'] as const).map((option) => {
               const selected = gender === option;
@@ -103,7 +103,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
                     className="h-10 w-8 rounded-sm object-cover object-top"
                   />
                   <span className="font-cinzel text-xs tracking-[.12em] text-[#ddd0c1] uppercase">
-                    {option}
+                    {option === 'woman' ? t('character.genderWoman') : t('character.genderMan')}
                   </span>
                 </button>
               );
@@ -117,7 +117,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
             disabled={trimmedName.length < 2 || submitting}
             className="mt-8 h-12 rounded-md border border-[#c9a24a] bg-[linear-gradient(180deg,#d7b65b,#a77e2f)] font-cinzel text-sm tracking-[.16em] text-[#1b1207] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-35"
           >
-            {submitting ? 'ENTERING THE REGISTRY…' : 'BEGIN ESCAPE'}
+            {submitting ? t('character.submitting') : t('character.submit')}
           </button>
         </section>
       </form>

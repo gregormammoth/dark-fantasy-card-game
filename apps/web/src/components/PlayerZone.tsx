@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import type { PoisonState } from '@dark-fantasy/shared/types/battle';
+import { useTranslation } from '@/i18n/useTranslation';
 import { CardStack } from './CardStack';
 import { Hand } from './Hand';
 import { EndTurnButton } from './EndTurnButton';
@@ -41,6 +42,7 @@ export function PlayerZone({
   showEndTurn = true,
   isHit = false,
 }: PlayerZoneProps) {
+  const { t } = useTranslation();
   const spendCount = spendingIndices?.size ?? 0;
   const displayHealth =
     health + (spendMode === 'burn' ? spendCount : 0);
@@ -89,7 +91,7 @@ export function PlayerZone({
             >
               {displayHealth}
             </span>
-            <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">CARDS</span>
+            <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('battle.cardsShort')}</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-[#b7ab9c]">
             <span className="inline-flex items-center gap-1">
@@ -113,7 +115,14 @@ export function PlayerZone({
       <Hand cards={hand} disabled={handDisabled} onAddToCombo={onAddToCombo} />
 
       <div className="flex shrink-0 flex-col items-center gap-3">
-        {showEndTurn && <EndTurnButton onClick={onEndTurn} disabled={endTurnDisabled} />}
+        {showEndTurn && (
+          <EndTurnButton
+            onClick={onEndTurn}
+            disabled={endTurnDisabled}
+            line1={t('battle.endTurnLine1')}
+            line2={t('battle.endTurnLine2')}
+          />
+        )}
       </div>
     </motion.section>
   );

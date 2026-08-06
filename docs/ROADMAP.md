@@ -62,6 +62,7 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - **Product analytics** (players, sessions, play time, funnel)
 - **Feedback form** (in-game / site → stored + reviewable)
 - E2E + polish enough to ship the slice
+- **Localization** — English + Russian + Serbian (UI + Hollowfort content)
 
 ### Yellow — Beta-supporting (already largely done or light)
 
@@ -170,6 +171,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
 | Enemy balance / diversity | Not started — shared enemy card pool; no early→late curve or archetypes yet |
 | Portraits / card art | Class+gender player portraits; 24 player card covers |
+| Localization (en / ru / sr) | First pass — `/play` UI chrome (en/ru/sr), Settings switcher, localStorage; game content JSON + engine strings still English |
 | Inventory | Money for Beta; full items post-Beta |
 | Automated tests | E2E smoke + world→battle; XP / loadout unit tests (E2E needs guest+API bootstrap) |
 
@@ -247,6 +249,9 @@ CURRENT
   │
   ▼
 12. Polish + guided tour (map / battle) + E2E
+  │
+  ▼
+13. Localization (en / ru / sr)              ← UI chrome done; Hollowfort content follow-up
   │
   ▼
 BETA
@@ -798,6 +803,56 @@ Keep lean: spotlight + one sentence + optional “Next”. No separate tutorial 
 - [x] Seeded / resume-safe (don’t re-show completed steps after load)
 - [ ] No multi-screen tutorial campaign in Beta
 
+### Localization (English · Russian · Serbian)
+
+**Goal:** Players can play the full Hollowfort slice in **English**, **Russian**, or **Serbian**. Default locale follows browser language; manual override in Settings persists across sessions.
+
+**Horizon:** Yellow (Beta-supporting) · **Priority:** before Beta gate if targeting those markets; can ship Beta in English first and land locales in a fast follow.
+
+#### Infrastructure
+
+- [x] Choose i18n approach for Next.js `/play` client (lightweight context + JSON message files)
+- [x] Locale ids: `en`, `ru`, `sr` (Serbian Latin script for UI consistency unless Cyrillic is added later)
+- [x] Message files layout — `apps/web/src/i18n/messages/{en,ru,sr}.json` for UI chrome; content packs under `packages/content/locales/` deferred
+- [x] `useTranslation` / `t()` hook wired through screens and shared components
+- [x] Persist chosen locale in `localStorage` (`dfcg-locale-v1`); browser default on first visit
+- [x] Language switcher in **Settings** (alongside audio)
+- [x] Fonts: **latin-ext** on Cinzel + Spectral; Cyrillic via system fallback for Russian UI
+
+#### UI chrome (apps/web)
+
+Translate all player-facing shell text:
+
+- [x] Character creation (name, gender, errors, submit)
+- [x] World map + exploration (headers, actions, hand bar, end turn, quest log)
+- [x] Location panel (Travel, Talk, Fight, Search, Escape)
+- [x] Battle (turn labels, combo empty state, end turn, result modal)
+- [x] Player screen (tabs, class XP, unlock / deck copy, back labels)
+- [x] Settings, coach marks (`CoachMark` tour strings), toasts, modals
+- [ ] Marketing / public pages (home, lore, patch notes) — lower priority than `/play`
+
+#### Game content (packages/content + engine)
+
+Translate data-driven strings shown at runtime:
+
+- [ ] Player card names + descriptions (~24 cards)
+- [ ] Enemy names + battle log templates where fixed English
+- [ ] Hollowfort location names + short blurbs
+- [ ] NPC dialog lines + quest names / descriptions / step labels
+- [ ] Exploration encounter text + action result messages generated in engine (audit `explorationMachine` / location encounters)
+
+#### Rules
+
+- [x] English remains source of truth; `en` keys required before `ru` / `sr` ship
+- [x] No gameplay logic in translation files — strings only
+- [x] Seeded runs / saves locale-agnostic (language is a client pref, not in `RunState`)
+- [x] Coach marks and analytics event names stay English internally; display text localized
+- [ ] QA pass per locale: no truncated buttons, overflow on long Russian strings, Cyrillic legibility
+
+#### Deliverable
+
+A player can switch language in Settings and play Hollowfort with localized **UI chrome** in all three languages. Full content localization (cards, NPC dialog, engine logs) is a follow-up pass.
+
 ### Audio / UX
 
 - [x] Ambient beds, screen music, combat/UI SFX (see [AUDIO.md](./AUDIO.md))
@@ -819,7 +874,7 @@ Keep lean: spotlight + one sentence + optional “Next”. No separate tutorial 
 
 ### Deliverable
 
-Stable Beta build on Vercel — including a short guided tour for map + battle first steps.
+Stable Beta build on Vercel — including a short guided tour for map + battle first steps; localization (en / ru / sr) tracked as step 13 before or immediately after Beta gate.
 
 ---
 
@@ -842,6 +897,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests
 - [ ] Money in inventory (earn / spend in the slice)
+- [ ] Localization: English + Russian + Serbian — UI chrome done; Hollowfort content JSON + engine strings follow-up (or documented fast-follow after English Beta)
 
 ### Explicitly out of Beta scope (Green)
 

@@ -1,6 +1,9 @@
+'use client';
+
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import { Card } from '@/components/Card';
 import { useAudio } from '@/audio/useAudio';
+import { useTranslation } from '@/i18n/useTranslation';
 
 interface ExplorationHandBarProps {
   context: ExplorationContext;
@@ -13,6 +16,7 @@ export function ExplorationHandBar({
   onSelectCard,
   onEndTurn,
 }: ExplorationHandBarProps) {
+  const { t } = useTranslation();
   const { play } = useAudio();
   const deckStack = [0, 1, 2, 3, 4, 5];
 
@@ -36,7 +40,7 @@ export function ExplorationHandBar({
         </div>
         <div className="flex flex-col items-center leading-none">
           <span className="font-cinzel text-[24px] text-[#e0b552]">{context.deck.length}</span>
-          <span className="mt-1 text-[9px] tracking-[.2em] text-[#8a7f72]">YOUR DECK</span>
+          <span className="mt-1 text-[9px] tracking-[.2em] text-[#8a7f72]">{t('exploration.yourDeck')}</span>
         </div>
       </div>
 
@@ -44,11 +48,9 @@ export function ExplorationHandBar({
 
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">
-            CARDS IN HAND · SELECT ONE TO ACT
-          </span>
+          <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">{t('exploration.cardsInHand')}</span>
           <span className="text-[9px] tracking-[.18em] text-[#8a7f72]">
-            DISCARD {context.discard.length}
+            {t('exploration.discard', { count: context.discard.length })}
           </span>
         </div>
         <div className="flex h-[150px] items-end">
@@ -70,7 +72,7 @@ export function ExplorationHandBar({
             );
           })}
           {context.hand.length === 0 && (
-            <span className="pb-8 text-[13px] text-[#8a7f72]">Hand is empty.</span>
+            <span className="pb-8 text-[13px] text-[#8a7f72]">{t('exploration.handEmpty')}</span>
           )}
         </div>
       </div>
@@ -78,7 +80,7 @@ export function ExplorationHandBar({
       <div className="flex shrink-0 flex-col items-center gap-3">
         <div className="text-center">
           <div className="font-cinzel text-[28px] text-[#e0b552]">{context.actionsRemaining}</div>
-          <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">ACTIONS LEFT</div>
+          <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('exploration.actionsLeft')}</div>
         </div>
         <button
           type="button"
@@ -88,7 +90,7 @@ export function ExplorationHandBar({
           }}
           className="rounded-[10px] border border-[rgba(201,162,74,.45)] bg-[rgba(224,181,82,.12)] px-5 py-3 font-cinzel text-[12px] tracking-[.16em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.8)] hover:bg-[rgba(224,181,82,.2)]"
         >
-          END TURN
+          {t('exploration.endTurn')}
         </button>
       </div>
     </div>

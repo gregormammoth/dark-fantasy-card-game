@@ -15,7 +15,8 @@ import {
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
-import { classThemes, getCardEffectSummary, getCardType } from '@/lib/cardTheme';
+import { useTranslation } from '@/i18n/useTranslation';
+import { classThemes, getCardEffectSummary, getCardType, getClassLabel } from '@/lib/cardTheme';
 import {
   getQuestSteps,
   listQuestItems,
@@ -49,12 +50,8 @@ interface PlayerScreenProps {
   backLabel?: string;
 }
 
-function classLabel(classId: CardClass): string {
-  return classThemes[classId].label[0] + classThemes[classId].label.slice(1).toLowerCase();
-}
-
-function typeLabel(definition: CardDefinition): string {
-  return getCardType(definition) === 'defense' ? 'DEFENCE' : 'ATTACK';
+function typeLabel(definition: CardDefinition, t: ReturnType<typeof useTranslation>['t']): string {
+  return getCardType(definition) === 'defense' ? t('cardType.defense') : t('cardType.attack');
 }
 
 function typeColor(definition: CardDefinition): string {
@@ -67,26 +64,27 @@ function statusCopy(
   availableLevels: number,
   accent: string,
   improved: boolean,
+  t: ReturnType<typeof useTranslation>['t'],
 ): { label: string; color: string } {
   if (status === 'unlocked') {
     return {
-      label: inDeck ? 'In deck — click to remove' : 'Unlocked — click to add',
+      label: inDeck ? t('player.inDeckRemove') : t('player.unlockedAdd'),
       color: '#7fb08a',
     };
   }
   if (status === 'available') {
     return {
-      label: `Unlock — ${LEVEL_COST} Level`,
+      label: t('player.unlockCost', { cost: LEVEL_COST }),
       color: accent,
     };
   }
   if (improved) {
     return {
-      label: `Needs ${LEVEL_COST} Level (have ${availableLevels})`,
+      label: t('player.needsLevel', { cost: LEVEL_COST, available: availableLevels }),
       color: '#8a7f72',
     };
   }
-  return { label: 'Locked', color: '#8a7f72' };
+  return { label: t('player.lockedStatus'), color: '#8a7f72' };
 }
 
 export function PlayerScreen({
@@ -98,6 +96,7 @@ export function PlayerScreen({
   onBack,
   backLabel = '← World Map',
 }: PlayerScreenProps) {
+  const { t } = useTranslation();
   const allCards = useMemo(() => getPlayerCardDefinitions(), []);
   const [activeTab, setActiveTab] = useState<TabId>('character');
   const [selectedClassId, setSelectedClassId] = useState<CardClass>('fighter');
@@ -146,7 +145,7 @@ export function PlayerScreen({
   const buildParts = PLAYER_CLASSES.filter((id) => deckByClass[id] > 0)
     .sort((a, b) => deckByClass[b] - deckByClass[a])
     .slice(0, 2)
-    .map((id) => classLabel(id));
+    .map((id) => getClassLabel(id, t));
   const totalXp = getTotalXp(progression);
   const overallLevel = Math.max(1, getClassLevel(totalXp) + 1);
 
@@ -170,6 +169,7 @@ export function PlayerScreen({
         selectedAvailableLevels,
         selectedTheme.accent,
         Boolean(activeCard.improved),
+        t,
       )
     : { label: '', color: '#8a7f72' };
 
@@ -191,7 +191,7 @@ export function PlayerScreen({
   const selectedQuest =
     quests.find((quest) => quest.id === activeQuestId) ?? filteredQuests[0] ?? null;
 
-  const items = listQuestItems(exploration);
+  const items = listQuestItems(exploration, t);
   const filteredItems = items.filter(
     (item) => itemFilter === 'all' || item.category === itemFilter,
   );
@@ -202,7 +202,11 @@ export function PlayerScreen({
   const selectedItem = items.find((item) => item.id === activeItemId) ?? null;
 
   const topLabel =
-    activeTab === 'quests' ? 'QUEST LOG' : activeTab === 'inventory' ? 'INVENTORY' : 'CHARACTER';
+    activeTab === 'quests'
+      ? t('player.questLog')
+      : activeTab === 'inventory'
+        ? t('player.inventory')
+        : t('player.character');
 
   function onCardAction(card: CardDefinition) {
     if (!card.class) {
@@ -234,7 +238,7 @@ export function PlayerScreen({
     const inDeck = deck.includes(card.id);
     if (status === 'unlocked') {
       return {
-        label: inDeck ? 'REMOVE FROM DECK' : 'ADD TO DECK',
+        label: inDeck ? t('player.removeFromDeck') : t('player.addToDeck'),
         border: `${selectedTheme.accent}66`,
         bg: inDeck ? 'transparent' : `${selectedTheme.accent}22`,
         color: selectedTheme.accent,
@@ -243,7 +247,7 @@ export function PlayerScreen({
     }
     if (status === 'available') {
       return {
-        label: `UNLOCK · ${LEVEL_COST} LVL`,
+        label: t('player.unlockLevel', { cost: LEVEL_COST }),
         border: `${selectedTheme.accent}88`,
         bg: `${selectedTheme.accent}28`,
         color: selectedTheme.accent,
@@ -251,7 +255,7 @@ export function PlayerScreen({
       };
     }
     return {
-      label: 'LOCKED',
+      label: t('common.locked'),
       border: 'rgba(201,162,74,.2)',
       bg: 'transparent',
       color: '#6a6058',
@@ -265,8 +269,8 @@ export function PlayerScreen({
     <div className="flex min-h-[100dvh] justify-center px-6 py-8 text-[#e8ddcf] sm:px-10">
       {progressionCoach.show && (
         <CoachMark
-          title="LEVEL UP & REFORGE"
-          body="Winning fights earns class XP. Spend levels to unlock improved cards, then add or remove cards to reshape your deck — your deck also decides your battle portrait."
+          title={t('tour.progressionTitle')}
+          body={t('tour.progressionBody')}
           placement="top"
           onDismiss={progressionCoach.dismiss}
         />
@@ -281,15 +285,15 @@ export function PlayerScreen({
             {backLabel}
           </button>
           <span className="font-cinzel text-[16px] tracking-[.3em] text-[#b8917f]">{topLabel}</span>
-          <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">HOLLOWFORT LEDGER</span>
+          <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">{t('player.ledger')}</span>
         </div>
 
         <div className="flex gap-2.5">
           {(
             [
-              ['character', 'CHARACTER'],
-              ['quests', 'QUESTS'],
-              ['inventory', 'INVENTORY'],
+              ['character', t('player.character')],
+              ['quests', t('player.questLog')],
+              ['inventory', t('player.inventory')],
             ] as const
           ).map(([id, label]) => {
             const selected = activeTab === id;
@@ -327,31 +331,29 @@ export function PlayerScreen({
               <div className="flex flex-1 flex-col justify-center gap-2.5">
                 <div>
                   <div className="font-cinzel text-[22px] text-[#f0dfcb]">{profile.name}</div>
-                  <div className="mt-0.5 text-[12px] italic text-[#8a7f72]">
-                    Escaped from Hollowfort
-                  </div>
+                  <div className="mt-0.5 text-[12px] italic text-[#8a7f72]">{t('player.escapedFrom')}</div>
                 </div>
                 <div className="flex flex-wrap gap-10">
                   <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">BUILD</div>
+                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.build')}</div>
                     <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {buildParts.length ? buildParts.join(' / ') : 'Unaligned'}
+                      {buildParts.length ? buildParts.join(' / ') : t('player.unaligned')}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">LEVEL</div>
+                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.level')}</div>
                     <div className="mt-1 font-cinzel text-[14px] text-[#c9a24a]">{overallLevel}</div>
                   </div>
                   <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">TOTAL XP</div>
+                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.totalXp')}</div>
                     <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
                       {totalXp.toLocaleString()}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">DECK</div>
+                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.deck')}</div>
                     <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {deck.length} / {DECK_CAP}
+                      {t('player.deckCount', { count: deck.length, cap: DECK_CAP })}
                     </div>
                   </div>
                 </div>
@@ -384,7 +386,7 @@ export function PlayerScreen({
                           className="font-cinzel text-[14px] tracking-wide"
                           style={{ color: theme.accent }}
                         >
-                          {classLabel(classId)}
+                          {getClassLabel(classId, t)}
                         </span>
                         {unclaimedCount > 0 && (
                           <span
@@ -396,7 +398,7 @@ export function PlayerScreen({
                         )}
                       </span>
                       <span className="shrink-0 text-[11px] text-[#8a7f72]">
-                        LV {level} · {xpInto}/{XP_PER_LEVEL} XP
+                        {t('player.xpBar', { level, current: xpInto, total: XP_PER_LEVEL })}
                       </span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-sm bg-[rgba(0,0,0,.4)]">
@@ -414,13 +416,13 @@ export function PlayerScreen({
               <div className="min-w-0 flex-1 overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
                 <div className="flex border-b border-[rgba(201,162,74,.28)] bg-[rgba(201,162,74,.06)] px-4 py-2.5">
                   <span className="w-12" />
-                  <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">NAME</span>
-                  <span className="w-[90px] text-[10px] tracking-[.16em] text-[#8a7f72]">TYPE</span>
+                  <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">{t('common.name')}</span>
+                  <span className="w-[90px] text-[10px] tracking-[.16em] text-[#8a7f72]">{t('player.typeHeader')}</span>
                   <span className="w-[150px] text-[10px] tracking-[.16em] text-[#8a7f72]">
-                    VALUE
+                    {t('player.valueHeader')}
                   </span>
                   <span className="w-[150px] text-right text-[10px] tracking-[.16em] text-[#8a7f72]">
-                    STATUS
+                    {t('player.statusHeader')}
                   </span>
                 </div>
                 {selectedCards.map((definition) => {
@@ -433,8 +435,9 @@ export function PlayerScreen({
                     inDeck,
                     selectedAvailableLevels,
                     selectedTheme.accent,
-                    Boolean(definition.improved),
-                  );
+        Boolean(definition.improved),
+        t,
+      );
                   const imageSrc =
                     definition.image ??
                     (definition.class ? `/cards/${definition.id}.png` : undefined);
@@ -478,7 +481,7 @@ export function PlayerScreen({
                         className="w-[90px] text-[10px] tracking-wide"
                         style={{ color: typeColor(definition) }}
                       >
-                        {typeLabel(definition)}
+                        {typeLabel(definition, t)}
                       </span>
                       <span className="w-[150px] text-[12px] text-[#a99c8d]">
                         {getCardEffectSummary(definition)}
@@ -521,7 +524,7 @@ export function PlayerScreen({
                       className="absolute left-2 top-2 rounded-[3px] px-1.5 py-0.5 text-[9px] tracking-wider text-white"
                       style={{ background: typeColor(activeCard) }}
                     >
-                      {typeLabel(activeCard)}
+                      {typeLabel(activeCard, t)}
                     </span>
                   </div>
                   <div className="flex flex-col gap-2.5 px-[18px] py-4">
@@ -530,7 +533,7 @@ export function PlayerScreen({
                       {activeCard.name}
                     </div>
                     {activeCard.improved && (
-                      <div className="text-[10px] tracking-[.16em] text-[#c9a24a]">IMPROVED · 1 LEVEL</div>
+                      <div className="text-[10px] tracking-[.16em] text-[#c9a24a]">{t('player.improvedCost')}</div>
                     )}
                     <div className="text-[12px] text-[#a99c8d]">
                       {getCardEffectSummary(activeCard)}
@@ -563,10 +566,10 @@ export function PlayerScreen({
             <div className="rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)] px-[22px] py-[18px]">
               <div className="mb-3 flex items-baseline justify-between">
                 <span className="font-cinzel text-[14px] tracking-[.1em] text-[#e8ddcf]">
-                  Current Deck
+                  {t('player.currentDeck')}
                 </span>
                 <span className="text-[12px] text-[#8a7f72]">
-                  {deck.length} / {DECK_CAP} cards
+                  {t('player.currentDeckCount', { count: deck.length, cap: DECK_CAP })}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
@@ -580,7 +583,7 @@ export function PlayerScreen({
                         className="w-[70px] font-cinzel text-[12px]"
                         style={{ color: theme.accent }}
                       >
-                        {classLabel(classId)}
+                        {getClassLabel(classId, t)}
                       </span>
                       <div className="h-2 flex-1 overflow-hidden rounded-[2px] bg-[rgba(0,0,0,.4)]">
                         <div
@@ -625,7 +628,7 @@ export function PlayerScreen({
       {confirmCard && confirmClassId && (
         <UnlockCardModal
           name={confirmCard.name}
-          className={classLabel(confirmClassId)}
+          className={getClassLabel(confirmClassId, t)}
           color={classThemes[confirmClassId].accent}
           borderColor={`${classThemes[confirmClassId].accent}66`}
           costLevels={LEVEL_COST}
@@ -656,12 +659,19 @@ function QuestsTab({
   onSelect: (id: string) => void;
   exploration: ExplorationContext | null;
 }) {
-  const steps = selectedQuest ? getQuestSteps(exploration, selectedQuest) : null;
+  const { t } = useTranslation();
+  const steps = selectedQuest ? getQuestSteps(exploration, selectedQuest, t) : null;
 
   return (
     <div className="-mt-px flex flex-col gap-3.5">
       <div className="flex gap-2">
-        {(['all', 'active', 'completed'] as const).map((id) => {
+        {(
+          [
+            ['all', t('common.all')],
+            ['active', t('exploration.active')],
+            ['completed', t('common.completed')],
+          ] as const
+        ).map(([id, label]) => {
           const selected = filter === id;
           return (
             <button
@@ -675,7 +685,7 @@ function QuestsTab({
                 borderColor: selected ? 'rgba(224,181,82,.5)' : 'rgba(201,162,74,.2)',
               }}
             >
-              {id.toUpperCase()}
+              {label}
             </button>
           );
         })}
@@ -684,15 +694,14 @@ function QuestsTab({
       <div className="flex items-start gap-4">
         <div className="w-[340px] shrink-0 overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
           {allQuests.length === 0 && (
-            <p className="m-0 px-4 py-5 text-[12px] text-[#8a7f72]">
-              No quests yet. Talk to faction NPCs in the prison.
-            </p>
+            <p className="m-0 px-4 py-5 text-[12px] text-[#8a7f72]">{t('player.noQuestsYet')}</p>
           )}
           {quests.map((quest) => {
             const selected = quest.id === selectedQuest?.id;
-            const questSteps = getQuestSteps(exploration, quest);
-            const stepsText = questStepsLabel(questSteps);
-            const statusLabel = quest.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS';
+            const questSteps = getQuestSteps(exploration, quest, t);
+            const stepsText = questStepsLabel(questSteps, t);
+            const statusLabel =
+              quest.status === 'completed' ? t('common.completed') : t('common.inProgress');
             const dot = quest.status === 'completed' ? '#7fb08a' : '#e0b552';
             return (
               <button
@@ -718,7 +727,7 @@ function QuestsTab({
                   </span>
                 </div>
                 <div className="ml-[17px] mt-1 text-[10px] tracking-[.1em] text-[#8a7f72]">
-                  {questLocationLabel(quest)} · {statusLabel}
+                  {questLocationLabel(quest, t)} · {statusLabel}
                 </div>
                 {stepsText && (
                   <div className="ml-[17px] mt-1 text-[10px] tracking-[.1em] text-[#c9a24a]">
@@ -734,7 +743,7 @@ function QuestsTab({
           {selectedQuest ? (
             <>
               <div className="text-[10px] tracking-[.2em] text-[#6b5a38]">
-                {questLocationLabel(selectedQuest)}
+                {questLocationLabel(selectedQuest, t)}
               </div>
               <div className="mt-1.5 font-cinzel text-[24px] text-[#2b2116]">
                 {selectedQuest.name}
@@ -745,7 +754,7 @@ function QuestsTab({
                   color: selectedQuest.status === 'completed' ? '#3f6b4a' : '#8a5a1a',
                 }}
               >
-                {selectedQuest.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS'}
+                {selectedQuest.status === 'completed' ? t('common.completed') : t('common.inProgress')}
               </div>
               <div className="my-4 h-px bg-[rgba(60,45,20,.25)]" />
               <p className="m-0 text-[14px] leading-relaxed text-[#3a2c1a]">
@@ -780,9 +789,7 @@ function QuestsTab({
               )}
             </>
           ) : (
-            <p className="m-0 text-[14px] text-[#3a2c1a]">
-              No quest selected. Begin threads by speaking with faction NPCs.
-            </p>
+            <p className="m-0 text-[14px] text-[#3a2c1a]">{t('player.noQuestSelected')}</p>
           )}
         </div>
       </div>
@@ -807,6 +814,7 @@ function InventoryTab({
   allItems: QuestItemView[];
   portrait: string;
 }) {
+  const { t } = useTranslation();
   const keyring = allItems.find((item) => item.id === 'dining_keyring');
   const lavender = allItems.find((item) => item.id === 'dried_lavender');
   const mushroom = allItems.find((item) => item.id === 'lowcap_mushroom');
@@ -817,9 +825,9 @@ function InventoryTab({
         <div className="flex gap-2">
           {(
             [
-              ['all', 'ALL'],
-              ['key', 'KEY ITEMS'],
-              ['ingredient', 'INGREDIENTS'],
+              ['all', t('common.all')],
+              ['key', t('player.keyItems')],
+              ['ingredient', t('player.ingredients')],
             ] as const
           ).map(([id, label]) => {
             const selected = filter === id;
@@ -844,12 +852,12 @@ function InventoryTab({
         <div className="overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
           <div className="flex border-b border-[rgba(201,162,74,.28)] bg-[rgba(201,162,74,.06)] px-4 py-2.5">
             <span className="w-[46px]" />
-            <span className="w-[180px] text-[10px] tracking-[.16em] text-[#8a7f72]">NAME</span>
+            <span className="w-[180px] text-[10px] tracking-[.16em] text-[#8a7f72]">{t('common.name')}</span>
             <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">
-              DESCRIPTION
+              {t('common.description')}
             </span>
             <span className="w-[160px] text-right text-[10px] tracking-[.16em] text-[#8a7f72]">
-              QUEST
+              {t('player.questProgress')}
             </span>
           </div>
           {items.map((item) => {
@@ -887,7 +895,7 @@ function InventoryTab({
                   className="w-[160px] text-right text-[11px]"
                   style={{ color: item.obtained ? '#e0b552' : '#6a6058' }}
                 >
-                  {item.obtained ? item.questName : 'Not yet found'}
+                  {item.obtained ? item.questName : t('player.notYetFound')}
                 </span>
               </button>
             );

@@ -1,6 +1,9 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import type { ComboPreview } from '@dark-fantasy/shared/types/comboPreview';
 import { isComboPreviewEmpty } from '@dark-fantasy/shared/types/comboPreview';
+import { useTranslation } from '@/i18n/useTranslation';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface ComboPreviewPanelProps {
@@ -18,41 +21,41 @@ export function ComboPreviewPanel({
   playerShield,
   playerMaxShield,
 }: ComboPreviewPanelProps) {
+  const { t } = useTranslation();
+
   if (!preview || isComboPreviewEmpty(preview)) {
     return (
       <div className="flex flex-col gap-3 rounded-[14px] border border-[rgba(201,162,74,.14)] bg-gradient-to-b from-[rgba(20,15,12,.7)] to-[rgba(12,9,8,.7)] p-4">
-        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">IF YOU END TURN</span>
-        <p className="text-sm text-[#5a5147]">Add cards to your combo to see the preview.</p>
+        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.ifYouEndTurn')}</span>
+        <p className="text-sm text-[#5a5147]">{t('battle.addCardsForPreview')}</p>
       </div>
     );
   }
 
   const enemyAfter = Math.max(0, enemyHealth - preview.damageToEnemy);
   const shieldAfter = Math.min(playerMaxShield, playerShield + preview.shieldGain);
+  const cardLabel =
+    comboSize === 1 ? t('common.card', { count: comboSize }) : t('common.cards', { count: comboSize });
 
   return (
     <div className="flex flex-col gap-3 rounded-[14px] border border-[rgba(201,162,74,.24)] bg-gradient-to-b from-[rgba(20,15,12,.9)] to-[rgba(12,9,8,.9)] p-4">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">IF YOU END TURN</span>
-        <span className="text-[10px] text-[#6f6659]">
-          {comboSize} card{comboSize === 1 ? '' : 's'}
-        </span>
+        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.ifYouEndTurn')}</span>
+        <span className="text-[10px] text-[#6f6659]">{cardLabel}</span>
       </div>
 
       {preview.damageToEnemy > 0 && (
         <PreviewRow
           tone="damage"
           icon={<AttackIcon className="inline-block h-[22px] w-5 shrink-0" />}
-          title={
-            <>
-              <b className="font-cinzel text-[17px]">{preview.damageToEnemy}</b> cards burn from
-              enemy
-            </>
-          }
+          title={t('battle.cardsBurnFromEnemy', { count: preview.damageToEnemy })}
           detail={
             preview.enemyShieldBlocked > 0
-              ? `${preview.totalDamageToEnemy} damage − ${preview.enemyShieldBlocked} enemy shield`
-              : `${preview.totalDamageToEnemy} damage`
+              ? t('battle.damageMinusShield', {
+                  damage: preview.totalDamageToEnemy,
+                  blocked: preview.enemyShieldBlocked,
+                })
+              : t('battle.damageOnly', { damage: preview.totalDamageToEnemy })
           }
         />
       )}
@@ -61,8 +64,8 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="pierce"
           icon={<PierceIcon className="inline-block h-4 w-4 shrink-0" />}
-          title="Ignores shield"
-          detail="Attack pierces armor"
+          title={t('battle.ignoresShield')}
+          detail={t('battle.piercesArmor')}
         />
       )}
 
@@ -70,13 +73,11 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="poison"
           icon={<PoisonIcon className="inline-block h-5 w-[18px] shrink-0" />}
-          title={
-            <>
-              Poison <b className="font-cinzel">{preview.poison.damagePerTurn}</b> / turn ×{' '}
-              {preview.poison.turns}
-            </>
-          }
-          detail="bypasses shield & barrier"
+          title={t('battle.poisonPerTurn', {
+            damage: preview.poison.damagePerTurn,
+            turns: preview.poison.turns,
+          })}
+          detail={t('battle.poisonBypass')}
         />
       )}
 
@@ -84,12 +85,8 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="shield"
           icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" />}
-          title={
-            <>
-              You gain <b className="font-cinzel">+{preview.shieldGain}</b> shield
-            </>
-          }
-          detail={`now at ${shieldAfter} / ${playerMaxShield} max`}
+          title={t('battle.gainShield', { amount: preview.shieldGain })}
+          detail={t('battle.shieldNowAt', { current: shieldAfter, max: playerMaxShield })}
         />
       )}
 
@@ -97,12 +94,8 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="barrier"
           icon={<BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />}
-          title={
-            <>
-              You gain <b className="font-cinzel">+{preview.barrierGain}</b> barrier
-            </>
-          }
-          detail="expires end of round"
+          title={t('battle.gainBarrier', { amount: preview.barrierGain })}
+          detail={t('battle.barrierExpires')}
         />
       )}
 
@@ -110,12 +103,8 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="reduced"
           icon={<ShieldIcon className="inline-block h-5 w-[18px] shrink-0" style={{ background: '#6fae5a' }} />}
-          title={
-            <>
-              <b className="font-cinzel">{preview.damageReductionPercent}%</b> damage reduction
-            </>
-          }
-          detail="this round only"
+          title={t('battle.damageReduction', { percent: preview.damageReductionPercent })}
+          detail={t('battle.thisRoundOnly')}
         />
       )}
 
@@ -123,12 +112,8 @@ export function ComboPreviewPanel({
         <PreviewRow
           tone="heal"
           icon={<span className="shrink-0 text-[#c9a24a]">↩</span>}
-          title={
-            <>
-              Recover <b className="font-cinzel">{preview.cardsRecovered}</b> cards
-            </>
-          }
-          detail="from discard to hand"
+          title={t('battle.recoverCards', { count: preview.cardsRecovered })}
+          detail={t('battle.fromDiscardToHand')}
         />
       )}
 
@@ -136,11 +121,12 @@ export function ComboPreviewPanel({
         <>
           <div className="my-0.5 h-px bg-[rgba(201,162,74,.16)]" />
           <div className="flex items-center justify-between text-xs text-[#b7ab9c]">
-            <span>Enemy deck</span>
+            <span>{t('battle.enemyDeck')}</span>
             <span>
               <b className="font-cinzel text-[15px] text-[#f0b3aa]">{enemyHealth}</b>
               <span className="mx-1.5 text-[#6f6659]">→</span>
-              <b className="font-cinzel text-[15px] text-[#f0b3aa]">{enemyAfter}</b> cards
+              <b className="font-cinzel text-[15px] text-[#f0b3aa]">{enemyAfter}</b>{' '}
+              {t('battle.deckAsHealth')}
             </span>
           </div>
         </>
