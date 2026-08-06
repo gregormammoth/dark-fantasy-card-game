@@ -1,4 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  Crown,
+  DoorOpen,
+  Eye,
+  Gem,
+  HelpCircle,
+  Home,
+  Lock,
+  MapPin,
+  ScrollText,
+  Swords,
+  User,
+} from 'lucide-react';
 import type { ExplorationContext, LocationDefinition, LocationStatus } from '@dark-fantasy/shared/types/exploration';
 import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import {
@@ -29,6 +43,54 @@ function getOccupantCard(
     return { image: npc.image, border: '#8fb0e0' };
   }
   return null;
+}
+
+function getLocationMarker(
+  context: ExplorationContext,
+  location: LocationDefinition,
+  options: { locked: boolean; showInfo: boolean },
+): { Icon: LucideIcon; color: string } {
+  if (options.locked) {
+    return { Icon: Lock, color: '#5a534a' };
+  }
+  if (!options.showInfo) {
+    return { Icon: HelpCircle, color: '#4a4640' };
+  }
+
+  const liveEnemy = location.enemies.find(
+    (enemy) => !enemy.defeated && isEnemyAvailable(context, enemy),
+  );
+  if (location.type === 'boss' || liveEnemy?.tier.toLowerCase().includes('boss')) {
+    return { Icon: Crown, color: locationTypeColors.boss };
+  }
+  if (liveEnemy) {
+    return { Icon: Swords, color: locationTypeColors.danger };
+  }
+
+  const liveNpc = location.npcs.find((npc) => isNpcAvailable(context, npc));
+  if (liveNpc || location.type === 'npc') {
+    return { Icon: User, color: locationTypeColors.npc };
+  }
+
+  if (location.quest) {
+    return { Icon: ScrollText, color: locationTypeColors.hub };
+  }
+
+  if (location.loot.some((item) => !item.claimed) || location.type === 'loot') {
+    return { Icon: Gem, color: locationTypeColors.loot };
+  }
+
+  if (location.type === 'gate') {
+    return { Icon: DoorOpen, color: locationTypeColors.gate };
+  }
+  if (location.type === 'secret') {
+    return { Icon: Eye, color: locationTypeColors.secret };
+  }
+  if (location.type === 'start' || location.type === 'hub') {
+    return { Icon: Home, color: locationTypeColors[location.type] };
+  }
+
+  return { Icon: MapPin, color: locationTypeColors[location.type] };
 }
 
 interface PrisonMapProps {
@@ -526,6 +588,9 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
             const hasThreat = !!liveEnemy;
             const occupant = showInfo ? getOccupantCard(context, location) : null;
             const showQuestBadge = showInfo && !!location.quest;
+            const marker = getLocationMarker(context, location, { locked, showInfo });
+            const MarkerIcon = marker.Icon;
+            const iconSize = location.type === 'boss' || location.type === 'gate' ? 22 : 18;
 
             return (
               <button
@@ -584,14 +649,12 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                     }}
                   />
                   <div className="relative z-[2] flex h-full flex-col items-center justify-center gap-1 px-1.5">
-                    <span
-                      className="inline-block"
+                    <MarkerIcon
+                      size={iconSize}
+                      strokeWidth={2.1}
                       style={{
-                        width: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
-                        height: location.type === 'boss' || location.type === 'gate' ? 22 : 16,
-                        background: color,
-                        clipPath: 'polygon(50% 0,100% 50%,50% 100%,0 50%)',
-                        boxShadow: `0 0 14px -2px ${color}`,
+                        color: marker.color,
+                        filter: `drop-shadow(0 0 8px ${marker.color}88)`,
                       }}
                     />
                     <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
@@ -611,7 +674,9 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                   )}
                 </div>
                 {showQuestBadge && (
-                  <span className="absolute left-1.5 top-1.5 z-[4] h-[13px] w-[13px] animate-[qpulse_2s_ease-in-out_infinite] rounded-full border-2 border-[#12100f] bg-[#e0b552]" />
+                  <span className="absolute left-1 top-1 z-[4] flex h-[22px] w-[22px] animate-[qpulse_2s_ease-in-out_infinite] items-center justify-center rounded-full border-2 border-[#12100f] bg-[#1a1512] text-[#e0b552] shadow-[0_0_10px_-2px_rgba(224,181,82,.8)]">
+                    <ScrollText size={12} strokeWidth={2.4} />
+                  </span>
                 )}
                 {occupant && (
                   <span

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
-import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
 import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import {
   getActiveLocationEncounter,
@@ -252,14 +251,6 @@ export function ExplorationScreen({
           onClose={() => actor.send({ type: 'CLEAR_SELECTION' })}
           onTravel={(locationId) =>
             actor.send({ type: 'PLAY_ACTION', action: 'MOVE', targetId: locationId })
-          }
-          onAction={(action: ExplorationActionType, options) =>
-            actor.send({
-              type: 'PLAY_ACTION',
-              action,
-              targetId: options?.targetId,
-              interactionId: options?.interactionId,
-            })
           }
           onTalk={(locationId, npcId) =>
             actor.send({ type: 'QUEUE_DIALOG', locationId, npcId })

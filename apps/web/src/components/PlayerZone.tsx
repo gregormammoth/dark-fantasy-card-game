@@ -64,7 +64,7 @@ export function PlayerZone({
     >
       <div className="flex shrink-0 items-end gap-4">
         <div className="relative">
-          <div className="h-[126px] w-24 overflow-hidden rounded-[11px] bg-[#151009]">
+          <div className="h-[200px] w-[152px] overflow-hidden rounded-[13px] bg-[#151009]">
             <img
               src={portrait}
               alt=""
@@ -72,7 +72,7 @@ export function PlayerZone({
             />
           </div>
           <div
-            className="pointer-events-none absolute inset-0 rounded-[11px] border border-[rgba(201,162,74,.5)]"
+            className="pointer-events-none absolute inset-0 rounded-[13px] border border-[rgba(201,162,74,.5)]"
             style={{ boxShadow: 'inset 0 0 22px -8px rgba(201,162,74,.6)' }}
           />
         </div>

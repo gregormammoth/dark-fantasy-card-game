@@ -1,12 +1,10 @@
 'use client';
 
 import type {
-  ExplorationActionType,
   ExplorationContext,
   LocationDefinition,
 } from '@dark-fantasy/shared/types/exploration';
-import { canMoveTo, getLocationStatus, isInteractionAvailable, isLocationLocked, isExitBlocked, isCorridorBlocked, isDiningHallPathBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
-import { canPlayAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
+import { canMoveTo, getLocationStatus, isLocationLocked, isExitBlocked, isCorridorBlocked, isDiningHallPathBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
@@ -23,7 +21,6 @@ interface LocationDetailPanelProps {
   location: LocationDefinition | null;
   onClose: () => void;
   onTravel: (locationId: string) => void;
-  onAction: (action: ExplorationActionType, options?: { interactionId?: string; targetId?: string }) => void;
   onTalk?: (locationId: string, npcId: string) => void;
   onFight?: (locationId: string, enemyId: string) => void;
   onEscape?: () => void;
@@ -34,7 +31,6 @@ export function LocationDetailPanel({
   location,
   onClose,
   onTravel,
-  onAction,
   onTalk,
   onFight,
   onEscape,
@@ -61,9 +57,6 @@ export function LocationDetailPanel({
   const activeEnemy = availableEnemies[0];
   const availableNpcs = location.npcs.filter((npc) => isNpcAvailable(context, npc));
   const unclaimedLoot = location.loot.filter((item) => !item.claimed);
-  const availableInteractions = location.interactions.filter((item) =>
-    isInteractionAvailable(context, item.id),
-  );
 
   const chips = locked
     ? []
@@ -72,9 +65,6 @@ export function LocationDetailPanel({
         ...unclaimedLoot.map(() => ({ label: t('location.chipLoot'), color: activityColors.loot })),
         ...availableNpcs.map(() => ({ label: t('location.chipNpc'), color: activityColors.npc })),
         ...(location.quest ? [{ label: t('location.chipQuest'), color: activityColors.quest }] : []),
-        ...location.interactions
-          .filter((item) => item.action === 'REST' && !item.completed)
-          .map(() => ({ label: t('location.chipRest'), color: activityColors.rest })),
       ];
 
   return (
@@ -255,46 +245,6 @@ export function LocationDetailPanel({
                 );
               })}
             </div>
-          </div>
-        )}
-
-        {isHere && showInfo && (
-          <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">
-              {hasCard ? t('location.playCardToAct') : t('location.selectCardFirst')}
-            </span>
-            {availableInteractions.map((interaction) => {
-              const enabled =
-                hasCard &&
-                canPlayAction(context, interaction.action, {
-                  interactionId: interaction.id,
-                  targetId: interaction.targetId,
-                  cardInstanceId: context.selectedCardInstanceId ?? undefined,
-                });
-              return (
-                <button
-                  key={interaction.id}
-                  type="button"
-                  disabled={!enabled}
-                  onClick={() =>
-                    onAction(interaction.action, {
-                      interactionId: interaction.id,
-                      targetId: interaction.targetId,
-                    })
-                  }
-                  className="rounded-[5px] border border-[rgba(201,162,74,.3)] px-3 py-2.5 text-left font-cinzel text-[12px] tracking-wide text-[#e8ddcf] transition enabled:hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {interaction.label}
-                  <span className="mt-1 block text-[10px] tracking-[.14em] text-[#8a7f72]">
-                    {interaction.action}
-                    {interaction.locked ? t('location.interactionLocked') : ''}
-                  </span>
-                </button>
-              );
-            })}
-            {availableInteractions.length === 0 && (
-              <span className="text-[12px] text-[#8a7f72]">{t('location.noInteractions')}</span>
-            )}
           </div>
         )}
       </div>
