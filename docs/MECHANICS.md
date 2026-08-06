@@ -242,23 +242,25 @@ Each card has an ordered list of **effects** resolved top to bottom on the same 
 | `bonusDamagePerAttackCard` | Add `value` × (other Attack cards in **current combo**) to pending damage. Excludes the card being resolved. |
 | `bonusBarrierPerDefenseCard` | Add `value` × (other Defense cards in **current combo**) to pending barrier. Excludes the card being resolved. |
 | `bonusShieldPerDefenseCard` | Add `value` × (`defenseCardsPlayed` this battle) to pending shield. |
-| `bonusIfLowerHp` | If player HP is below `thresholdPercent` of max HP, add `damage` to pending damage. |
+| `bonusIfLowerHp` | If player HP at combo commit is below `thresholdPercent` of max HP, add `damage` to pending damage (order-independent). |
 | `reduceDamagePercent` | Set player damage reduction to `value`% for this round. |
 
 ### Combo-scoped bonuses
 
-These count cards still in the **combo** while a card resolves (not yet moved to discard):
+These count other cards in the **committed combo** (snapshot at combo start), excluding the card being resolved. Order inside the combo does not change the total:
 
 - `bonusDamagePerAttackCard`
 - `bonusBarrierPerDefenseCard`
 
-Example: Battle Momentum with two other Attack cards in the combo deals 2 + 2 = 4 damage.
+Example: Battle Momentum with one other Attack card in the combo (e.g. Poison Dagger) deals 2 + 1 = 3 damage whether Momentum is first or second.
 
 Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 = 3 barrier.
 
 ### Conditional bonuses
 
-**Last Stand** uses `bonusIfLowerHp`: if the player’s current HP (deck + hand + combo) is below 50% of starting max HP, it adds +2 damage before its damage effect (4 total instead of 2).
+**Last Stand** uses `bonusIfLowerHp`: if the player’s HP at **combo commit** (deck + hand + full combo, before any card resolves) is below `thresholdPercent` of starting max HP, it adds +2 damage before its damage effect (4 total instead of 2). The check is **order-independent** and must match the combo preview.
+
+**Backstab** uses `bonusIfFirstAttack`: if **no attack cards have been played yet this battle** when the combo is committed, add bonus damage. Position inside the combo does not matter — the check uses attack count at combo start, so Backstab second in the first attack combo still gets the bonus. After any attack has resolved in a prior combo, later Backstabs do not.
 
 ---
 
@@ -270,6 +272,7 @@ Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 =
 | Battle Momentum | Fighter | Attack | +1 damage per other Attack in combo; 2 damage |
 | Raise Shield | Fighter | Defense | +2 shield |
 | Poison Dagger | Rogue | Attack | Poison 1/turn for 3 turns |
+| Backstab | Rogue | Attack | +2 damage if first attack combo of the battle; 2 damage |
 | Smoke Escape | Rogue | Defense | 50% damage reduction this round |
 | Arcane Bolt | Wizard | Attack | Ignores shield; 2 damage |
 | Magic Barrier | Wizard | Defense | +3 barrier |
@@ -325,8 +328,8 @@ Default setup is in `src/data/battle.json`:
 |---------|---------|
 | Player starting shield | 2 |
 | Player max shield | 2 |
-| Player starting hand | 4 cards on first turn |
-| Player deck | All player cards, shuffled |
+| Player starting hand | 4 cards on first turn (world battles); location battles keep the current exploration hand |
+| Player deck | World battles: loadout shuffled. Location battles: exploration deck + discard shuffled into the draw pile; exploration discard starts empty |
 | Enemy name | Shadow Beast |
 | Enemy starting shield | 2 |
 | Enemy max shield | 2 |

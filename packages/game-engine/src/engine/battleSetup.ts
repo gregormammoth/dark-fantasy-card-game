@@ -2,12 +2,22 @@ import playerCardsData from '@dark-fantasy/content/playerCards.json';
 import improvedCardsData from '@dark-fantasy/content/improvedCards.json';
 import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
 import battleData from '@dark-fantasy/content/battle.json';
-import type { CardDefinition } from '@dark-fantasy/shared/types/card';
-import type { BattleContext, BattleEnemyOverride } from '@dark-fantasy/shared/types/battle';
+import type { CardDefinition, CardInstance } from '@dark-fantasy/shared/types/card';
+import type {
+  BattleContext,
+  BattleEnemyOverride,
+  PlayerBattlePiles,
+} from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import type { PlayerGender } from '@dark-fantasy/shared/types/player';
 import type { RngState } from '@dark-fantasy/shared/types/rng';
-import { createCardInstance, resetInstanceCounter, shuffle, drawCards } from './deck';
+import {
+  createCardInstance,
+  resetInstanceCounter,
+  shuffle,
+  drawCards,
+  syncInstanceCounterFromCards,
+} from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { createInitialProgression } from './progression/xp';
@@ -69,8 +79,8 @@ export function createInitialBattle(
   rngState?: RngState,
   playerDeckIds?: string[],
   playerGender?: PlayerGender,
+  playerPiles?: PlayerBattlePiles,
 ): BattleContext {
-  resetInstanceCounter();
   resetLogCounter();
 
   const rng = rngState ? cloneRng(rngState) : createRng();
@@ -78,11 +88,28 @@ export function createInitialBattle(
     playerDeckIds && playerDeckIds.length > 0
       ? playerDeckIds
       : createInitialLoadout().deckCardIds;
-  const playerDeck = shuffle(buildDeck(deckIds), rng);
-  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
 
+  let playerHand: CardInstance[] = [];
+  let playerDeck: CardInstance[];
+  let playerDiscard: CardInstance[] = [];
+
+  if (playerPiles) {
+    playerHand = structuredClone(playerPiles.hand);
+    playerDeck = shuffle(
+      [...structuredClone(playerPiles.deck), ...structuredClone(playerPiles.discard)],
+      rng,
+    );
+    playerDiscard = [];
+    syncInstanceCounterFromCards([...playerHand, ...playerDeck]);
+  } else {
+    resetInstanceCounter();
+    playerDeck = shuffle(buildDeck(deckIds), rng);
+  }
+
+  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
   const playerMaxShield = battleData.player.maxShield ?? 2;
   const enemyMaxShield = battleData.enemy.maxShield ?? 2;
+  const playerMaxHealth = playerHand.length + playerDeck.length + playerDiscard.length;
 
   return {
     player: {
@@ -91,8 +118,8 @@ export function createInitialBattle(
       maxShield: playerMaxShield,
       barrier: 0,
       deck: playerDeck,
-      hand: [],
-      discard: [],
+      hand: playerHand,
+      discard: playerDiscard,
     },
     enemy: {
       name: enemyOverride?.name ?? battleData.enemy.name,
@@ -104,7 +131,7 @@ export function createInitialBattle(
       discard: [],
     },
     combo: [],
-    playerMaxHealth: playerDeck.length,
+    playerMaxHealth,
     enemyMaxHealth: enemyDeck.length,
     combatStats: {
       attackCardsPlayed: 0,
@@ -125,6 +152,9 @@ export function createInitialBattle(
     lastDamageResult: null,
     isFirstPlayerTurn: true,
     lastPlayerDrawCount: 0,
+    comboStartPlayerHealth: null,
+    comboStartAttackCardsPlayed: null,
+    comboStartCards: null,
     log: [],
     progression: structuredClone(progression),
     progressionAtBattleStart: structuredClone(progression),
@@ -164,6 +194,12 @@ export function initBattleLog(battle: BattleContext): BattleContext {
 
 export function drawAtTurnStart(battle: BattleContext): BattleContext {
   const startingHandSize = battleData.player.startingHandSize ?? 4;
+  if (battle.isFirstPlayerTurn && battle.player.hand.length > 0) {
+    const next = structuredClone(battle);
+    next.isFirstPlayerTurn = false;
+    next.lastPlayerDrawCount = 0;
+    return next;
+  }
   const count = battle.isFirstPlayerTurn ? startingHandSize : 1;
   const next = drawPlayerCards(battle, count);
   next.isFirstPlayerTurn = false;

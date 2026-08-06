@@ -71,6 +71,9 @@ export interface BattleContext {
   lastDamageResult: DamageResolution | null;
   isFirstPlayerTurn: boolean;
   lastPlayerDrawCount: number;
+  comboStartPlayerHealth: number | null;
+  comboStartAttackCardsPlayed: number | null;
+  comboStartCards: CardInstance[] | null;
   log: BattleLogEntry[];
   progression: PlayerProgression;
   progressionAtBattleStart: PlayerProgression;
@@ -84,6 +87,12 @@ export type BattleEnemyOverride = {
   barrierPerTurn?: number;
 };
 
+export type PlayerBattlePiles = {
+  hand: CardInstance[];
+  deck: CardInstance[];
+  discard: CardInstance[];
+};
+
 export type BattleEvent =
   | {
       type: 'START_BATTLE';
@@ -92,6 +101,7 @@ export type BattleEvent =
       rng?: RngState;
       playerDeckIds?: string[];
       playerGender?: PlayerGender;
+      playerPiles?: PlayerBattlePiles;
     }
   | { type: 'ADD_TO_COMBO'; cardInstanceId: string }
   | { type: 'REMOVE_FROM_COMBO'; cardInstanceId: string }
@@ -104,5 +114,6 @@ export type BattleEvent =
       rng?: RngState;
       playerDeckIds?: string[];
       playerGender?: PlayerGender;
+      playerPiles?: PlayerBattlePiles;
     }
   | { type: 'LEAVE_BATTLE' };

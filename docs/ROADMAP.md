@@ -158,9 +158,9 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | World / Exploration / Battle screens | Connected via `GameApp` + shared `RunState` |
 | Shared **Run** state | Done — `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
 | Character creation | Done — name + gender → `POST /players` → guest `playerId` |
-| Exploration ↔ Battle continuity | In place — location FIGHT → battle → `TO PRISON` |
-| Exploration action economy + encounter pressure | Not started — map still needs a clear 3–4 action/card loop, encounter pressure, and battle handoff from exploration state |
-| Battle core | Partial — playable |
+| Exploration ↔ Battle continuity | In place — location FIGHT → battle with carried piles → victory syncs piles back; encounter pressure / card disturbance still open |
+| Exploration action economy + encounter pressure | Partial — 4 actions/turn exist; clear spend loop / encounter pressure / UI timing still open |
+| Battle core | Partial — playable; conditional combo bonuses use combo-start HP (order-independent; preview matches resolve) |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
@@ -198,7 +198,7 @@ Update this table as milestones land.
 - [x] Return to exploration after battle (`TO PRISON`) with XP intact
 - [x] Open Player and see updated class XP
 - [x] Fight again with a meaningfully different deck
-- [ ] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
+- [x] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
@@ -225,7 +225,7 @@ CURRENT
 2. Shared Run State                        ← RunState done; app XState machine deferred
   │
   ▼
-3. Exploration ↔ Battle (same run)         ← session loop done; action economy + battle handoff open
+3. Exploration ↔ Battle (same run)         ← session loop + hand/deck handoff done; encounter pressure open
   │
   ▼
 4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
@@ -365,9 +365,10 @@ Exploration and battle are no longer separate runtimes.
 - [ ] Complete the exploration action economy so spending cards on the map is clear, fast, and convenient
 - [ ] Tune the default prison turn cadence to roughly **3–4 actions / cards** before an encounter fires, with room for content-driven variation
 - [ ] Make encounters pressure the current card state in meaningful ways (shuffle, discard, burn, remove, or otherwise disturb cards instead of acting like a cosmetic timer)
-- [ ] Carry the player into battle with the current exploration hand / deck state so saved cards become tactical battle resources
+- [x] Carry the player into battle with the current exploration hand / deck state so saved cards become tactical battle resources
 - [ ] Let encounter outcomes also touch battle readiness by consuming, shuffling, or denying cards the player was trying to preserve
 - [ ] Surface this clearly in the UI: actions remaining, encounter timing, and which cards are being risked by spending or holding
+- [x] Align combo logic for conditional bonuses (e.g. `bonusIfLowerHp`) — order-independent; preview matches resolve
 
 ### Deliverable
 
@@ -687,7 +688,8 @@ Then expand: 32 → 50 → 80 → 120 after the system feels right.
 ### Tasks (player)
 
 - [x] Fighter, Rogue, Wizard, Survivor as class ids + XP paths
-- [x] Attack / defence effects + combos
+- [x] Attack / defence effects + combos (base resolve path)
+- [x] Align combo logic for conditional bonuses (e.g. `bonusIfLowerHp` / “+2 damage if &lt; 50% HP”) — effect must not depend on card position in the combo; combo preview must match actual resolve
 - [ ] Balance ~24–32 cards so classes feel distinct
 - [ ] Utility / event / equipment categories only if the slice needs them
 - [ ] Synergies / rarity / upgrades — lean for Beta; expand post-Beta
@@ -797,6 +799,7 @@ Keep lean: spotlight + one sentence + optional “Next”. No separate tutorial 
 
 - [x] First-battle coach: stack cards into the combo + preview
 - [x] End turn to resolve (same coach)
+- [x] Align conditional combo bonuses with preview (e.g. `bonusIfLowerHp`) — same total regardless of card order; UI preview matches resolve
 - [ ] Intent / enemy turn one-liner
 - [ ] HP = cards left (deck as health) callout
 - [ ] Victory / defeat next-step tip (return to prison / load save)
@@ -878,6 +881,7 @@ A player can switch language in Settings and play Hollowfort with localized **UI
 - [x] XP / progression unit tests
 - [x] E2E smoke: `/play` entry + marketing home
 - [ ] Unit: damage, card effects, deck ops, status, RNG
+- [x] Unit: conditional combo bonuses (`bonusIfLowerHp` and similar) are order-independent and match `previewCombo`
 - [ ] Integration: exploration ↔ battle, rewards, save/load
 - [ ] E2E: new run → fight → XP → unlock → save/load → boss → escape (seeded)
 - [ ] E2E: first-run tour appears once, dismissible, does not block travel/fight
@@ -904,6 +908,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
 - [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
 - [ ] Reward loop + class progression readable without a tutorial wall
+- [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests
 - [ ] Money in inventory (earn / spend in the slice)

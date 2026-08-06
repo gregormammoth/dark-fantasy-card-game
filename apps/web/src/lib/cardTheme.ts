@@ -91,7 +91,7 @@ export function getCardEffectSummary(definition: CardDefinition): string {
       parts.push(`+${effect.damage ?? 0} if low HP`);
     }
     if (effect.type === 'bonusIfFirstAttack') {
-      parts.push(`+${effect.damage ?? 0} if first attack`);
+      parts.push(`+${effect.damage ?? 0} if first attack combo`);
     }
     if (effect.type === 'restoreMaxShields') {
       parts.push('max shield if empty');

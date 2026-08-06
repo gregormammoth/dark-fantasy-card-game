@@ -199,6 +199,12 @@ export type ExplorationEvent =
   | { type: 'ACK_ESCAPE' }
   | { type: 'SYNC_RNG'; rng: RngState }
   | {
+      type: 'SYNC_PLAYER_CARDS';
+      hand: CardInstance[];
+      deck: CardInstance[];
+      discard: CardInstance[];
+    }
+  | {
       type: 'HYDRATE';
       context: ExplorationContext;
       phase: 'playerTurn' | 'encounter';

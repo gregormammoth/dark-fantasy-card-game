@@ -75,7 +75,7 @@
         "value": 3
       }
     ],
-    "description": "Deal 3 damage. If it's the first attack of the battle, deal 6 instead.",
+    "description": "Deal 3 damage. If this is the first attack combo of the battle, deal 6 instead.",
     "improved": true
   },
   {

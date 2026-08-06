@@ -359,6 +359,17 @@ function GameShell() {
     }
     if (pendingLocationFight && !battleSnap.matches('idle')) {
       explorationActor.send({ type: 'SYNC_RNG', rng: battleSnap.context.rng });
+      if (result === 'victory') {
+        explorationActor.send({
+          type: 'SYNC_PLAYER_CARDS',
+          hand: battleSnap.context.player.hand,
+          deck: battleSnap.context.player.deck,
+          discard: [
+            ...battleSnap.context.player.discard,
+            ...battleSnap.context.combo,
+          ],
+        });
+      }
     }
     if (pendingLocationFight) {
       const won = result === 'victory';
@@ -497,6 +508,11 @@ function GameShell() {
         barrierPerTurn: enemy.barrierPerTurn,
       },
       rng: exploration.rng,
+      playerPiles: {
+        hand: exploration.hand,
+        deck: exploration.deck,
+        discard: exploration.discard,
+      },
     });
   }
 

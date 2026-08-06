@@ -39,6 +39,7 @@ export const battleMachine = setup({
           event.rng,
           event.playerDeckIds,
           event.playerGender,
+          event.playerPiles,
         );
       }
       return createInitialBattle();

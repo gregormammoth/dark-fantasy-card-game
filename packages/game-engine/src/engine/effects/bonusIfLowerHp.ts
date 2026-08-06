@@ -4,7 +4,7 @@ import type { EffectContext, EffectHandler } from '@dark-fantasy/shared/types/ef
 import { getHealth } from '../health';
 
 export const bonusIfLowerHpHandler: EffectHandler = (effect: Effect, ctx: EffectContext) => {
-  const playerHealth = getHealth(ctx.battle, 'player');
+  const playerHealth = ctx.battle.comboStartPlayerHealth ?? getHealth(ctx.battle, 'player');
   const threshold = (effect.thresholdPercent ?? 50) / 100;
   if (playerHealth < ctx.battle.playerMaxHealth * threshold) {
     ctx.resolution.pendingDamageBonus += effect.damage ?? 0;

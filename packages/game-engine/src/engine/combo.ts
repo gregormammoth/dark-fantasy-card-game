@@ -3,7 +3,7 @@ import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { EffectContext, EffectTarget } from '@dark-fantasy/shared/types/effect';
 import { effectHandlers } from './effects/registry';
 import { createResolutionState } from './effects/resolutionState';
-import { isBattleOver, addBarrier } from './health';
+import { isBattleOver, addBarrier, getPlayerHealth } from './health';
 import { shuffle } from './deck';
 import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
@@ -42,6 +42,9 @@ export function beginPlayerResolution(battle: BattleContext): BattleContext {
     appendLog(next, 'You ended the turn without playing any cards.', 'combo');
     next.resolutionQueue = [];
     next.activePlay = null;
+    next.comboStartPlayerHealth = null;
+    next.comboStartAttackCardsPlayed = null;
+    next.comboStartCards = null;
     return next;
   }
 
@@ -50,6 +53,9 @@ export function beginPlayerResolution(battle: BattleContext): BattleContext {
     `You played ${next.combo.length} card${next.combo.length === 1 ? '' : 's'}.`,
     'combo',
   );
+  next.comboStartPlayerHealth = getPlayerHealth(next);
+  next.comboStartAttackCardsPlayed = next.combatStats.attackCardsPlayed;
+  next.comboStartCards = structuredClone(next.combo);
   next.resolutionQueue = [...next.combo];
   next.activePlay = null;
   return next;
@@ -99,6 +105,9 @@ export function finishPlayerResolution(battle: BattleContext): BattleContext {
   next.combo = [];
   next.resolutionQueue = [];
   next.activePlay = null;
+  next.comboStartPlayerHealth = null;
+  next.comboStartAttackCardsPlayed = null;
+  next.comboStartCards = null;
   return next;
 }
 

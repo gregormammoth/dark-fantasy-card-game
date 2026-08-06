@@ -1,6 +1,6 @@
 import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { ComboPreview } from '@dark-fantasy/shared/types/comboPreview';
-import { getEnemyHealth } from './health';
+import { getEnemyHealth, getPlayerHealth } from './health';
 import { resolveCardEffects } from './combo';
 
 export function previewCombo(battle: BattleContext): ComboPreview | null {
@@ -17,12 +17,32 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
   let sim = structuredClone(battle);
   sim.log = [];
   sim.lastDamageResult = null;
+  sim.comboStartPlayerHealth = getPlayerHealth(sim);
+  sim.comboStartAttackCardsPlayed = sim.combatStats.attackCardsPlayed;
+  sim.comboStartCards = structuredClone(sim.combo);
 
-  for (const card of battle.combo) {
+  const queue = [...sim.combo];
+  for (const card of queue) {
+    const comboIndex = sim.combo.findIndex((entry) => entry.instanceId === card.instanceId);
+    if (comboIndex !== -1) {
+      sim.combo.splice(comboIndex, 1);
+    }
+
     sim.resolvingCardInstanceId = card.instanceId;
     sim = resolveCardEffects(sim, card, 'player');
     sim.resolvingCardInstanceId = null;
+    sim.player.discard.push(card);
+
+    if (card.definition.type === 'attack') {
+      sim.combatStats.attackCardsPlayed += 1;
+    } else if (card.definition.type === 'defense') {
+      sim.combatStats.defenseCardsPlayed += 1;
+    }
   }
+
+  sim.comboStartPlayerHealth = null;
+  sim.comboStartAttackCardsPlayed = null;
+  sim.comboStartCards = null;
 
   const damageToEnemy = Math.max(0, initialEnemyHealth - getEnemyHealth(sim));
   const enemyShieldBlocked = Math.max(0, initialEnemyShield - sim.enemy.shield);

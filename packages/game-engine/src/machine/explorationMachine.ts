@@ -107,6 +107,22 @@ export const explorationMachine = setup({
       next.rng = cloneRng(event.rng);
       return next;
     }),
+    syncPlayerCards: assign(({ context, event }) => {
+      if (event.type !== 'SYNC_PLAYER_CARDS') {
+        return context;
+      }
+      const next = structuredClone(context);
+      next.hand = structuredClone(event.hand);
+      next.deck = structuredClone(event.deck);
+      next.discard = structuredClone(event.discard);
+      const selectedStillInHand = next.hand.some(
+        (card) => card.instanceId === next.selectedCardInstanceId,
+      );
+      if (!selectedStillInHand) {
+        next.selectedCardInstanceId = null;
+      }
+      return next;
+    }),
     hydrateExploration: assign(({ event }) => {
       if (event.type !== 'HYDRATE') {
         return createInitialExploration();
@@ -149,6 +165,7 @@ export const explorationMachine = setup({
     RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
     ACK_ESCAPE: { actions: 'ackEscape' },
     SYNC_RNG: { actions: 'syncRng' },
+    SYNC_PLAYER_CARDS: { actions: 'syncPlayerCards' },
     RESET: {
       target: '.idle',
       actions: 'resetExploration',

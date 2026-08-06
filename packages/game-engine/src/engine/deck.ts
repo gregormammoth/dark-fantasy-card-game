@@ -16,6 +16,21 @@ export function resetInstanceCounter(): void {
   instanceCounter = 0;
 }
 
+export function syncInstanceCounterFromCards(cards: CardInstance[]): void {
+  let max = instanceCounter;
+  for (const card of cards) {
+    const match = /_(\d+)$/.exec(card.instanceId);
+    if (!match) {
+      continue;
+    }
+    const value = Number(match[1]);
+    if (Number.isFinite(value)) {
+      max = Math.max(max, value);
+    }
+  }
+  instanceCounter = max;
+}
+
 export function shuffle<T>(array: T[], rng: RngState): T[] {
   return shuffleWithRng(array, rng);
 }

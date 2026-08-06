@@ -6,7 +6,8 @@ export const bonusBarrierPerDefenseCardHandler: EffectHandler = (
   ctx: EffectContext,
 ) => {
   const resolvingId = ctx.battle.resolvingCardInstanceId;
-  const defenseCount = ctx.battle.combo.filter(
+  const comboCards = ctx.battle.comboStartCards ?? ctx.battle.combo;
+  const defenseCount = comboCards.filter(
     (card) =>
       card.definition.type === 'defense' &&
       (resolvingId === null || card.instanceId !== resolvingId),
