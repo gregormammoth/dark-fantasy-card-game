@@ -83,7 +83,7 @@ packages/
   shared/          Shared types
   content/         Game JSON + portrait refs
 tests/e2e/         Playwright smoke tests
-docs/              Roadmap, architecture, mechanics
+docs/              Roadmap, positioning, architecture, mechanics
 ```
 
 ## Deploy (Vercel)

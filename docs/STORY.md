@@ -2,7 +2,7 @@
 
 Narrative bible for the Beta vertical slice. Gameplay systems live elsewhere; this document owns **plot, tone, and player-facing story beats**.
 
-Related: [HOLLOWFORT.md](./HOLLOWFORT.md) (NPCs, locations, enemies, factions), [ROADMAP.md](./ROADMAP.md) (slice journey), [MECHANICS.md](./MECHANICS.md) (rules), marketing lore under `apps/web/content/lore/`.
+Related: [HOLLOWFORT.md](./HOLLOWFORT.md) (NPCs, locations, enemies, factions), [ROADMAP.md](./ROADMAP.md) (slice journey), [MECHANICS.md](./MECHANICS.md) (rules), [POSITIONING.md](./POSITIONING.md) (audience & market), marketing lore under `apps/web/content/lore/`.
 
 ---
 

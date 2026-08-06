@@ -1,5 +1,7 @@
 # Game Development Roadmap (Beta → Vertical Slice)
 
+Related: [POSITIONING.md](./POSITIONING.md) (audience & market), [ARCHITECTURE.md](./ARCHITECTURE.md), [MECHANICS.md](./MECHANICS.md), [HOLLOWFORT.md](./HOLLOWFORT.md).
+
 ## Vision
 
 The Beta is **not** the entire game.
