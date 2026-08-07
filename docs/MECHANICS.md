@@ -4,14 +4,29 @@ This document describes the game rules implemented today and the planned directi
 
 ## Scope
 
-**Implemented now:** turn-based card battles between the player and an enemy.
+**Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, and prison encounter pressure on cards and shields.
 
-**Planned later:** a global map where the player chooses locations to visit or enemies to fight, earns experience from those encounters, and spends experience to unlock new cards and customize their deck.
+**Planned later:** progressive deck-cap / max-shield stats, money economy, and further world content beyond the prison slice.
 
-Battles are the combat layer of the larger game. Map navigation, progression, economy, and deck building outside of combat are not implemented yet.
+Battles are the combat layer of the larger run. Exploration carries hand, deck, discard, and shield into fights.
 
 ---
 
+## Exploration Encounter Pressure
+
+Each exploration turn grants **4 actions**. Spending a card or ending the turn spends actions. When the turn ends, the next turn **keeps leftover hand cards**, **draws up to hand size (4)**, then the **encounter deck** resolves on that hand.
+
+Encounters can:
+
+| Effect | Behavior |
+|--------|----------|
+| `discardCards` | Randomly discard cards from hand |
+| `recoverDiscard` | Return cards from discard to hand |
+| `shuffleCards` | Shuffle `hand`, `deck`, `discard`, or `all` piles |
+| `addCards` | Inject card ids into hand / deck / discard |
+| `modifyShield` | Change current shield (`value`) and/or max shield (`maxValue`) |
+
+Exploration tracks `shield` / `maxShield`. Those values carry into location battles and sync back on victory. The hand bar shows actions until the next encounter; the encounter modal lists cards and shield deltas that changed.
 ## Core Concept: Health Is Your Deck
 
 There are no separate hit points. **Remaining cards represent health.**

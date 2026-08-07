@@ -375,6 +375,8 @@ function GameShell() {
             ...battleSnap.context.player.discard,
             ...battleSnap.context.combo,
           ],
+          shield: battleSnap.context.player.shield,
+          maxShield: battleSnap.context.player.maxShield,
         });
       }
     }
@@ -520,6 +522,8 @@ function GameShell() {
         hand: live.hand,
         deck: live.deck,
         discard: live.discard,
+        shield: live.shield,
+        maxShield: live.maxShield,
       },
     });
   }

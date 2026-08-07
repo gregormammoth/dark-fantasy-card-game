@@ -3,7 +3,7 @@
     "id": "nothing_happens",
     "title": "Nothing Happens",
     "description": "The uprising pauses. Footsteps fade. For a moment, you are alone between factions.",
-    "weight": 3,
+    "weight": 2,
     "effects": [
       { "type": "log", "message": "The halls stay quiet — for now." },
       { "type": "nothing" }
@@ -12,7 +12,7 @@
   {
     "id": "undead_patrol",
     "title": "Undead Patrol",
-    "description": "Resurrected inmates sweep the corridor in a loose pack. You duck aside — not without cost.",
+    "description": "Resurrected inmates sweep the corridor. You duck aside — a card slips from your grip.",
     "weight": 2,
     "effects": [
       { "type": "log", "message": "An undead patrol forces you to duck aside — you lose a card from your hand." },
@@ -26,7 +26,8 @@
     "weight": 2,
     "effects": [
       { "type": "log", "message": "You gather herbs and recover a discarded card." },
-      { "type": "recoverDiscard", "count": 1 }
+      { "type": "recoverDiscard", "count": 1 },
+      { "type": "modifyShield", "value": 1 }
     ]
   },
   {
@@ -42,11 +43,12 @@
   {
     "id": "hanging_ambush",
     "title": "Gallows Ambush",
-    "description": "A hanging corpse drops from the rafters. You fight free, but not without cost.",
+    "description": "A hanging corpse drops from the rafters. You fight free, but your grip falters.",
     "weight": 2,
     "effects": [
       { "type": "log", "message": "A hanging corpse ambushes you — two cards are lost from hand." },
-      { "type": "discardCards", "count": 2 }
+      { "type": "discardCards", "count": 2 },
+      { "type": "modifyShield", "value": -1 }
     ]
   },
   {
@@ -62,10 +64,11 @@
   {
     "id": "collapsed_corridor",
     "title": "Collapsed Corridor",
-    "description": "Stone groans as the uprising shakes the foundations. Dust fills the air.",
-    "weight": 1,
+    "description": "Stone groans as the uprising shakes the foundations. Dust and panic scramble your cards.",
+    "weight": 2,
     "effects": [
-      { "type": "log", "message": "Falling rubble forces a hard scramble — you discard a card." },
+      { "type": "log", "message": "Falling rubble scatters your hand." },
+      { "type": "shuffleCards", "pile": "hand" },
       { "type": "discardCards", "count": 1 },
       { "type": "discoverConnected" }
     ]
@@ -78,6 +81,76 @@
     "effects": [
       { "type": "log", "message": "You note which halls the living Guards still claim." },
       { "type": "discoverConnected" }
+    ]
+  },
+  {
+    "id": "riot_shuffle",
+    "title": "Corridor Riot",
+    "description": "Bodies surge past. Your carefully ordered cards are torn into chaos.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "The riot scatters every pile you carried." },
+      { "type": "shuffleCards", "pile": "all" }
+    ]
+  },
+  {
+    "id": "press_gang",
+    "title": "Press Gang",
+    "description": "Faction recruiters shove a spare blade into your pack — whether you wanted it or not.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "A spare Heavy Strike is forced into your deck." },
+      { "type": "addCards", "cardIds": ["fighter_attack_01"], "pile": "deck" }
+    ]
+  },
+  {
+    "id": "warden_tax",
+    "title": "Warden's Tax",
+    "description": "A tax collector of the old order pries at your guard. Your shield wavers.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "The tax leaves your shield thinner." },
+      { "type": "modifyShield", "value": -1 }
+    ]
+  },
+  {
+    "id": "stolen_buckler",
+    "title": "Stolen Buckler",
+    "description": "You pry a cracked buckler from a fallen guard. It will not last, but it holds for now.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "You raise a scavenged shield." },
+      { "type": "modifyShield", "value": 1 }
+    ]
+  },
+  {
+    "id": "armorer_scrap",
+    "title": "Armorer's Scrap",
+    "description": "A half-mad smith hammers your guard wider — crude, but more coverage.",
+    "weight": 1,
+    "effects": [
+      { "type": "log", "message": "Your max shield increases." },
+      { "type": "modifyShield", "maxValue": 1, "value": 1 }
+    ]
+  },
+  {
+    "id": "poisoned_rivet",
+    "title": "Poisoned Rivet",
+    "description": "Corrosion eats a rivet from your armor. Your maximum guard shrinks.",
+    "weight": 1,
+    "effects": [
+      { "type": "log", "message": "Your max shield decreases." },
+      { "type": "modifyShield", "maxValue": -1 }
+    ]
+  },
+  {
+    "id": "smuggled_raise",
+    "title": "Smuggled Raise Shield",
+    "description": "An Anarchist slips you a battered Raise Shield card. It joins your pack.",
+    "weight": 1,
+    "effects": [
+      { "type": "log", "message": "Raise Shield is added to your hand." },
+      { "type": "addCards", "cardIds": ["fighter_defense_01"], "pile": "hand" }
     ]
   }
 ]

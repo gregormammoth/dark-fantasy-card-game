@@ -115,14 +115,17 @@ export function createInitialBattle(
   }
 
   const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
-  const playerMaxShield = battleData.player.maxShield ?? 2;
+  const playerMaxShield =
+    playerPiles?.maxShield ?? battleData.player.maxShield ?? 2;
   const enemyMaxShield = battleData.enemy.maxShield ?? 2;
+  const playerStartingShield =
+    playerPiles?.shield ?? battleData.player.startingShield ?? 2;
   const playerMaxHealth = playerHand.length + playerDeck.length + playerDiscard.length;
 
   return {
     player: {
       portrait: getPlayerPortraitForDeck(deckIds, playerGender),
-      shield: Math.min(battleData.player.startingShield, playerMaxShield),
+      shield: Math.min(Math.max(0, playerStartingShield), playerMaxShield),
       maxShield: playerMaxShield,
       barrier: 0,
       deck: playerDeck,

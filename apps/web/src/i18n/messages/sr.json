@@ -90,7 +90,13 @@
     "mapRegionLabel": "HOLLOWFORT — PRVA TVRDAVA",
     "zoomIn": "Uvećaj",
     "zoomOut": "Umanji",
-    "centerOnPlayer": "Centriraj na igrača"
+    "centerOnPlayer": "Centriraj na igrača",
+    "shield": "Štit {current}/{max}",
+    "shieldLabel": "ŠTIT",
+    "actionsUntilEncounter": "{count} akcija do susreta",
+    "encounterImminent": "Susret se okida sada",
+    "actionsSpent": "{used}/{max} potrošeno",
+    "riskHint": "Preostale karte ostaju, dopuna do 4, pa susret može da promeni karte i štit."
   },
   "location": {
     "branchSealed": "PUT ZATVOREN",
@@ -302,7 +308,20 @@
   },
   "encounter": {
     "title": "SUSRET",
-    "dismiss": "NASTAVI"
+    "dismiss": "NASTAVI",
+    "results": "REZULTAT",
+    "chipShield": "{delta} Štit",
+    "chipMaxShield": "{delta} Maks. štit",
+    "chipDiscard": "{delta} Karta",
+    "chipRecover": "{delta} Karta nazad",
+    "chipAdd": "{delta} Karta",
+    "chipShuffle": "~ Mešanje",
+    "detailShield": "Štit {before} → {after} / {max}",
+    "detailMaxShield": "Maks. štit {before} → {after}",
+    "detailDiscard": "Ruka → odbačeno: {name}",
+    "detailRecover": "Odbačeno → ruka: {name}",
+    "detailAdd": "Dodato: {name}",
+    "detailShuffle": "Promešano: {pile}"
   },
   "locationBattle": {
     "title": "BORBA",

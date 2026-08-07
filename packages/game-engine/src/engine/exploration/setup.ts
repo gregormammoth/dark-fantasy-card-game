@@ -1,4 +1,5 @@
 import prisonMapData from '@dark-fantasy/content/prisonMap.json';
+import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
 import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
@@ -61,6 +62,8 @@ export function createInitialExploration(
     deck: buildPlayerDeckFromIds(deckCardIds, rng),
     hand: [],
     discard: [],
+    shield: battleData.player.startingShield ?? 2,
+    maxShield: battleData.player.maxShield ?? 2,
     actionsRemaining: 4,
     maxActions: 4,
     handSize: 4,

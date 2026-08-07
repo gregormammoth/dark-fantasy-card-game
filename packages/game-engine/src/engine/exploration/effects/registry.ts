@@ -13,6 +13,9 @@ import { unlockInteractionHandler } from './unlockInteraction';
 import { setFlagHandler } from './setFlag';
 import { recoverDiscardHandler } from './recoverDiscard';
 import { discardCardsHandler } from './discardCards';
+import { shuffleCardsHandler } from './shuffleCards';
+import { addCardsHandler } from './addCards';
+import { modifyShieldHandler } from './modifyShield';
 import { skipNextEncounterHandler } from './skipNextEncounter';
 import { reshuffleEncounterHandler } from './reshuffleEncounter';
 import { nothingHandler } from './nothing';
@@ -34,6 +37,9 @@ export const explorationEffectHandlers: Record<
   setFlag: setFlagHandler,
   recoverDiscard: recoverDiscardHandler,
   discardCards: discardCardsHandler,
+  shuffleCards: shuffleCardsHandler,
+  addCards: addCardsHandler,
+  modifyShield: modifyShieldHandler,
   skipNextEncounter: skipNextEncounterHandler,
   reshuffleEncounter: reshuffleEncounterHandler,
   nothing: nothingHandler,

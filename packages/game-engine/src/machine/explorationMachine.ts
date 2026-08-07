@@ -115,6 +115,13 @@ export const explorationMachine = setup({
       next.hand = structuredClone(event.hand);
       next.deck = structuredClone(event.deck);
       next.discard = structuredClone(event.discard);
+      if (typeof event.shield === 'number') {
+        next.shield = event.shield;
+      }
+      if (typeof event.maxShield === 'number') {
+        next.maxShield = event.maxShield;
+      }
+      next.shield = Math.max(0, Math.min(next.maxShield, next.shield));
       const selectedStillInHand = next.hand.some(
         (card) => card.instanceId === next.selectedCardInstanceId,
       );
@@ -128,6 +135,13 @@ export const explorationMachine = setup({
         return createInitialExploration();
       }
       const next = structuredClone(event.context);
+      if (typeof next.shield !== 'number') {
+        next.shield = 2;
+      }
+      if (typeof next.maxShield !== 'number') {
+        next.maxShield = 2;
+      }
+      next.shield = Math.max(0, Math.min(next.maxShield, next.shield));
       syncExplorationLogCounter(next.log);
       return next;
     }),
@@ -151,6 +165,7 @@ export const explorationMachine = setup({
     },
     hasPendingEncounter: ({ context }) => context.pendingEncounter !== null,
     noActionsRemaining: ({ context }) => context.actionsRemaining <= 0,
+    shouldResolveEncounter: ({ context }) => context.turnCount > 1,
     hydrateToEncounter: ({ event }) => event.type === 'HYDRATE' && event.phase === 'encounter',
   },
 }).createMachine({
@@ -194,13 +209,19 @@ export const explorationMachine = setup({
     },
     playerTurnStart: {
       entry: 'beginTurn',
-      always: { target: 'playerTurn' },
+      always: [
+        {
+          guard: 'shouldResolveEncounter',
+          target: 'resolvingEncounter',
+        },
+        { target: 'playerTurn' },
+      ],
     },
     playerTurn: {
       always: [
         {
           guard: 'noActionsRemaining',
-          target: 'resolvingEncounter',
+          target: 'playerTurnStart',
         },
       ],
       on: {
@@ -212,7 +233,7 @@ export const explorationMachine = setup({
           guard: 'canPlayEventAction',
           actions: 'playAction',
         },
-        END_TURN: { target: 'resolvingEncounter' },
+        END_TURN: { target: 'playerTurnStart' },
         RESTART: {
           target: 'playerTurnStart',
           actions: 'initExploration',
@@ -223,13 +244,13 @@ export const explorationMachine = setup({
       entry: 'resolveEncounter',
       always: [
         { guard: 'hasPendingEncounter', target: 'encounter' },
-        { target: 'playerTurnStart' },
+        { target: 'playerTurn' },
       ],
     },
     encounter: {
       on: {
         DISMISS_ENCOUNTER: {
-          target: 'playerTurnStart',
+          target: 'playerTurn',
           actions: 'dismissEncounter',
         },
       },

@@ -1,6 +1,11 @@
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
-import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
-import { drawCards, shuffle } from '../deck';
+import type {
+  ExplorationCardPile,
+  ExplorationContext,
+} from '@dark-fantasy/shared/types/exploration';
+import { createCardInstance, drawCards, shuffle } from '../deck';
+import { nextInt } from '../rng';
+import { getPlayerCardById } from '../progression/loadout';
 import { appendExplorationLog } from './log';
 
 function reshuffleIfNeeded(context: ExplorationContext): void {
@@ -97,12 +102,125 @@ export function discardFromHand(
     return context;
   }
   const next = structuredClone(context);
-  const removed = next.hand.splice(0, Math.min(count, next.hand.length));
+  const removed: CardInstance[] = [];
+  const toRemove = Math.min(count, next.hand.length);
+  for (let i = 0; i < toRemove; i += 1) {
+    const index = nextInt(next.rng, next.hand.length);
+    const [card] = next.hand.splice(index, 1);
+    if (card) {
+      removed.push(card);
+    }
+  }
   next.discard.push(...removed);
+  if (
+    next.selectedCardInstanceId &&
+    !next.hand.some((card) => card.instanceId === next.selectedCardInstanceId)
+  ) {
+    next.selectedCardInstanceId = null;
+  }
   appendExplorationLog(
     next,
     `Discarded ${removed.length} card${removed.length === 1 ? '' : 's'} from hand.`,
     'danger',
   );
+  return next;
+}
+
+export function shufflePlayerCards(
+  context: ExplorationContext,
+  pile: ExplorationCardPile = 'hand',
+): ExplorationContext {
+  const next = structuredClone(context);
+  if (pile === 'hand') {
+    next.hand = shuffle(next.hand, next.rng);
+    appendExplorationLog(next, 'Your hand is scrambled.', 'danger');
+    return next;
+  }
+  if (pile === 'deck') {
+    next.deck = shuffle(next.deck, next.rng);
+    appendExplorationLog(next, 'Your deck is reshuffled.', 'danger');
+    return next;
+  }
+  if (pile === 'discard') {
+    next.discard = shuffle(next.discard, next.rng);
+    appendExplorationLog(next, 'Your discard pile is stirred.', 'danger');
+    return next;
+  }
+
+  const combined = shuffle([...next.hand, ...next.deck, ...next.discard], next.rng);
+  const handSize = Math.min(next.handSize, combined.length);
+  next.hand = combined.slice(0, handSize);
+  next.deck = combined.slice(handSize);
+  next.discard = [];
+  next.selectedCardInstanceId = null;
+  appendExplorationLog(next, 'Chaos scatters your cards — piles are reshuffled.', 'danger');
+  return next;
+}
+
+export function addCardsToPile(
+  context: ExplorationContext,
+  cardIds: string[],
+  pile: Exclude<ExplorationCardPile, 'all'> = 'deck',
+): ExplorationContext {
+  if (cardIds.length === 0) {
+    return context;
+  }
+  const next = structuredClone(context);
+  const created: CardInstance[] = [];
+  for (const id of cardIds) {
+    const definition = getPlayerCardById(id);
+    if (!definition) {
+      continue;
+    }
+    created.push(createCardInstance(definition));
+  }
+  if (created.length === 0) {
+    return context;
+  }
+  if (pile === 'hand') {
+    next.hand.push(...created);
+  } else if (pile === 'discard') {
+    next.discard.push(...created);
+  } else {
+    next.deck.push(...created);
+    next.deck = shuffle(next.deck, next.rng);
+  }
+  appendExplorationLog(
+    next,
+    `${created.length} card${created.length === 1 ? '' : 's'} enter your ${pile}.`,
+    pile === 'hand' || pile === 'deck' ? 'loot' : 'system',
+  );
+  return next;
+}
+
+export function modifyExplorationShield(
+  context: ExplorationContext,
+  currentDelta = 0,
+  maxDelta = 0,
+): ExplorationContext {
+  if (currentDelta === 0 && maxDelta === 0) {
+    return context;
+  }
+  const next = structuredClone(context);
+  next.maxShield = Math.max(0, next.maxShield + maxDelta);
+  next.shield = Math.max(0, Math.min(next.maxShield, next.shield + currentDelta));
+  if (maxDelta !== 0) {
+    appendExplorationLog(
+      next,
+      maxDelta > 0
+        ? `Your max shield rises to ${next.maxShield}.`
+        : `Your max shield falls to ${next.maxShield}.`,
+      maxDelta > 0 ? 'loot' : 'danger',
+    );
+  }
+  if (currentDelta !== 0) {
+    appendExplorationLog(
+      next,
+      currentDelta > 0
+        ? `You brace — shield ${next.shield}/${next.maxShield}.`
+        : `Your guard slips — shield ${next.shield}/${next.maxShield}.`,
+      currentDelta > 0 ? 'loot' : 'danger',
+    );
+  }
   return next;
 }

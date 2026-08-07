@@ -139,10 +139,30 @@ export interface ExplorationLogEntry {
   kind: 'system' | 'action' | 'encounter' | 'move' | 'loot' | 'danger';
 }
 
+export type ExplorationCardPile = 'hand' | 'deck' | 'discard' | 'all';
+
+export interface EncounterResultCard {
+  instanceId: string;
+  cardId: string;
+  name: string;
+}
+
+export interface EncounterResults {
+  discarded: EncounterResultCard[];
+  recovered: EncounterResultCard[];
+  added: EncounterResultCard[];
+  shuffled?: Exclude<ExplorationCardPile, 'all'> | 'all';
+  shieldBefore: number;
+  shieldAfter: number;
+  maxShieldBefore: number;
+  maxShieldAfter: number;
+}
+
 export interface PendingEncounter {
   id: string;
   title: string;
   description: string;
+  results?: EncounterResults;
 }
 
 export interface ExplorationContext {
@@ -155,6 +175,8 @@ export interface ExplorationContext {
   deck: CardInstance[];
   hand: CardInstance[];
   discard: CardInstance[];
+  shield: number;
+  maxShield: number;
   actionsRemaining: number;
   maxActions: number;
   handSize: number;
@@ -203,6 +225,8 @@ export type ExplorationEvent =
       hand: CardInstance[];
       deck: CardInstance[];
       discard: CardInstance[];
+      shield?: number;
+      maxShield?: number;
     }
   | {
       type: 'HYDRATE';
@@ -235,6 +259,9 @@ export type ExplorationEffectType =
   | 'setFlag'
   | 'recoverDiscard'
   | 'discardCards'
+  | 'shuffleCards'
+  | 'addCards'
+  | 'modifyShield'
   | 'skipNextEncounter'
   | 'reshuffleEncounter'
   | 'nothing';
@@ -243,11 +270,14 @@ export interface ExplorationEffect {
   type: ExplorationEffectType;
   value?: number;
   count?: number;
+  maxValue?: number;
   message?: string;
   locationId?: string;
   targetId?: string;
   flag?: string;
   flagValue?: boolean;
+  pile?: ExplorationCardPile;
+  cardIds?: string[];
 }
 
 export interface EncounterDefinition {

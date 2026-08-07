@@ -90,7 +90,13 @@
     "mapRegionLabel": "ХОЛЛОУФОРТ — ПЕРВАЯ КРЕПОСТЬ",
     "zoomIn": "Приблизить",
     "zoomOut": "Отдалить",
-    "centerOnPlayer": "Центрировать на игроке"
+    "centerOnPlayer": "Центрировать на игроке",
+    "shield": "Щит {current}/{max}",
+    "shieldLabel": "ЩИТ",
+    "actionsUntilEncounter": "{count} действий до встречи",
+    "encounterImminent": "Встреча сработает сейчас",
+    "actionsSpent": "{used}/{max} потрачено",
+    "riskHint": "Оставшиеся карты сохраняются, добор до 4, затем встреча может изменить карты и щит."
   },
   "location": {
     "branchSealed": "ПУТЬ ЗАПЕЧАТАН",
@@ -302,7 +308,20 @@
   },
   "encounter": {
     "title": "ВСТРЕЧА",
-    "dismiss": "ДАЛЕЕ"
+    "dismiss": "ДАЛЕЕ",
+    "results": "ИТОГ",
+    "chipShield": "{delta} Щит",
+    "chipMaxShield": "{delta} Макс. щит",
+    "chipDiscard": "{delta} Карта",
+    "chipRecover": "{delta} Карта назад",
+    "chipAdd": "{delta} Карта",
+    "chipShuffle": "~ Перемешать",
+    "detailShield": "Щит {before} → {after} / {max}",
+    "detailMaxShield": "Макс. щит {before} → {after}",
+    "detailDiscard": "Рука → сброс: {name}",
+    "detailRecover": "Сброс → рука: {name}",
+    "detailAdd": "Добавлено: {name}",
+    "detailShuffle": "Перемешано: {pile}"
   },
   "locationBattle": {
     "title": "БОЕВАЯ ВСТРЕЧА",

@@ -735,6 +735,11 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                 max: context.maxActions,
                 turn: context.turnCount,
               })}
+              {' · '}
+              {t('exploration.shield', {
+                current: context.shield ?? 0,
+                max: context.maxShield ?? 0,
+              })}
             </span>
           </div>
         </div>

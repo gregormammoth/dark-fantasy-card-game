@@ -160,8 +160,8 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | World / Exploration / Battle screens | Connected via `GameApp` + shared `RunState` |
 | Shared **Run** state | Done — `RunState` owns progression/loadout/exploration/navigation; app XState machine deferred |
 | Character creation | Done — name + gender → `POST /players` → guest `playerId` |
-| Exploration ↔ Battle continuity | In place — location FIGHT → battle with carried piles → victory syncs piles back; encounter pressure / card disturbance still open |
-| Exploration action economy + encounter pressure | Partial — 4 actions/turn exist; encounters should disturb cards (shuffle / discard / add) and/or shields (↑/↓); UI timing still open |
+| Exploration ↔ Battle continuity | In place — location FIGHT → battle with carried piles + shield → victory syncs piles/shield back |
+| Exploration action economy + encounter pressure | In place — 4 actions/turn; encounters shuffle / discard / add cards and raise / lower shields; HUD + modal show timing and impact |
 | Battle core | Partial — playable; conditional combo bonuses order-independent; deck/shield caps still fixed content defaults |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
@@ -205,7 +205,7 @@ Update this table as milestones land.
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
 - [ ] Grow **deck cap** and **max shield** through progression (not hard-coded forever)
-- [ ] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
+- [x] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
 - [x] Escape Hollowfort (Exit Gate → world)
 - [x] Reach the world map via escape
@@ -230,7 +230,7 @@ CURRENT
 2. Shared Run State                        ← RunState done; app XState machine deferred
   │
   ▼
-3. Exploration ↔ Battle (same run)         ← handoff done; encounter card/shield pressure open
+3. Exploration ↔ Battle (same run)         ← handoff + encounter card/shield pressure done
   │
   ▼
 4. Minimal NestJS + Postgres scaffold      ← done (`apps/api` + Docker Postgres)
@@ -367,13 +367,13 @@ Exploration and battle are no longer separate runtimes.
 - [x] Battle result returns to exploration (`TO PRISON`, not a dead-end modal island)
 - [x] Polish outcomes, locks, and once-flags for the prison slice (`finalBranchId`, talked NPCs, remove defeated enemies)
 - [x] Locked locations (sealed final branches + Exit Gate until chosen boss cleared)
-- [ ] Complete the exploration action economy so spending cards on the map is clear, fast, and convenient
-- [ ] Tune the default prison turn cadence to roughly **3–4 actions / cards** before an encounter fires, with room for content-driven variation
-- [ ] Make encounters **disturb cards** in meaningful ways: **shuffle**, **discard**, and/or **add** cards (not a cosmetic timer)
-- [ ] Make encounters also pressure **shields**: **increase** or **decrease** current / max shield when that serves the beat
+- [x] Complete the exploration action economy so spending cards on the map is clear, fast, and convenient
+- [x] Tune the default prison turn cadence to roughly **3–4 actions / cards** before an encounter fires, with room for content-driven variation
+- [x] Make encounters **disturb cards** in meaningful ways: **shuffle**, **discard**, and/or **add** cards (not a cosmetic timer)
+- [x] Make encounters also pressure **shields**: **increase** or **decrease** current / max shield when that serves the beat
 - [x] Carry the player into battle with the current exploration hand / deck state so saved cards become tactical battle resources
-- [ ] Let encounter outcomes also touch battle readiness by consuming, shuffling, denying, or injecting cards the player was trying to preserve
-- [ ] Surface this clearly in the UI: actions remaining, encounter timing, and which cards / shields are being risked
+- [x] Let encounter outcomes also touch battle readiness by consuming, shuffling, denying, or injecting cards the player was trying to preserve
+- [x] Surface this clearly in the UI: actions remaining, encounter timing, and which cards / shields are being risked
 - [x] Align combo logic for conditional bonuses (e.g. `bonusIfLowerHp`) — order-independent; preview matches resolve
 
 ### Deliverable
@@ -921,7 +921,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
 - [ ] Reward loop + class progression readable without a tutorial wall
 - [ ] Progressive **deck cap** + **max shield** (live Run stats; at least one Hollowfort upgrade path)
-- [ ] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)
+- [x] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)
 - [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests

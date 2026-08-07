@@ -90,7 +90,13 @@
     "mapRegionLabel": "HOLLOWFORT — FIRST FORTRESS",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "centerOnPlayer": "Center on player"
+    "centerOnPlayer": "Center on player",
+    "shield": "Shield {current}/{max}",
+    "shieldLabel": "SHIELD",
+    "actionsUntilEncounter": "{count} actions until encounter",
+    "encounterImminent": "Encounter fires next",
+    "actionsSpent": "{used}/{max} spent",
+    "riskHint": "Keep leftover cards, draw up to 4, then the encounter can change cards and shield."
   },
   "location": {
     "branchSealed": "BRANCH SEALED",
@@ -305,7 +311,20 @@
   },
   "encounter": {
     "title": "ENCOUNTER",
-    "dismiss": "CONTINUE"
+    "dismiss": "CONTINUE",
+    "results": "RESULTS",
+    "chipShield": "{delta} Shield",
+    "chipMaxShield": "{delta} Max shield",
+    "chipDiscard": "{delta} Card",
+    "chipRecover": "{delta} Card back",
+    "chipAdd": "{delta} Card",
+    "chipShuffle": "~ Shuffle",
+    "detailShield": "Shield {before} → {after} / {max}",
+    "detailMaxShield": "Max shield {before} → {after}",
+    "detailDiscard": "Hand → discard: {name}",
+    "detailRecover": "Discard → hand: {name}",
+    "detailAdd": "Added to piles: {name}",
+    "detailShuffle": "Shuffled {pile}"
   },
   "locationBattle": {
     "title": "COMBAT ENCOUNTER",

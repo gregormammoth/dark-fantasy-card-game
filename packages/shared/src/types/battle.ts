@@ -91,6 +91,8 @@ export type PlayerBattlePiles = {
   hand: CardInstance[];
   deck: CardInstance[];
   discard: CardInstance[];
+  shield?: number;
+  maxShield?: number;
 };
 
 export type BattleEvent =
