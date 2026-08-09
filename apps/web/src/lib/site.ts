@@ -31,20 +31,20 @@ export const legalNav = [
 ] as const;
 
 export const homeStats = [
-  { value: '4', label: 'CLASSES TO MASTER' },
-  { value: '24+', label: 'UNLOCKABLE CARDS' },
+  { value: '5', label: 'CLASSES TO MASTER' },
+  { value: '30+', label: 'UNLOCKABLE CARDS' },
   { value: '11', label: 'PRISON ROOMS' },
   { value: '1', label: 'VERTICAL SLICE' },
 ] as const;
 
 export const homeClassShowcase = [
   {
-    id: 'fighter',
-    name: 'Fighter',
+    id: 'warrior',
+    name: 'Warrior',
     href: '/classes',
-    color: '#e0665c',
-    borderColor: 'rgba(214,68,58,.35)',
-    glow: 'rgba(214,68,58,.35)',
+    color: '#5b86c4',
+    borderColor: 'rgba(91,134,196,.35)',
+    glow: 'rgba(91,134,196,.35)',
     image: '/characters/player_fighter.png',
     blurb: 'Heavy strikes, raised shields, and reckless swings built to outlast anything below.',
     tag: 'MELEE · DEFENCE',
@@ -75,12 +75,23 @@ export const homeClassShowcase = [
     id: 'survivor',
     name: 'Survivor',
     href: '/classes',
-    color: '#c9a24a',
-    borderColor: 'rgba(201,162,74,.35)',
-    glow: 'rgba(201,162,74,.35)',
+    color: '#e0524a',
+    borderColor: 'rgba(224,82,74,.35)',
+    glow: 'rgba(224,82,74,.35)',
     image: '/characters/player_survivor.png',
     blurb: 'Scrap tools, desperate defenses, and hard-won grit from the prison itself.',
     tag: 'ENDURE · SCRAP',
+  },
+  {
+    id: 'seeker',
+    name: 'Seeker',
+    href: '/classes',
+    color: '#c9a24a',
+    borderColor: 'rgba(201,162,74,.35)',
+    glow: 'rgba(201,162,74,.35)',
+    image: '/characters/player.png',
+    blurb: 'Mark weak points, dig for answers, then strike where the armor fails.',
+    tag: 'DIG · DEDUCE',
   },
 ] as const;
 

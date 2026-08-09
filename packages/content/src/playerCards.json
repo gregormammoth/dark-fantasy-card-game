@@ -1,8 +1,8 @@
 [
   {
-    "id": "fighter_attack_01",
+    "id": "warrior_attack_01",
     "name": "Heavy Strike",
-    "class": "fighter",
+    "class": "warrior",
     "type": "attack",
     "effects": [
       { "type": "damage", "value": 3 }
@@ -10,9 +10,9 @@
     "description": "Deal 3 damage."
   },
   {
-    "id": "fighter_attack_02",
+    "id": "warrior_attack_02",
     "name": "Battle Momentum",
-    "class": "fighter",
+    "class": "warrior",
     "type": "attack",
     "effects": [
       { "type": "bonusDamagePerAttackCard", "value": 1 },
@@ -21,9 +21,9 @@
     "description": "Deal 2 damage. +1 for each other Attack card in your combo."
   },
   {
-    "id": "fighter_defense_01",
+    "id": "warrior_defense_01",
     "name": "Raise Shield",
-    "class": "fighter",
+    "class": "warrior",
     "type": "defense",
     "effects": [
       { "type": "shield", "value": 2 }
@@ -124,5 +124,38 @@
       { "type": "restoreMaxShields" }
     ],
     "description": "If you have no Shield, restore it to maximum."
+  },
+  {
+    "id": "seeker_defense_01",
+    "name": "Quick Survey",
+    "class": "seeker",
+    "type": "defense",
+    "effects": [
+      { "type": "draw", "count": 2 }
+    ],
+    "description": "Draw 2 cards instantly. Does not use a combo slot."
+  },
+  {
+    "id": "seeker_defense_02",
+    "name": "Mark the Joint",
+    "class": "seeker",
+    "type": "defense",
+    "effects": [
+      { "type": "markEnemy" },
+      { "type": "draw", "count": 1 }
+    ],
+    "description": "Mark the enemy and draw 1 card."
+  },
+  {
+    "id": "seeker_attack_01",
+    "name": "Weak-Point Strike",
+    "class": "seeker",
+    "type": "attack",
+    "effects": [
+      { "type": "ignoreShieldIfMarked" },
+      { "type": "bonusIfMarked", "damage": 2 },
+      { "type": "damage", "value": 2 }
+    ],
+    "description": "Deal 2 damage. If the enemy is marked, ignore shield and deal 4 instead."
   }
 ]

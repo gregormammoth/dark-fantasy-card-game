@@ -20,10 +20,11 @@
     "hollowfort": "Холлоуфорт"
   },
   "classes": {
-    "fighter": "Воин",
+    "warrior": "Воин",
     "rogue": "Плут",
     "wizard": "Маг",
     "survivor": "Выживший",
+    "seeker": "Искатель",
     "enemy": "ВРАГ"
   },
   "cardType": {
@@ -199,6 +200,7 @@
     "barrierLabel": "Барьер",
     "manaLabel": "Мана",
     "poisonedLabel": "Отравлен",
+    "markedLabel": "Метка",
     "cardsHealth": "КАРТ · ЗДОРОВЬЕ",
     "cardsShort": "КАРТ",
     "playComboLine1": "СЫГРАТЬ",

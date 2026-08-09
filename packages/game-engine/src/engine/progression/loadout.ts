@@ -24,7 +24,7 @@ const improvedCards = (improvedCardsData as CardDefinition[]).map((card) => ({
 const allCards: CardDefinition[] = [...baseCards, ...improvedCards];
 const cardById = new Map(allCards.map((card) => [card.id, card]));
 
-export const DECK_CAP = 12;
+export const DECK_CAP = 15;
 
 export function listAllPlayerCards(): CardDefinition[] {
   return allCards;
@@ -129,14 +129,15 @@ export function toggleDeckCard(loadout: PlayerLoadout, cardId: string): PlayerLo
   };
 }
 
-const CLASS_ORDER: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
+const CLASS_ORDER: CardClass[] = ['warrior', 'rogue', 'wizard', 'survivor', 'seeker'];
 
 export function countDeckClasses(deckCardIds: string[]): Record<CardClass, number> {
   const counts: Record<CardClass, number> = {
-    fighter: 0,
+    warrior: 0,
     rogue: 0,
     wizard: 0,
     survivor: 0,
+    seeker: 0,
   };
   for (const id of deckCardIds) {
     const classId = cardById.get(id)?.class;

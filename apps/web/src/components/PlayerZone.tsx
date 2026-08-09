@@ -25,6 +25,7 @@ interface PlayerZoneProps {
   endTurnDisabled?: boolean;
   showEndTurn?: boolean;
   comboSize?: number;
+  comboAtCap?: boolean;
   isHit?: boolean;
 }
 
@@ -46,6 +47,7 @@ export function PlayerZone({
   endTurnDisabled,
   showEndTurn = true,
   comboSize = 0,
+  comboAtCap = false,
   isHit = false,
 }: PlayerZoneProps) {
   const { t } = useTranslation();
@@ -123,7 +125,12 @@ export function PlayerZone({
         </div>
       </div>
 
-      <Hand cards={hand} disabled={handDisabled} onAddToCombo={onAddToCombo} />
+      <Hand
+        cards={hand}
+        disabled={handDisabled}
+        comboAtCap={comboAtCap}
+        onAddToCombo={onAddToCombo}
+      />
 
       <div className="flex shrink-0 flex-col items-center gap-3">
         {showEndTurn && (

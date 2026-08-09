@@ -99,7 +99,7 @@ export function PlayerScreen({
   const { t } = useTranslation();
   const allCards = useMemo(() => getPlayerCardDefinitions(), []);
   const [activeTab, setActiveTab] = useState<TabId>('character');
-  const [selectedClassId, setSelectedClassId] = useState<CardClass>('fighter');
+  const [selectedClassId, setSelectedClassId] = useState<CardClass>('warrior');
   const [selectedCardByClass, setSelectedCardByClass] = useState<Partial<Record<CardClass, string>>>(
     {},
   );

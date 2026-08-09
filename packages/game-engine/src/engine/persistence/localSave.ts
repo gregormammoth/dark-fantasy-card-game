@@ -6,25 +6,44 @@ import type {
 import { LOCAL_SAVE_SCHEMA_VERSION } from '@dark-fantasy/shared/types/save';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
-import { createInitialProgression } from '../progression/xp';
+import { createInitialProgression, normalizeLoadoutCardIds, normalizeProgression } from '../progression/xp';
 import { createInitialLoadout } from '../progression/loadout';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function isProgression(value: unknown): value is PlayerProgression {
+function hasClassXp(entry: unknown): boolean {
+  return isRecord(entry) && typeof entry.xp === 'number';
+}
+
+function coerceProgression(value: unknown): PlayerProgression | null {
   if (!isRecord(value) || !isRecord(value.classes)) {
-    return false;
+    return null;
   }
   const classes = value.classes;
-  for (const key of ['fighter', 'rogue', 'wizard', 'survivor'] as const) {
-    const entry = classes[key];
-    if (!isRecord(entry) || typeof entry.xp !== 'number') {
-      return false;
+  const warrior = hasClassXp(classes.warrior)
+    ? (classes.warrior as { xp: number })
+    : hasClassXp(classes.fighter)
+      ? (classes.fighter as { xp: number })
+      : null;
+  if (!warrior) {
+    return null;
+  }
+  for (const key of ['rogue', 'wizard', 'survivor'] as const) {
+    if (!hasClassXp(classes[key])) {
+      return null;
     }
   }
-  return true;
+  return normalizeProgression({
+    classes: {
+      warrior,
+      rogue: classes.rogue as { xp: number },
+      wizard: classes.wizard as { xp: number },
+      survivor: classes.survivor as { xp: number },
+      seeker: hasClassXp(classes.seeker) ? (classes.seeker as { xp: number }) : { xp: 0 },
+    },
+  });
 }
 
 function isLoadout(value: unknown): value is PlayerLoadout {
@@ -37,6 +56,16 @@ function isLoadout(value: unknown): value is PlayerLoadout {
     value.unlockedCardIds.every((id) => typeof id === 'string') &&
     value.deckCardIds.every((id) => typeof id === 'string')
   );
+}
+
+function coerceLoadout(value: unknown): PlayerLoadout {
+  if (!isLoadout(value)) {
+    return createInitialLoadout();
+  }
+  return {
+    unlockedCardIds: normalizeLoadoutCardIds(value.unlockedCardIds),
+    deckCardIds: normalizeLoadoutCardIds(value.deckCardIds),
+  };
 }
 
 function isRng(value: unknown): boolean {
@@ -108,7 +137,8 @@ export function parseLocalSave(raw: string): LocalSaveFile | null {
       return null;
     }
     const state = parsed.state;
-    if (!isProgression(state.progression)) {
+    const progression = coerceProgression(state.progression);
+    if (!progression) {
       return null;
     }
     if (typeof state.runSeed !== 'number') {
@@ -150,12 +180,12 @@ export function parseLocalSave(raw: string): LocalSaveFile | null {
         enemyId: state.pendingLocationFight.enemyId,
       };
     }
-    const loadout = isLoadout(state.loadout) ? state.loadout : createInitialLoadout();
+    const loadout = coerceLoadout(state.loadout);
     return {
       schemaVersion: LOCAL_SAVE_SCHEMA_VERSION,
       savedAt: parsed.savedAt,
       state: {
-        progression: state.progression,
+        progression,
         loadout,
         exploration: state.exploration,
         explorationPhase: state.explorationPhase,

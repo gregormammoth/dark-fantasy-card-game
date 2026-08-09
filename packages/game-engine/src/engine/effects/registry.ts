@@ -17,6 +17,10 @@ import { restoreMaxShieldsHandler } from './restoreMaxShields';
 import { gainManaHandler } from './gainMana';
 import { bonusDamagePerManaHandler } from './bonusDamagePerMana';
 import { bonusBarrierPerManaHandler } from './bonusBarrierPerMana';
+import { markEnemyHandler } from './markEnemy';
+import { bonusIfMarkedHandler } from './bonusIfMarked';
+import { ignoreShieldIfMarkedHandler } from './ignoreShieldIfMarked';
+import { bonusDamagePerCardDrawnHandler } from './bonusDamagePerCardDrawn';
 
 export const effectHandlers: Record<EffectType, EffectHandler> = {
   damage: damageHandler,
@@ -36,4 +40,8 @@ export const effectHandlers: Record<EffectType, EffectHandler> = {
   gainMana: gainManaHandler,
   bonusDamagePerMana: bonusDamagePerManaHandler,
   bonusBarrierPerMana: bonusBarrierPerManaHandler,
+  markEnemy: markEnemyHandler,
+  bonusIfMarked: bonusIfMarkedHandler,
+  ignoreShieldIfMarked: ignoreShieldIfMarkedHandler,
+  bonusDamagePerCardDrawn: bonusDamagePerCardDrawnHandler,
 };

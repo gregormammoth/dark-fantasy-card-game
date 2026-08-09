@@ -102,7 +102,7 @@
     "weight": 2,
     "effects": [
       { "type": "log", "message": "A spare Heavy Strike is forced into your deck." },
-      { "type": "addCards", "cardIds": ["fighter_attack_01"], "pile": "deck" }
+      { "type": "addCards", "cardIds": ["warrior_attack_01"], "pile": "deck" }
     ]
   },
   {
@@ -172,7 +172,7 @@
     "weight": 1,
     "effects": [
       { "type": "log", "message": "Raise Shield is added to your hand." },
-      { "type": "addCards", "cardIds": ["fighter_defense_01"], "pile": "hand" }
+      { "type": "addCards", "cardIds": ["warrior_defense_01"], "pile": "hand" }
     ]
   }
 ]

@@ -26,7 +26,7 @@ function makeCard(
     definition: {
       id,
       name: id,
-      class: options.class ?? 'fighter',
+      class: options.class ?? 'warrior',
       type: options.type,
       effects: options.effects,
     },
@@ -84,6 +84,8 @@ function makeBattle(hand: CardInstance[]): BattleContext {
     lastDamageResult: null,
     isFirstPlayerTurn: false,
     lastPlayerDrawCount: 0,
+    enemyMarked: false,
+    playerCardsDrawnThisBattle: 0,
     comboStartPlayerHealth: null,
     comboStartAttackCardsPlayed: null,
     comboStartCards: null,

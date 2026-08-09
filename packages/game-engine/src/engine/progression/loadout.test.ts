@@ -36,21 +36,21 @@ describe('class levels', () => {
 });
 
 describe('improved card unlocks', () => {
-  it('exposes twelve improved cards', () => {
-    expect(listImprovedPlayerCards()).toHaveLength(12);
+  it('exposes fifteen improved cards', () => {
+    expect(listImprovedPlayerCards()).toHaveLength(15);
   });
 
   it('requires a free class level to unlock', () => {
     let progression = createInitialProgression();
     const loadout = createInitialLoadout();
-    const cardId = 'improved_fighter_crushing_blow';
+    const cardId = 'improved_warrior_crushing_blow';
 
     expect(canUnlockImprovedCard(progression, loadout, cardId)).toBe(false);
 
     for (let i = 0; i < 10; i += 1) {
-      progression = awardCardXp(progression, 'fighter');
+      progression = awardCardXp(progression, 'warrior');
     }
-    expect(getClassXp(progression, 'fighter')).toBe(10);
+    expect(getClassXp(progression, 'warrior')).toBe(10);
     expect(canUnlockImprovedCard(progression, loadout, cardId)).toBe(true);
 
     const next = unlockImprovedCard(progression, loadout, cardId);
@@ -58,7 +58,7 @@ describe('improved card unlocks', () => {
     expect(next?.unlockedCardIds).toContain(cardId);
     expect(next?.deckCardIds).not.toContain(cardId);
     expect(next?.deckCardIds).toHaveLength(DECK_CAP);
-    expect(spentLevelsForClass(next!, 'fighter')).toBe(1);
+    expect(spentLevelsForClass(next!, 'warrior')).toBe(1);
     expect(canUnlockImprovedCard(progression, next!, cardId)).toBe(false);
   });
 });
@@ -73,8 +73,22 @@ describe('deck-driven player portrait', () => {
     expect(getPlayerPortraitForDeck(deck)).toBe('/characters/player_wizard.png');
   });
 
-  it('falls back to fighter for an empty deck', () => {
-    expect(getDominantDeckClass([])).toBe('fighter');
+  it('falls back to warrior for an empty deck', () => {
+    expect(getDominantDeckClass([])).toBe('warrior');
     expect(getPlayerPortraitForDeck([])).toBe('/characters/player_fighter.png');
+  });
+
+  it('includes seeker cards in the starter deck', () => {
+    const loadout = createInitialLoadout();
+    expect(loadout.unlockedCardIds.some((id) => id.startsWith('seeker_'))).toBe(true);
+    expect(loadout.deckCardIds).toEqual(
+      expect.arrayContaining([
+        'seeker_defense_01',
+        'seeker_defense_02',
+        'seeker_attack_01',
+      ]),
+    );
+    expect(loadout.deckCardIds).toHaveLength(15);
+    expect(loadout.deckCardIds.length).toBeLessThanOrEqual(DECK_CAP);
   });
 });

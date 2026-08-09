@@ -58,9 +58,20 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
     barrierGain: Math.max(0, sim.player.barrier - initialBarrier),
     manaDelta: sim.playerMana - initialMana,
     cardsRecovered: Math.max(0, sim.player.hand.length - initialHandSize),
-    ignoresShield: battle.combo.some((card) =>
-      card.definition.effects.some((effect) => effect.type === 'ignoreShield'),
-    ),
+    ignoresShield: (() => {
+      const marked =
+        battle.enemyMarked ||
+        battle.combo.some((card) =>
+          card.definition.effects.some((effect) => effect.type === 'markEnemy'),
+        );
+      return battle.combo.some((card) =>
+        card.definition.effects.some(
+          (effect) =>
+            effect.type === 'ignoreShield' ||
+            (effect.type === 'ignoreShieldIfMarked' && marked),
+        ),
+      );
+    })(),
   };
 
   if (sim.enemyPoison) {

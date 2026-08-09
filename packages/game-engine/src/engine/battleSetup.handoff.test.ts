@@ -10,7 +10,7 @@ function makeCard(id: string): CardInstance {
   const definition: CardDefinition = {
     id,
     name: id,
-    class: 'fighter',
+    class: 'warrior',
     type: 'attack',
     effects: [{ type: 'damage', value: 1 }],
   };
@@ -53,7 +53,7 @@ describe('createInitialBattle exploration handoff', () => {
     const hand = [makeCard(baseIds[0]), makeCard(baseIds[1])];
     const deck = baseIds.slice(2, 8).map((id) => makeCard(id));
     const discard = baseIds.slice(8).map((id) => makeCard(id));
-    const withImproved = [...baseIds, 'improved_fighter_crushing_blow', 'improved_rogue_assassinate'];
+    const withImproved = [...baseIds, 'improved_warrior_crushing_blow', 'improved_rogue_assassinate'];
 
     const battle = createInitialBattle(
       createInitialProgression(),
@@ -67,7 +67,7 @@ describe('createInitialBattle exploration handoff', () => {
     const allIds = [...battle.player.hand, ...battle.player.deck, ...battle.player.discard].map(
       (card) => card.definition.id,
     );
-    expect(allIds).toContain('improved_fighter_crushing_blow');
+    expect(allIds).toContain('improved_warrior_crushing_blow');
     expect(allIds).toContain('improved_rogue_assassinate');
     expect(allIds).toHaveLength(withImproved.length);
     expect(battle.player.hand.map((card) => card.definition.id).sort()).toEqual(

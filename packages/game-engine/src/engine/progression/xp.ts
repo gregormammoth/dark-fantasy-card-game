@@ -5,15 +5,16 @@ import {
   XP_PER_CLASS_LEVEL,
 } from '@dark-fantasy/shared/types/progression';
 
-const PLAYER_CLASSES: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
+const PLAYER_CLASSES: CardClass[] = ['warrior', 'rogue', 'wizard', 'survivor', 'seeker'];
 
 export function createInitialProgression(): PlayerProgression {
   return {
     classes: {
-      fighter: { xp: 0 },
+      warrior: { xp: 0 },
       rogue: { xp: 0 },
       wizard: { xp: 0 },
       survivor: { xp: 0 },
+      seeker: { xp: 0 },
     },
   };
 }
@@ -87,4 +88,31 @@ export function getTotalXpGained(
 
 export function listPlayerClasses(): readonly CardClass[] {
   return PLAYER_CLASSES;
+}
+
+export function normalizeProgression(raw: PlayerProgression): PlayerProgression {
+  const classes = { ...raw.classes } as PlayerProgression['classes'] & {
+    fighter?: { xp: number };
+  };
+  if (classes.fighter && !classes.warrior) {
+    classes.warrior = classes.fighter;
+  }
+  delete classes.fighter;
+  return {
+    classes: {
+      warrior: { xp: classes.warrior?.xp ?? 0 },
+      rogue: { xp: classes.rogue?.xp ?? 0 },
+      wizard: { xp: classes.wizard?.xp ?? 0 },
+      survivor: { xp: classes.survivor?.xp ?? 0 },
+      seeker: { xp: classes.seeker?.xp ?? 0 },
+    },
+  };
+}
+
+export function normalizeLoadoutCardIds(ids: string[]): string[] {
+  return ids.map((id) =>
+    id
+      .replace(/^improved_fighter_/, 'improved_warrior_')
+      .replace(/^fighter_/, 'warrior_'),
+  );
 }

@@ -171,6 +171,8 @@ export function createInitialBattle(
     enemyBarrierPerTurn: enemyOverride?.barrierPerTurn ?? 0,
     playerMana: Math.min(Math.max(0, playerStartingMana), playerMaxMana),
     playerMaxMana,
+    enemyMarked: false,
+    playerCardsDrawnThisBattle: 0,
     resolvingCardInstanceId: null,
     resolutionQueue: [],
     activePlay: null,
@@ -198,6 +200,7 @@ function drawPlayerCards(battle: BattleContext, count: number): BattleContext {
   next.player.discard = discard;
   next.player.hand.push(...drawn);
   next.lastPlayerDrawCount = drawn.length;
+  next.playerCardsDrawnThisBattle += drawn.length;
   if (drawn.length > 0) {
     appendLog(
       next,

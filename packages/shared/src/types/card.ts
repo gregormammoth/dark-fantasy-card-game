@@ -1,6 +1,6 @@
 import type { EnemyBand, EnemyGroup } from './enemy';
 
-export type CardClass = 'fighter' | 'rogue' | 'wizard' | 'survivor';
+export type CardClass = 'warrior' | 'rogue' | 'wizard' | 'survivor' | 'seeker';
 
 export type CardType = 'attack' | 'defense';
 
@@ -21,7 +21,11 @@ export type EffectType =
   | 'restoreMaxShields'
   | 'gainMana'
   | 'bonusDamagePerMana'
-  | 'bonusBarrierPerMana';
+  | 'bonusBarrierPerMana'
+  | 'markEnemy'
+  | 'bonusIfMarked'
+  | 'ignoreShieldIfMarked'
+  | 'bonusDamagePerCardDrawn';
 
 export interface Effect {
   type: EffectType;

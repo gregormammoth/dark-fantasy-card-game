@@ -20,10 +20,11 @@
     "hollowfort": "Hollowfort"
   },
   "classes": {
-    "fighter": "Fighter",
+    "warrior": "Warrior",
     "rogue": "Rogue",
     "wizard": "Wizard",
     "survivor": "Survivor",
+    "seeker": "Seeker",
     "enemy": "ENEMY"
   },
   "cardType": {
@@ -199,6 +200,7 @@
     "barrierLabel": "Barrier",
     "manaLabel": "Mana",
     "poisonedLabel": "Poisoned",
+    "markedLabel": "Marked",
     "cardsHealth": "CARDS · HEALTH",
     "cardsShort": "CARDS",
     "playComboLine1": "PLAY",

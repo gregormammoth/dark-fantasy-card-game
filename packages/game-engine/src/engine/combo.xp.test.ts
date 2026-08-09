@@ -94,6 +94,8 @@ function makeBattle(hand: CardInstance[], enemyDeck: CardInstance[] = []): Battl
     lastDamageResult: null,
     isFirstPlayerTurn: false,
     lastPlayerDrawCount: 0,
+    enemyMarked: false,
+    playerCardsDrawnThisBattle: 0,
     comboStartPlayerHealth: null,
     comboStartAttackCardsPlayed: null,
     comboStartCards: null,
@@ -120,13 +122,13 @@ function playThroughCombo(battle: BattleContext, cardIds: string[]): BattleConte
 describe('battle card play awards class xp', () => {
   it('awards +1 fighter xp for a successful fighter card play', () => {
     const fighter = makeCard('fighter_attack', {
-      class: 'fighter',
+      class: 'warrior',
       type: 'attack',
       damage: 1,
     });
     const result = playThroughCombo(makeBattle([fighter]), [fighter.instanceId]);
 
-    expect(getClassXp(result.progression, 'fighter')).toBe(1);
+    expect(getClassXp(result.progression, 'warrior')).toBe(1);
   });
 
   it('awards +1 wizard xp for a successful wizard card play', () => {
@@ -163,15 +165,15 @@ describe('battle card play awards class xp', () => {
   });
 
   it('accumulates xp across multiple successful plays and classes', () => {
-    const fighterA = makeCard('fighter_a', { class: 'fighter', type: 'attack', damage: 1 });
-    const fighterB = makeCard('fighter_b', { class: 'fighter', type: 'attack', damage: 5 });
+    const fighterA = makeCard('fighter_a', { class: 'warrior', type: 'attack', damage: 1 });
+    const fighterB = makeCard('fighter_b', { class: 'warrior', type: 'attack', damage: 5 });
     const wizard = makeCard('wizard_a', { class: 'wizard', type: 'attack', damage: 2 });
 
     let battle = makeBattle([fighterA, fighterB, wizard]);
     battle = playThroughCombo(battle, [fighterA.instanceId, fighterB.instanceId]);
     const result = playThroughCombo(battle, [wizard.instanceId]);
 
-    expect(getClassXp(result.progression, 'fighter')).toBe(2);
+    expect(getClassXp(result.progression, 'warrior')).toBe(2);
     expect(getClassXp(result.progression, 'wizard')).toBe(1);
     expect(getClassXp(result.progression, 'rogue')).toBe(0);
   });
@@ -181,13 +183,13 @@ describe('battle card play awards class xp', () => {
     const afterBegin = beginPlayerResolution(battle);
     const afterResolve = resolveNextComboCard(afterBegin);
 
-    expect(getClassXp(afterResolve.progression, 'fighter')).toBe(0);
+    expect(getClassXp(afterResolve.progression, 'warrior')).toBe(0);
     expect(afterResolve).toBe(afterBegin);
   });
 
   it('does not award xp for invalid combo adds', () => {
     const fighter = makeCard('fighter_attack', {
-      class: 'fighter',
+      class: 'warrior',
       type: 'attack',
       damage: 1,
     });
@@ -195,7 +197,7 @@ describe('battle card play awards class xp', () => {
     const unchanged = addToCombo(battle, 'missing_instance');
 
     expect(unchanged).toBe(battle);
-    expect(getClassXp(unchanged.progression, 'fighter')).toBe(0);
+    expect(getClassXp(unchanged.progression, 'warrior')).toBe(0);
   });
 
   it('does not award player xp for enemy card plays', () => {
@@ -203,33 +205,34 @@ describe('battle card play awards class xp', () => {
     const battle = makeBattle([], [enemyCard]);
     const result = resolveEnemyTurn(battle);
 
-    expect(getClassXp(result.progression, 'fighter')).toBe(0);
+    expect(getClassXp(result.progression, 'warrior')).toBe(0);
     expect(getClassXp(result.progression, 'rogue')).toBe(0);
     expect(getClassXp(result.progression, 'wizard')).toBe(0);
     expect(getClassXp(result.progression, 'survivor')).toBe(0);
+    expect(getClassXp(result.progression, 'seeker')).toBe(0);
   });
 
   it('awards xp once per successful resolve even if animation state is cleared', () => {
     const fighter = makeCard('fighter_attack', {
-      class: 'fighter',
+      class: 'warrior',
       type: 'attack',
       damage: 3,
     });
     let battle = addToCombo(makeBattle([fighter]), fighter.instanceId);
     battle = beginPlayerResolution(battle);
     battle = resolveNextComboCard(battle);
-    const afterFirst = getClassXp(battle.progression, 'fighter');
+    const afterFirst = getClassXp(battle.progression, 'warrior');
     battle = { ...battle, activePlay: null };
     battle = resolveNextComboCard(battle);
 
     expect(afterFirst).toBe(1);
-    expect(getClassXp(battle.progression, 'fighter')).toBe(1);
+    expect(getClassXp(battle.progression, 'warrior')).toBe(1);
   });
 
   it('refuses a third card when the combo is at cap', () => {
-    const a = makeCard('a', { class: 'fighter', type: 'attack', damage: 1 });
-    const b = makeCard('b', { class: 'fighter', type: 'attack', damage: 1 });
-    const c = makeCard('c', { class: 'fighter', type: 'attack', damage: 1 });
+    const a = makeCard('a', { class: 'warrior', type: 'attack', damage: 1 });
+    const b = makeCard('b', { class: 'warrior', type: 'attack', damage: 1 });
+    const c = makeCard('c', { class: 'warrior', type: 'attack', damage: 1 });
     let battle = makeBattle([a, b, c]);
     battle = addToCombo(battle, a.instanceId);
     battle = addToCombo(battle, b.instanceId);

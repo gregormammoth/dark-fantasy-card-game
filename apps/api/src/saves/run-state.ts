@@ -3,10 +3,11 @@ export const LOCAL_SAVE_SCHEMA_VERSION = 2;
 export interface ApiRunState {
   progression: {
     classes: {
-      fighter: { xp: number };
+      warrior: { xp: number };
       rogue: { xp: number };
       wizard: { xp: number };
       survivor: { xp: number };
+      seeker: { xp: number };
     };
   };
   loadout: {
@@ -25,13 +26,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function hasClassXp(entry: unknown): boolean {
+  return isRecord(entry) && typeof entry.xp === 'number';
+}
+
 function isProgression(value: unknown): boolean {
   if (!isRecord(value) || !isRecord(value.classes)) {
     return false;
   }
-  for (const key of ['fighter', 'rogue', 'wizard', 'survivor'] as const) {
-    const entry = value.classes[key];
-    if (!isRecord(entry) || typeof entry.xp !== 'number') {
+  const classes = value.classes;
+  const hasWarrior = hasClassXp(classes.warrior) || hasClassXp(classes.fighter);
+  if (!hasWarrior) {
+    return false;
+  }
+  for (const key of ['rogue', 'wizard', 'survivor'] as const) {
+    if (!hasClassXp(classes[key])) {
       return false;
     }
   }

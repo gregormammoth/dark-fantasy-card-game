@@ -1,8 +1,8 @@
 {
   "bands": {
-    "intro": { "deckSize": 8, "startingShield": 0, "maxShield": 1, "barrierPerTurn": 0 },
-    "common": { "deckSize": 12, "startingShield": 2, "maxShield": 2, "barrierPerTurn": 0 },
-    "elite": { "deckSize": 16, "startingShield": 3, "maxShield": 3, "barrierPerTurn": 0 }
+    "intro": { "deckSize": 15, "startingShield": 0, "maxShield": 1, "barrierPerTurn": 0 },
+    "common": { "deckSize": 17, "startingShield": 2, "maxShield": 2, "barrierPerTurn": 0 },
+    "elite": { "deckSize": 20, "startingShield": 3, "maxShield": 3, "barrierPerTurn": 0 }
   },
   "enemies": [
     {

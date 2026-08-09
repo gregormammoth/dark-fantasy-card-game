@@ -20,10 +20,11 @@
     "hollowfort": "Hollowfort"
   },
   "classes": {
-    "fighter": "Borac",
+    "warrior": "Ratnik",
     "rogue": "Lopov",
     "wizard": "Čarobnjak",
     "survivor": "Preživeli",
+    "seeker": "Tražilac",
     "enemy": "NEPRIJATELJ"
   },
   "cardType": {
@@ -199,6 +200,7 @@
     "barrierLabel": "Barijera",
     "manaLabel": "Mana",
     "poisonedLabel": "Otrovano",
+    "markedLabel": "Označeno",
     "cardsHealth": "KARTE · ZDRAVLJE",
     "cardsShort": "KARTE",
     "playComboLine1": "ODIGRAJ",

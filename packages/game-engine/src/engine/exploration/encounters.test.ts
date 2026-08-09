@@ -48,9 +48,9 @@ describe('exploration encounter pressure', () => {
   it('adds cards into the deck', () => {
     let exploration = createInitialExploration(3);
     const before = exploration.deck.length;
-    exploration = addCardsToPile(exploration, ['fighter_attack_01'], 'deck');
+    exploration = addCardsToPile(exploration, ['warrior_attack_01'], 'deck');
     expect(exploration.deck.length).toBe(before + 1);
-    expect(exploration.deck.some((card) => card.definition.id === 'fighter_attack_01')).toBe(
+    expect(exploration.deck.some((card) => card.definition.id === 'warrior_attack_01')).toBe(
       true,
     );
   });

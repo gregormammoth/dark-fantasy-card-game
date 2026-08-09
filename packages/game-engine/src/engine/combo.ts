@@ -13,10 +13,45 @@ import { nextInt } from './rng';
 
 export const COMBO_CAP = 2;
 
+export function isInstantPlayCard(card: CardInstance): boolean {
+  const effects = card.definition.effects;
+  return effects.length > 0 && effects.every((effect) => effect.type === 'draw');
+}
+
+export function playInstantCard(battle: BattleContext, cardInstanceId: string): BattleContext {
+  const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
+  if (cardIndex === -1) {
+    return battle;
+  }
+  const card = battle.player.hand[cardIndex];
+  if (!isInstantPlayCard(card)) {
+    return battle;
+  }
+
+  const next = structuredClone(battle);
+  const [played] = next.player.hand.splice(cardIndex, 1);
+  appendLog(next, `You played ${played.definition.name}.`, 'play');
+
+  let resolved = resolveCardEffects(next, played, 'player');
+  resolved.player.discard.push(played);
+  if (played.definition.type === 'attack') {
+    resolved.combatStats.attackCardsPlayed += 1;
+  } else if (played.definition.type === 'defense') {
+    resolved.combatStats.defenseCardsPlayed += 1;
+  }
+  if (played.definition.class) {
+    resolved.progression = awardCardXp(resolved.progression, played.definition.class);
+  }
+  return clearDamageResult(resolved);
+}
+
 export function addToCombo(battle: BattleContext, cardInstanceId: string): BattleContext {
   const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
   if (cardIndex === -1) {
     return battle;
+  }
+  if (isInstantPlayCard(battle.player.hand[cardIndex])) {
+    return playInstantCard(battle, cardInstanceId);
   }
   if (battle.combo.length >= COMBO_CAP) {
     return battle;

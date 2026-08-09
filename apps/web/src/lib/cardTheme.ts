@@ -10,12 +10,12 @@ export interface ClassTheme {
 }
 
 export const classThemes: Record<CardClass, ClassTheme> = {
-  fighter: {
-    label: 'FIGHTER',
-    border: 'rgba(224,82,74,.5)',
-    accent: '#e0524a',
-    badge: 'rgba(224,82,74,.92)',
-    glow: 'rgba(224,82,74,.7)',
+  warrior: {
+    label: 'WARRIOR',
+    border: 'rgba(91,134,196,.5)',
+    accent: '#5b86c4',
+    badge: 'rgba(91,134,196,.92)',
+    glow: 'rgba(91,134,196,.65)',
   },
   rogue: {
     label: 'ROGUE',
@@ -33,6 +33,13 @@ export const classThemes: Record<CardClass, ClassTheme> = {
   },
   survivor: {
     label: 'SURVIVOR',
+    border: 'rgba(224,82,74,.5)',
+    accent: '#e0524a',
+    badge: 'rgba(224,82,74,.92)',
+    glow: 'rgba(224,82,74,.7)',
+  },
+  seeker: {
+    label: 'SEEKER',
     border: 'rgba(201,162,74,.5)',
     accent: '#c9a24a',
     badge: 'rgba(201,162,74,.92)',
@@ -78,6 +85,9 @@ export function getCardEffectSummary(definition: CardDefinition): string {
     if (effect.type === 'reduceDamagePercent') {
       parts.push(`−${effect.value ?? 0}% damage`);
     }
+    if (effect.type === 'draw') {
+      parts.push(`draw ${effect.count ?? 1}`);
+    }
     if (effect.type === 'recoverDiscard') {
       parts.push(`+${effect.count ?? 1} cards`);
     }
@@ -107,6 +117,18 @@ export function getCardEffectSummary(definition: CardDefinition): string {
     }
     if (effect.type === 'bonusBarrierPerMana') {
       parts.push(`+${effect.value ?? 0} barrier/mana`);
+    }
+    if (effect.type === 'markEnemy') {
+      parts.push('mark enemy');
+    }
+    if (effect.type === 'bonusIfMarked') {
+      parts.push(`+${effect.damage ?? 0} if marked`);
+    }
+    if (effect.type === 'ignoreShieldIfMarked') {
+      parts.push('pierce if marked');
+    }
+    if (effect.type === 'bonusDamagePerCardDrawn') {
+      parts.push(`+${effect.value ?? 0} per card drawn`);
     }
   }
 
@@ -142,7 +164,11 @@ export function getCardHeight(): number {
 export function getCardEffectIconType(definition: CardDefinition): CardEffectIconType {
   const effectTypes = definition.effects.map((effect) => effect.type);
 
-  if (effectTypes.includes('ignoreShield') || effectTypes.includes('bonusDamagePerMana')) {
+  if (
+    effectTypes.includes('ignoreShield') ||
+    effectTypes.includes('ignoreShieldIfMarked') ||
+    effectTypes.includes('bonusDamagePerMana')
+  ) {
     return 'pierce';
   }
   if (effectTypes.includes('poison')) {
@@ -152,7 +178,9 @@ export function getCardEffectIconType(definition: CardDefinition): CardEffectIco
     effectTypes.includes('damage') ||
     effectTypes.includes('bonusDamagePerAttackCard') ||
     effectTypes.includes('bonusIfLowerHp') ||
-    effectTypes.includes('bonusIfFirstAttack')
+    effectTypes.includes('bonusIfFirstAttack') ||
+    effectTypes.includes('bonusIfMarked') ||
+    effectTypes.includes('bonusDamagePerCardDrawn')
   ) {
     return 'attack';
   }
@@ -172,10 +200,9 @@ export function getCardEffectIconType(definition: CardDefinition): CardEffectIco
   ) {
     return 'shield';
   }
-  if (effectTypes.includes('recoverDiscard')) {
+  if (effectTypes.includes('recoverDiscard') || effectTypes.includes('draw') || effectTypes.includes('markEnemy')) {
     return 'recover';
   }
-
   return getCardType(definition) === 'attack' ? 'attack' : 'shield';
 }
 

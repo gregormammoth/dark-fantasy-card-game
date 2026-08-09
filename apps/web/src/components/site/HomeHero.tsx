@@ -49,7 +49,7 @@ export function HomeHero() {
             {siteConfig.name.toUpperCase()}
           </h1>
           <p className="animate-[floatUp_.8s_.16s_ease-out_both] text-lg leading-relaxed text-[#cabfae]">
-            Escape Hollowfort Prison. Build your deck across fighter, rogue, wizard, and survivor —
+            Escape Hollowfort Prison. Build your deck across warrior, rogue, wizard, survivor, and seeker —
             then burn through enemies one card at a time.
           </p>
           <div className="mt-2 flex flex-wrap gap-4 animate-[floatUp_.8s_.24s_ease-out_both]">

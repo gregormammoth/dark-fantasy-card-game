@@ -18,8 +18,8 @@ describe('progression xp', () => {
   });
 
   it('awards +1 fighter xp', () => {
-    const next = awardCardXp(createInitialProgression(), 'fighter');
-    expect(getClassXp(next, 'fighter')).toBe(1);
+    const next = awardCardXp(createInitialProgression(), 'warrior');
+    expect(getClassXp(next, 'warrior')).toBe(1);
   });
 
   it('awards +1 wizard xp', () => {
@@ -37,20 +37,25 @@ describe('progression xp', () => {
     expect(getClassXp(next, 'survivor')).toBe(1);
   });
 
+  it('awards +1 seeker xp', () => {
+    const next = awardCardXp(createInitialProgression(), 'seeker');
+    expect(getClassXp(next, 'seeker')).toBe(1);
+  });
+
   it('accumulates xp for repeated awards', () => {
     let progression = createInitialProgression();
-    progression = awardCardXp(progression, 'fighter');
-    progression = awardCardXp(progression, 'fighter');
-    expect(getClassXp(progression, 'fighter')).toBe(2);
+    progression = awardCardXp(progression, 'warrior');
+    progression = awardCardXp(progression, 'warrior');
+    expect(getClassXp(progression, 'warrior')).toBe(2);
   });
 
   it('only updates the awarded class', () => {
     let progression = createInitialProgression();
-    progression = awardCardXp(progression, 'fighter');
-    progression = awardCardXp(progression, 'fighter');
+    progression = awardCardXp(progression, 'warrior');
+    progression = awardCardXp(progression, 'warrior');
     progression = awardCardXp(progression, 'wizard');
 
-    expect(getClassXp(progression, 'fighter')).toBe(2);
+    expect(getClassXp(progression, 'warrior')).toBe(2);
     expect(getClassXp(progression, 'wizard')).toBe(1);
     expect(getClassXp(progression, 'rogue')).toBe(0);
     expect(getClassXp(progression, 'survivor')).toBe(0);

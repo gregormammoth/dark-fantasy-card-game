@@ -6,7 +6,7 @@ This document describes the game rules implemented today and the planned directi
 
 **Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, and prison encounter pressure on cards and shields.
 
-**Planned later:** player level + choosable combat skills (max shield, combo size, max mana growth, deck cap, draw per turn), Seeker class, money economy, and further world content beyond the prison slice. See [Planned Progression](#planned-progression-not-implemented).
+**Planned later:** player level + choosable combat skills (max shield, combo size, max mana growth, deck cap, draw per turn), money economy, and further world content beyond the prison slice. See [Planned Progression](#planned-progression-not-implemented).
 
 Battles are the combat layer of the larger run. Exploration carries hand, deck, discard, and shield into fights.
 
@@ -227,18 +227,18 @@ Player cards belong to a **class** and have a **type**:
 
 | Class | Theme |
 |-------|-------|
-| Fighter | Direct damage and shield |
+| Warrior | Direct damage and shield |
 | Rogue | Poison and evasion |
 | Wizard | Barrier, pierce, and battle mana (charge → spend) |
 | Survivor | Conditional power and recovery |
-| Seeker | Planned fifth class — dig, mark, deduce; mono-viable with smart attacks |
+| Seeker | Dig, mark, and exploit weak points |
 
 | Type | Role |
 |------|------|
 | Attack | Effects target the **enemy** |
 | Defense | Effects target the **player** |
 
-Card data lives in `src/data/playerCards.json`.
+Card data lives in `packages/content/src/playerCards.json`.
 
 ### Enemy cards
 
@@ -259,7 +259,7 @@ Each card has an ordered list of **effects** resolved top to bottom on the same 
 | `barrier` | Gain `value` barrier on the player. Adds pending barrier bonus. |
 | `poison` | Apply poison: `damagePerTurn` for `duration` turns. |
 | `ignoreShield` | Next `damage` on this card ignores shield. |
-| `draw` | Draw `count` cards from deck to hand (no discard reshuffle). |
+| `draw` | Draw `count` cards from deck to hand (no discard reshuffle). Cards whose effects are **only** `draw` play **instantly** (not into the combo, no combo-slot cost). |
 | `recoverDiscard` | Move up to `count` cards from discard to hand (most recently discarded first). |
 | `bonusDamagePerAttackCard` | Add `value` × (other Attack cards in **current combo**) to pending damage. Excludes the card being resolved. |
 | `bonusBarrierPerDefenseCard` | Add `value` × (other Defense cards in **current combo**) to pending barrier. Excludes the card being resolved. |
@@ -271,6 +271,10 @@ Each card has an ordered list of **effects** resolved top to bottom on the same 
 | `gainMana` | Player only. Gain `value` mana, capped at `playerMaxMana` (default **2**). |
 | `bonusDamagePerMana` | Add `value` × **current mana** to pending damage, then spend all mana (set to 0). |
 | `bonusBarrierPerMana` | Add `value` × **current mana** to pending barrier, then spend all mana (set to 0). |
+| `markEnemy` | Battle-scoped: mark the enemy for Seeker payoffs. |
+| `bonusIfMarked` | If the enemy is marked, add `damage` to pending damage. |
+| `ignoreShieldIfMarked` | If the enemy is marked, next `damage` on this card ignores shield. |
+| `bonusDamagePerCardDrawn` | Add `value` × **cards drawn this battle** to pending damage. |
 
 ### Mana
 
@@ -303,9 +307,9 @@ Each class has **6 cards** across base + improved (mix of attack and defense).
 
 | Card | Class | Type | Effect |
 |------|-------|------|--------|
-| Heavy Strike | Fighter | Attack | 3 damage |
-| Battle Momentum | Fighter | Attack | +1 damage per other Attack in combo; 2 damage |
-| Raise Shield | Fighter | Defense | +2 shield |
+| Heavy Strike | Warrior | Attack | 3 damage |
+| Battle Momentum | Warrior | Attack | +1 damage per other Attack in combo; 2 damage |
+| Raise Shield | Warrior | Defense | +2 shield |
 | Poison Dagger | Rogue | Attack | Poison 1/turn for 3 turns |
 | Backstab | Rogue | Attack | +2 damage if first attack combo of the battle; 2 damage |
 | Smoke Escape | Rogue | Defense | 50% damage reduction this round |
@@ -315,14 +319,17 @@ Each class has **6 cards** across base + improved (mix of attack and defense).
 | Last Stand | Survivor | Attack | +2 damage if below 50% HP; 2 damage |
 | Second Chance | Survivor | Defense | Recover 2 cards from discard |
 | Survival Instinct | Survivor | Defense | Restore max shield if empty |
+| Quick Survey | Seeker | Defense | Instant: draw 2 (no combo slot) |
+| Mark the Joint | Seeker | Defense | Mark enemy; draw 1 |
+| Weak-Point Strike | Seeker | Attack | 2 damage; if marked, pierce and +2 damage |
 
 ### Improved (unlocks)
 
 | Card | Class | Type | Effect |
 |------|-------|------|--------|
-| Crushing Blow | Fighter | Attack | 4 damage |
-| Warpath | Fighter | Defense | +2 shield; 25% damage reduction |
-| Iron Wall | Fighter | Defense | +3 shield |
+| Crushing Blow | Warrior | Attack | 4 damage |
+| Warpath | Warrior | Defense | +2 shield; 25% damage reduction |
+| Iron Wall | Warrior | Defense | +3 shield |
 | Assassinate | Rogue | Attack | +2 if first attack combo; 3 damage |
 | Venom Needle | Rogue | Defense | Poison 2×2; 25% damage reduction |
 | Phantom Step | Rogue | Defense | 75% damage reduction |
@@ -332,6 +339,9 @@ Each class has **6 cards** across base + improved (mix of attack and defense).
 | Blood Fury | Survivor | Attack | +3 if below 50% HP; 3 damage |
 | Second Wind | Survivor | Attack | Recover 2 from discard; 2 damage |
 | Undying | Survivor | Defense | Restore max shield, then +1 shield |
+| Deep Search | Seeker | Defense | Instant: draw 3 (no combo slot) |
+| Anatomy Lesson | Seeker | Attack | 2 damage; +1 per card drawn this battle |
+| Case Closed | Seeker | Attack | 3 damage; if marked, pierce and +3 damage |
 
 ## Enemy Groups and Power Bands
 
@@ -429,7 +439,7 @@ Inspiration: Skyrim-style separation of **skills you use** (classes / cards) fro
 
 ### Design rule
 
-**Do not** hard-bind combat ceilings to classes (e.g. Fighter always raises max shield). Classes earn XP and unlock cards; **player level** grants a free choice among shared combat skills. A pure Wizard build can still invest in max shield; a Fighter can still raise mana if they splash wizard cards.
+**Do not** hard-bind combat ceilings to classes (e.g. Warrior always raises max shield). Classes earn XP and unlock cards; **player level** grants a free choice among shared combat skills. A pure Wizard build can still invest in max shield; a Warrior can still raise mana if they splash wizard cards.
 
 ```text
 Play cards → class XP → class levels
@@ -445,14 +455,14 @@ Play cards → class XP → class levels
 
 | Idea | Proposal |
 |------|----------|
-| Source | Sum of class levels across all classes (Fighter + Rogue + Wizard + Survivor [+ Seeker]) |
+| Source | Sum of class levels across all classes (Warrior + Rogue + Wizard + Survivor + Seeker) |
 | Rate | **1 player level per 5 class levels** (tunable; start here) |
 | On level-up | Player **chooses exactly one** skill to increase by 1 |
 | Does not auto-raise | Skills never rise just from playing related cards — only from the level-up choice (plus optional gear / items later) |
 
 Class levels remain independent (10 XP = 1 class level). Spending a class level on an improved card still costs that class’s free levels; it does not spend the player-level skill point.
 
-Example: 3 Fighter + 2 Rogue = 5 class levels → player level 1 → pick Max Combo or Max Shield, etc.
+Example: 3 Warrior + 2 Rogue = 5 class levels → player level 1 → pick Max Combo or Max Shield, etc.
 
 ### Combat skills (choosable attributes)
 
@@ -463,7 +473,7 @@ Hand size stays a **constant** (default 4). It is not a skill. Everything below 
 | **Max shield** | Guard capacity (armor ceiling) | 2 | 4 | Cards that grant shield still refill *current* guard up to this cap. Inventory armor (later) may help within or toward this cap — not a second uncapped stack. |
 | **Max combo** | Cards allowed in the combo at once | 2 (current `COMBO_CAP`) | 5 | A low default makes combo-bonus cards aspirational; the skill (later) raises the ceiling. |
 | **Max mana** | Cap for battle mana | 2 | 5 | New resource; see [Mana](#mana-planned). |
-| **Max deck** | Loadout / HP ceiling | 12 (current `DECK_CAP`) | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — unlocks already force a cut at 12. |
+| **Max deck** | Loadout / HP ceiling | 15 (current `DECK_CAP`) | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — improved unlocks force a cut when the deck is full. |
 | **Draw per turn** | Cards drawn at the start of each player turn after the opening hand | 1 | 3 | Opening hand still fills to hand size (4). Seeker cards may draw *extra* beyond this baseline. |
 
 Suggested early defaults if shipping a first pass: combo max **2**, draw **1**, shield **2**, mana **2/2**, deck cap tight enough that improved unlocks force a cut.
@@ -479,96 +489,19 @@ Rules in play:
 - Spend scales damage or barrier by mana spent (all current mana), shown in combo preview.
 - Exploration encounters can change current mana via `modifyMana`.
 
-### Seeker class (planned)
+### Seeker class
 
-Fifth class: **information → precision**. Dig and read the fight, then strike the weak point. Not a tutor splash that other decks require — a full mono-class identity.
+Fifth class: **information → precision**. Dig and mark, then strike the weak point.
 
 | | |
 |-------|--------------------------------|
-| Fantasy | Scout, archivist, restless prisoner who maps every corridor and every tell |
-| Contrast with Rogue | Rogue is *opportunism* (timing, poison, first strike). Seeker is *preparation* (mark, peek, dig, then exploit) |
-| Mono-class rule | A pure Seeker deck must win common fights alone. Roughly **half dig/setup, half payoff** (attacks + survival) — not a draw-only kit |
-| Skill synergy | Benefits from **Draw per turn** and a usable **Max deck**, but does not own those skills |
+| Fantasy | Scout who maps corridors and tells |
+| Contrast with Rogue | Rogue is opportunism; Seeker is preparation |
+| Mono-class rule | Dig/setup cards plus marked payoffs |
 
-#### Core loops
+**Implemented loop:** Mark the Joint → Weak-Point Strike / Case Closed. Dig with Quick Survey / Deep Search (**instant draw** — resolves immediately, does not use a combo slot, so you can dig into Backstab or other payoff cards); Anatomy Lesson scales with cards drawn this battle.
 
-**1. Expose / Mark, then Exploit**
-
-1. Play a setup card that **marks** the enemy (battle-scoped flag / counter).
-2. Dig or hold until the payoff is in hand.
-3. Play an exploit attack: bonus damage and/or **ignore shield** *while marked*.
-
-Fiction: you found the gap in the guard; the next blow goes there.
-
-**2. Deduce the next blow**
-
-1. Peek or reveal the enemy’s next **1–N** deck cards (intent / telegraph).
-2. Act on that knowledge: cancel or blunt a known attack, strike harder, or rearrange your own line.
-
-Fiction: you already know what they will try.
-
-#### Card directions (content sketch — not final names)
-
-**Dig & search**
-
-| Idea | Behavior |
-|------|----------|
-| Quick survey | Draw X cards (respect hand size) |
-| Deep search | Draw until hand is full |
-| Named find | Search own deck for a specific card (by id, type, or class); put it into hand |
-| Recase | Put 1 card from discard on top of deck (or into hand) |
-| Peek own line | Look at top N of own deck; leave one, bury the rest |
-
-**Deduction & enemy knowledge**
-
-| Idea | Behavior |
-|------|----------|
-| Read the tell | See the enemy’s next **1–N** cards |
-| Deduce the next blow | Defense: peek enemy top card(s); gain small guard/barrier *or* prepare a cancel |
-| Cancel known strike | If you know the enemy’s next card (peeked this battle / this turn), **negate or skip** that enemy play when it would resolve |
-| Case notes | Keep “known” enemy cards visible until they are played or the battle ends |
-
-**Payoff attacks (smart damage — required for mono)**
-
-| Idea | Behavior |
-|------|----------|
-| Weak-point strike | Modest base damage; **ignore shield** and/or bonus damage if the enemy is **marked** |
-| Anatomy lesson | Damage **+1 per card drawn this turn** (or this battle) |
-| Prepared thrust | Bonus damage if you peeked the enemy this turn, or if a dig card is also in the combo |
-| Case closed (improved) | Large hit that requires a condition a pure Seeker deck can set reliably (marked, or N cards drawn, or known enemy card) |
-
-Avoid raw “deal 4 with no condition” (that is Fighter) and avoid `bonusIfFirstAttack` as the main identity (that is Rogue).
-
-**Survival / setup defenses**
-
-| Idea | Behavior |
-|------|----------|
-| Keep your distance | Small shield or damage reduction after a peek/draw |
-| Mark the joint | Mark enemy; optionally draw 1 |
-| Sidestep the obvious | If next enemy card is known, reduce its damage to 0 or prevent that one card |
-
-#### Effects the engine will need (beyond today)
-
-Existing verbs already cover part of the kit: `draw`, `recoverDiscard`, `ignoreShield`, conditional damage bonuses.
-
-Likely **new** effect / state pieces:
-
-| Piece | Purpose |
-|-------|---------|
-| `markEnemy` / `requireMarked` | Expose → Exploit loop |
-| `peekEnemyDeck` (count) | Deduce the next blow |
-| `knownEnemyCards` (battle memory) | Cancel / bonus while knowledge lasts |
-| `cancelNextEnemyCard` or skip one enemy play | Payoff for correct deduction |
-| `bonusDamagePerCardDrawn` | Scale with dig this turn/battle |
-| `searchDeck` (filter: type / class / id) | Named find — needs a small pick UI |
-
-Combo preview should show mark status, known enemy cards, and draw-scaled damage the same way it shows other conditionals today.
-
-#### Authoring checklist
-
-Before shipping Seeker cards, a pure Seeker hand should answer in one sentence: **how do I win this knight fight?** If the answer is only “draw more,” the class is not ready.
-
-Prefer shipping the **player-level + skills** frame with the current four classes first; add Seeker when mark/peek/cancel feel good in battle UI.
+Peek/cancel enemy-intent cards remain planned.
 
 ### What stays class-owned
 

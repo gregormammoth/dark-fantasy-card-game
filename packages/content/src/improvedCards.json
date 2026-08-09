@@ -1,8 +1,8 @@
 [
   {
-    "id": "improved_fighter_crushing_blow",
+    "id": "improved_warrior_crushing_blow",
     "name": "Crushing Blow",
-    "class": "fighter",
+    "class": "warrior",
     "type": "attack",
     "effects": [
       {
@@ -14,9 +14,9 @@
     "improved": true
   },
   {
-    "id": "improved_fighter_warpath",
+    "id": "improved_warrior_warpath",
     "name": "Warpath",
-    "class": "fighter",
+    "class": "warrior",
     "type": "defense",
     "effects": [
       {
@@ -32,9 +32,9 @@
     "improved": true
   },
   {
-    "id": "improved_fighter_iron_wall",
+    "id": "improved_warrior_iron_wall",
     "name": "Iron Wall",
-    "class": "fighter",
+    "class": "warrior",
     "type": "defense",
     "effects": [
       {
@@ -198,6 +198,59 @@
       }
     ],
     "description": "Restore Shield to maximum, then gain 1 Shield.",
+    "improved": true
+  },
+  {
+    "id": "improved_seeker_deep_search",
+    "name": "Deep Search",
+    "class": "seeker",
+    "type": "defense",
+    "effects": [
+      {
+        "type": "draw",
+        "count": 3
+      }
+    ],
+    "description": "Draw 3 cards instantly. Does not use a combo slot.",
+    "improved": true
+  },
+  {
+    "id": "improved_seeker_anatomy_lesson",
+    "name": "Anatomy Lesson",
+    "class": "seeker",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "bonusDamagePerCardDrawn",
+        "value": 1
+      },
+      {
+        "type": "damage",
+        "value": 2
+      }
+    ],
+    "description": "Deal 2 damage. +1 damage per card drawn this battle.",
+    "improved": true
+  },
+  {
+    "id": "improved_seeker_case_closed",
+    "name": "Case Closed",
+    "class": "seeker",
+    "type": "attack",
+    "effects": [
+      {
+        "type": "ignoreShieldIfMarked"
+      },
+      {
+        "type": "bonusIfMarked",
+        "damage": 3
+      },
+      {
+        "type": "damage",
+        "value": 3
+      }
+    ],
+    "description": "Deal 3 damage. If the enemy is marked, ignore shield and deal 6 instead.",
     "improved": true
   }
 ]

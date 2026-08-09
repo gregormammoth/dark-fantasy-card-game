@@ -87,6 +87,8 @@ function makeBattle(
     lastDamageResult: null,
     isFirstPlayerTurn: false,
     lastPlayerDrawCount: 0,
+    enemyMarked: false,
+    playerCardsDrawnThisBattle: 0,
     comboStartPlayerHealth: null,
     comboStartAttackCardsPlayed: null,
     comboStartCards: null,

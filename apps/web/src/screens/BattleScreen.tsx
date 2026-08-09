@@ -352,6 +352,7 @@ export function BattleScreen({
           spendingIndices={spendState.enemy?.indices}
           spendMode={spendState.enemy?.mode}
           isHit={hitTarget === 'enemy'}
+          marked={battle.enemyMarked}
         />
 
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_356px]">
@@ -382,10 +383,11 @@ export function BattleScreen({
           maxMana={battle.playerMaxMana}
           poison={battle.playerPoison}
           hand={battle.player.hand}
-          handDisabled={!isPlayerTurn || isResolving || battle.combo.length >= COMBO_CAP}
+          handDisabled={!isPlayerTurn || isResolving}
           endTurnDisabled={isResolving}
           showEndTurn={isPlayerTurn}
           comboSize={battle.combo.length}
+          comboAtCap={battle.combo.length >= COMBO_CAP}
           spendingIndices={spendState.player?.indices}
           spendMode={spendState.player?.mode}
           onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}

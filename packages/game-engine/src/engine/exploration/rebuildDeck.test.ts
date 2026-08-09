@@ -19,7 +19,7 @@ describe('rebuildExplorationDeck mid-run', () => {
     const before = actor.getSnapshot();
     expect(before.matches('playerTurn')).toBe(true);
 
-    const nextIds = [...loadout.deckCardIds, 'improved_fighter_crushing_blow'];
+    const nextIds = [...loadout.deckCardIds, 'improved_warrior_crushing_blow'];
     const rebuilt = rebuildExplorationDeck(before.context, nextIds);
     actor.send({
       type: 'HYDRATE',
@@ -32,7 +32,7 @@ describe('rebuildExplorationDeck mid-run', () => {
     const allIds = [...after.context.hand, ...after.context.deck, ...after.context.discard].map(
       (card) => card.definition.id,
     );
-    expect(allIds).toContain('improved_fighter_crushing_blow');
+    expect(allIds).toContain('improved_warrior_crushing_blow');
     expect(allIds.filter((id) => nextIds.includes(id)).sort()).toEqual([...nextIds].sort());
   });
 

@@ -16,7 +16,7 @@ import {
 } from '@dark-fantasy/game-engine';
 
 export { DECK_CAP, createInitialLoadout };
-export const PLAYER_CLASSES: CardClass[] = ['fighter', 'rogue', 'wizard', 'survivor'];
+export const PLAYER_CLASSES: CardClass[] = ['warrior', 'rogue', 'wizard', 'survivor', 'seeker'];
 export const LEVEL_COST = IMPROVED_CARD_LEVEL_COST;
 export const XP_PER_LEVEL = XP_PER_CLASS_LEVEL;
 

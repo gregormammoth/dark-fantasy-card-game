@@ -21,6 +21,7 @@ interface EnemyZoneProps {
   spendingIndices?: Set<number>;
   spendMode?: 'burn' | 'draw';
   isHit?: boolean;
+  marked?: boolean;
 }
 
 function EmberParticle({ left, size, color, delay, duration }: {
@@ -58,6 +59,7 @@ export function EnemyZone({
   spendingIndices,
   spendMode = 'burn',
   isHit = false,
+  marked = false,
 }: EnemyZoneProps) {
   const { t } = useTranslation();
   const spendCount = spendingIndices?.size ?? 0;
@@ -158,6 +160,11 @@ export function EnemyZone({
             {t('battle.shieldLabel')}{' '}
             <b className="font-cinzel text-[#dbe6f5]">{shield}</b>
           </span>
+          {marked && (
+            <span className="inline-flex items-center gap-1.5 text-[#c9a24a]">
+              {t('battle.markedLabel')}
+            </span>
+          )}
           {barrier > 0 && (
             <span className="inline-flex items-center gap-1.5 text-[#c4b0ef]">
               ✦ {t('battle.barrierLabel')} <b className="font-cinzel text-[#ddd0f5]">{barrier}</b>

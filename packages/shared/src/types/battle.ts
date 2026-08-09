@@ -68,6 +68,8 @@ export interface BattleContext {
   enemyBarrierPerTurn: number;
   playerMana: number;
   playerMaxMana: number;
+  enemyMarked: boolean;
+  playerCardsDrawnThisBattle: number;
   resolvingCardInstanceId: string | null;
   resolutionQueue: CardInstance[];
   activePlay: ActivePlay | null;

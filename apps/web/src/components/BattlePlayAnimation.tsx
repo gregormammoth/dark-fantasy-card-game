@@ -23,7 +23,7 @@ function getTheme(cue: AnimationCue) {
   if (cue.cardClass) {
     return classThemes[cue.cardClass as CardClass];
   }
-  return cue.source === 'enemy' ? enemyTheme : classThemes.fighter;
+  return cue.source === 'enemy' ? enemyTheme : classThemes.warrior;
 }
 
 function Pill({

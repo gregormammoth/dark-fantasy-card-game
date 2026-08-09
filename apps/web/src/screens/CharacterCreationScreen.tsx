@@ -56,7 +56,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
       >
         <section className="relative min-h-[560px] overflow-hidden border-b border-[rgba(201,162,74,.2)] md:border-r md:border-b-0">
           <img
-            src={PLAYER_GENDER_PORTRAITS[gender].fighter}
+            src={PLAYER_GENDER_PORTRAITS[gender].warrior}
             alt=""
             className="absolute inset-0 h-full w-full object-cover object-top"
           />
@@ -98,7 +98,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
                   }}
                 >
                   <img
-                    src={PLAYER_GENDER_PORTRAITS[option].fighter}
+                    src={PLAYER_GENDER_PORTRAITS[option].warrior}
                     alt=""
                     className="h-10 w-8 rounded-sm object-cover object-top"
                   />
