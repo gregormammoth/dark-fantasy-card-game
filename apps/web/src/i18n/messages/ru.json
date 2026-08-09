@@ -72,6 +72,7 @@
     "header": "ТЮРЬМА ХОЛЛОУФОРТ",
     "seedLabel": "СИД {seed}",
     "questLog": "ЖУРНАЛ КВЕСТОВ",
+    "unclaimedCards": "Доступно новых карт: {count}",
     "activeThreads": "АКТИВНЫЕ НИТИ",
     "noQuestsYet": "Квестов пока нет. Поговорите с NPC фракций.",
     "active": "АКТИВЕН",

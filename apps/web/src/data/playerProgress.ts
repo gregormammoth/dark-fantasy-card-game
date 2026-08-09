@@ -11,6 +11,7 @@ import {
   createInitialLoadout,
   getCardsForClass as engineGetCardsForClass,
   listAllPlayerCards,
+  listImprovedPlayerCards,
   spentLevelsForClass,
 } from '@dark-fantasy/game-engine';
 
@@ -60,4 +61,21 @@ export function classSpendableLevels(
 
 export function classSpentLevels(loadout: PlayerLoadout, classId: CardClass): number {
   return spentLevelsForClass(loadout, classId);
+}
+
+export function unclaimedCardChoices(
+  progression: PlayerProgression,
+  loadout: PlayerLoadout,
+): number {
+  const improved = listImprovedPlayerCards();
+  return PLAYER_CLASSES.reduce((total, classId) => {
+    const levels = availableLevelsForClass(progression, loadout, classId);
+    if (levels < LEVEL_COST) {
+      return total;
+    }
+    const stillLocked = improved.filter(
+      (card) => card.class === classId && !loadout.unlockedCardIds.includes(card.id),
+    ).length;
+    return total + Math.min(Math.floor(levels / LEVEL_COST), stillLocked);
+  }, 0);
 }

@@ -34,6 +34,7 @@ import type { MusicScreen } from '@/audio/types';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
 import { trackEvent } from '@/lib/analytics';
 import { createPlayerProfile, loadPlayerProfile } from '@/lib/playerProfile';
+import { unclaimedCardChoices } from '@/data/playerProgress';
 import { clearCloudRun, loadCloudRun, saveCloudRun } from '@/lib/runSave';
 
 const worldMap = worldMapData as WorldMapDefinition;
@@ -588,6 +589,7 @@ function GameShell() {
         deckCardIds={loadout.deckCardIds}
         playerGender={profile.gender}
         playerName={profile.name}
+        unclaimedCardCount={unclaimedCardChoices(progression, loadout)}
       />
     );
   } else if (screen === 'player') {

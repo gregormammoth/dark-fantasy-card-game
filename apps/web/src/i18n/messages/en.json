@@ -72,6 +72,7 @@
     "header": "HOLLOWFORT PRISON",
     "seedLabel": "SEED {seed}",
     "questLog": "QUEST LOG",
+    "unclaimedCards": "{count} new card(s) to choose",
     "activeThreads": "ACTIVE THREADS",
     "noQuestsYet": "No quests yet. Talk to faction NPCs.",
     "active": "ACTIVE",
