@@ -24,9 +24,9 @@ Encounters can:
 | `recoverDiscard` | Return cards from discard to hand |
 | `shuffleCards` | Shuffle `hand`, `deck`, `discard`, or `all` piles |
 | `addCards` | Inject card ids into hand / deck / discard |
-| `modifyShield` | Change current shield (`value`) and/or max shield (`maxValue`) |
+| `modifyShield` | Change current shield (`value`) only; capped at `maxShield` |
 
-Exploration tracks `shield` / `maxShield`. Those values carry into location battles and sync back on victory. The hand bar shows actions until the next encounter; the encounter modal lists cards and shield deltas that changed.
+Exploration tracks `shield` / `maxShield`. Current shield can change during exploration; `maxShield` is fixed for the run and only upgrades on the player screen. Shield carries into location battles; after a **won** battle, current shield restores to `maxShield`. The encounter modal lists cards and shield deltas that changed.
 ## Core Concept: Health Is Your Deck
 
 There are no separate hit points. **Remaining cards represent health.**

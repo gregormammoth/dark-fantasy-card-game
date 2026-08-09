@@ -270,7 +270,6 @@ export interface ExplorationEffect {
   type: ExplorationEffectType;
   value?: number;
   count?: number;
-  maxValue?: number;
   message?: string;
   locationId?: string;
   targetId?: string;

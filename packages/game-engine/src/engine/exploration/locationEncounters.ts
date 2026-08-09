@@ -221,6 +221,10 @@ export function resolveLocationBattle(
   const resolvedEnemyId = enemyId ?? encounter?.targetId;
   let defeatedEnemyId: string | null = null;
 
+  if (won) {
+    context.shield = context.maxShield;
+  }
+
   if (won && resolvedLocationId) {
     const location = context.locations[resolvedLocationId];
     if (location) {

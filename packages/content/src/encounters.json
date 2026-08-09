@@ -126,21 +126,21 @@
   {
     "id": "armorer_scrap",
     "title": "Armorer's Scrap",
-    "description": "A half-mad smith hammers your guard wider — crude, but more coverage.",
+    "description": "A half-mad smith hammers a patch onto your guard — crude, but it holds for now.",
     "weight": 1,
     "effects": [
-      { "type": "log", "message": "Your max shield increases." },
-      { "type": "modifyShield", "maxValue": 1, "value": 1 }
+      { "type": "log", "message": "The patch steadies your guard." },
+      { "type": "modifyShield", "value": 2 }
     ]
   },
   {
     "id": "poisoned_rivet",
     "title": "Poisoned Rivet",
-    "description": "Corrosion eats a rivet from your armor. Your maximum guard shrinks.",
+    "description": "Corrosion eats at your armor. Your guard weakens.",
     "weight": 1,
     "effects": [
-      { "type": "log", "message": "Your max shield decreases." },
-      { "type": "modifyShield", "maxValue": -1 }
+      { "type": "log", "message": "Your shield buckles under the rot." },
+      { "type": "modifyShield", "value": -1 }
     ]
   },
   {

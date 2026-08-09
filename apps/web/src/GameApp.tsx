@@ -375,7 +375,7 @@ function GameShell() {
             ...battleSnap.context.player.discard,
             ...battleSnap.context.combo,
           ],
-          shield: battleSnap.context.player.shield,
+          shield: battleSnap.context.player.maxShield,
           maxShield: battleSnap.context.player.maxShield,
         });
       }

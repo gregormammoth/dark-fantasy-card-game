@@ -195,32 +195,19 @@ export function addCardsToPile(
 
 export function modifyExplorationShield(
   context: ExplorationContext,
-  currentDelta = 0,
-  maxDelta = 0,
+  delta = 0,
 ): ExplorationContext {
-  if (currentDelta === 0 && maxDelta === 0) {
+  if (delta === 0) {
     return context;
   }
   const next = structuredClone(context);
-  next.maxShield = Math.max(0, next.maxShield + maxDelta);
-  next.shield = Math.max(0, Math.min(next.maxShield, next.shield + currentDelta));
-  if (maxDelta !== 0) {
-    appendExplorationLog(
-      next,
-      maxDelta > 0
-        ? `Your max shield rises to ${next.maxShield}.`
-        : `Your max shield falls to ${next.maxShield}.`,
-      maxDelta > 0 ? 'loot' : 'danger',
-    );
-  }
-  if (currentDelta !== 0) {
-    appendExplorationLog(
-      next,
-      currentDelta > 0
-        ? `You brace — shield ${next.shield}/${next.maxShield}.`
-        : `Your guard slips — shield ${next.shield}/${next.maxShield}.`,
-      currentDelta > 0 ? 'loot' : 'danger',
-    );
-  }
+  next.shield = Math.max(0, Math.min(next.maxShield, next.shield + delta));
+  appendExplorationLog(
+    next,
+    delta > 0
+      ? `You brace — shield ${next.shield}/${next.maxShield}.`
+      : `Your guard slips — shield ${next.shield}/${next.maxShield}.`,
+    delta > 0 ? 'loot' : 'danger',
+  );
   return next;
 }

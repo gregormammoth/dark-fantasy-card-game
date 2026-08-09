@@ -12,6 +12,7 @@ import {
   shufflePlayerCards,
 } from './hand';
 import { createInitialExploration } from './setup';
+import { resolveLocationBattle } from './locationEncounters';
 
 describe('exploration encounter pressure', () => {
   it('discards random cards from hand', () => {
@@ -53,19 +54,16 @@ describe('exploration encounter pressure', () => {
     );
   });
 
-  it('raises and lowers shield within max', () => {
+  it('raises and lowers current shield within max', () => {
     let exploration = createInitialExploration(1);
     expect(exploration.shield).toBe(2);
     expect(exploration.maxShield).toBe(2);
-    exploration = modifyExplorationShield(exploration, -1, 0);
+    exploration = modifyExplorationShield(exploration, -1);
     expect(exploration.shield).toBe(1);
-    exploration = modifyExplorationShield(exploration, 0, 1);
-    expect(exploration.maxShield).toBe(3);
-    exploration = modifyExplorationShield(exploration, 2, 0);
-    expect(exploration.shield).toBe(3);
-    exploration = modifyExplorationShield(exploration, 0, -2);
-    expect(exploration.maxShield).toBe(1);
-    expect(exploration.shield).toBe(1);
+    expect(exploration.maxShield).toBe(2);
+    exploration = modifyExplorationShield(exploration, 2);
+    expect(exploration.shield).toBe(2);
+    expect(exploration.maxShield).toBe(2);
   });
 
   it('records encounter results for discard and shield beats', () => {
@@ -136,5 +134,20 @@ describe('exploration encounter pressure', () => {
     snap = actor.getSnapshot();
     expect(snap.matches('playerTurn')).toBe(true);
     expect(snap.context.hand).toHaveLength(2);
+  });
+
+  it('restores shield to max after a won location battle', () => {
+    let exploration = createInitialExploration(4);
+    exploration = modifyExplorationShield(exploration, -1);
+    expect(exploration.shield).toBe(1);
+    exploration = resolveLocationBattle(exploration, true);
+    expect(exploration.shield).toBe(exploration.maxShield);
+  });
+
+  it('does not restore shield after a lost location battle', () => {
+    let exploration = createInitialExploration(4);
+    exploration = modifyExplorationShield(exploration, -1);
+    exploration = resolveLocationBattle(exploration, false);
+    expect(exploration.shield).toBe(1);
   });
 });
