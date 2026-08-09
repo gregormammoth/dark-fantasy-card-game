@@ -35,7 +35,7 @@ export function canPlayAction(
   action: ExplorationActionType,
   options: { targetId?: string; interactionId?: string; cardInstanceId?: string } = {},
 ): boolean {
-  if (context.actionsRemaining <= 0) {
+  if (context.hand.length <= 0) {
     return false;
   }
   if (!options.cardInstanceId && !context.selectedCardInstanceId) {
@@ -110,8 +110,8 @@ export function playExplorationAction(
     interactionId,
   });
 
-  if (next.actionsRemaining === 0) {
-    appendExplorationLog(next, 'No actions remain this turn.', 'system');
+  if (next.hand.length === 0) {
+    appendExplorationLog(next, 'No cards left to act with this turn.', 'system');
   }
 
   return next;

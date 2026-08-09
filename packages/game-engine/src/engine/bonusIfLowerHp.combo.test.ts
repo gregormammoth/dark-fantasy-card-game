@@ -116,10 +116,6 @@ describe('bonusIfLowerHp combo order', () => {
       type: 'attack',
       effects: [{ type: 'damage', value: 1 }],
     });
-    const fillerB = makeCard('filler_b', {
-      type: 'attack',
-      effects: [{ type: 'damage', value: 1 }],
-    });
     const lastStand = makeCard('last_stand', {
       type: 'attack',
       effects: [
@@ -129,7 +125,7 @@ describe('bonusIfLowerHp combo order', () => {
     });
 
     const base = makeBattle({
-      hand: [fillerA, fillerB, lastStand],
+      hand: [fillerA, lastStand],
       deck: Array.from({ length: 1 }, (_, index) =>
         makeCard(`deck_${index}`, {
           type: 'defense',
@@ -143,16 +139,14 @@ describe('bonusIfLowerHp combo order', () => {
     const lastStandFirst = resolveComboOrder(structuredClone(base), [
       'last_stand_instance',
       'filler_a_instance',
-      'filler_b_instance',
     ]);
     const lastStandLast = resolveComboOrder(structuredClone(base), [
       'filler_a_instance',
-      'filler_b_instance',
       'last_stand_instance',
     ]);
 
     expect(getEnemyHealth(lastStandFirst)).toBe(getEnemyHealth(lastStandLast));
-    expect(20 - getEnemyHealth(lastStandFirst)).toBe(6);
+    expect(20 - getEnemyHealth(lastStandFirst)).toBe(5);
   });
 
   it('matches preview damage to resolved damage for Last Stand combos', () => {

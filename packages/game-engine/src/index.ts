@@ -1,5 +1,6 @@
 export { getPlayerHealth, getEnemyHealth } from './engine/health';
 export { previewCombo } from './engine/comboPreview';
+export { COMBO_CAP } from './engine/combo';
 export {
   DEFAULT_ENEMY_BAND,
   getEnemyBandProfile,

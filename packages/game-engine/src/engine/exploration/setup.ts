@@ -13,7 +13,7 @@ import { reconcilePlayerCardPiles } from '../playerPiles';
 import { buildEncounterDeck } from './encounters';
 import { appendExplorationLog, resetExplorationLogCounter } from './log';
 import { visitLocation } from './map';
-import { drawUntilHandSize } from './hand';
+import { drawUntilHandSize, syncActionsToHand } from './hand';
 import { setLocationEncounterQueue } from './locationEncounters';
 import { createInitialLoadout, getPlayerCardById } from '../progression/loadout';
 
@@ -124,13 +124,13 @@ export function rebuildExplorationDeck(
   ) {
     next.selectedCardInstanceId = null;
   }
+  syncActionsToHand(next);
   return next;
 }
 
 export function beginExplorationTurn(context: ExplorationContext): ExplorationContext {
   let next = structuredClone(context);
   next.turnCount += 1;
-  next.actionsRemaining = next.maxActions;
   next.selectedCardInstanceId = null;
   next.lastActionMessage = null;
   next.pendingEncounter = null;

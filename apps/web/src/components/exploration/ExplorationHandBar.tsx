@@ -90,9 +90,12 @@ export function ExplorationHandBar({
               <span className="text-[9px] tracking-[.16em] text-[#8a7f72]">
                 {t('exploration.actionsLabel')}
               </span>
+              <span className="font-cinzel text-[11px] tracking-[.08em] text-[#e0b552]">
+                {context.hand.length}/{context.handSize}
+              </span>
               <div className="flex gap-[5px]">
-                {Array.from({ length: context.maxActions }, (_, index) => {
-                  const remaining = index < context.actionsRemaining;
+                {Array.from({ length: Math.max(context.handSize, context.hand.length) }, (_, index) => {
+                  const remaining = index < context.hand.length;
                   return (
                     <span
                       key={index}

@@ -9,6 +9,7 @@ import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './E
 interface ComboPreviewPanelProps {
   preview: ComboPreview | null;
   comboSize: number;
+  comboCap?: number;
   enemyHealth: number;
   playerShield: number;
   playerMaxShield: number;
@@ -17,16 +18,30 @@ interface ComboPreviewPanelProps {
 export function ComboPreviewPanel({
   preview,
   comboSize,
+  comboCap,
   enemyHealth,
   playerShield,
   playerMaxShield,
 }: ComboPreviewPanelProps) {
   const { t } = useTranslation();
+  const sizeLabel =
+    comboCap != null
+      ? t('battle.comboCount', { count: comboSize, cap: comboCap })
+      : comboSize === 1
+        ? t('common.card', { count: comboSize })
+        : t('common.cards', { count: comboSize });
 
   if (!preview || isComboPreviewEmpty(preview)) {
     return (
       <div className="flex flex-col gap-3 rounded-[14px] border border-[rgba(201,162,74,.14)] bg-gradient-to-b from-[rgba(20,15,12,.7)] to-[rgba(12,9,8,.7)] p-4">
-        <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.ifYouEndTurn')}</span>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.ifYouEndTurn')}</span>
+          {comboCap != null && (
+            <span className="font-cinzel text-[10px] tracking-[.08em] text-[#6f6659]">
+              {t('battle.comboCount', { count: comboSize, cap: comboCap })}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-[#5a5147]">{t('battle.addCardsForPreview')}</p>
       </div>
     );
@@ -34,14 +49,12 @@ export function ComboPreviewPanel({
 
   const enemyAfter = Math.max(0, enemyHealth - preview.damageToEnemy);
   const shieldAfter = Math.min(playerMaxShield, playerShield + preview.shieldGain);
-  const cardLabel =
-    comboSize === 1 ? t('common.card', { count: comboSize }) : t('common.cards', { count: comboSize });
 
   return (
     <div className="flex flex-col gap-3 rounded-[14px] border border-[rgba(201,162,74,.24)] bg-gradient-to-b from-[rgba(20,15,12,.9)] to-[rgba(12,9,8,.9)] p-4">
       <div className="flex items-center justify-between">
         <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">{t('battle.ifYouEndTurn')}</span>
-        <span className="text-[10px] text-[#6f6659]">{cardLabel}</span>
+        <span className="font-cinzel text-[10px] tracking-[.08em] text-[#6f6659]">{sizeLabel}</span>
       </div>
 
       {preview.totalDamageToEnemy > 0 && (

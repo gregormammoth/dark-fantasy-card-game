@@ -11,9 +11,14 @@ import { buildAnimationCue, captureBattleSnapshot, clearDamageResult } from './a
 import { awardCardXp } from './progression/xp';
 import { nextInt } from './rng';
 
+export const COMBO_CAP = 2;
+
 export function addToCombo(battle: BattleContext, cardInstanceId: string): BattleContext {
   const cardIndex = battle.player.hand.findIndex((c) => c.instanceId === cardInstanceId);
   if (cardIndex === -1) {
+    return battle;
+  }
+  if (battle.combo.length >= COMBO_CAP) {
     return battle;
   }
 
@@ -39,7 +44,7 @@ export function beginPlayerResolution(battle: BattleContext): BattleContext {
   const next = structuredClone(battle);
 
   if (next.combo.length === 0) {
-    appendLog(next, 'You ended the turn without playing any cards.', 'combo');
+    appendLog(next, 'You skipped without playing a combo.', 'combo');
     next.resolutionQueue = [];
     next.activePlay = null;
     next.comboStartPlayerHealth = null;

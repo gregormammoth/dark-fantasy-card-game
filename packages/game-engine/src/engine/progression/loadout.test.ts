@@ -12,6 +12,7 @@ import {
 import {
   canUnlockImprovedCard,
   createInitialLoadout,
+  DECK_CAP,
   getCardsForClass,
   getDominantDeckClass,
   getPlayerPortraitForDeck,
@@ -55,7 +56,8 @@ describe('improved card unlocks', () => {
     const next = unlockImprovedCard(progression, loadout, cardId);
     expect(next).not.toBeNull();
     expect(next?.unlockedCardIds).toContain(cardId);
-    expect(next?.deckCardIds).toContain(cardId);
+    expect(next?.deckCardIds).not.toContain(cardId);
+    expect(next?.deckCardIds).toHaveLength(DECK_CAP);
     expect(spentLevelsForClass(next!, 'fighter')).toBe(1);
     expect(canUnlockImprovedCard(progression, next!, cardId)).toBe(false);
   });

@@ -252,7 +252,7 @@ export function LocationDetailPanel({
         {canTravel && (
           <button
             type="button"
-            disabled={context.actionsRemaining <= 0}
+            disabled={context.hand.length <= 0}
             onClick={() => onTravel(location.id)}
             className="flex-1 rounded-[5px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.22),rgba(90,23,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -267,7 +267,7 @@ export function LocationDetailPanel({
         {!isHere && status === 'visited' && !canTravel && (
           <button
             type="button"
-            disabled={context.actionsRemaining <= 0 || !canMoveTo(context, location.id)}
+            disabled={context.hand.length <= 0 || !canMoveTo(context, location.id)}
             onClick={() => onTravel(location.id)}
             className="flex-1 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
           >

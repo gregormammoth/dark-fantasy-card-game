@@ -24,7 +24,7 @@ const improvedCards = (improvedCardsData as CardDefinition[]).map((card) => ({
 const allCards: CardDefinition[] = [...baseCards, ...improvedCards];
 const cardById = new Map(allCards.map((card) => [card.id, card]));
 
-export const DECK_CAP = 30;
+export const DECK_CAP = 12;
 
 export function listAllPlayerCards(): CardDefinition[] {
   return allCards;

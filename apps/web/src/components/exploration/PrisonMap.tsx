@@ -731,8 +731,8 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
             </span>
             <span className="text-[11px] text-[#b7ab9c]">
               {t('exploration.actionsTurn', {
-                remaining: context.actionsRemaining,
-                max: context.maxActions,
+                remaining: context.hand.length,
+                max: context.handSize,
                 turn: context.turnCount,
               })}
               {' · '}

@@ -22,6 +22,7 @@ interface PlayerZoneProps {
   handDisabled?: boolean;
   endTurnDisabled?: boolean;
   showEndTurn?: boolean;
+  comboSize?: number;
   isHit?: boolean;
 }
 
@@ -40,6 +41,7 @@ export function PlayerZone({
   handDisabled,
   endTurnDisabled,
   showEndTurn = true,
+  comboSize = 0,
   isHit = false,
 }: PlayerZoneProps) {
   const { t } = useTranslation();
@@ -48,6 +50,7 @@ export function PlayerZone({
     health + (spendMode === 'burn' ? spendCount : 0);
   const displayDeckCount =
     spendMode === 'draw' ? deckCount + spendCount : deckCount;
+  const hasCombo = comboSize > 0;
 
   return (
     <motion.section
@@ -119,8 +122,8 @@ export function PlayerZone({
           <EndTurnButton
             onClick={onEndTurn}
             disabled={endTurnDisabled}
-            line1={t('battle.endTurnLine1')}
-            line2={t('battle.endTurnLine2')}
+            line1={hasCombo ? t('battle.playComboLine1') : t('battle.skipLine1')}
+            line2={hasCombo ? t('battle.playComboLine2') : t('battle.skipLine2')}
           />
         )}
       </div>

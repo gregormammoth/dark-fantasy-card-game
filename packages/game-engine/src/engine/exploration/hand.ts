@@ -17,10 +17,16 @@ function reshuffleIfNeeded(context: ExplorationContext): void {
   appendExplorationLog(context, 'You reshuffle your discard into your deck.', 'system');
 }
 
+export function syncActionsToHand(context: ExplorationContext): void {
+  context.actionsRemaining = context.hand.length;
+  context.maxActions = Math.max(context.handSize, context.hand.length);
+}
+
 export function drawUntilHandSize(context: ExplorationContext): ExplorationContext {
   const next = structuredClone(context);
   const needed = Math.max(0, next.handSize - next.hand.length);
   if (needed === 0) {
+    syncActionsToHand(next);
     return next;
   }
 
@@ -49,6 +55,7 @@ export function drawUntilHandSize(context: ExplorationContext): ExplorationConte
       'system',
     );
   }
+  syncActionsToHand(next);
   return next;
 }
 
@@ -63,8 +70,8 @@ export function consumeCard(
   const next = structuredClone(context);
   const [card] = next.hand.splice(index, 1);
   next.discard.push(card);
-  next.actionsRemaining = Math.max(0, next.actionsRemaining - 1);
   next.selectedCardInstanceId = null;
+  syncActionsToHand(next);
   return { context: next, card };
 }
 
@@ -91,6 +98,7 @@ export function recoverFromDiscard(
       'loot',
     );
   }
+  syncActionsToHand(next);
   return next;
 }
 
@@ -123,6 +131,7 @@ export function discardFromHand(
     `Discarded ${removed.length} card${removed.length === 1 ? '' : 's'} from hand.`,
     'danger',
   );
+  syncActionsToHand(next);
   return next;
 }
 
@@ -134,6 +143,7 @@ export function shufflePlayerCards(
   if (pile === 'hand') {
     next.hand = shuffle(next.hand, next.rng);
     appendExplorationLog(next, 'Your hand is scrambled.', 'danger');
+    syncActionsToHand(next);
     return next;
   }
   if (pile === 'deck') {
@@ -154,6 +164,7 @@ export function shufflePlayerCards(
   next.discard = [];
   next.selectedCardInstanceId = null;
   appendExplorationLog(next, 'Chaos scatters your cards — piles are reshuffled.', 'danger');
+  syncActionsToHand(next);
   return next;
 }
 
@@ -190,6 +201,9 @@ export function addCardsToPile(
     `${created.length} card${created.length === 1 ? '' : 's'} enter your ${pile}.`,
     pile === 'hand' || pile === 'deck' ? 'loot' : 'system',
   );
+  if (pile === 'hand') {
+    syncActionsToHand(next);
+  }
   return next;
 }
 

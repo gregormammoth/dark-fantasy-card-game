@@ -113,7 +113,7 @@
     "type": "attack",
     "description": "The ritual turned outward, all at once.",
     "enemyGroup": "ritualist",
-    "minBand": "boss",
+    "minBand": "elite",
     "effects": [
       { "type": "ignoreShield" },
       { "type": "damage", "value": 4 }
@@ -193,8 +193,7 @@
     "enemyGroup": "undead",
     "minBand": "elite",
     "effects": [
-      { "type": "restoreMaxShields" },
-      { "type": "damage", "value": 1 }
+      { "type": "recoverDiscard", "count": 3 }
     ]
   },
   {
@@ -239,7 +238,7 @@
     "type": "attack",
     "description": "The old order, enforced one last time.",
     "enemyGroup": "brute",
-    "minBand": "boss",
+    "minBand": "elite",
     "signature": true,
     "effects": [
       { "type": "shield", "value": 2 },
@@ -252,7 +251,7 @@
     "type": "attack",
     "description": "A sentence read out while it is carried out.",
     "enemyGroup": "ritualist",
-    "minBand": "boss",
+    "minBand": "elite",
     "signature": true,
     "effects": [
       { "type": "ignoreShield" },
@@ -266,7 +265,7 @@
     "type": "attack",
     "description": "The revolution he never finished, answering to something else.",
     "enemyGroup": "undead",
-    "minBand": "boss",
+    "minBand": "elite",
     "signature": true,
     "effects": [
       { "type": "restoreMaxShields" },

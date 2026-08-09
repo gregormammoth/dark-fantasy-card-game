@@ -2,8 +2,7 @@
   "bands": {
     "intro": { "deckSize": 8, "startingShield": 0, "maxShield": 1, "barrierPerTurn": 0 },
     "common": { "deckSize": 12, "startingShield": 2, "maxShield": 2, "barrierPerTurn": 0 },
-    "elite": { "deckSize": 16, "startingShield": 2, "maxShield": 3, "barrierPerTurn": 0 },
-    "boss": { "deckSize": 22, "startingShield": 3, "maxShield": 4, "barrierPerTurn": 0 }
+    "elite": { "deckSize": 16, "startingShield": 3, "maxShield": 3, "barrierPerTurn": 0 }
   },
   "enemies": [
     {
@@ -54,19 +53,19 @@
     {
       "id": "butcher",
       "name": "Butcher",
-      "tier": "Elite · Cleaver",
+      "tier": "Common · Cleaver",
       "description": "The kitchen's last cook, still working with what's left in the larder.",
       "image": "/characters/butcher.png",
-      "band": "elite",
+      "band": "common",
       "group": "brute"
     },
     {
       "id": "knight",
       "name": "Knight",
-      "tier": "Elite · Armored",
+      "tier": "Common · Armored",
       "description": "A knight in full plate, sword and shield still gripped tight, guarding an armory with nothing left to protect.",
       "image": "/characters/knight.png",
-      "band": "elite",
+      "band": "common",
       "group": "warrior"
     },
     {
@@ -81,10 +80,10 @@
     {
       "id": "sorcerer_enemy",
       "name": "The Sorcerer",
-      "tier": "Boss · Ritual",
+      "tier": "Elite · Ritual",
       "description": "Refuse his errand and he will burn you where you stand. Twenty wards, two barriers every breath.",
       "image": "/characters/sorcerer.png",
-      "band": "boss",
+      "band": "elite",
       "group": "ritualist",
       "deckSize": 30,
       "barrierPerTurn": 2
@@ -92,10 +91,10 @@
     {
       "id": "inquisitor_boss",
       "name": "The Inquisitor",
-      "tier": "BOSS",
+      "tier": "Elite · Ritualist",
       "description": "A former interrogator, alive and far worse for it, guarding the chapel's door out.",
       "image": "/characters/inquisitor.png",
-      "band": "boss",
+      "band": "elite",
       "group": "ritualist",
       "signatureCardIds": [
         "signature_inquisitor_judgment",
@@ -106,10 +105,10 @@
     {
       "id": "prison_warden_boss",
       "name": "The Prison Warden",
-      "tier": "BOSS",
+      "tier": "Elite · Brute",
       "description": "Symbol of the old order, risen to keep it intact by any means left to him.",
       "image": "/characters/prison_warden.png",
-      "band": "boss",
+      "band": "elite",
       "group": "brute",
       "signatureCardIds": [
         "signature_warden_decree",
@@ -120,10 +119,10 @@
     {
       "id": "corrupted_anarchist",
       "name": "The Resurrected Anarchist",
-      "tier": "BOSS",
+      "tier": "Elite · Undead",
       "description": "The revolution he never finished, twisted into something that answers to the ritual instead of his cause.",
       "image": "/characters/resurrected_anarchist.png",
-      "band": "boss",
+      "band": "elite",
       "group": "undead",
       "signatureCardIds": [
         "signature_anarchist_uprising",

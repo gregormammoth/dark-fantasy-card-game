@@ -14,7 +14,7 @@ Battles are the combat layer of the larger run. Exploration carries hand, deck, 
 
 ## Exploration Encounter Pressure
 
-Each exploration turn grants **4 actions**. Spending a card or ending the turn spends actions. When the turn ends, the next turn **keeps leftover hand cards**, **draws up to hand size (4)**, then the **encounter deck** resolves on that hand.
+Each exploration turn draws up to **hand size (4)**. **Actions equal cards in hand** — spending a card for an action also spends that action. Encounters that discard or add hand cards change how many actions you have left. When the turn ends, leftover hand cards are kept, the next turn draws up to hand size again, then the **encounter deck** resolves on that hand.
 
 Every action costs one card from hand. Choosing the action comes first: pressing an action such as **Travel here** with no card selected opens a card picker over a dimmed screen, showing the hand and what each card would do for that action. Picking a card spends it and resolves the action; cancelling returns to the map so another action can be chosen. If a card is already selected in the hand bar, the action resolves immediately with it.
 
@@ -96,7 +96,7 @@ During the player turn the player can:
 - Review the **combo preview** (see [Combo Preview](#combo-preview)).
 - Press **End Turn** to lock in the combo and begin resolution.
 
-Today there is no limit on combo size beyond how many cards are in hand. Planned: a **max combo** skill caps how many cards may sit in the combo at once.
+Today the combo is capped at **2** cards (`COMBO_CAP`). Planned: a **max combo** skill raises that ceiling.
 
 ### Combo resolution
 
@@ -451,9 +451,9 @@ Hand size stays a **constant** (default 4). It is not a skill. Everything below 
 | Skill | Role | Proposed start | Soft ceiling (tunable) | Notes |
 |-------|------|---------------:|-----------------------:|-------|
 | **Max shield** | Guard capacity (armor ceiling) | 2 | 4 | Cards that grant shield still refill *current* guard up to this cap. Inventory armor (later) may help within or toward this cap — not a second uncapped stack. |
-| **Max combo** | Cards allowed in the combo at once | 2 | 5 | Today unlimited (hand-limited). A low default makes combo-bonus cards aspirational; Rogue-heavy play still benefits but anyone can buy the skill. |
+| **Max combo** | Cards allowed in the combo at once | 2 (current `COMBO_CAP`) | 5 | A low default makes combo-bonus cards aspirational; the skill (later) raises the ceiling. |
 | **Max mana** | Cap for battle mana | 2 | 5 | New resource; see [Mana](#mana-planned). |
-| **Max deck** | Loadout / HP ceiling | ~12–14 | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — UI should still encourage cutting weak cards. Today `DECK_CAP` 30 never binds. |
+| **Max deck** | Loadout / HP ceiling | 12 (current `DECK_CAP`) | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — unlocks already force a cut at 12. |
 | **Draw per turn** | Cards drawn at the start of each player turn after the opening hand | 1 | 3 | Opening hand still fills to hand size (4). Seeker cards may draw *extra* beyond this baseline. |
 
 Suggested early defaults if shipping a first pass: combo max **2**, draw **1**, shield **2**, mana **0/2**, deck cap tight enough that improved unlocks force a cut.

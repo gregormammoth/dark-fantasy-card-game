@@ -7,6 +7,7 @@ import { createInitialProgression, getClassXp } from './progression/xp';
 import {
   addToCombo,
   beginPlayerResolution,
+  COMBO_CAP,
   resolveEnemyTurn,
   resolveNextComboCard,
 } from './combo';
@@ -164,10 +165,9 @@ describe('battle card play awards class xp', () => {
     const fighterB = makeCard('fighter_b', { class: 'fighter', type: 'attack', damage: 5 });
     const wizard = makeCard('wizard_a', { class: 'wizard', type: 'attack', damage: 2 });
 
-    const result = playThroughCombo(
-      makeBattle([fighterA, fighterB, wizard]),
-      [fighterA.instanceId, fighterB.instanceId, wizard.instanceId],
-    );
+    let battle = makeBattle([fighterA, fighterB, wizard]);
+    battle = playThroughCombo(battle, [fighterA.instanceId, fighterB.instanceId]);
+    const result = playThroughCombo(battle, [wizard.instanceId]);
 
     expect(getClassXp(result.progression, 'fighter')).toBe(2);
     expect(getClassXp(result.progression, 'wizard')).toBe(1);
@@ -222,5 +222,18 @@ describe('battle card play awards class xp', () => {
 
     expect(afterFirst).toBe(1);
     expect(getClassXp(battle.progression, 'fighter')).toBe(1);
+  });
+
+  it('refuses a third card when the combo is at cap', () => {
+    const a = makeCard('a', { class: 'fighter', type: 'attack', damage: 1 });
+    const b = makeCard('b', { class: 'fighter', type: 'attack', damage: 1 });
+    const c = makeCard('c', { class: 'fighter', type: 'attack', damage: 1 });
+    let battle = makeBattle([a, b, c]);
+    battle = addToCombo(battle, a.instanceId);
+    battle = addToCombo(battle, b.instanceId);
+    const blocked = addToCombo(battle, c.instanceId);
+    expect(COMBO_CAP).toBe(2);
+    expect(blocked.combo).toHaveLength(2);
+    expect(blocked.player.hand.map((card) => card.instanceId)).toContain(c.instanceId);
   });
 });

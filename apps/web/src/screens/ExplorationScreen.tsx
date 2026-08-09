@@ -109,7 +109,7 @@ export function ExplorationScreen({
     }
   }, [actor, context.flags.escaped_hollowfort, onEscapeToWorld]);
 
-  const canAct = snapshot.matches('playerTurn') && context.actionsRemaining > 0;
+  const canAct = snapshot.matches('playerTurn') && context.hand.length > 0;
 
   useEffect(() => {
     if (pendingAction && !canAct) {
@@ -121,7 +121,7 @@ export function ExplorationScreen({
     action: ExplorationActionType,
     options: Omit<PendingAction, 'action'> = {},
   ) {
-    if (context.actionsRemaining <= 0) {
+    if (context.hand.length <= 0) {
       return;
     }
     if (context.selectedCardInstanceId) {
