@@ -1,0 +1,135 @@
+{
+  "bands": {
+    "intro": { "deckSize": 8, "startingShield": 0, "maxShield": 1, "barrierPerTurn": 0 },
+    "common": { "deckSize": 12, "startingShield": 2, "maxShield": 2, "barrierPerTurn": 0 },
+    "elite": { "deckSize": 16, "startingShield": 2, "maxShield": 3, "barrierPerTurn": 0 },
+    "boss": { "deckSize": 22, "startingShield": 3, "maxShield": 4, "barrierPerTurn": 0 }
+  },
+  "enemies": [
+    {
+      "id": "prisoner",
+      "name": "Prisoner",
+      "tier": "Common · Feral",
+      "description": "A fellow inmate, chained and half-starved, lashing out at anything that moves.",
+      "image": "/characters/prisoner.png",
+      "band": "intro",
+      "group": "cutthroat"
+    },
+    {
+      "id": "giant_rat",
+      "name": "Giant Rat",
+      "tier": "Pack · Vermin",
+      "description": "Fed well on whatever the ritual left behind, and grown far past its size.",
+      "image": "/characters/giant_rat.png",
+      "band": "intro",
+      "group": "beast"
+    },
+    {
+      "id": "crazy_prisoner",
+      "name": "Crazy Prisoner",
+      "tier": "Common · Deranged",
+      "description": "Driven mad long before the ritual, and worse now that something's finally listening to him.",
+      "image": "/characters/crazy_prisoner.png",
+      "band": "common",
+      "group": "cutthroat"
+    },
+    {
+      "id": "guard",
+      "name": "Guard",
+      "tier": "Common · Armored",
+      "description": "A revived guard in full kit, shield raised out of muscle memory alone.",
+      "image": "/characters/guard.png",
+      "band": "common",
+      "group": "warrior"
+    },
+    {
+      "id": "fat_prisoner",
+      "name": "Fat Prisoner",
+      "tier": "Common · Brute",
+      "description": "Swollen with whatever the ritual fed him, and furious that you interrupted his meal.",
+      "image": "/characters/fat_prisoner.png",
+      "band": "common",
+      "group": "brute"
+    },
+    {
+      "id": "butcher",
+      "name": "Butcher",
+      "tier": "Elite · Cleaver",
+      "description": "The kitchen's last cook, still working with what's left in the larder.",
+      "image": "/characters/butcher.png",
+      "band": "elite",
+      "group": "brute"
+    },
+    {
+      "id": "knight",
+      "name": "Knight",
+      "tier": "Elite · Armored",
+      "description": "A knight in full plate, sword and shield still gripped tight, guarding an armory with nothing left to protect.",
+      "image": "/characters/knight.png",
+      "band": "elite",
+      "group": "warrior"
+    },
+    {
+      "id": "demon",
+      "name": "Demon",
+      "tier": "Elite · Bound",
+      "description": "Something the ritual called up and never fully controlled, still chained to this room.",
+      "image": "/characters/demon.png",
+      "band": "common",
+      "group": "ritualist"
+    },
+    {
+      "id": "sorcerer_enemy",
+      "name": "The Sorcerer",
+      "tier": "Boss · Ritual",
+      "description": "Refuse his errand and he will burn you where you stand. Twenty wards, two barriers every breath.",
+      "image": "/characters/sorcerer.png",
+      "band": "boss",
+      "group": "ritualist",
+      "deckSize": 30,
+      "barrierPerTurn": 2
+    },
+    {
+      "id": "inquisitor_boss",
+      "name": "The Inquisitor",
+      "tier": "BOSS",
+      "description": "A former interrogator, alive and far worse for it, guarding the chapel's door out.",
+      "image": "/characters/inquisitor.png",
+      "band": "boss",
+      "group": "ritualist",
+      "signatureCardIds": [
+        "signature_inquisitor_judgment",
+        "signature_inquisitor_judgment",
+        "signature_inquisitor_judgment"
+      ]
+    },
+    {
+      "id": "prison_warden_boss",
+      "name": "The Prison Warden",
+      "tier": "BOSS",
+      "description": "Symbol of the old order, risen to keep it intact by any means left to him.",
+      "image": "/characters/prison_warden.png",
+      "band": "boss",
+      "group": "brute",
+      "signatureCardIds": [
+        "signature_warden_decree",
+        "signature_warden_decree",
+        "signature_warden_decree"
+      ]
+    },
+    {
+      "id": "corrupted_anarchist",
+      "name": "The Resurrected Anarchist",
+      "tier": "BOSS",
+      "description": "The revolution he never finished, twisted into something that answers to the ritual instead of his cause.",
+      "image": "/characters/resurrected_anarchist.png",
+      "band": "boss",
+      "group": "undead",
+      "signatureCardIds": [
+        "signature_anarchist_uprising",
+        "signature_anarchist_uprising",
+        "signature_anarchist_uprising"
+      ]
+    }
+  ]
+}

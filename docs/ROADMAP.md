@@ -918,7 +918,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [ ] Feedback form live and stored
 - [ ] Seeded RNG in production builds
 - [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
-- [ ] Enemy difficulty curve (weak early → strong late) + archetype card groups
+- [x] Enemy difficulty curve (weak early → strong late) + archetype card groups (`enemies.json` roster + band table; balance pass open)
 - [ ] Reward loop + class progression readable without a tutorial wall
 - [ ] Progressive **deck cap** + **max shield** (live Run stats; at least one Hollowfort upgrade path)
 - [x] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)

@@ -46,6 +46,12 @@ export interface LocationEnemy {
   barrierPerTurn?: number;
 }
 
+export interface LocationEnemyPlacement {
+  id: string;
+  requiresFlag?: string;
+  skipAutoEncounter?: boolean;
+}
+
 export interface LocationNpc {
   id: string;
   name: string;
@@ -138,6 +144,10 @@ export interface LocationDefinition {
   discovered: boolean;
   image?: string;
 }
+
+export type LocationSourceDefinition = Omit<LocationDefinition, 'enemies'> & {
+  enemies: LocationEnemyPlacement[];
+};
 
 export interface ExplorationLogEntry {
   id: number;

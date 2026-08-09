@@ -3,6 +3,9 @@ export { previewCombo } from './engine/comboPreview';
 export {
   DEFAULT_ENEMY_BAND,
   getEnemyBandProfile,
+  getEnemyDefinition,
+  hydrateEnemyPlacement,
+  listEnemyDefinitions,
   listEnemyGroupCardIds,
   resolveEnemyBattleProfile,
 } from './engine/enemyBands';

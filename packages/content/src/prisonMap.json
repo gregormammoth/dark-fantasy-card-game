@@ -100,16 +100,7 @@
       },
       "description": "Row after row of empty cells. Someone has scratched tally marks into every door on the political prisoners' side — years of them.",
       "image": "/locations/cell_block.png",
-      "enemies": [
-        {
-          "id": "prisoner",
-          "name": "Prisoner",
-          "tier": "Common · Feral",
-          "description": "A fellow inmate, chained and half-starved, lashing out at anything that moves.",
-          "image": "/characters/prisoner.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "prisoner" }],
       "interactions": [],
       "npcs": [],
       "loot": [],
@@ -132,25 +123,11 @@
       "description": "A sunken circle of stone carved with wards, candles burning along every column. This is where the ritual beneath Hollowfort was cast.",
       "image": "/locations/ritual_room.png",
       "enemies": [
-        {
-          "id": "demon",
-          "name": "Demon",
-          "tier": "Elite · Bound",
-          "description": "Something the ritual called up and never fully controlled, still chained to this room.",
-          "image": "/characters/demon.png",
-          "defeated": false
-        },
+        { "id": "demon" },
         {
           "id": "sorcerer_enemy",
-          "name": "The Sorcerer",
-          "tier": "Boss · Ritual",
-          "description": "Refuse his errand and he will burn you where you stand. Twenty wards, two barriers every breath.",
-          "image": "/characters/sorcerer.png",
-          "defeated": false,
           "requiresFlag": "ritual_demon_cleared",
-          "skipAutoEncounter": true,
-          "deckSize": 20,
-          "barrierPerTurn": 2
+          "skipAutoEncounter": true
         }
       ],
       "npcs": [
@@ -197,16 +174,7 @@
       },
       "description": "Old foundations beneath the fortress, lit by torches that shouldn't still be burning. Something skitters just out of the light.",
       "image": "/locations/underground_tunnels.png",
-      "enemies": [
-        {
-          "id": "giant_rat",
-          "name": "Giant Rat",
-          "tier": "Pack · Vermin",
-          "description": "Fed well on whatever the ritual left behind, and grown far past its size.",
-          "image": "/characters/giant_rat.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "giant_rat" }],
       "loot": [
         {
           "id": "lowcap_mushroom",
@@ -260,16 +228,7 @@
       },
       "description": "Cold ovens, spilled grain, a knife block missing every blade but one.",
       "image": "/locations/kitchen.png",
-      "enemies": [
-        {
-          "id": "butcher",
-          "name": "Butcher",
-          "tier": "Elite · Cleaver",
-          "description": "The kitchen's last cook, still working with what's left in the larder.",
-          "image": "/characters/butcher.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "butcher" }],
       "interactions": [],
       "npcs": [],
       "loot": [],
@@ -291,16 +250,7 @@
       },
       "description": "Rows of empty cots, bandages black with old blood. Whatever died here last did not stay down.",
       "image": "/locations/infirmary.png",
-      "enemies": [
-        {
-          "id": "crazy_prisoner",
-          "name": "Crazy Prisoner",
-          "tier": "Common · Deranged",
-          "description": "Driven mad long before the ritual, and worse now that something's finally listening to him.",
-          "image": "/characters/crazy_prisoner.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "crazy_prisoner" }],
       "loot": [
         {
           "id": "dried_lavender",
@@ -370,16 +320,7 @@
       },
       "description": "Bunks overturned, foot-lockers pried open. Whoever held this room isn't holding it anymore.",
       "image": "/locations/guard_barracks.png",
-      "enemies": [
-        {
-          "id": "guard",
-          "name": "Guard",
-          "tier": "Common · Armored",
-          "description": "A revived guard in full kit, shield raised out of muscle memory alone.",
-          "image": "/characters/guard.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "guard" }],
       "loot": [],
       "interactions": [],
       "npcs": [],
@@ -401,16 +342,7 @@
       },
       "description": "Weapon racks toppled across the floor, suits of armor still standing at attention along the walls.",
       "image": "/locations/armory.png",
-      "enemies": [
-        {
-          "id": "knight",
-          "name": "Knight",
-          "tier": "Elite · Armored",
-          "description": "A knight in full plate, sword and shield still gripped tight, guarding an armory with nothing left to protect.",
-          "image": "/characters/knight.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "knight" }],
       "loot": [],
       "interactions": [],
       "npcs": [],
@@ -432,16 +364,7 @@
       },
       "description": "Long tables set for a meal that never happened, chandeliers still lit above the empty benches.",
       "image": "/locations/dining_hall.png",
-      "enemies": [
-        {
-          "id": "fat_prisoner",
-          "name": "Fat Prisoner",
-          "tier": "Common · Brute",
-          "description": "Swollen with whatever the ritual fed him, and furious that you interrupted his meal.",
-          "image": "/characters/fat_prisoner.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "fat_prisoner" }],
       "interactions": [],
       "npcs": [],
       "loot": [],
@@ -507,16 +430,7 @@
       },
       "description": "Candlelight over a desecrated altar. The Inquisitor kneels before it, and rises the instant he hears you.",
       "image": "/locations/chapel.png",
-      "enemies": [
-        {
-          "id": "inquisitor_boss",
-          "name": "The Inquisitor",
-          "tier": "BOSS",
-          "description": "A former interrogator, alive and far worse for it, guarding the chapel's door out.",
-          "image": "/characters/inquisitor.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "inquisitor_boss" }],
       "loot": [],
       "interactions": [],
       "npcs": [],
@@ -538,16 +452,7 @@
       },
       "description": "Papers scattered everywhere, a chair overturned. The Warden himself is very much returned from the dead.",
       "image": "/locations/warden_tower.png",
-      "enemies": [
-        {
-          "id": "prison_warden_boss",
-          "name": "The Prison Warden",
-          "tier": "BOSS",
-          "description": "Symbol of the old order, risen to keep it intact by any means left to him.",
-          "image": "/characters/prison_warden.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "prison_warden_boss" }],
       "loot": [],
       "interactions": [],
       "npcs": [],
@@ -569,16 +474,7 @@
       },
       "description": "The cells where the crown kept its heretics. The Anarchist you met at the start is here too — or something wearing what's left of him.",
       "image": "/locations/political_wing.png",
-      "enemies": [
-        {
-          "id": "corrupted_anarchist",
-          "name": "The Resurrected Anarchist",
-          "tier": "BOSS",
-          "description": "The revolution he never finished, twisted into something that answers to the ritual instead of his cause.",
-          "image": "/characters/resurrected_anarchist.png",
-          "defeated": false
-        }
-      ],
+      "enemies": [{ "id": "corrupted_anarchist" }],
       "loot": [],
       "interactions": [],
       "npcs": [],

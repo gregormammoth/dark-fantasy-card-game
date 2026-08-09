@@ -1,23 +1,28 @@
 import enemyCardsData from '@dark-fantasy/content/enemyCards.json';
+import enemiesData from '@dark-fantasy/content/enemies.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
 import type {
   EnemyBand,
   EnemyBandProfile,
   EnemyBattleProfile,
+  EnemyCatalogFile,
+  EnemyDefinition,
   EnemyGroup,
 } from '@dark-fantasy/shared/types/enemy';
-import type { LocationEnemy } from '@dark-fantasy/shared/types/exploration';
+import type {
+  LocationEnemy,
+  LocationEnemyPlacement,
+} from '@dark-fantasy/shared/types/exploration';
 
 const enemyCards = enemyCardsData as CardDefinition[];
+const enemyCatalog = enemiesData as EnemyCatalogFile;
+const enemyById = new Map<string, EnemyDefinition>(
+  enemyCatalog.enemies.map((enemy) => [enemy.id, enemy]),
+);
 
 const BAND_ORDER: EnemyBand[] = ['intro', 'common', 'elite', 'boss'];
 
-const BAND_PROFILES: Record<EnemyBand, EnemyBandProfile> = {
-  intro: { deckSize: 8, startingShield: 0, maxShield: 1, barrierPerTurn: 0 },
-  common: { deckSize: 12, startingShield: 2, maxShield: 2, barrierPerTurn: 0 },
-  elite: { deckSize: 16, startingShield: 2, maxShield: 3, barrierPerTurn: 0 },
-  boss: { deckSize: 22, startingShield: 3, maxShield: 4, barrierPerTurn: 1 },
-};
+const BAND_PROFILES = enemyCatalog.bands;
 
 export const DEFAULT_ENEMY_BAND: EnemyBand = 'common';
 
@@ -59,6 +64,32 @@ function fillFromPool(pool: string[], count: number): string[] {
     ids.push(...pool);
   }
   return ids.slice(0, count);
+}
+
+export function getEnemyDefinition(id: string): EnemyDefinition | undefined {
+  return enemyById.get(id);
+}
+
+export function listEnemyDefinitions(): EnemyDefinition[] {
+  return enemyCatalog.enemies.map((enemy) => structuredClone(enemy));
+}
+
+export function hydrateEnemyPlacement(placement: LocationEnemyPlacement): LocationEnemy {
+  const definition = enemyById.get(placement.id);
+  if (!definition) {
+    throw new Error(`Unknown enemy id: ${placement.id}`);
+  }
+  const enemy: LocationEnemy = {
+    ...structuredClone(definition),
+    defeated: false,
+  };
+  if (placement.requiresFlag) {
+    enemy.requiresFlag = placement.requiresFlag;
+  }
+  if (placement.skipAutoEncounter) {
+    enemy.skipAutoEncounter = placement.skipAutoEncounter;
+  }
+  return enemy;
 }
 
 export function resolveEnemyBattleProfile(

@@ -321,7 +321,7 @@ Each class has **3 attack + 3 defense** across base + improved cards.
 
 ## Enemy Groups and Power Bands
 
-Enemy cards in `enemyCards.json` are split into **groups** so different opponents play differently, and gated by **band** so early fights stay simpler than late ones.
+Enemy cards in `enemyCards.json` are split into **groups** so different opponents play differently, and gated by **band** so early fights stay simpler than late ones. Enemies themselves live in `enemies.json`.
 
 | Group | Feel |
 |-------|------|
@@ -332,7 +332,7 @@ Enemy cards in `enemyCards.json` are split into **groups** so different opponent
 | `undead` | Grim defence, rot, remade guard |
 | `brute` | Heavy trades, thick hide |
 
-A `LocationEnemy` picks its `band` and `group`; the engine resolves both into a deck and defences.
+Every enemy is authored once in `enemies.json`, which holds both the band table and the roster. An entry carries its presentation (`name`, `tier`, `description`, `image`), its `band` and `group`, optional `signatureCardIds`, and optional stat overrides. Maps do not repeat any of that: a location lists **placements** — an enemy `id` plus placement-only rules such as `requiresFlag` and `skipAutoEncounter` — and run setup hydrates each placement into a live enemy. The same enemy can therefore be reused across locations and maps.
 
 | Band | Deck size | Starting shield | Max shield | Barrier / turn |
 |------|----------:|----------------:|-----------:|---------------:|
@@ -341,11 +341,14 @@ A `LocationEnemy` picks its `band` and `group`; the engine resolves both into a 
 | `elite` | 16 | 2 | 3 | 0 |
 | `boss` | 22 | 3 | 4 | 1 |
 
+The Hollowfort curve: `prisoner` and `giant_rat` are `intro`; `crazy_prisoner`, `guard`, and `fat_prisoner` are `common`; `butcher`, `knight`, and `demon` are `elite`; `sorcerer_enemy`, `inquisitor_boss`, `prison_warden_boss`, and `corrupted_anarchist` are `boss`.
+
 Rules:
 
 - A card's `minBand` is the weakest band allowed to draw it, so stronger cards appear only on stronger enemies.
 - Explicit values on the enemy (`deckSize`, `startingShield`, `maxShield`, `barrierPerTurn`) always override band defaults.
-- Cards marked `signature` are excluded from every normal pool and appear only when an enemy names them in `signatureCardIds` — used for route bosses.
+- Cards marked `signature` are excluded from every normal pool and appear only when an enemy names them in `signatureCardIds` — used for route bosses. Listing an id more than once seeds that many copies into the deck.
+- An unknown enemy id in a placement throws at run setup rather than failing silently.
 - Enemy deck size **is** enemy health, so band deck size is also the HP dial.
 - Enemy cards must not use `reduceDamagePercent`: that effect only reduces damage aimed at the player, so it would help the player instead.
 

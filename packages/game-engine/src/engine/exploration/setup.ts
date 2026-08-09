@@ -1,7 +1,12 @@
 import prisonMapData from '@dark-fantasy/content/prisonMap.json';
 import battleData from '@dark-fantasy/content/battle.json';
 import type { CardDefinition } from '@dark-fantasy/shared/types/card';
-import type { ExplorationContext, LocationDefinition } from '@dark-fantasy/shared/types/exploration';
+import type {
+  ExplorationContext,
+  LocationDefinition,
+  LocationSourceDefinition,
+} from '@dark-fantasy/shared/types/exploration';
+import { hydrateEnemyPlacement } from '../enemyBands';
 import { createCardInstance, resetInstanceCounter, shuffle } from '../deck';
 import { createRng } from '../rng';
 import { reconcilePlayerCardPiles } from '../playerPiles';
@@ -16,7 +21,7 @@ interface PrisonMapFile {
   id: string;
   name: string;
   startLocationId: string;
-  locations: LocationDefinition[];
+  locations: LocationSourceDefinition[];
 }
 
 const mapFile = prisonMapData as PrisonMapFile;
@@ -37,7 +42,10 @@ function buildPlayerDeckFromIds(
 function buildLocations(): Record<string, LocationDefinition> {
   const locations: Record<string, LocationDefinition> = {};
   for (const location of structuredClone(mapFile.locations)) {
-    locations[location.id] = location;
+    locations[location.id] = {
+      ...location,
+      enemies: location.enemies.map(hydrateEnemyPlacement),
+    };
   }
   return locations;
 }

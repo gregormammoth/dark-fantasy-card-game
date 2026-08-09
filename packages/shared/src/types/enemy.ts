@@ -22,3 +22,23 @@ export interface EnemyBattleProfile {
   maxShield: number;
   barrierPerTurn: number;
 }
+
+export interface EnemyDefinition {
+  id: string;
+  name: string;
+  tier: string;
+  description?: string;
+  image?: string;
+  band: EnemyBand;
+  group?: EnemyGroup;
+  signatureCardIds?: string[];
+  deckSize?: number;
+  startingShield?: number;
+  maxShield?: number;
+  barrierPerTurn?: number;
+}
+
+export interface EnemyCatalogFile {
+  bands: Record<EnemyBand, EnemyBandProfile>;
+  enemies: EnemyDefinition[];
+}
