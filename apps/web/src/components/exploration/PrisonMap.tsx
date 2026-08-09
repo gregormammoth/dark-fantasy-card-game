@@ -456,6 +456,7 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
     if (!drag.moved && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
       drag.moved = true;
       setDragging(true);
+      setHoveredId(null);
       event.currentTarget.setPointerCapture(event.pointerId);
     }
     if (!drag.moved) {
@@ -489,8 +490,10 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
   return (
     <div
       ref={viewportRef}
-      className={`relative h-[660px] overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[radial-gradient(1000px_700px_at_24%_10%,#241a14,#0c0908_68%)] ${
-        dragging ? 'cursor-grabbing' : 'cursor-grab'
+      className={`relative h-[660px] select-none overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[radial-gradient(1000px_700px_at_24%_10%,#241a14,#0c0908_68%)] ${
+        dragging
+          ? 'cursor-grabbing [&_[data-map-room]]:pointer-events-none'
+          : 'cursor-grab'
       }`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -605,7 +608,11 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                     currentId === location.id ? null : currentId,
                   )
                 }
-                className="absolute z-[3] cursor-pointer overflow-visible rounded-md transition-[filter,transform,box-shadow] duration-[180ms] hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]"
+                className={`absolute z-[3] cursor-pointer overflow-visible rounded-md transition-[filter,transform,box-shadow] duration-[180ms] ${
+                  dragging
+                    ? ''
+                    : 'hover:brightness-[1.22] hover:saturate-105 hover:-translate-y-[3px] hover:scale-[1.045] hover:shadow-[0_0_0_2px_rgba(224,181,82,.65),0_14px_30px_-10px_rgba(0,0,0,.7),0_0_34px_-6px_rgba(224,181,82,.55)]'
+                }`}
                 style={{
                   left: location.position.x - w / 2,
                   top: location.position.y - h / 2,
@@ -739,6 +746,11 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
               {t('exploration.shield', {
                 current: context.shield ?? 0,
                 max: context.maxShield ?? 0,
+              })}
+              {' · '}
+              {t('exploration.mana', {
+                current: context.mana ?? 0,
+                max: context.maxMana ?? 0,
               })}
             </span>
           </div>

@@ -88,6 +88,10 @@ function buildEncounterResults(
     shieldAfter: after.shield,
     maxShieldBefore: before.maxShield,
     maxShieldAfter: after.maxShield,
+    manaBefore: before.mana,
+    manaAfter: after.mana,
+    maxManaBefore: before.maxMana,
+    maxManaAfter: after.maxMana,
   };
 }
 
@@ -108,6 +112,10 @@ export function drawAndResolveEncounter(context: ExplorationContext): Exploratio
         shieldAfter: next.shield,
         maxShieldBefore: next.maxShield,
         maxShieldAfter: next.maxShield,
+        manaBefore: next.mana,
+        manaAfter: next.mana,
+        maxManaBefore: next.maxMana,
+        maxManaAfter: next.maxMana,
       },
     };
     appendExplorationLog(next, 'You avoid the encounter.', 'encounter');
@@ -128,6 +136,10 @@ export function drawAndResolveEncounter(context: ExplorationContext): Exploratio
         shieldAfter: next.shield,
         maxShieldBefore: next.maxShield,
         maxShieldAfter: next.maxShield,
+        manaBefore: next.mana,
+        manaAfter: next.mana,
+        maxManaBefore: next.maxMana,
+        maxManaAfter: next.maxMana,
       },
     };
     return next;

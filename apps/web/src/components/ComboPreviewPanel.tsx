@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import type { ComboPreview } from '@dark-fantasy/shared/types/comboPreview';
 import { isComboPreviewEmpty } from '@dark-fantasy/shared/types/comboPreview';
 import { useTranslation } from '@/i18n/useTranslation';
-import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
+import { AttackIcon, BarrierIcon, ManaIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface ComboPreviewPanelProps {
   preview: ComboPreview | null;
@@ -13,6 +13,7 @@ interface ComboPreviewPanelProps {
   enemyHealth: number;
   playerShield: number;
   playerMaxShield: number;
+  playerMana?: number;
 }
 
 export function ComboPreviewPanel({
@@ -22,6 +23,7 @@ export function ComboPreviewPanel({
   enemyHealth,
   playerShield,
   playerMaxShield,
+  playerMana = 0,
 }: ComboPreviewPanelProps) {
   const { t } = useTranslation();
   const sizeLabel =
@@ -113,6 +115,18 @@ export function ComboPreviewPanel({
           icon={<BarrierIcon className="inline-block h-[13px] w-3.5 shrink-0" />}
           title={t('battle.gainBarrier', { amount: preview.barrierGain })}
           detail={t('battle.barrierExpires')}
+        />
+      )}
+
+      {preview.manaDelta !== 0 && (
+        <PreviewRow
+          tone="barrier"
+          icon={<ManaIcon className="inline-block h-[13px] w-[13px] shrink-0" />}
+          title={t('battle.manaChange', {
+            before: playerMana,
+            after: Math.max(0, playerMana + preview.manaDelta),
+          })}
+          detail={preview.manaDelta > 0 ? t('battle.manaGainedPreview') : t('battle.manaSpentPreview')}
         />
       )}
 

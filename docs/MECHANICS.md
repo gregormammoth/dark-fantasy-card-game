@@ -6,7 +6,7 @@ This document describes the game rules implemented today and the planned directi
 
 **Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, and prison encounter pressure on cards and shields.
 
-**Planned later:** player level + choosable combat skills (max shield, combo size, mana, deck cap, draw per turn), Seeker class, mana on wizard cards, money economy, and further world content beyond the prison slice. See [Planned Progression](#planned-progression-not-implemented).
+**Planned later:** player level + choosable combat skills (max shield, combo size, max mana growth, deck cap, draw per turn), Seeker class, money economy, and further world content beyond the prison slice. See [Planned Progression](#planned-progression-not-implemented).
 
 Battles are the combat layer of the larger run. Exploration carries hand, deck, discard, and shield into fights.
 
@@ -27,8 +27,9 @@ Encounters can:
 | `shuffleCards` | Shuffle `hand`, `deck`, `discard`, or `all` piles |
 | `addCards` | Inject card ids into hand / deck / discard |
 | `modifyShield` | Change current shield (`value`) only; capped at `maxShield` |
+| `modifyMana` | Change current mana (`value`) only; capped at `maxMana` |
 
-Exploration tracks `shield` / `maxShield`. Current shield can change during exploration; today `maxShield` is fixed from content defaults. Planned: `maxShield` becomes a **player skill** chosen at player level-up (see [Planned Progression](#planned-progression-not-implemented)). Shield carries into location battles; after a **won** battle, current shield restores to `maxShield`. The encounter modal lists cards and shield deltas that changed.
+Exploration tracks `shield` / `maxShield` and `mana` / `maxMana`. Current values can change during exploration; today both caps are fixed from content defaults. Planned: caps become **player skills** chosen at player level-up (see [Planned Progression](#planned-progression-not-implemented)). Shield and mana carry into location battles; after a **won** battle, both restore to their max. The encounter modal lists cards, shield, and mana deltas that changed.
 
 ---
 
@@ -228,7 +229,7 @@ Player cards belong to a **class** and have a **type**:
 |-------|-------|
 | Fighter | Direct damage and shield |
 | Rogue | Poison and evasion |
-| Wizard | Barrier and shield bypass (planned: mana charge / spend) |
+| Wizard | Barrier, pierce, and battle mana (charge → spend) |
 | Survivor | Conditional power and recovery |
 | Seeker | Planned fifth class — dig, mark, deduce; mono-viable with smart attacks |
 
@@ -264,7 +265,16 @@ Each card has an ordered list of **effects** resolved top to bottom on the same 
 | `bonusBarrierPerDefenseCard` | Add `value` × (other Defense cards in **current combo**) to pending barrier. Excludes the card being resolved. |
 | `bonusShieldPerDefenseCard` | Add `value` × (`defenseCardsPlayed` this battle) to pending shield. |
 | `bonusIfLowerHp` | If player HP at combo commit is below `thresholdPercent` of max HP, add `damage` to pending damage (order-independent). |
+| `bonusIfFirstAttack` | If no attack cards have resolved yet this battle at combo commit, add `damage` to pending damage. |
+| `restoreMaxShields` | If shield is empty, restore it to max. |
 | `reduceDamagePercent` | Set player damage reduction to `value`% for this round. |
+| `gainMana` | Player only. Gain `value` mana, capped at `playerMaxMana` (default **2**). |
+| `bonusDamagePerMana` | Add `value` × **current mana** to pending damage, then spend all mana (set to 0). |
+| `bonusBarrierPerMana` | Add `value` × **current mana** to pending barrier, then spend all mana (set to 0). |
+
+### Mana
+
+Run-scoped resource for the player (like shield). Starts at **2 / 2** and carries into battle. Wizard cards either **gain** mana (`gainMana`) or **spend** it for power (`bonusDamagePerMana` / `bonusBarrierPerMana`). Spend effects use all current mana at once. Combo order matters: play Focus after spending to recharge in the same turn. After a **won** location battle, mana restores to max (same as shield). Exploration encounters can raise or lower current mana via `modifyMana`.
 
 ### Combo-scoped bonuses
 
@@ -275,7 +285,7 @@ These count other cards in the **committed combo** (snapshot at combo start), ex
 
 Example: Battle Momentum with one other Attack card in the combo (e.g. Poison Dagger) deals 2 + 1 = 3 damage whether Momentum is first or second.
 
-Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 = 3 barrier.
+Example: start a fight at 2 mana and play Arcane Bolt alone — it spends 2 mana for +2 damage (4 pierce total). After spending, Focus (+2 mana) refills the pool for the next spend.
 
 ### Conditional bonuses
 
@@ -287,7 +297,7 @@ Example: Barrier Mastery with one other Defense card in the combo grants 2 + 1 =
 
 ## Player Card Reference
 
-Each class has **3 attack + 3 defense** across base + improved cards.
+Each class has **6 cards** across base + improved (mix of attack and defense).
 
 ### Base
 
@@ -299,9 +309,9 @@ Each class has **3 attack + 3 defense** across base + improved cards.
 | Poison Dagger | Rogue | Attack | Poison 1/turn for 3 turns |
 | Backstab | Rogue | Attack | +2 damage if first attack combo of the battle; 2 damage |
 | Smoke Escape | Rogue | Defense | 50% damage reduction this round |
-| Arcane Bolt | Wizard | Attack | Ignores shield; 2 damage |
-| Magic Barrier | Wizard | Defense | +3 barrier |
-| Barrier Mastery | Wizard | Defense | +1 barrier per other Defense in combo; +2 barrier |
+| Arcane Bolt | Wizard | Attack | Ignore shield; 2 damage; +1 damage per mana spent |
+| Magic Barrier | Wizard | Defense | +2 barrier; +1 barrier per mana spent |
+| Focus | Wizard | Defense | +1 mana |
 | Last Stand | Survivor | Attack | +2 damage if below 50% HP; 2 damage |
 | Second Chance | Survivor | Defense | Recover 2 cards from discard |
 | Survival Instinct | Survivor | Defense | Restore max shield if empty |
@@ -316,9 +326,9 @@ Each class has **3 attack + 3 defense** across base + improved cards.
 | Assassinate | Rogue | Attack | +2 if first attack combo; 3 damage |
 | Venom Needle | Rogue | Defense | Poison 2×2; 25% damage reduction |
 | Phantom Step | Rogue | Defense | 75% damage reduction |
-| Arcane Lance | Wizard | Attack | Ignore shield; 3 damage |
-| Cascade Bolt | Wizard | Attack | +1 per other Attack in combo; 2 damage |
-| Ward Lattice | Wizard | Defense | +4 barrier |
+| Arcane Lance | Wizard | Attack | Ignore shield; 3 damage; +2 damage per mana spent |
+| Ward Lattice | Wizard | Defense | +3 barrier; +2 barrier per mana spent |
+| Deep Focus | Wizard | Defense | +2 mana |
 | Blood Fury | Survivor | Attack | +3 if below 50% HP; 3 damage |
 | Second Wind | Survivor | Attack | Recover 2 from discard; 2 damage |
 | Undying | Survivor | Defense | Restore max shield, then +1 shield |
@@ -456,28 +466,18 @@ Hand size stays a **constant** (default 4). It is not a skill. Everything below 
 | **Max deck** | Loadout / HP ceiling | 12 (current `DECK_CAP`) | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — unlocks already force a cut at 12. |
 | **Draw per turn** | Cards drawn at the start of each player turn after the opening hand | 1 | 3 | Opening hand still fills to hand size (4). Seeker cards may draw *extra* beyond this baseline. |
 
-Suggested early defaults if shipping a first pass: combo max **2**, draw **1**, shield **2**, mana **0/2**, deck cap tight enough that improved unlocks force a cut.
+Suggested early defaults if shipping a first pass: combo max **2**, draw **1**, shield **2**, mana **2/2**, deck cap tight enough that improved unlocks force a cut.
 
-### Mana (planned)
+### Mana
 
-Wizard identity shifts from “barrier + pierce only” to a **charge → spend** loop.
+Battle mana is **implemented** (default max **2**). See [Mana](#mana) under Effect System. Raising max mana via player-level skill picks remains planned.
 
-Rules (keep brutal-simple for Beta):
+Rules in play:
 
-- Mana is **battle-scoped**: starts at 0 (or a small carry-in later), capped by **Max mana**, discarded or reset when the battle ends.
-- Cards either **gain** mana or **spend** mana — avoid cards that do both in one effect list.
-- Spend scales one clear number (damage *or* barrier), shown in combo preview.
-- Cap stays small (pips, not a second HP bar).
-
-Example card roles:
-
-| Role | Behavior |
-|------|----------|
-| Channel / Focus | `+1 mana` (often defense / ritual) |
-| Arcane Bolt (updated) | Base effect weak or pierce; spend 1–N mana to raise damage |
-| Magic Barrier (updated) | Base barrier; spend mana to raise barrier |
-
-Existing combo-barrier cards can stay; mana is an additional lever, not a replacement for barrier as a defense type.
+- Mana is **run-scoped** like shield: starts full (**2 / 2**), carries into battle from exploration, restores to max after a won fight.
+- Cards either **gain** mana or **spend** mana — wizard kit follows that split.
+- Spend scales damage or barrier by mana spent (all current mana), shown in combo preview.
+- Exploration encounters can change current mana via `modifyMana`.
 
 ### Seeker class (planned)
 

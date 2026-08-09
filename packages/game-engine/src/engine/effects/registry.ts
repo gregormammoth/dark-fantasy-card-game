@@ -14,6 +14,9 @@ import { bonusBarrierPerDefenseCardHandler } from './bonusBarrierPerDefenseCard'
 import { bonusIfLowerHpHandler } from './bonusIfLowerHp';
 import { bonusIfFirstAttackHandler } from './bonusIfFirstAttack';
 import { restoreMaxShieldsHandler } from './restoreMaxShields';
+import { gainManaHandler } from './gainMana';
+import { bonusDamagePerManaHandler } from './bonusDamagePerMana';
+import { bonusBarrierPerManaHandler } from './bonusBarrierPerMana';
 
 export const effectHandlers: Record<EffectType, EffectHandler> = {
   damage: damageHandler,
@@ -30,4 +33,7 @@ export const effectHandlers: Record<EffectType, EffectHandler> = {
   bonusIfLowerHp: bonusIfLowerHpHandler,
   bonusIfFirstAttack: bonusIfFirstAttackHandler,
   restoreMaxShields: restoreMaxShieldsHandler,
+  gainMana: gainManaHandler,
+  bonusDamagePerMana: bonusDamagePerManaHandler,
+  bonusBarrierPerMana: bonusBarrierPerManaHandler,
 };

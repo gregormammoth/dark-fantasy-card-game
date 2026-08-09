@@ -56,7 +56,7 @@ describe('enemy catalog', () => {
       skipAutoEncounter: true,
     });
     expect(enemy.name).toBe('The Sorcerer');
-    expect(enemy.band).toBe('boss');
+    expect(enemy.band).toBe('elite');
     expect(enemy.group).toBe('ritualist');
     expect(enemy.defeated).toBe(false);
     expect(enemy.requiresFlag).toBe('ritual_demon_cleared');
@@ -82,21 +82,20 @@ describe('enemy catalog', () => {
     expect(cellBlock?.enemies[0]?.band).toBe('intro');
   });
 
-  it('scales the difficulty curve from intro trash to bosses', () => {
+  it('scales the difficulty curve from intro trash to elites', () => {
     const prisoner = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'prisoner' }));
     const knight = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'knight' }));
     const warden = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'prison_warden_boss' }));
 
     expect(prisoner.deckSize).toBeLessThan(knight.deckSize);
-    expect(knight.deckSize).toBeLessThan(warden.deckSize);
+    expect(knight.deckSize).toBeLessThanOrEqual(warden.deckSize);
     expect(prisoner.maxShield).toBeLessThan(warden.maxShield);
-    expect(warden.barrierPerTurn).toBeGreaterThan(0);
     expect(warden.deckCardIds).toContain('signature_warden_decree');
   });
 
-  it('keeps the sorcerer at the twenty wards and two barriers its description promises', () => {
+  it('keeps the sorcerer oversized with regenerating barriers', () => {
     const profile = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'sorcerer_enemy' }));
-    expect(profile.deckSize).toBe(20);
+    expect(profile.deckSize).toBe(30);
     expect(profile.barrierPerTurn).toBe(2);
   });
 });

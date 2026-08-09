@@ -379,6 +379,8 @@ function GameShell() {
           ],
           shield: battleSnap.context.player.maxShield,
           maxShield: battleSnap.context.player.maxShield,
+          mana: battleSnap.context.playerMaxMana,
+          maxMana: battleSnap.context.playerMaxMana,
         });
       }
     }
@@ -527,6 +529,8 @@ function GameShell() {
         discard: live.discard,
         shield: live.shield,
         maxShield: live.maxShield,
+        mana: live.mana,
+        maxMana: live.maxMana,
       },
     });
   }

@@ -223,6 +223,7 @@ export function resolveLocationBattle(
 
   if (won) {
     context.shield = context.maxShield;
+    context.mana = context.maxMana;
   }
 
   if (won && resolvedLocationId) {

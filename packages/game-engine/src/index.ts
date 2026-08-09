@@ -1,6 +1,7 @@
 export { getPlayerHealth, getEnemyHealth } from './engine/health';
 export { previewCombo } from './engine/comboPreview';
 export { COMBO_CAP } from './engine/combo';
+export { DEFAULT_PLAYER_MAX_MANA } from './engine/battleSetup';
 export {
   DEFAULT_ENEMY_BAND,
   getEnemyBandProfile,

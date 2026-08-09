@@ -68,9 +68,10 @@
     "type": "attack",
     "effects": [
       { "type": "ignoreShield" },
+      { "type": "bonusDamagePerMana", "value": 1 },
       { "type": "damage", "value": 2 }
     ],
-    "description": "Deal 2 damage ignoring shields."
+    "description": "Deal 2 damage ignoring shields. +1 damage per mana spent."
   },
   {
     "id": "wizard_defense_01",
@@ -78,20 +79,20 @@
     "class": "wizard",
     "type": "defense",
     "effects": [
-      { "type": "barrier", "value": 3 }
+      { "type": "bonusBarrierPerMana", "value": 1 },
+      { "type": "barrier", "value": 2 }
     ],
-    "description": "Gain 3 Barrier until end of round."
+    "description": "Gain 2 Barrier. +1 Barrier per mana spent."
   },
   {
     "id": "wizard_defense_02",
-    "name": "Barrier Mastery",
+    "name": "Focus",
     "class": "wizard",
     "type": "defense",
     "effects": [
-      { "type": "bonusBarrierPerDefenseCard", "value": 1 },
-      { "type": "barrier", "value": 2 }
+      { "type": "gainMana", "value": 2 }
     ],
-    "description": "Gain 2 Barrier +1 for each other Defense card in your combo."
+    "description": "Gain 2 Mana."
   },
   {
     "id": "survivor_attack_01",

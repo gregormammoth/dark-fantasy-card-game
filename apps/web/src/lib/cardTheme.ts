@@ -99,6 +99,15 @@ export function getCardEffectSummary(definition: CardDefinition): string {
     if (effect.type === 'ignoreShield') {
       parts.push('pierce');
     }
+    if (effect.type === 'gainMana') {
+      parts.push(`+${effect.value ?? 0} mana`);
+    }
+    if (effect.type === 'bonusDamagePerMana') {
+      parts.push(`+${effect.value ?? 0} dmg/mana`);
+    }
+    if (effect.type === 'bonusBarrierPerMana') {
+      parts.push(`+${effect.value ?? 0} barrier/mana`);
+    }
   }
 
   if (parts.length === 0 && definition.description) {
@@ -133,7 +142,7 @@ export function getCardHeight(): number {
 export function getCardEffectIconType(definition: CardDefinition): CardEffectIconType {
   const effectTypes = definition.effects.map((effect) => effect.type);
 
-  if (effectTypes.includes('ignoreShield')) {
+  if (effectTypes.includes('ignoreShield') || effectTypes.includes('bonusDamagePerMana')) {
     return 'pierce';
   }
   if (effectTypes.includes('poison')) {
@@ -147,7 +156,12 @@ export function getCardEffectIconType(definition: CardDefinition): CardEffectIco
   ) {
     return 'attack';
   }
-  if (effectTypes.includes('barrier') || effectTypes.includes('bonusBarrierPerDefenseCard')) {
+  if (
+    effectTypes.includes('barrier') ||
+    effectTypes.includes('bonusBarrierPerDefenseCard') ||
+    effectTypes.includes('bonusBarrierPerMana') ||
+    effectTypes.includes('gainMana')
+  ) {
     return 'barrier';
   }
   if (

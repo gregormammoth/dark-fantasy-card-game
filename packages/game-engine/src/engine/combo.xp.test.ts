@@ -86,6 +86,8 @@ function makeBattle(hand: CardInstance[], enemyDeck: CardInstance[] = []): Battl
     enemyPoison: null,
     damageReductionPercent: 0,
     enemyBarrierPerTurn: 0,
+    playerMana: 0,
+    playerMaxMana: 2,
     resolvingCardInstanceId: null,
     resolutionQueue: [],
     activePlay: null,

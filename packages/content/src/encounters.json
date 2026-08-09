@@ -27,7 +27,8 @@
     "effects": [
       { "type": "log", "message": "You gather herbs and recover a discarded card." },
       { "type": "recoverDiscard", "count": 1 },
-      { "type": "modifyShield", "value": 1 }
+      { "type": "modifyShield", "value": 1 },
+      { "type": "modifyMana", "value": 1 }
     ]
   },
   {
@@ -48,7 +49,8 @@
     "effects": [
       { "type": "log", "message": "A hanging corpse ambushes you — two cards are lost from hand." },
       { "type": "discardCards", "count": 2 },
-      { "type": "modifyShield", "value": -1 }
+      { "type": "modifyShield", "value": -1 },
+      { "type": "modifyMana", "value": -1 }
     ]
   },
   {
@@ -141,6 +143,26 @@
     "effects": [
       { "type": "log", "message": "Your shield buckles under the rot." },
       { "type": "modifyShield", "value": -1 }
+    ]
+  },
+  {
+    "id": "arcane_residue",
+    "title": "Arcane Residue",
+    "description": "A cracked ward-stone still hums. The leftover charge settles behind your eyes.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "Residue flows into you — mana rises." },
+      { "type": "modifyMana", "value": 1 }
+    ]
+  },
+  {
+    "id": "null_ward",
+    "title": "Null Ward",
+    "description": "A dead mage's seal flares once and drinks the air. Your focus thins.",
+    "weight": 2,
+    "effects": [
+      { "type": "log", "message": "The ward drinks your mana." },
+      { "type": "modifyMana", "value": -1 }
     ]
   },
   {

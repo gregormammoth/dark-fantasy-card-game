@@ -102,11 +102,15 @@
         "type": "ignoreShield"
       },
       {
+        "type": "bonusDamagePerMana",
+        "value": 2
+      },
+      {
         "type": "damage",
         "value": 3
       }
     ],
-    "description": "Deal 3 damage ignoring shields.",
+    "description": "Deal 3 damage ignoring shields. +2 damage per mana spent.",
     "improved": true
   },
   {
@@ -116,32 +120,29 @@
     "type": "defense",
     "effects": [
       {
+        "type": "bonusBarrierPerMana",
+        "value": 2
+      },
+      {
         "type": "barrier",
-        "value": 4
+        "value": 3
       }
     ],
-    "description": "Gain 4 Barrier until end of round.",
+    "description": "Gain 3 Barrier. +2 Barrier per mana spent.",
     "improved": true
   },
   {
     "id": "improved_wizard_cascade_ward",
-    "name": "Cascade Bolt",
+    "name": "Deep Focus",
     "class": "wizard",
-    "type": "attack",
+    "type": "defense",
     "effects": [
       {
-        "type": "ignoreShield"
-      },
-      {
-        "type": "bonusDamagePerAttackCard",
-        "value": 1
-      },
-      {
-        "type": "damage",
-        "value": 2
+        "type": "gainMana",
+        "value": 3
       }
     ],
-    "description": "Deal 2 damage. +1 for each other Attack card in your combo.",
+    "description": "Gain 3 Mana.",
     "improved": true
   },
   {

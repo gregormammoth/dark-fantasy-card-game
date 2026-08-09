@@ -5,7 +5,7 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { CardStack } from './CardStack';
 import { Hand } from './Hand';
 import { EndTurnButton } from './EndTurnButton';
-import { BarrierIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
+import { BarrierIcon, ManaIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 interface PlayerZoneProps {
   portrait: string;
@@ -13,6 +13,8 @@ interface PlayerZoneProps {
   deckCount: number;
   shield: number;
   barrier: number;
+  mana: number;
+  maxMana: number;
   poison: PoisonState | null;
   hand: CardInstance[];
   onAddToCombo: (instanceId: string) => void;
@@ -32,6 +34,8 @@ export function PlayerZone({
   deckCount,
   shield,
   barrier,
+  mana,
+  maxMana,
   poison,
   hand,
   onAddToCombo,
@@ -104,6 +108,10 @@ export function PlayerZone({
             <span className="inline-flex items-center gap-1 text-[#a58fe0]">
               <BarrierIcon className="inline-block h-[13px] w-3.5" />
               {barrier}
+            </span>
+            <span className="inline-flex items-center gap-1 text-[#6ec8e0]" title={t('battle.manaLabel')}>
+              <ManaIcon className="inline-block h-[13px] w-[13px]" />
+              {mana}/{maxMana}
             </span>
             {poison && (
               <span className="inline-flex items-center gap-1 text-[#8fce7a]">

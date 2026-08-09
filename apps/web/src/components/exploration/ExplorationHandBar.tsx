@@ -2,7 +2,7 @@
 
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import { Card } from '@/components/Card';
-import { ShieldIcon } from '@/components/EffectIcons';
+import { ManaIcon, ShieldIcon } from '@/components/EffectIcons';
 import { useAudio } from '@/audio/useAudio';
 import { useTranslation } from '@/i18n/useTranslation';
 
@@ -74,6 +74,18 @@ export function ExplorationHandBar({
           </div>
           <span className="text-[8px] tracking-[.18em] text-[#8a7f72]">
             {t('exploration.shieldLabel')}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex h-24 w-[70px] flex-col items-center justify-center gap-1.5 rounded border border-[rgba(110,200,224,.35)] bg-[rgba(110,200,224,.08)]">
+            <ManaIcon className="inline-block h-[22px] w-5" />
+            <span className="font-cinzel text-sm text-[#d7f4fb]">
+              {context.mana}/{context.maxMana}
+            </span>
+          </div>
+          <span className="text-[8px] tracking-[.18em] text-[#8a7f72]">
+            {t('exploration.manaLabel')}
           </span>
         </div>
       </div>

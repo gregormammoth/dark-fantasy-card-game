@@ -122,6 +122,19 @@ export const explorationMachine = setup({
         next.maxShield = event.maxShield;
       }
       next.shield = Math.max(0, Math.min(next.maxShield, next.shield));
+      if (typeof event.mana === 'number') {
+        next.mana = event.mana;
+      }
+      if (typeof event.maxMana === 'number') {
+        next.maxMana = event.maxMana;
+      }
+      if (typeof next.mana !== 'number') {
+        next.mana = 2;
+      }
+      if (typeof next.maxMana !== 'number') {
+        next.maxMana = 2;
+      }
+      next.mana = Math.max(0, Math.min(next.maxMana, next.mana));
       const selectedStillInHand = next.hand.some(
         (card) => card.instanceId === next.selectedCardInstanceId,
       );
@@ -142,6 +155,13 @@ export const explorationMachine = setup({
         next.maxShield = 2;
       }
       next.shield = Math.max(0, Math.min(next.maxShield, next.shield));
+      if (typeof next.mana !== 'number') {
+        next.mana = 2;
+      }
+      if (typeof next.maxMana !== 'number') {
+        next.maxMana = 2;
+      }
+      next.mana = Math.max(0, Math.min(next.maxMana, next.mana));
       syncExplorationLogCounter(next.log);
       return next;
     }),

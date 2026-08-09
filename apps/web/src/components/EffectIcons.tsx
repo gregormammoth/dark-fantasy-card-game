@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Diamond, Droplets, Hexagon, RotateCcw, Shield, Sword } from 'lucide-react';
+import { Diamond, Droplets, Hexagon, RotateCcw, Shield, Sparkles, Sword } from 'lucide-react';
 import type { CardEffectIconType } from '@/lib/cardTheme';
 
 interface IconProps {
@@ -25,6 +25,10 @@ export function ShieldIcon({ className, style }: IconProps) {
 
 export function BarrierIcon({ className, style }: IconProps) {
   return <Hexagon className={className} style={iconStyle('#9a7ae0', style)} strokeWidth={2.1} />;
+}
+
+export function ManaIcon({ className, style }: IconProps) {
+  return <Sparkles className={className} style={iconStyle('#6ec8e0', style)} strokeWidth={2.1} />;
 }
 
 export function PoisonIcon({ className, style }: IconProps) {

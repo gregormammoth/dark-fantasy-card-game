@@ -368,6 +368,7 @@ export function BattleScreen({
             enemyHealth={enemyHealth}
             playerShield={battle.player.shield}
             playerMaxShield={battle.player.maxShield}
+            playerMana={battle.playerMana}
           />
         </div>
 
@@ -377,6 +378,8 @@ export function BattleScreen({
           deckCount={battle.player.deck.length}
           shield={battle.player.shield}
           barrier={battle.player.barrier}
+          mana={battle.playerMana}
+          maxMana={battle.playerMaxMana}
           poison={battle.playerPoison}
           hand={battle.player.hand}
           handDisabled={!isPlayerTurn || isResolving || battle.combo.length >= COMBO_CAP}

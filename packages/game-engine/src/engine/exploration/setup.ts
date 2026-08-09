@@ -16,6 +16,7 @@ import { visitLocation } from './map';
 import { drawUntilHandSize, syncActionsToHand } from './hand';
 import { setLocationEncounterQueue } from './locationEncounters';
 import { createInitialLoadout, getPlayerCardById } from '../progression/loadout';
+import { DEFAULT_PLAYER_MAX_MANA } from '../battleSetup';
 
 interface PrisonMapFile {
   id: string;
@@ -72,6 +73,8 @@ export function createInitialExploration(
     discard: [],
     shield: battleData.player.startingShield ?? 2,
     maxShield: battleData.player.maxShield ?? 2,
+    mana: DEFAULT_PLAYER_MAX_MANA,
+    maxMana: DEFAULT_PLAYER_MAX_MANA,
     actionsRemaining: 4,
     maxActions: 4,
     handSize: 4,

@@ -11,6 +11,7 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
   const initialEnemyHealth = getEnemyHealth(battle);
   const initialShield = battle.player.shield;
   const initialBarrier = battle.player.barrier;
+  const initialMana = battle.playerMana;
   const initialHandSize = battle.player.hand.length;
   const initialEnemyShield = battle.enemy.shield;
   const initialEnemyBarrier = battle.enemy.barrier;
@@ -55,6 +56,7 @@ export function previewCombo(battle: BattleContext): ComboPreview | null {
     enemyShieldBlocked,
     shieldGain: Math.max(0, sim.player.shield - initialShield),
     barrierGain: Math.max(0, sim.player.barrier - initialBarrier),
+    manaDelta: sim.playerMana - initialMana,
     cardsRecovered: Math.max(0, sim.player.hand.length - initialHandSize),
     ignoresShield: battle.combo.some((card) =>
       card.definition.effects.some((effect) => effect.type === 'ignoreShield'),

@@ -66,6 +66,8 @@ export interface BattleContext {
   enemyPoison: PoisonState | null;
   damageReductionPercent: number;
   enemyBarrierPerTurn: number;
+  playerMana: number;
+  playerMaxMana: number;
   resolvingCardInstanceId: string | null;
   resolutionQueue: CardInstance[];
   activePlay: ActivePlay | null;
@@ -100,6 +102,8 @@ export type PlayerBattlePiles = {
   discard: CardInstance[];
   shield?: number;
   maxShield?: number;
+  mana?: number;
+  maxMana?: number;
 };
 
 export type BattleEvent =

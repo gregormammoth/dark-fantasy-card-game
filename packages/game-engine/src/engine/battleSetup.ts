@@ -25,6 +25,8 @@ import { createInitialLoadout, getPlayerPortraitForDeck } from './progression/lo
 import { reconcilePlayerCardPiles } from './playerPiles';
 import { cloneRng, createRng } from './rng';
 
+export const DEFAULT_PLAYER_MAX_MANA = 2;
+
 const cardRegistry = new Map<string, CardDefinition>();
 
 for (const card of playerCardsData) {
@@ -128,6 +130,8 @@ export function createInitialBattle(
     enemyOverride?.startingShield ?? battleData.enemy.startingShield ?? 2;
   const playerStartingShield =
     playerPiles?.shield ?? battleData.player.startingShield ?? 2;
+  const playerMaxMana = playerPiles?.maxMana ?? DEFAULT_PLAYER_MAX_MANA;
+  const playerStartingMana = playerPiles?.mana ?? playerMaxMana;
   const playerMaxHealth = playerHand.length + playerDeck.length + playerDiscard.length;
 
   return {
@@ -165,6 +169,8 @@ export function createInitialBattle(
     enemyPoison: null,
     damageReductionPercent: 0,
     enemyBarrierPerTurn: enemyOverride?.barrierPerTurn ?? 0,
+    playerMana: Math.min(Math.max(0, playerStartingMana), playerMaxMana),
+    playerMaxMana,
     resolvingCardInstanceId: null,
     resolutionQueue: [],
     activePlay: null,

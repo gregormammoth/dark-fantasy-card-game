@@ -8,6 +8,7 @@ import { drawAndResolveEncounter, getEncounterDefinition } from './encounters';
 import {
   addCardsToPile,
   discardFromHand,
+  modifyExplorationMana,
   modifyExplorationShield,
   shufflePlayerCards,
 } from './hand';
@@ -66,6 +67,18 @@ describe('exploration encounter pressure', () => {
     expect(exploration.maxShield).toBe(2);
   });
 
+  it('raises and lowers current mana within max', () => {
+    let exploration = createInitialExploration(1);
+    expect(exploration.mana).toBe(2);
+    expect(exploration.maxMana).toBe(2);
+    exploration = modifyExplorationMana(exploration, -1);
+    expect(exploration.mana).toBe(1);
+    expect(exploration.maxMana).toBe(2);
+    exploration = modifyExplorationMana(exploration, 2);
+    expect(exploration.mana).toBe(2);
+    expect(exploration.maxMana).toBe(2);
+  });
+
   it('records encounter results for discard and shield beats', () => {
     const definition = getEncounterDefinition('hanging_ambush');
     expect(definition).toBeTruthy();
@@ -82,6 +95,9 @@ describe('exploration encounter pressure', () => {
     expect(resolved.pendingEncounter?.results?.discarded.length).toBe(2);
     expect(resolved.pendingEncounter?.results?.shieldAfter).toBe(
       resolved.pendingEncounter!.results!.shieldBefore - 1,
+    );
+    expect(resolved.pendingEncounter?.results?.manaAfter).toBe(
+      resolved.pendingEncounter!.results!.manaBefore - 1,
     );
   });
 
@@ -144,10 +160,25 @@ describe('exploration encounter pressure', () => {
     expect(exploration.shield).toBe(exploration.maxShield);
   });
 
+  it('restores mana to max after a won location battle', () => {
+    let exploration = createInitialExploration(4);
+    exploration = modifyExplorationMana(exploration, -1);
+    expect(exploration.mana).toBe(1);
+    exploration = resolveLocationBattle(exploration, true);
+    expect(exploration.mana).toBe(exploration.maxMana);
+  });
+
   it('does not restore shield after a lost location battle', () => {
     let exploration = createInitialExploration(4);
     exploration = modifyExplorationShield(exploration, -1);
     exploration = resolveLocationBattle(exploration, false);
     expect(exploration.shield).toBe(1);
+  });
+
+  it('does not restore mana after a lost location battle', () => {
+    let exploration = createInitialExploration(4);
+    exploration = modifyExplorationMana(exploration, -1);
+    exploration = resolveLocationBattle(exploration, false);
+    expect(exploration.mana).toBe(1);
   });
 });

@@ -39,6 +39,7 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
     }
     const rows: ChangeRow[] = [];
     const shieldDelta = results.shieldAfter - results.shieldBefore;
+    const manaDelta = results.manaAfter - results.manaBefore;
 
     if (shieldDelta !== 0) {
       rows.push({
@@ -50,6 +51,18 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
         }),
         color: '#5b86c4',
         bg: 'rgba(91,134,196,.1)',
+      });
+    }
+    if (manaDelta !== 0) {
+      rows.push({
+        key: 'mana',
+        label: t('encounter.changeMana', { delta: signed(manaDelta) }),
+        sub: t('encounter.changeManaNow', {
+          current: results.manaAfter,
+          max: results.maxManaAfter,
+        }),
+        color: '#6ec8e0',
+        bg: 'rgba(110,200,224,.1)',
       });
     }
     for (const card of results.discarded) {

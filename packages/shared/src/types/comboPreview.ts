@@ -4,6 +4,7 @@ export interface ComboPreview {
   enemyShieldBlocked: number;
   shieldGain: number;
   barrierGain: number;
+  manaDelta: number;
   poison?: { damagePerTurn: number; turns: number };
   damageReductionPercent?: number;
   cardsRecovered: number;
@@ -17,6 +18,7 @@ export function isComboPreviewEmpty(preview: ComboPreview): boolean {
     preview.totalDamageToEnemy === 0 &&
     preview.shieldGain === 0 &&
     preview.barrierGain === 0 &&
+    preview.manaDelta === 0 &&
     preview.cardsRecovered === 0 &&
     !preview.poison &&
     !preview.damageReductionPercent &&

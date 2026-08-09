@@ -172,6 +172,10 @@ export interface EncounterResults {
   shieldAfter: number;
   maxShieldBefore: number;
   maxShieldAfter: number;
+  manaBefore: number;
+  manaAfter: number;
+  maxManaBefore: number;
+  maxManaAfter: number;
 }
 
 export interface PendingEncounter {
@@ -193,6 +197,8 @@ export interface ExplorationContext {
   discard: CardInstance[];
   shield: number;
   maxShield: number;
+  mana: number;
+  maxMana: number;
   actionsRemaining: number;
   maxActions: number;
   handSize: number;
@@ -244,6 +250,8 @@ export type ExplorationEvent =
       discard: CardInstance[];
       shield?: number;
       maxShield?: number;
+      mana?: number;
+      maxMana?: number;
     }
   | {
       type: 'HYDRATE';
@@ -279,6 +287,7 @@ export type ExplorationEffectType =
   | 'shuffleCards'
   | 'addCards'
   | 'modifyShield'
+  | 'modifyMana'
   | 'skipNextEncounter'
   | 'reshuffleEncounter'
   | 'nothing';

@@ -18,7 +18,10 @@ export type EffectType =
   | 'bonusBarrierPerDefenseCard'
   | 'bonusIfLowerHp'
   | 'bonusIfFirstAttack'
-  | 'restoreMaxShields';
+  | 'restoreMaxShields'
+  | 'gainMana'
+  | 'bonusDamagePerMana'
+  | 'bonusBarrierPerMana';
 
 export interface Effect {
   type: EffectType;

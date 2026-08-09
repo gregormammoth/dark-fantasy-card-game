@@ -225,3 +225,22 @@ export function modifyExplorationShield(
   );
   return next;
 }
+
+export function modifyExplorationMana(
+  context: ExplorationContext,
+  delta = 0,
+): ExplorationContext {
+  if (delta === 0) {
+    return context;
+  }
+  const next = structuredClone(context);
+  next.mana = Math.max(0, Math.min(next.maxMana, next.mana + delta));
+  appendExplorationLog(
+    next,
+    delta > 0
+      ? `Mana gathers — ${next.mana}/${next.maxMana}.`
+      : `Your focus frays — mana ${next.mana}/${next.maxMana}.`,
+    delta > 0 ? 'loot' : 'danger',
+  );
+  return next;
+}

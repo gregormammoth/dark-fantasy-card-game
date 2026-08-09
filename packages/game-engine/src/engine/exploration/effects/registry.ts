@@ -16,6 +16,7 @@ import { discardCardsHandler } from './discardCards';
 import { shuffleCardsHandler } from './shuffleCards';
 import { addCardsHandler } from './addCards';
 import { modifyShieldHandler } from './modifyShield';
+import { modifyManaHandler } from './modifyMana';
 import { skipNextEncounterHandler } from './skipNextEncounter';
 import { reshuffleEncounterHandler } from './reshuffleEncounter';
 import { nothingHandler } from './nothing';
@@ -40,6 +41,7 @@ export const explorationEffectHandlers: Record<
   shuffleCards: shuffleCardsHandler,
   addCards: addCardsHandler,
   modifyShield: modifyShieldHandler,
+  modifyMana: modifyManaHandler,
   skipNextEncounter: skipNextEncounterHandler,
   reshuffleEncounter: reshuffleEncounterHandler,
   nothing: nothingHandler,
