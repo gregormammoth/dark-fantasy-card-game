@@ -72,7 +72,7 @@
     {
       "id": "demon",
       "name": "Demon",
-      "tier": "Elite · Bound",
+      "tier": "Common · Bound",
       "description": "Something the ritual called up and never fully controlled, still chained to this room.",
       "image": "/characters/demon.png",
       "band": "common",

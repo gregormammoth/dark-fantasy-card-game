@@ -51,7 +51,9 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - Shared **Run** state (one continuous playthrough)
 - Exploration ↔ Battle with the same run
 - Class XP → levels → unlocks → deck changes
-- **Flexible deck cap + max shield** as progression stats (not fixed forever at content defaults)
+- **Player level** from total class levels (proposed 1 per 5 class levels) → choose one combat skill (+1 max shield / combo / mana / deck / draw per turn)
+- Skills are **not** hard-bound to classes (Skyrim-style: use skills for XP, choose attributes on level-up)
+- **Hand size stays constant** (4); draw-per-turn and max combo become skills
 - **Reward loop** (action → reward → progression → new options)
 - **Quests** (engine logic + player-facing quest log / UI)
 - **Money** in a light inventory (earn / spend; not full item loadout)
@@ -145,7 +147,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 9. New regions should require minimal engine changes and primarily consist of new content.
 10. Prefer incremental, testable refactoring over large architectural rewrites.
 11. Prefer proving the **vertical slice**; ship only the **thin** backend Beta needs (saves, analytics, feedback).
-12. Cards, classes, XP, and deckbuilding stay primary; Beta inventory is **money + quest state**, not a full item RPG. **Deck cap** and **max shield** are progression stats, not forever-fixed content constants.
+12. Cards, classes, XP, and deckbuilding stay primary; Beta inventory is **money + quest state**, not a full item RPG. Combat ceilings (**max shield**, **max combo**, **max mana**, **max deck**, **draw per turn**) rise from **player-level skill picks**, not from binding each skill to a class. **Hand size** stays a constant.
 13. Analytics answers product questions (who played, how long, where they drop) — not vanity dashboards.
 
 ---
@@ -165,7 +167,8 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Battle core | Partial — playable; conditional combo bonuses order-independent; deck/shield caps still fixed content defaults |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
-| Progression stats (deck cap / max shield) | Not started — `DECK_CAP` and battle `maxShield` are fixed; should grow with player progression |
+| Player level + choosable skills | Designed in [MECHANICS.md](./MECHANICS.md#planned-progression-not-implemented) — not implemented |
+| Progression stats (deck / shield / combo / mana / draw) | Not started — fixed content defaults; skills planned as player-level picks |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
@@ -204,7 +207,7 @@ Update this table as milestones land.
 - [x] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
-- [ ] Grow **deck cap** and **max shield** through progression (not hard-coded forever)
+- [ ] Grow combat skills via **player level** picks (max shield, max combo, max mana, max deck, draw per turn) — see MECHANICS
 - [x] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
 - [x] Escape Hollowfort (Exit Gate → world)
@@ -242,7 +245,7 @@ CURRENT
 6. Seeded RNG (required)                   ← done
   │
   ▼
-7. Reward loop + flexible deck/shield caps ← XP/unlocks exist; grant API + progressive caps open
+7. Reward loop + player-level skills              ← XP/unlocks exist; player level + skill picks + grant API open
   │
   ▼
 8. Quests (logic + UI) + money             ← quests done; money open
@@ -266,7 +269,7 @@ CURRENT
 BETA
 ```
 
-Full auth, profiles, leaderboards, and **full item inventory** stay **after** this path. Beta money + quests are in scope. Progressive **deck cap** and **max shield** are Beta progression, not Green item RPG. The Beta API is intentionally thin.
+Full auth, profiles, leaderboards, and **full item inventory** stay **after** this path. Beta money + quests are in scope. Progressive combat skills via **player level** are Beta progression, not Green item RPG. The Beta API is intentionally thin.
 
 ---
 
@@ -491,31 +494,53 @@ Same seed ⇒ same random sequence ⇒ reproducible bugs and E2E scenarios.
 - [x] Battle results show XP gained this fight
 - [x] Persist via cloud save / load (M4)
 
-### Level system (next progression step)
+### Level system
 
 ```text
-XP → Class Level → Unlockable cards → Spend XP → Deck changes
+Class XP → Class Level → Unlockable cards (spend free class levels)
+         ↘
+          Sum of class levels → Player Level (1 per 5 class levels, tunable)
+                              → Choose +1 to one combat skill
 ```
 
 - [x] Independent class levels from XP thresholds (10 XP = 1 level per class)
 - [x] Unlock new cards by spending free class levels (1 level per improved card)
-- [ ] Passive bonuses (only if they serve the slice — keep lean)
+- [ ] **Player level** derived from total class levels (start at 5 class levels = 1 player level)
+- [ ] On player level-up: choose one skill — max shield, max combo, max mana, max deck, or draw per turn
+- [ ] Skills are **shared** (not hard-bound to Fighter/Rogue/Wizard/Survivor/Seeker)
+- [ ] Hand size remains a **constant** (default 4) — not a skill
 - [ ] Avoid heavy level-curve tuning until analytics / playtests inform pace
 
-### Deck growth & combat caps (progression)
+Design notes live in [MECHANICS.md — Planned Progression](./MECHANICS.md#planned-progression-not-implemented).
 
-Today `DECK_CAP` (loadout) and battle `maxShield` (from `battle.json`) are fixed. For Beta they should be **player progression stats** that can rise (and occasionally fall) through rewards, levels, encounters, or story beats.
+### Combat skills & caps (progression)
+
+Today `DECK_CAP`, battle `maxShield`, unlimited combo size, fixed draw-1, and no mana are content/engine defaults. They should become **Run / progression skills** chosen at player level-up (gear/items may modify later).
 
 - [x] Character screen deck composition (add / remove, deck cap)
 - [x] Unlock cards by spending free class levels (bound to loadout + battles)
 - [x] Twelve improved cards available on Character screen (1 level each)
 - [x] Mid-run unlock rebuilds exploration/battle deck for the next fight
-- [ ] Move **deck cap** off a hard constant into Run / progression (base value + modifiers; Character UI enforces the live cap)
-- [ ] Move **max shield** (and starting shield if needed) off fixed `battle.json` defaults into Run / progression so battles and exploration use the same caps
-- [ ] At least one clear progression path that raises deck cap and/or max shield in Hollowfort (level reward, quest reward, money purchase, or encounter boon)
-- [ ] Encounters / events can temporarily or permanently change shield (and optionally deck pressure) without hard-coding only in battle setup
+- [ ] **Max shield** — live skill; battles + exploration share the same cap
+- [ ] **Max combo** — cap cards in the combo (proposed start 2)
+- [ ] **Max mana** + battle mana resource; wizard cards gain or spend mana
+- [ ] **Max deck** — live loadout/HP ceiling (tighten default so unlocks force cuts)
+- [ ] **Draw per turn** — skill (proposed start 1; soft ceiling ~3)
+- [ ] Character UI shows skills + unspent player-level picks
+- [ ] At least one Hollowfort path that makes a skill pick or upgrade feel earned (level-up is the primary path; optional quest/item later)
+- [ ] Encounters / events can still change *current* shield without raising the skill cap
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
+
+### Seeker class (post–four-skill frame or late Beta)
+
+- [ ] Fifth class: dig / mark / deduce — mono-viable (not draw-only splash)
+- [ ] Loops: **Expose → Exploit** (mark then payoff); **Deduce the next blow** (peek enemy 1–N, cancel/blunt known attacks)
+- [ ] Base + improved cards: dig, search deck, mark, peek enemy, draw-scaled / marked attacks, cancel-known defense
+- [ ] Engine pieces as needed: mark, peek enemy deck, known-card memory, cancel next enemy card, bonus per cards drawn, search UI
+- [ ] Portraits + class XP like existing classes
+- [ ] Prefer shipping player-level skills with the current four classes first
+- [ ] Design detail: [MECHANICS.md — Seeker](./MECHANICS.md#seeker-class-planned)
 
 ### Reward loop (explicit system)
 
@@ -535,14 +560,14 @@ Win battle
   → Next battle feels different
 ```
 
-- [ ] Define reward grant API on the Run (XP, unlocks, flags, money, deck-cap / max-shield deltas, optional card offers)
+- [ ] Define reward grant API on the Run (XP, unlocks, flags, money, skill deltas, optional card offers)
 - [ ] Battle end applies rewards into the Run (not only UI counters)
-- [ ] At least one non-XP reward path for the prison slice (card offer, money, deck/shield upgrade, or story unlock)
+- [ ] At least one non-XP reward path for the prison slice (card offer, money, skill bump, or story unlock)
 - [ ] Reward reveal UX (can be simple for Beta)
 
 ### Deliverable
 
-Players specialise or hybridise through cards — and each fight changes what they can do next. Deck size and shield ceiling can grow with the run.
+Players specialise or hybridise through cards — and each fight changes what they can do next. Player level lets them choose *how* they get stronger (shield, combo, mana, deck, draw), independent of which classes they play.
 
 ---
 
@@ -920,7 +945,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
 - [x] Enemy difficulty curve (weak early → strong late) + archetype card groups (`enemies.json` roster + band table; balance pass open)
 - [ ] Reward loop + class progression readable without a tutorial wall
-- [ ] Progressive **deck cap** + **max shield** (live Run stats; at least one Hollowfort upgrade path)
+- [ ] Player level + choosable skills (max shield / combo / mana / deck / draw); hand size constant — see MECHANICS
 - [x] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)
 - [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
