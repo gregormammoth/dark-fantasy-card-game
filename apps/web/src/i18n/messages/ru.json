@@ -74,6 +74,7 @@
     "seedLabel": "СИД {seed}",
     "questLog": "ЖУРНАЛ КВЕСТОВ",
     "unclaimedCards": "Доступно новых карт: {count}",
+    "unclaimedSkills": "Очков навыков для траты: {count}",
     "activeThreads": "АКТИВНЫЕ НИТИ",
     "noQuestsYet": "Квестов пока нет. Поговорите с NPC фракций.",
     "active": "АКТИВЕН",
@@ -248,7 +249,19 @@
     "notYetFound": "Ещё не найдено",
     "backWorld": "← Карта мира",
     "backPrison": "← Тюрьма",
-    "xpBar": "УР {level} · {current}/{total} ОПЫТА"
+    "xpBar": "УР {level} · {current}/{total} ОПЫТА",
+    "playerLevelBar": "{current} / {total} уровней классов",
+    "skills": "НАВЫКИ",
+    "skillPoints": "{count} очко навыка",
+    "skillPointsPlural": "{count} очков навыков",
+    "chooseSkill": "ВЫБРАТЬ НАВЫК",
+    "skill": {
+      "maxShield": "Макс. щит",
+      "maxCombo": "Макс. комбо",
+      "maxMana": "Макс. мана",
+      "maxDeck": "Макс. колода",
+      "drawPerTurn": "Добор за ход"
+    }
   },
   "settings": {
     "ariaLabel": "Настройки",
@@ -324,6 +337,16 @@
     "after": "После открытия: {count} ур.",
     "confirm": "ОТКРЫТЬ",
     "cancel": "ОТМЕНА"
+  },
+  "levelUpModal": {
+    "title": "УРОВЕНЬ ПЕРСОНАЖА",
+    "headline": "Повысьте боевой навык",
+    "body": "Каждые пять уровней классов дают одно очко навыка. Выберите, куда вложить.",
+    "pointsLabel": "Доступно очков",
+    "nextValue": "{current} → {next}",
+    "atCap": "Максимум",
+    "choose": "+1",
+    "later": "ПОЗЖЕ"
   },
   "actionPicker": {
     "eyebrow": "ПОТРАТИТЬ ДЕЙСТВИЕ",

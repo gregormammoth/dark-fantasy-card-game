@@ -39,6 +39,21 @@ export {
   normalizeProgression,
 } from './engine/progression/xp';
 export {
+  applySkillsToExplorationCaps,
+  canChooseSkill,
+  chooseSkill,
+  createInitialSkills,
+  getAvailableSkillPoints,
+  getComboCap,
+  getDeckCap,
+  getDrawPerTurn,
+  getPlayerLevel,
+  getPlayerLevelProgress,
+  getSpentSkillPoints,
+  getTotalClassLevels,
+  normalizeSkills,
+} from './engine/progression/skills';
+export {
   DECK_CAP,
   availableLevelsForClass,
   canUnlockImprovedCard,

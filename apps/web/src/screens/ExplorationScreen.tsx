@@ -49,6 +49,7 @@ interface ExplorationScreenProps {
   playerGender: PlayerGender;
   playerName: string;
   unclaimedCardCount?: number;
+  unclaimedSkillCount?: number;
 }
 
 export function ExplorationScreen({
@@ -62,6 +63,7 @@ export function ExplorationScreen({
   playerGender,
   playerName,
   unclaimedCardCount = 0,
+  unclaimedSkillCount = 0,
 }: ExplorationScreenProps) {
   const { t } = useTranslation();
   const snapshot = useSelector(actor, (state) => state);
@@ -199,13 +201,23 @@ export function ExplorationScreen({
               type="button"
               onClick={onOpenPlayer}
               title={
-                unclaimedCardCount > 0
-                  ? t('exploration.unclaimedCards', { count: unclaimedCardCount })
-                  : undefined
+                unclaimedSkillCount > 0
+                  ? t('exploration.unclaimedSkills', { count: unclaimedSkillCount })
+                  : unclaimedCardCount > 0
+                    ? t('exploration.unclaimedCards', { count: unclaimedCardCount })
+                    : undefined
               }
               className="relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
             >
               {t('common.character')}
+              {unclaimedSkillCount > 0 && (
+                <span
+                  aria-label={t('exploration.unclaimedSkills', { count: unclaimedSkillCount })}
+                  className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]"
+                >
+                  {unclaimedSkillCount}
+                </span>
+              )}
               {unclaimedCardCount > 0 && (
                 <span
                   aria-label={t('exploration.unclaimedCards', { count: unclaimedCardCount })}

@@ -33,7 +33,11 @@ export const explorationMachine = setup({
         event.type === 'START_EXPLORATION' || event.type === 'RESTART'
           ? event.deckCardIds
           : undefined;
-      return createInitialExploration(seed, deckCardIds);
+      const skills =
+        event.type === 'START_EXPLORATION' || event.type === 'RESTART'
+          ? event.skills
+          : undefined;
+      return createInitialExploration(seed, deckCardIds, skills);
     }),
     beginTurn: assign(({ context }) => beginExplorationTurn(context)),
     selectLocation: assign(({ context, event }) => {

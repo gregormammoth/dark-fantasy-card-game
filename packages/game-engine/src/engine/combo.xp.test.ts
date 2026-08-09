@@ -241,4 +241,22 @@ describe('battle card play awards class xp', () => {
     expect(blocked.combo).toHaveLength(2);
     expect(blocked.player.hand.map((card) => card.instanceId)).toContain(c.instanceId);
   });
+
+  it('allows a third card when maxCombo skill is raised', () => {
+    const a = makeCard('a', { class: 'warrior', type: 'attack', damage: 1 });
+    const b = makeCard('b', { class: 'warrior', type: 'attack', damage: 1 });
+    const c = makeCard('c', { class: 'warrior', type: 'attack', damage: 1 });
+    let battle = makeBattle([a, b, c]);
+    battle = {
+      ...battle,
+      progression: {
+        ...battle.progression,
+        skills: { ...battle.progression.skills, maxCombo: 3 },
+      },
+    };
+    battle = addToCombo(battle, a.instanceId);
+    battle = addToCombo(battle, b.instanceId);
+    battle = addToCombo(battle, c.instanceId);
+    expect(battle.combo).toHaveLength(3);
+  });
 });

@@ -9,7 +9,9 @@ import {
   getClassXp,
   getImprovedUnlockCost,
 } from './xp';
+import { getDeckCap } from './skills';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import { PLAYER_SKILL_BASE } from '@dark-fantasy/shared/types/progression';
 
 const baseCards = (playerCardsData as CardDefinition[]).map((card) => ({
   ...card,
@@ -24,7 +26,7 @@ const improvedCards = (improvedCardsData as CardDefinition[]).map((card) => ({
 const allCards: CardDefinition[] = [...baseCards, ...improvedCards];
 const cardById = new Map(allCards.map((card) => [card.id, card]));
 
-export const DECK_CAP = 15;
+export const DECK_CAP = PLAYER_SKILL_BASE.maxDeck;
 
 export function listAllPlayerCards(): CardDefinition[] {
   return allCards;
@@ -98,7 +100,8 @@ export function unlockImprovedCard(
   if (!canUnlockImprovedCard(progression, loadout, cardId)) {
     return null;
   }
-  if (loadout.deckCardIds.length >= DECK_CAP) {
+  const deckCap = getDeckCap(progression);
+  if (loadout.deckCardIds.length >= deckCap) {
     return {
       unlockedCardIds: [...loadout.unlockedCardIds, cardId],
       deckCardIds: [...loadout.deckCardIds],
@@ -110,7 +113,11 @@ export function unlockImprovedCard(
   };
 }
 
-export function toggleDeckCard(loadout: PlayerLoadout, cardId: string): PlayerLoadout {
+export function toggleDeckCard(
+  loadout: PlayerLoadout,
+  cardId: string,
+  progression?: PlayerProgression,
+): PlayerLoadout {
   if (!loadout.unlockedCardIds.includes(cardId)) {
     return loadout;
   }
@@ -120,7 +127,8 @@ export function toggleDeckCard(loadout: PlayerLoadout, cardId: string): PlayerLo
       deckCardIds: loadout.deckCardIds.filter((id) => id !== cardId),
     };
   }
-  if (loadout.deckCardIds.length >= DECK_CAP) {
+  const deckCap = progression ? getDeckCap(progression) : DECK_CAP;
+  if (loadout.deckCardIds.length >= deckCap) {
     return loadout;
   }
   return {

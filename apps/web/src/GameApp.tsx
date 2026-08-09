@@ -6,8 +6,10 @@ import type { ActorRefFrom } from 'xstate';
 import { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import {
+  applySkillsToExplorationCaps,
   createInitialLoadout,
   createRun,
+  getAvailableSkillPoints,
   normalizeSeed,
   rebuildExplorationDeck,
   resolveEnemyBattleProfile,
@@ -279,9 +281,32 @@ function GameShell() {
     return () => subscription.unsubscribe();
   }, [explorationActor, ready]);
 
-  const handleProgressionChange = useCallback((next: PlayerProgression) => {
-    setRun((current) => ({ ...current, progression: next }));
-  }, []);
+  const handleProgressionChange = useCallback(
+    (next: PlayerProgression) => {
+      const snap = explorationActor.getSnapshot();
+      if (!snap.matches('idle')) {
+        const caps = applySkillsToExplorationCaps(
+          snap.context.maxShield,
+          snap.context.shield,
+          snap.context.maxMana,
+          snap.context.mana,
+          next.skills,
+        );
+        explorationActor.send({
+          type: 'SYNC_PLAYER_CARDS',
+          hand: snap.context.hand,
+          deck: snap.context.deck,
+          discard: snap.context.discard,
+          shield: caps.shield,
+          maxShield: caps.maxShield,
+          mana: caps.mana,
+          maxMana: caps.maxMana,
+        });
+      }
+      setRun((current) => ({ ...current, progression: next }));
+    },
+    [explorationActor],
+  );
 
   const handleLoadoutChange = useCallback(
     (next: PlayerLoadout) => {
@@ -399,6 +424,7 @@ function GameShell() {
         type: 'START_EXPLORATION',
         seed: resolveRunSeed(),
         deckCardIds: loadout.deckCardIds,
+        skills: progression.skills,
       });
     }
     setRun((current) => ({
@@ -594,6 +620,7 @@ function GameShell() {
         playerGender={profile.gender}
         playerName={profile.name}
         unclaimedCardCount={unclaimedCardChoices(progression, loadout)}
+        unclaimedSkillCount={getAvailableSkillPoints(progression)}
       />
     );
   } else if (screen === 'player') {
@@ -603,6 +630,7 @@ function GameShell() {
         loadout={loadout}
         profile={profile}
         onLoadoutChange={handleLoadoutChange}
+        onProgressionChange={handleProgressionChange}
         exploration={explorationContext}
         onBack={() => setRun((current) => ({ ...current, screen: playerReturnScreen }))}
         backLabel={

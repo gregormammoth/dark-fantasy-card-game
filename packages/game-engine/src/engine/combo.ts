@@ -9,9 +9,11 @@ import { appendLog } from './battleLog';
 import { applyPoisonTick } from './poison';
 import { buildAnimationCue, captureBattleSnapshot, clearDamageResult } from './animationCue';
 import { awardCardXp } from './progression/xp';
+import { getComboCap } from './progression/skills';
 import { nextInt } from './rng';
+import { PLAYER_SKILL_BASE } from '@dark-fantasy/shared/types/progression';
 
-export const COMBO_CAP = 2;
+export const COMBO_CAP = PLAYER_SKILL_BASE.maxCombo;
 
 export function isInstantPlayCard(card: CardInstance): boolean {
   const effects = card.definition.effects;
@@ -53,7 +55,7 @@ export function addToCombo(battle: BattleContext, cardInstanceId: string): Battl
   if (isInstantPlayCard(battle.player.hand[cardIndex])) {
     return playInstantCard(battle, cardInstanceId);
   }
-  if (battle.combo.length >= COMBO_CAP) {
+  if (battle.combo.length >= getComboCap(battle.progression)) {
     return battle;
   }
 

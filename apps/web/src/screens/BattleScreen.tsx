@@ -6,7 +6,7 @@ import type { BattleContext } from '@dark-fantasy/shared/types/battle';
 import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { getPlayerHealth, getEnemyHealth } from '@dark-fantasy/game-engine/engine/health';
 import { previewCombo } from '@dark-fantasy/game-engine/engine/comboPreview';
-import { COMBO_CAP, getTotalXpGained, getXpGained } from '@dark-fantasy/game-engine';
+import { getComboCap, getTotalXpGained, getXpGained } from '@dark-fantasy/game-engine';
 import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
 import { useGameOverAudio } from '@/audio/useGameOverAudio';
@@ -358,14 +358,14 @@ export function BattleScreen({
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_356px]">
           <Combo
             cards={battle.combo}
-            comboCap={COMBO_CAP}
+            comboCap={getComboCap(battle.progression)}
             disabled={!isPlayerTurn || isResolving}
             onRemoveCard={(id) => actor.send({ type: 'REMOVE_FROM_COMBO', cardInstanceId: id })}
           />
           <ComboPreviewPanel
             preview={comboPreview}
             comboSize={battle.combo.length}
-            comboCap={COMBO_CAP}
+            comboCap={getComboCap(battle.progression)}
             enemyHealth={enemyHealth}
             playerShield={battle.player.shield}
             playerMaxShield={battle.player.maxShield}
@@ -387,7 +387,7 @@ export function BattleScreen({
           endTurnDisabled={isResolving}
           showEndTurn={isPlayerTurn}
           comboSize={battle.combo.length}
-          comboAtCap={battle.combo.length >= COMBO_CAP}
+          comboAtCap={battle.combo.length >= getComboCap(battle.progression)}
           spendingIndices={spendState.player?.indices}
           spendMode={spendState.player?.mode}
           onAddToCombo={(id) => actor.send({ type: 'ADD_TO_COMBO', cardInstanceId: id })}

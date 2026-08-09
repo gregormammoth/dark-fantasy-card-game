@@ -51,9 +51,9 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - Shared **Run** state (one continuous playthrough)
 - Exploration ↔ Battle with the same run
 - Class XP → levels → unlocks → deck changes
-- **Player level** from total class levels (proposed 1 per 5 class levels) → choose one combat skill (+1 max shield / combo / mana / deck / draw per turn)
+- **Player level** from total class levels (1 per 5 class levels) → choose one combat skill (+1 max shield / combo / mana / deck / draw per turn)
 - Skills are **not** hard-bound to classes (Skyrim-style: use skills for XP, choose attributes on level-up)
-- **Hand size stays constant** (4); draw-per-turn and max combo become skills
+- **Hand size stays constant** (4); draw-per-turn and max combo are skills
 - **Reward loop** (action → reward → progression → new options)
 - **Quests** (engine logic + player-facing quest log / UI)
 - **Money** in a light inventory (earn / spend; not full item loadout)
@@ -167,8 +167,8 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Battle core | Partial — playable; conditional combo bonuses order-independent; deck/shield caps still fixed content defaults |
 | Class XP award + UI | In place |
 | Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
-| Player level + choosable skills | Designed in [MECHANICS.md](./MECHANICS.md#planned-progression-not-implemented) — not implemented |
-| Progression stats (deck / shield / combo / mana / draw) | Not started — fixed content defaults; skills planned as player-level picks |
+| Player level + choosable skills | Live — see [MECHANICS.md](./MECHANICS.md#player-level-and-combat-skills) |
+| Progression stats (deck / shield / combo / mana / draw) | Live player-level skills (soft ceilings enforced on pick) |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Not started |
@@ -207,7 +207,7 @@ Update this table as milestones land.
 - [x] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
 - [ ] Earn and spend money (light inventory)
-- [ ] Grow combat skills via **player level** picks (max shield, max combo, max mana, max deck, draw per turn) — see MECHANICS
+- [x] Grow combat skills via **player level** picks (max shield, max combo, max mana, max deck, draw per turn) — see MECHANICS
 - [x] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
 - [x] Escape Hollowfort (Exit Gate → world)
@@ -505,30 +505,30 @@ Class XP → Class Level → Unlockable cards (spend free class levels)
 
 - [x] Independent class levels from XP thresholds (10 XP = 1 level per class)
 - [x] Unlock new cards by spending free class levels (1 level per improved card)
-- [ ] **Player level** derived from total class levels (start at 5 class levels = 1 player level)
-- [ ] On player level-up: choose one skill — max shield, max combo, max mana, max deck, or draw per turn
-- [ ] Skills are **shared** (not hard-bound to Fighter/Rogue/Wizard/Survivor/Seeker)
-- [ ] Hand size remains a **constant** (default 4) — not a skill
+- [x] **Player level** derived from total class levels (5 class levels = 1 player level)
+- [x] On player level-up: choose one skill — max shield, max combo, max mana, max deck, or draw per turn
+- [x] Skills are **shared** (not hard-bound to Warrior/Rogue/Wizard/Survivor/Seeker)
+- [x] Hand size remains a **constant** (default 4) — not a skill
 - [ ] Avoid heavy level-curve tuning until analytics / playtests inform pace
 
-Design notes live in [MECHANICS.md — Planned Progression](./MECHANICS.md#planned-progression-not-implemented).
+Design notes live in [MECHANICS.md — Player Level and Combat Skills](./MECHANICS.md#player-level-and-combat-skills).
 
 ### Combat skills & caps (progression)
 
-Today `DECK_CAP`, battle `maxShield`, unlimited combo size, fixed draw-1, and no mana are content/engine defaults. They should become **Run / progression skills** chosen at player level-up (gear/items may modify later).
+Combat ceilings are **player skills** chosen at player level-up (gear/items may modify later).
 
 - [x] Character screen deck composition (add / remove, deck cap)
 - [x] Unlock cards by spending free class levels (bound to loadout + battles)
 - [x] Twelve improved cards available on Character screen (1 level each)
 - [x] Mid-run unlock rebuilds exploration/battle deck for the next fight
-- [ ] **Max shield** — live skill; battles + exploration share the same cap
-- [ ] **Max combo** — cap cards in the combo (proposed start 2)
-- [ ] **Max mana** + battle mana resource; wizard cards gain or spend mana
-- [ ] **Max deck** — live loadout/HP ceiling (tighten default so unlocks force cuts)
-- [ ] **Draw per turn** — skill (proposed start 1; soft ceiling ~3)
-- [ ] Character UI shows skills + unspent player-level picks
+- [x] **Max shield** — live skill; battles + exploration share the same cap
+- [x] **Max combo** — cap cards in the combo (start 2)
+- [x] **Max mana** + battle mana resource; wizard cards gain or spend mana
+- [x] **Max deck** — live loadout/HP ceiling
+- [x] **Draw per turn** — skill (start 1; soft ceiling 3)
+- [x] Character UI shows skills + unspent player-level picks
 - [ ] At least one Hollowfort path that makes a skill pick or upgrade feel earned (level-up is the primary path; optional quest/item later)
-- [ ] Encounters / events can still change *current* shield without raising the skill cap
+- [x] Encounters / events can still change *current* shield without raising the skill cap
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
 

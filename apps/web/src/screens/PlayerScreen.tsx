@@ -1,11 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CardClass, CardDefinition } from '@dark-fantasy/shared/types/card';
 import type { ExplorationContext, RunQuest } from '@dark-fantasy/shared/types/exploration';
-import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type {
+  PlayerLoadout,
+  PlayerProgression,
+  PlayerSkillId,
+} from '@dark-fantasy/shared/types/progression';
+import { PLAYER_SKILL_IDS } from '@dark-fantasy/shared/types/progression';
 import type { PlayerProfile } from '@dark-fantasy/shared/types/player';
 import {
+  chooseSkill,
+  getAvailableSkillPoints,
   getClassLevel,
   getClassXp,
+  getDeckCap,
+  getPlayerLevel,
+  getPlayerLevelProgress,
   getPlayerPortraitForDeck,
   getTotalXp,
   getXpIntoLevel,
@@ -13,6 +23,7 @@ import {
   toggleDeckCard,
 } from '@dark-fantasy/game-engine';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
+import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -25,7 +36,6 @@ import {
   type QuestItemView,
 } from '@/lib/questUi';
 import {
-  DECK_CAP,
   LEVEL_COST,
   PLAYER_CLASSES,
   XP_PER_LEVEL,
@@ -45,6 +55,7 @@ interface PlayerScreenProps {
   loadout: PlayerLoadout;
   profile: PlayerProfile;
   onLoadoutChange: (loadout: PlayerLoadout) => void;
+  onProgressionChange: (progression: PlayerProgression) => void;
   exploration?: ExplorationContext | null;
   onBack: () => void;
   backLabel?: string;
@@ -92,6 +103,7 @@ export function PlayerScreen({
   loadout,
   profile,
   onLoadoutChange,
+  onProgressionChange,
   exploration = null,
   onBack,
   backLabel = '← World Map',
@@ -104,11 +116,24 @@ export function PlayerScreen({
     {},
   );
   const [confirmCardId, setConfirmCardId] = useState<string | null>(null);
+  const [levelUpOpen, setLevelUpOpen] = useState(false);
   const [questFilter, setQuestFilter] = useState<QuestFilter>('all');
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
   const [itemFilter, setItemFilter] = useState<ItemFilter>('all');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const progressionCoach = useCoachStep(profile.playerId, 'progression', activeTab === 'character');
+  const availableSkillPoints = getAvailableSkillPoints(progression);
+  const playerLevel = getPlayerLevel(progression);
+  const playerLevelProgress = getPlayerLevelProgress(progression);
+  const deckCap = getDeckCap(progression);
+
+  const didAutoOpenLevelUp = useRef(false);
+  useEffect(() => {
+    if (!didAutoOpenLevelUp.current && availableSkillPoints > 0) {
+      didAutoOpenLevelUp.current = true;
+      setLevelUpOpen(true);
+    }
+  }, [availableSkillPoints]);
 
   const cardById = useMemo(() => {
     const map: Record<string, CardDefinition> = {};
@@ -147,7 +172,10 @@ export function PlayerScreen({
     .slice(0, 2)
     .map((id) => getClassLabel(id, t));
   const totalXp = getTotalXp(progression);
-  const overallLevel = Math.max(1, getClassLevel(totalXp) + 1);
+  const playerLevelPct = Math.max(
+    0,
+    Math.min(100, Math.round((playerLevelProgress.current / playerLevelProgress.total) * 100)),
+  );
 
   const selectedTheme = classThemes[selectedClassId];
   const selectedAvailableLevels = classSpendableLevels(progression, loadout, selectedClassId);
@@ -214,7 +242,7 @@ export function PlayerScreen({
     }
     const status = cardStatusFor(card, progression, loadout);
     if (status === 'unlocked') {
-      onLoadoutChange(toggleDeckCard(loadout, card.id));
+      onLoadoutChange(toggleDeckCard(loadout, card.id, progression));
       return;
     }
     if (status === 'available') {
@@ -231,6 +259,17 @@ export function PlayerScreen({
       onLoadoutChange(next);
     }
     setConfirmCardId(null);
+  }
+
+  function onChooseSkill(skillId: PlayerSkillId) {
+    const next = chooseSkill(progression, skillId);
+    if (!next) {
+      return;
+    }
+    onProgressionChange(next);
+    if (getAvailableSkillPoints(next) <= 0) {
+      setLevelUpOpen(false);
+    }
   }
 
   function actionButton(card: CardDefinition) {
@@ -342,7 +381,14 @@ export function PlayerScreen({
                   </div>
                   <div>
                     <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.level')}</div>
-                    <div className="mt-1 font-cinzel text-[14px] text-[#c9a24a]">{overallLevel}</div>
+                    <div className="mt-1 flex items-center gap-2 font-cinzel text-[14px] text-[#c9a24a]">
+                      {playerLevel}
+                      {availableSkillPoints > 0 && (
+                        <span className="rounded-[3px] bg-[#c9a24a] px-1.5 py-0.5 font-cinzel text-[9px] tracking-wide text-[#1a1208]">
+                          +{availableSkillPoints}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.totalXp')}</div>
@@ -353,11 +399,64 @@ export function PlayerScreen({
                   <div>
                     <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.deck')}</div>
                     <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {t('player.deckCount', { count: deck.length, cap: DECK_CAP })}
+                      {t('player.deckCount', { count: deck.length, cap: deckCap })}
                     </div>
                   </div>
                 </div>
+                <div className="mt-1">
+                  <div className="mb-1 flex items-baseline justify-between gap-2">
+                    <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">
+                      {t('player.level')}
+                    </span>
+                    <span className="text-[11px] text-[#8a7f72]">
+                      {t('player.playerLevelBar', {
+                        current: playerLevelProgress.current,
+                        total: playerLevelProgress.total,
+                      })}
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-sm bg-[rgba(0,0,0,.4)]">
+                    <div
+                      className="h-full bg-[#c9a24a] transition-[width] duration-300"
+                      style={{ width: `${playerLevelPct}%` }}
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <div className="mt-1 flex flex-wrap items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(0,0,0,.2)] px-4 py-3">
+              <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.skills')}</span>
+              <div className="flex flex-1 flex-wrap gap-x-4 gap-y-1">
+                {PLAYER_SKILL_IDS.map((skillId) => (
+                  <span key={skillId} className="text-[12px] text-[#e8ddcf]">
+                    <span className="text-[#8a7f72]">
+                      {t(
+                        (
+                          {
+                            maxShield: 'player.skill.maxShield',
+                            maxCombo: 'player.skill.maxCombo',
+                            maxMana: 'player.skill.maxMana',
+                            maxDeck: 'player.skill.maxDeck',
+                            drawPerTurn: 'player.skill.drawPerTurn',
+                          } as const
+                        )[skillId],
+                      )}
+                    </span>
+                    {' '}
+                    <span className="font-cinzel text-[#c9a24a]">{progression.skills[skillId]}</span>
+                  </span>
+                ))}
+              </div>
+              {availableSkillPoints > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setLevelUpOpen(true)}
+                  className="rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[rgba(224,181,82,.12)] px-3 py-1.5 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:brightness-110"
+                >
+                  {t('player.chooseSkill')}
+                </button>
+              )}
             </div>
 
             <div className="mt-1 flex gap-2">
@@ -569,14 +668,14 @@ export function PlayerScreen({
                   {t('player.currentDeck')}
                 </span>
                 <span className="text-[12px] text-[#8a7f72]">
-                  {t('player.currentDeckCount', { count: deck.length, cap: DECK_CAP })}
+                  {t('player.currentDeckCount', { count: deck.length, cap: deckCap })}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
                 {PLAYER_CLASSES.map((classId) => {
                   const theme = classThemes[classId];
                   const count = deckByClass[classId];
-                  const pct = DECK_CAP > 0 ? Math.round((count / DECK_CAP) * 100) : 0;
+                  const pct = deckCap > 0 ? Math.round((count / deckCap) * 100) : 0;
                   return (
                     <div key={classId} className="flex items-center gap-3">
                       <span
@@ -636,6 +735,15 @@ export function PlayerScreen({
           afterLevels={Math.max(0, confirmAvailable - LEVEL_COST)}
           onConfirm={confirmUnlock}
           onCancel={() => setConfirmCardId(null)}
+        />
+      )}
+
+      {levelUpOpen && availableSkillPoints > 0 && (
+        <LevelUpSkillModal
+          progression={progression}
+          availablePoints={availableSkillPoints}
+          onChoose={onChooseSkill}
+          onCancel={() => setLevelUpOpen(false)}
         />
       )}
     </div>

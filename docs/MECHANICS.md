@@ -4,9 +4,9 @@ This document describes the game rules implemented today and the planned directi
 
 ## Scope
 
-**Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, and prison encounter pressure on cards and shields.
+**Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, player level + choosable combat skills, and prison encounter pressure on cards and shields.
 
-**Planned later:** player level + choosable combat skills (max shield, combo size, max mana growth, deck cap, draw per turn), money economy, and further world content beyond the prison slice. See [Planned Progression](#planned-progression-not-implemented).
+**Planned later:** money economy and further world content beyond the prison slice. See [Player Level and Combat Skills](#player-level-and-combat-skills) for the live progression model.
 
 Battles are the combat layer of the larger run. Exploration carries hand, deck, discard, and shield into fights.
 
@@ -29,7 +29,7 @@ Encounters can:
 | `modifyShield` | Change current shield (`value`) only; capped at `maxShield` |
 | `modifyMana` | Change current mana (`value`) only; capped at `maxMana` |
 
-Exploration tracks `shield` / `maxShield` and `mana` / `maxMana`. Current values can change during exploration; today both caps are fixed from content defaults. Planned: caps become **player skills** chosen at player level-up (see [Planned Progression](#planned-progression-not-implemented)). Shield and mana carry into location battles; after a **won** battle, both restore to their max. The encounter modal lists cards, shield, and mana deltas that changed.
+Exploration tracks `shield` / `maxShield` and `mana` / `maxMana`. Caps come from **player skills** (defaults 2 / 2); raising a skill mid-run updates the live exploration caps. Shield and mana carry into location battles; after a **won** battle, both restore to their max. The encounter modal lists cards, shield, and mana deltas that changed.
 
 ---
 
@@ -129,6 +129,8 @@ After the enemy turn, temporary round effects expire:
 - **Barrier** on the player is removed (unused barrier is lost).
 - **Damage reduction** (`reduceDamagePercent`) is cleared.
 
+Enemy barrier is **not** cleared here — it stays up for the next player combo, then expires when the enemy turn begins again.
+
 Then the next player turn begins.
 
 ---
@@ -142,7 +144,7 @@ Damage is a number of **cards to remove** from the target.
 When the player is hit, defenses apply in this order:
 
 1. **Damage reduction** (if active this round) — reduction amount is rounded **up** (`ceil`). Example: 3 damage at 50% reduction → 2 reduced, 1 taken.
-2. **Barrier** (player only) — absorbs damage until depleted.
+2. **Barrier** — absorbs damage until depleted.
 3. **Shield** — absorbs damage until depleted, unless the attack **ignores shield**.
 4. **Card loss** — remaining damage removes cards.
 
@@ -177,10 +179,10 @@ Shield blocks damage 1-for-1 before cards are lost. After a **won** location bat
 
 ## Barrier
 
-- **Player only.**
-- Blocks damage like shield (1-for-1) but is applied **before** shield when the player is hit.
-- **Expires at end of round** — all unused barrier is lost.
-- Does not have a separate cap beyond what cards grant.
+- Blocks damage like shield (1-for-1) and is applied **before** shield when that side is hit.
+- **Player barrier** expires at end of round — unused barrier is lost after the enemy turn.
+- **Enemy barrier** (from enemy cards or `barrierPerTurn`) lasts until after the next player combo (or skipped turn), then unused barrier expires before the enemy acts again.
+- Does not have a separate cap beyond what cards / regenerating effects grant.
 
 ---
 
@@ -433,18 +435,16 @@ Default setup is in `src/data/battle.json`:
 
 ---
 
-## Planned Progression (Not Implemented)
+## Player Level and Combat Skills
 
-Inspiration: Skyrim-style separation of **skills you use** (classes / cards) from **attributes you choose** when the character levels. How you level matters — not only how high the number is.
+Inspiration: Skyrim-style separation of **skills you use** (classes / cards) from **attributes you choose** when the character levels.
 
-### Design rule
-
-**Do not** hard-bind combat ceilings to classes (e.g. Warrior always raises max shield). Classes earn XP and unlock cards; **player level** grants a free choice among shared combat skills. A pure Wizard build can still invest in max shield; a Warrior can still raise mana if they splash wizard cards.
+**Do not** hard-bind combat ceilings to classes. Classes earn XP and unlock cards; **player level** grants a free choice among shared combat skills.
 
 ```text
 Play cards → class XP → class levels
                 ↓
-     every N class levels (proposed: 5) → +1 player level
+     every 5 class levels → +1 player level
                 ↓
      choose one skill to raise (+1)
                 ↓
@@ -453,38 +453,36 @@ Play cards → class XP → class levels
 
 ### Player level
 
-| Idea | Proposal |
-|------|----------|
+| Idea | Rule |
+|------|------|
 | Source | Sum of class levels across all classes (Warrior + Rogue + Wizard + Survivor + Seeker) |
-| Rate | **1 player level per 5 class levels** (tunable; start here) |
-| On level-up | Player **chooses exactly one** skill to increase by 1 |
-| Does not auto-raise | Skills never rise just from playing related cards — only from the level-up choice (plus optional gear / items later) |
+| Rate | **1 player level per 5 class levels** |
+| On level-up | Player **chooses exactly one** skill to increase by 1 (Character screen) |
+| Does not auto-raise | Skills never rise just from playing related cards — only from the level-up choice |
 
-Class levels remain independent (10 XP = 1 class level). Spending a class level on an improved card still costs that class’s free levels; it does not spend the player-level skill point.
+Class levels remain independent (10 XP = 1 class level). Spending a class level on an improved card does not spend the player-level skill point.
+
+Unspent skill points are derived: `floor(totalClassLevels / 5) − sum(skill − base)`.
 
 Example: 3 Warrior + 2 Rogue = 5 class levels → player level 1 → pick Max Combo or Max Shield, etc.
 
-### Combat skills (choosable attributes)
+### Combat skills
 
-Hand size stays a **constant** (default 4). It is not a skill. Everything below is a skill the player may raise at player level-up.
+Hand size stays a **constant** (default 4). It is not a skill.
 
-| Skill | Role | Proposed start | Soft ceiling (tunable) | Notes |
-|-------|------|---------------:|-----------------------:|-------|
-| **Max shield** | Guard capacity (armor ceiling) | 2 | 4 | Cards that grant shield still refill *current* guard up to this cap. Inventory armor (later) may help within or toward this cap — not a second uncapped stack. |
-| **Max combo** | Cards allowed in the combo at once | 2 (current `COMBO_CAP`) | 5 | A low default makes combo-bonus cards aspirational; the skill (later) raises the ceiling. |
-| **Max mana** | Cap for battle mana | 2 | 5 | New resource; see [Mana](#mana-planned). |
-| **Max deck** | Loadout / HP ceiling | 15 (current `DECK_CAP`) | ~18–20 | Deck size is HP *and* consistency. Raising the cap is room to specialize, not free bulk — improved unlocks force a cut when the deck is full. |
-| **Draw per turn** | Cards drawn at the start of each player turn after the opening hand | 1 | 3 | Opening hand still fills to hand size (4). Seeker cards may draw *extra* beyond this baseline. |
-
-Suggested early defaults if shipping a first pass: combo max **2**, draw **1**, shield **2**, mana **2/2**, deck cap tight enough that improved unlocks force a cut.
+| Skill | Role | Start | Soft ceiling (hard pick cap) | Notes |
+|-------|------|------:|-----------------------------:|-------|
+| **Max shield** | Guard capacity | 2 | 4 | Cards refill current guard up to this cap. |
+| **Max combo** | Cards in combo at once | 2 | 5 | Used by battle combo slots. |
+| **Max mana** | Cap for battle / exploration mana | 2 | 5 | See [Mana](#mana). |
+| **Max deck** | Loadout / HP ceiling | 15 | 18 | Improved unlocks force a cut when the deck is full. |
+| **Draw per turn** | Cards drawn at each player turn after the opening hand | 1 | 3 | Opening hand still fills to hand size (4). Seeker dig cards draw *extra*. |
 
 ### Mana
 
-Battle mana is **implemented** (default max **2**). See [Mana](#mana) under Effect System. Raising max mana via player-level skill picks remains planned.
+Battle mana is **implemented** (default max **2**, raised via the max mana skill). See [Mana](#mana) under Effect System.
 
-Rules in play:
-
-- Mana is **run-scoped** like shield: starts full (**2 / 2**), carries into battle from exploration, restores to max after a won fight.
+- Mana is **run-scoped** like shield: starts full, carries into battle from exploration, restores to max after a won fight.
 - Cards either **gain** mana or **spend** mana — wizard kit follows that split.
 - Spend scales damage or barrier by mana spent (all current mana), shown in combo preview.
 - Exploration encounters can change current mana via `modifyMana`.
@@ -493,13 +491,7 @@ Rules in play:
 
 Fifth class: **information → precision**. Dig and mark, then strike the weak point.
 
-| | |
-|-------|--------------------------------|
-| Fantasy | Scout who maps corridors and tells |
-| Contrast with Rogue | Rogue is opportunism; Seeker is preparation |
-| Mono-class rule | Dig/setup cards plus marked payoffs |
-
-**Implemented loop:** Mark the Joint → Weak-Point Strike / Case Closed. Dig with Quick Survey / Deep Search (**instant draw** — resolves immediately, does not use a combo slot, so you can dig into Backstab or other payoff cards); Anatomy Lesson scales with cards drawn this battle.
+**Implemented loop:** Mark the Joint → Weak-Point Strike / Case Closed. Dig with Quick Survey / Deep Search (**instant draw** — resolves immediately, does not use a combo slot); Anatomy Lesson scales with cards drawn this battle.
 
 Peek/cancel enemy-intent cards remain planned.
 
@@ -517,10 +509,9 @@ If inventory armor appears later: treat **max shield** as how well you can brace
 
 ### Open balance knobs
 
-- Exact ratio: class levels → player level (5:1 is a starting guess).
-- Whether enemy bands / world threats ever scale with **player level** (Skyrim-like risk: high level, weak combat picks). Prefer **not** for Hollowfort Beta — keep enemy difficulty map-authored.
+- Exact ratio: class levels → player level (5:1 now).
+- Whether enemy bands / world threats ever scale with **player level**. Prefer **not** for Hollowfort Beta — keep enemy difficulty map-authored.
 - Whether items can raise skills temporarily vs permanently.
-- Soft ceilings per skill so one dump-stat does not trivialize intro bands.
 
 ---
 
@@ -530,7 +521,7 @@ The full game extends the Hollowfort run into the wider map:
 
 1. **Global map** — move between locations; choose routes.
 2. **Encounters** — events, shops, battles (enemy identity from content / `enemies.json`).
-3. **Class XP + player level** — cards unlock from class levels; combat skills rise from player-level choices.
+3. **Class XP + player level** — cards unlock from class levels; combat skills rise from player-level choices (live in the prison slice).
 4. **Deck building** — assemble a personal deck under the live **max deck** skill; mid-run unlocks rebuild the exploration deck.
 
 Battles in this document are the combat resolution for that loop.

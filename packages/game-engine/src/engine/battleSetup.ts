@@ -20,7 +20,7 @@ import {
 } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
 import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
-import { createInitialProgression } from './progression/xp';
+import { createInitialProgression, normalizeProgression } from './progression/xp';
 import { createInitialLoadout, getPlayerPortraitForDeck } from './progression/loadout';
 import { reconcilePlayerCardPiles } from './playerPiles';
 import { cloneRng, createRng } from './rng';
@@ -87,6 +87,7 @@ export function createInitialBattle(
 ): BattleContext {
   resetLogCounter();
 
+  progression = normalizeProgression(progression);
   const rng = rngState ? cloneRng(rngState) : createRng();
   const deckIds =
     playerDeckIds && playerDeckIds.length > 0
@@ -122,15 +123,16 @@ export function createInitialBattle(
       ? enemyOverride.deckCardIds
       : buildEnemyDeckIds(enemyOverride?.deckSize);
   const enemyDeck = shuffle(buildDeck(enemyDeckIds), rng);
-  const playerMaxShield =
-    playerPiles?.maxShield ?? battleData.player.maxShield ?? 2;
+  const skillMaxShield = progression.skills?.maxShield ?? battleData.player.maxShield ?? 2;
+  const skillMaxMana = progression.skills?.maxMana ?? DEFAULT_PLAYER_MAX_MANA;
+  const playerMaxShield = playerPiles?.maxShield ?? skillMaxShield;
   const enemyMaxShield =
     enemyOverride?.maxShield ?? battleData.enemy.maxShield ?? 2;
   const enemyStartingShield =
     enemyOverride?.startingShield ?? battleData.enemy.startingShield ?? 2;
   const playerStartingShield =
-    playerPiles?.shield ?? battleData.player.startingShield ?? 2;
-  const playerMaxMana = playerPiles?.maxMana ?? DEFAULT_PLAYER_MAX_MANA;
+    playerPiles?.shield ?? battleData.player.startingShield ?? skillMaxShield;
+  const playerMaxMana = playerPiles?.maxMana ?? skillMaxMana;
   const playerStartingMana = playerPiles?.mana ?? playerMaxMana;
   const playerMaxHealth = playerHand.length + playerDeck.length + playerDiscard.length;
 
@@ -228,7 +230,8 @@ export function drawAtTurnStart(battle: BattleContext): BattleContext {
     next.lastPlayerDrawCount = 0;
     return next;
   }
-  const count = battle.isFirstPlayerTurn ? startingHandSize : 1;
+  const drawPerTurn = battle.progression.skills?.drawPerTurn ?? 1;
+  const count = battle.isFirstPlayerTurn ? startingHandSize : drawPerTurn;
   const next = drawPlayerCards(battle, count);
   next.isFirstPlayerTurn = false;
   return next;

@@ -70,4 +70,11 @@ describe('progression xp', () => {
     expect(next).not.toBe(initial);
     expect(next.classes).not.toBe(initial.classes);
   });
+
+  it('preserves skills when awarding class xp', () => {
+    const initial = createInitialProgression();
+    initial.skills.maxCombo = 3;
+    const next = awardCardXp(initial, 'wizard');
+    expect(next.skills.maxCombo).toBe(3);
+  });
 });

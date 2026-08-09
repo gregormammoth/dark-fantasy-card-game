@@ -74,6 +74,7 @@
     "seedLabel": "SEME {seed}",
     "questLog": "DNEVNIK ZADATAKA",
     "unclaimedCards": "Novih karata za izbor: {count}",
+    "unclaimedSkills": "Poena veština za trošenje: {count}",
     "activeThreads": "AKTIVNE NITI",
     "noQuestsYet": "Još nema zadataka. Razgovaraj sa NPC frakcija.",
     "active": "AKTIVAN",
@@ -248,7 +249,19 @@
     "notYetFound": "Još nije pronađeno",
     "backWorld": "← Mapa sveta",
     "backPrison": "← Zatvor",
-    "xpBar": "NIV {level} · {current}/{total} XP"
+    "xpBar": "NIV {level} · {current}/{total} XP",
+    "playerLevelBar": "{current} / {total} nivoa klasa",
+    "skills": "VEŠTINE",
+    "skillPoints": "{count} poen veštine",
+    "skillPointsPlural": "{count} poena veština",
+    "chooseSkill": "IZABERI VEŠTINU",
+    "skill": {
+      "maxShield": "Maks. štit",
+      "maxCombo": "Maks. kombo",
+      "maxMana": "Maks. mana",
+      "maxDeck": "Maks. špil",
+      "drawPerTurn": "Vuča po potezu"
+    }
   },
   "settings": {
     "ariaLabel": "Podešavanja",
@@ -324,6 +337,16 @@
     "after": "Posle otključavanja: {count} niv.",
     "confirm": "OTKLJUČAJ",
     "cancel": "OTKAŽI"
+  },
+  "levelUpModal": {
+    "title": "NIVO LIKA",
+    "headline": "Povećaj borbenu veštinu",
+    "body": "Svakih pet nivoa klasa daje jedan poen veštine. Izaberi gde da uložiš.",
+    "pointsLabel": "Dostupni poeni",
+    "nextValue": "{current} → {next}",
+    "atCap": "Na maksimumu",
+    "choose": "+1",
+    "later": "KASNIJE"
   },
   "actionPicker": {
     "eyebrow": "POTROŠI AKCIJU",

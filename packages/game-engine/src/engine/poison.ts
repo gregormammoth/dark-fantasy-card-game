@@ -47,17 +47,22 @@ export function expireRoundEffects(battle: BattleContext): BattleContext {
     appendLog(next, `Unused barrier expired (${unused}).`, 'barrier');
   }
 
-  if (next.enemy.barrier > 0) {
-    const unused = next.enemy.barrier;
-    next.enemy.barrier = 0;
-    appendLog(next, `${next.enemy.name}'s unused barrier expired (${unused}).`, 'barrier');
-  }
-
   if (next.damageReductionPercent > 0) {
     appendLog(next, 'Damage reduction wore off.', 'shield');
   }
 
   next.damageReductionPercent = 0;
+  return next;
+}
+
+export function expireEnemyBarrier(battle: BattleContext): BattleContext {
+  if (battle.enemy.barrier <= 0) {
+    return battle;
+  }
+  const next = structuredClone(battle);
+  const unused = next.enemy.barrier;
+  next.enemy.barrier = 0;
+  appendLog(next, `${next.enemy.name}'s unused barrier expired (${unused}).`, 'barrier');
   return next;
 }
 

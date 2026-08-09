@@ -11,7 +11,7 @@ import {
   resolveEnemyTurn,
   startPlayerTurn,
 } from '../engine/combo';
-import { expireRoundEffects, logVictory, logDefeat } from '../engine/poison';
+import { expireRoundEffects, expireEnemyBarrier, logVictory, logDefeat } from '../engine/poison';
 
 function clearActivePlay(context: BattleContext): BattleContext {
   const next = structuredClone(context);
@@ -66,6 +66,7 @@ export const battleMachine = setup({
     resolveEnemyTurn: assign(({ context }) => resolveEnemyTurn(context)),
     clearActivePlay: assign(({ context }) => clearActivePlay(context)),
     expireRound: assign(({ context }) => expireRoundEffects(context)),
+    expireEnemyBarrier: assign(({ context }) => expireEnemyBarrier(context)),
     logVictory: assign(({ context }) => logVictory(context)),
     logDefeat: assign(({ context }) => logDefeat(context)),
     incrementTurnCount: assign(({ context }) => incrementTurnCount(context)),
@@ -145,6 +146,7 @@ export const battleMachine = setup({
       },
     },
     enemyTurn: {
+      entry: 'expireEnemyBarrier',
       always: { target: 'animatingEnemyCard' },
     },
     animatingEnemyCard: {

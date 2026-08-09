@@ -74,6 +74,7 @@
     "seedLabel": "SEED {seed}",
     "questLog": "QUEST LOG",
     "unclaimedCards": "{count} new card(s) to choose",
+    "unclaimedSkills": "{count} skill point(s) to spend",
     "activeThreads": "ACTIVE THREADS",
     "noQuestsYet": "No quests yet. Talk to faction NPCs.",
     "active": "ACTIVE",
@@ -251,7 +252,19 @@
     "notYetFound": "Not yet found",
     "backWorld": "← World Map",
     "backPrison": "← Prison",
-    "xpBar": "LV {level} · {current}/{total} XP"
+    "xpBar": "LV {level} · {current}/{total} XP",
+    "playerLevelBar": "{current} / {total} class levels",
+    "skills": "SKILLS",
+    "skillPoints": "{count} skill point",
+    "skillPointsPlural": "{count} skill points",
+    "chooseSkill": "CHOOSE SKILL",
+    "skill": {
+      "maxShield": "Max Shield",
+      "maxCombo": "Max Combo",
+      "maxMana": "Max Mana",
+      "maxDeck": "Max Deck",
+      "drawPerTurn": "Draw Per Turn"
+    }
   },
   "settings": {
     "ariaLabel": "Settings",
@@ -282,7 +295,7 @@
     "battleTitle": "STACK YOUR COMBO",
     "battleBody": "Tap cards from your hand to stack them into a combo — the preview shows the damage and shield you'll deal. When you're set, press END TURN to unleash it.",
     "progressionTitle": "LEVEL UP & REFORGE",
-    "progressionBody": "Winning fights earns class XP. Spend levels to unlock improved cards, then add or remove cards to reshape your deck — your deck also decides your battle portrait."
+    "progressionBody": "Winning fights earns class XP. Every five class levels grant a player level — spend it on a combat skill. Class levels also unlock improved cards; your deck decides your battle portrait."
   },
   "questUi": {
     "locationKillWarden": "Prison Cell",
@@ -327,6 +340,16 @@
     "after": "After unlock: {count} level(s)",
     "confirm": "ADD TO DECK",
     "cancel": "CANCEL"
+  },
+  "levelUpModal": {
+    "title": "PLAYER LEVEL UP",
+    "headline": "Raise a combat skill",
+    "body": "Every five class levels grant one skill point. Choose where to invest.",
+    "pointsLabel": "Points available",
+    "nextValue": "{current} → {next}",
+    "atCap": "At maximum",
+    "choose": "+1",
+    "later": "LATER"
   },
   "actionPicker": {
     "eyebrow": "SPEND AN ACTION",

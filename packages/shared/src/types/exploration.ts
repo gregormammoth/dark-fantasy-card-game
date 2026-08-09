@@ -1,5 +1,6 @@
 import type { CardClass, CardInstance } from './card';
 import type { EnemyBand, EnemyGroup } from './enemy';
+import type { PlayerSkills } from './progression';
 import type { RngState } from './rng';
 
 export type LocationType =
@@ -217,7 +218,12 @@ export interface ExplorationContext {
 }
 
 export type ExplorationEvent =
-  | { type: 'START_EXPLORATION'; seed?: number; deckCardIds?: string[] }
+  | {
+      type: 'START_EXPLORATION';
+      seed?: number;
+      deckCardIds?: string[];
+      skills?: PlayerSkills;
+    }
   | { type: 'SELECT_LOCATION'; locationId: string }
   | { type: 'CLEAR_SELECTION' }
   | { type: 'SELECT_CARD'; cardInstanceId: string }
@@ -259,7 +265,12 @@ export type ExplorationEvent =
       phase: 'playerTurn' | 'encounter';
     }
   | { type: 'RESET' }
-  | { type: 'RESTART'; seed?: number; deckCardIds?: string[] };
+  | {
+      type: 'RESTART';
+      seed?: number;
+      deckCardIds?: string[];
+      skills?: PlayerSkills;
+    };
 
 export interface ActionOutcomeDefinition {
   message: string;

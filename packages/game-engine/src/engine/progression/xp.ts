@@ -4,6 +4,7 @@ import {
   IMPROVED_CARD_LEVEL_COST,
   XP_PER_CLASS_LEVEL,
 } from '@dark-fantasy/shared/types/progression';
+import { createInitialSkills, normalizeSkills } from './skills';
 
 const PLAYER_CLASSES: CardClass[] = ['warrior', 'rogue', 'wizard', 'survivor', 'seeker'];
 
@@ -16,6 +17,7 @@ export function createInitialProgression(): PlayerProgression {
       survivor: { xp: 0 },
       seeker: { xp: 0 },
     },
+    skills: createInitialSkills(),
   };
 }
 
@@ -29,6 +31,7 @@ export function awardCardXp(
   }
 
   return {
+    ...progression,
     classes: {
       ...progression.classes,
       [classId]: {
@@ -90,7 +93,9 @@ export function listPlayerClasses(): readonly CardClass[] {
   return PLAYER_CLASSES;
 }
 
-export function normalizeProgression(raw: PlayerProgression): PlayerProgression {
+export function normalizeProgression(
+  raw: PlayerProgression | (Omit<PlayerProgression, 'skills'> & { skills?: PlayerProgression['skills'] }),
+): PlayerProgression {
   const classes = { ...raw.classes } as PlayerProgression['classes'] & {
     fighter?: { xp: number };
   };
@@ -106,6 +111,7 @@ export function normalizeProgression(raw: PlayerProgression): PlayerProgression 
       survivor: { xp: classes.survivor?.xp ?? 0 },
       seeker: { xp: classes.seeker?.xp ?? 0 },
     },
+    skills: normalizeSkills(raw.skills),
   };
 }
 

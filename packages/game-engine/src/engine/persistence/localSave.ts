@@ -35,6 +35,7 @@ function coerceProgression(value: unknown): PlayerProgression | null {
       return null;
     }
   }
+  const skills = isRecord(value.skills) ? (value.skills as PlayerProgression['skills']) : undefined;
   return normalizeProgression({
     classes: {
       warrior,
@@ -43,6 +44,7 @@ function coerceProgression(value: unknown): PlayerProgression | null {
       survivor: classes.survivor as { xp: number },
       seeker: hasClassXp(classes.seeker) ? (classes.seeker as { xp: number }) : { xp: 0 },
     },
+    skills,
   });
 }
 

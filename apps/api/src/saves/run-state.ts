@@ -9,6 +9,13 @@ export interface ApiRunState {
       survivor: { xp: number };
       seeker: { xp: number };
     };
+    skills?: {
+      maxShield: number;
+      maxCombo: number;
+      maxMana: number;
+      maxDeck: number;
+      drawPerTurn: number;
+    };
   };
   loadout: {
     unlockedCardIds: string[];

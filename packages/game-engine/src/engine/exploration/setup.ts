@@ -16,7 +16,8 @@ import { visitLocation } from './map';
 import { drawUntilHandSize, syncActionsToHand } from './hand';
 import { setLocationEncounterQueue } from './locationEncounters';
 import { createInitialLoadout, getPlayerCardById } from '../progression/loadout';
-import { DEFAULT_PLAYER_MAX_MANA } from '../battleSetup';
+import type { PlayerSkills } from '@dark-fantasy/shared/types/progression';
+import { PLAYER_SKILL_BASE } from '@dark-fantasy/shared/types/progression';
 
 interface PrisonMapFile {
   id: string;
@@ -54,6 +55,7 @@ function buildLocations(): Record<string, LocationDefinition> {
 export function createInitialExploration(
   seed?: number,
   deckCardIds: string[] = createInitialLoadout().deckCardIds,
+  skills: PlayerSkills = PLAYER_SKILL_BASE,
 ): ExplorationContext {
   resetInstanceCounter();
   resetExplorationLogCounter();
@@ -61,6 +63,9 @@ export function createInitialExploration(
   const rng = createRng(seed);
   const locations = buildLocations();
   const startId = mapFile.startLocationId;
+  const maxShield = skills.maxShield;
+  const maxMana = skills.maxMana;
+  const startingShield = Math.min(battleData.player.startingShield ?? maxShield, maxShield);
   const context: ExplorationContext = {
     mapId: mapFile.id,
     mapName: mapFile.name,
@@ -71,10 +76,10 @@ export function createInitialExploration(
     deck: buildPlayerDeckFromIds(deckCardIds, rng),
     hand: [],
     discard: [],
-    shield: battleData.player.startingShield ?? 2,
-    maxShield: battleData.player.maxShield ?? 2,
-    mana: DEFAULT_PLAYER_MAX_MANA,
-    maxMana: DEFAULT_PLAYER_MAX_MANA,
+    shield: startingShield,
+    maxShield,
+    mana: maxMana,
+    maxMana,
     actionsRemaining: 4,
     maxActions: 4,
     handSize: 4,
