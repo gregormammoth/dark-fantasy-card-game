@@ -16,6 +16,8 @@ Battles are the combat layer of the larger run. Exploration carries hand, deck, 
 
 Each exploration turn grants **4 actions**. Spending a card or ending the turn spends actions. When the turn ends, the next turn **keeps leftover hand cards**, **draws up to hand size (4)**, then the **encounter deck** resolves on that hand.
 
+Every action costs one card from hand. Choosing the action comes first: pressing an action such as **Travel here** with no card selected opens a card picker over a dimmed screen, showing the hand and what each card would do for that action. Picking a card spends it and resolves the action; cancelling returns to the map so another action can be chosen. If a card is already selected in the hand bar, the action resolves immediately with it.
+
 Encounters can:
 
 | Effect | Behavior |
@@ -317,24 +319,35 @@ Each class has **3 attack + 3 defense** across base + improved cards.
 | Second Wind | Survivor | Attack | Recover 2 from discard; 2 damage |
 | Undying | Survivor | Defense | Restore max shield, then +1 shield |
 
-## Enemy Card Reference
+## Enemy Groups and Power Bands
 
-Current enemy (**Shadow Beast**) uses all cards from `enemyCards.json`:
+Enemy cards in `enemyCards.json` are split into **groups** so different opponents play differently, and gated by **band** so early fights stay simpler than late ones.
 
-| Card | Effects |
-|------|---------|
-| Scratch | 1 damage |
-| Bite | 2 damage |
-| Slash | 2 damage |
-| Heavy Swing | 4 damage |
-| Poison Claws | 2 damage + poison 1/turn × 3 |
-| Fire Breath | 1 damage |
-| Dark Bolt | Ignores shield; 2 damage |
-| Crushing Blow | 3 damage |
-| Tail Whip | 4 damage |
-| Shadow Strike | 5 damage |
+| Group | Feel |
+|-------|------|
+| `warrior` | Shields and drilled strikes |
+| `cutthroat` | Poison, pierce, fast cuts |
+| `ritualist` | Barrier and shield bypass |
+| `beast` | Raw damage and poison claws |
+| `undead` | Grim defence, rot, remade guard |
+| `brute` | Heavy trades, thick hide |
 
-(Deck contains duplicates of some cards.)
+A `LocationEnemy` picks its `band` and `group`; the engine resolves both into a deck and defences.
+
+| Band | Deck size | Starting shield | Max shield | Barrier / turn |
+|------|----------:|----------------:|-----------:|---------------:|
+| `intro` | 8 | 0 | 1 | 0 |
+| `common` | 12 | 2 | 2 | 0 |
+| `elite` | 16 | 2 | 3 | 0 |
+| `boss` | 22 | 3 | 4 | 1 |
+
+Rules:
+
+- A card's `minBand` is the weakest band allowed to draw it, so stronger cards appear only on stronger enemies.
+- Explicit values on the enemy (`deckSize`, `startingShield`, `maxShield`, `barrierPerTurn`) always override band defaults.
+- Cards marked `signature` are excluded from every normal pool and appear only when an enemy names them in `signatureCardIds` — used for route bosses.
+- Enemy deck size **is** enemy health, so band deck size is also the HP dial.
+- Enemy cards must not use `reduceDamagePercent`: that effect only reduces damage aimed at the player, so it would help the player instead.
 
 ---
 
@@ -366,6 +379,7 @@ Default setup is in `src/data/battle.json`:
 | Player starting hand | 4 cards on first turn (world battles); location battles keep the current exploration hand |
 | Player deck | World battles: loadout shuffled. Location battles: exploration deck + discard shuffled into the draw pile; exploration discard starts empty |
 | Enemy name | Shadow Beast |
+| Enemy deck | World battles: 12 cards from the shared pool. Location battles: resolved from the enemy's band and group |
 | Enemy starting shield | 2 |
 | Enemy max shield | 2 |
 | Enemy deck | All enemy cards, shuffled |

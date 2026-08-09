@@ -1,3 +1,5 @@
+import type { EnemyBand, EnemyGroup } from './enemy';
+
 export type CardClass = 'fighter' | 'rogue' | 'wizard' | 'survivor';
 
 export type CardType = 'attack' | 'defense';
@@ -36,6 +38,9 @@ export interface CardDefinition {
   description?: string;
   image?: string;
   improved?: boolean;
+  enemyGroup?: EnemyGroup;
+  minBand?: EnemyBand;
+  signature?: boolean;
   effects: Effect[];
 }
 

@@ -9,6 +9,7 @@
     "name": "Shadow Beast",
     "startingShield": 2,
     "maxShield": 2,
+    "deckSize": 12,
     "deck": "all"
   }
 }

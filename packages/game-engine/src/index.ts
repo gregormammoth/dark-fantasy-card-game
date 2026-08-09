@@ -1,7 +1,11 @@
 export { getPlayerHealth, getEnemyHealth } from './engine/health';
 export { previewCombo } from './engine/comboPreview';
-export { getEnemyIntent } from './engine/enemyIntent';
-export type { EnemyIntent } from './engine/enemyIntent';
+export {
+  DEFAULT_ENEMY_BAND,
+  getEnemyBandProfile,
+  listEnemyGroupCardIds,
+  resolveEnemyBattleProfile,
+} from './engine/enemyBands';
 export {
   canMoveTo,
   getLocationStatus,

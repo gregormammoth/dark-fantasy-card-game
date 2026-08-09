@@ -54,7 +54,7 @@ export const explorationMachine = setup({
       if (event.type !== 'PLAY_ACTION') {
         return context;
       }
-      const cardInstanceId = context.selectedCardInstanceId;
+      const cardInstanceId = event.cardInstanceId ?? context.selectedCardInstanceId;
       if (!cardInstanceId) {
         return context;
       }
@@ -154,13 +154,14 @@ export const explorationMachine = setup({
       if (event.type !== 'PLAY_ACTION') {
         return false;
       }
-      if (!context.selectedCardInstanceId) {
+      const cardInstanceId = event.cardInstanceId ?? context.selectedCardInstanceId;
+      if (!cardInstanceId) {
         return false;
       }
       return canPlayAction(context, event.action, {
         targetId: event.targetId,
         interactionId: event.interactionId,
-        cardInstanceId: context.selectedCardInstanceId,
+        cardInstanceId,
       });
     },
     hasPendingEncounter: ({ context }) => context.pendingEncounter !== null,

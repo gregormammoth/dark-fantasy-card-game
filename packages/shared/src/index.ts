@@ -3,6 +3,7 @@ export * from './types/battle';
 export * from './types/card';
 export * from './types/comboPreview';
 export * from './types/effect';
+export * from './types/enemy';
 export * from './types/exploration';
 export * from './types/explorationEffect';
 export * from './types/log';

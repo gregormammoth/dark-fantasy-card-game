@@ -313,6 +313,20 @@
     "confirm": "ADD TO DECK",
     "cancel": "CANCEL"
   },
+  "actionPicker": {
+    "eyebrow": "SPEND AN ACTION",
+    "title": "Choose a card to spend for action",
+    "subtitle": "The card you pick is spent on {action} and goes to your discard.",
+    "handEmpty": "No cards left in hand this turn.",
+    "cancel": "CANCEL · CHOOSE ANOTHER ACTION",
+    "actionMOVE": "travelling here",
+    "actionEXPLORE": "exploring",
+    "actionSEARCH": "searching",
+    "actionOPEN": "opening the way",
+    "actionATTACK": "attacking",
+    "actionTALK": "talking",
+    "actionREST": "resting"
+  },
   "encounter": {
     "title": "ENCOUNTER",
     "dismiss": "CONTINUE",

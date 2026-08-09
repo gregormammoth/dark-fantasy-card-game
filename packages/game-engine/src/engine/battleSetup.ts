@@ -62,16 +62,17 @@ function buildDeck(cardIds: string[]): ReturnType<typeof createCardInstance>[] {
 function buildEnemyDeckIds(deckSize?: number): string[] {
   const base = resolveDeckIds(
     battleData.enemy.deck as string[] | 'all',
-    enemyCardsData as CardDefinition[],
+    (enemyCardsData as CardDefinition[]).filter((card) => !card.signature),
   );
-  if (!deckSize || deckSize <= base.length) {
-    return deckSize ? base.slice(0, deckSize) : base;
+  const size = deckSize ?? battleData.enemy.deckSize;
+  if (!size || size <= base.length) {
+    return size ? base.slice(0, size) : base;
   }
   const ids: string[] = [];
-  while (ids.length < deckSize) {
+  while (ids.length < size) {
     ids.push(...base);
   }
-  return ids.slice(0, deckSize);
+  return ids.slice(0, size);
 }
 
 export function createInitialBattle(
@@ -114,10 +115,17 @@ export function createInitialBattle(
     playerDeck = shuffle(buildDeck(deckIds), rng);
   }
 
-  const enemyDeck = shuffle(buildDeck(buildEnemyDeckIds(enemyOverride?.deckSize)), rng);
+  const enemyDeckIds =
+    enemyOverride?.deckCardIds && enemyOverride.deckCardIds.length > 0
+      ? enemyOverride.deckCardIds
+      : buildEnemyDeckIds(enemyOverride?.deckSize);
+  const enemyDeck = shuffle(buildDeck(enemyDeckIds), rng);
   const playerMaxShield =
     playerPiles?.maxShield ?? battleData.player.maxShield ?? 2;
-  const enemyMaxShield = battleData.enemy.maxShield ?? 2;
+  const enemyMaxShield =
+    enemyOverride?.maxShield ?? battleData.enemy.maxShield ?? 2;
+  const enemyStartingShield =
+    enemyOverride?.startingShield ?? battleData.enemy.startingShield ?? 2;
   const playerStartingShield =
     playerPiles?.shield ?? battleData.player.startingShield ?? 2;
   const playerMaxHealth = playerHand.length + playerDeck.length + playerDiscard.length;
@@ -135,7 +143,7 @@ export function createInitialBattle(
     enemy: {
       name: enemyOverride?.name ?? battleData.enemy.name,
       portrait: enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT,
-      shield: Math.min(battleData.enemy.startingShield, enemyMaxShield),
+      shield: Math.min(Math.max(0, enemyStartingShield), enemyMaxShield),
       maxShield: enemyMaxShield,
       barrier: 0,
       deck: enemyDeck,

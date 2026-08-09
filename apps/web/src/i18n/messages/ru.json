@@ -310,6 +310,20 @@
     "confirm": "ОТКРЫТЬ",
     "cancel": "ОТМЕНА"
   },
+  "actionPicker": {
+    "eyebrow": "ПОТРАТИТЬ ДЕЙСТВИЕ",
+    "title": "Выберите карту для действия",
+    "subtitle": "Выбранная карта тратится на {action} и уходит в сброс.",
+    "handEmpty": "В руке больше нет карт на этот ход.",
+    "cancel": "ОТМЕНА · ВЫБРАТЬ ДРУГОЕ ДЕЙСТВИЕ",
+    "actionMOVE": "переход сюда",
+    "actionEXPLORE": "исследование",
+    "actionSEARCH": "поиск",
+    "actionOPEN": "открытие пути",
+    "actionATTACK": "атаку",
+    "actionTALK": "разговор",
+    "actionREST": "отдых"
+  },
   "encounter": {
     "title": "ВСТРЕЧА",
     "dismiss": "ДАЛЕЕ",

@@ -1,68 +1,276 @@
 [
   {
-    "id": "enemy_attack_01",
-    "name": "Scratch",
-    "effects": [{ "type": "damage", "value": 1 }]
-  },
-  {
-    "id": "enemy_attack_02",
-    "name": "Bite",
-    "effects": [{ "type": "damage", "value": 2 }]
-  },
-  {
-    "id": "enemy_attack_03",
+    "id": "warrior_slash",
     "name": "Slash",
+    "type": "attack",
+    "description": "A drilled sword stroke.",
+    "enemyGroup": "warrior",
+    "minBand": "intro",
     "effects": [{ "type": "damage", "value": 2 }]
   },
   {
-    "id": "enemy_attack_04",
-    "name": "Heavy Swing",
-    "effects": [{ "type": "damage", "value": 4 }]
+    "id": "warrior_shield_wall",
+    "name": "Shield Wall",
+    "type": "defense",
+    "description": "Raises the shield and waits.",
+    "enemyGroup": "warrior",
+    "minBand": "intro",
+    "effects": [{ "type": "shield", "value": 2 }]
   },
   {
-    "id": "enemy_attack_05",
-    "name": "Poison Claws",
+    "id": "warrior_shield_bash",
+    "name": "Shield Bash",
+    "type": "attack",
+    "description": "Braces behind the shield, then drives it forward.",
+    "enemyGroup": "warrior",
+    "minBand": "common",
     "effects": [
-      { "type": "damage", "value": 2 },
-      { "type": "poison", "damagePerTurn": 1, "duration": 3 }
+      { "type": "shield", "value": 1 },
+      { "type": "damage", "value": 2 }
     ]
   },
   {
-    "id": "enemy_attack_06",
-    "name": "Fire Breath",
+    "id": "warrior_reforge_guard",
+    "name": "Reforge Guard",
+    "type": "defense",
+    "description": "Rebuilds a broken guard from nothing.",
+    "enemyGroup": "warrior",
+    "minBand": "elite",
+    "effects": [{ "type": "restoreMaxShields" }]
+  },
+  {
+    "id": "cutthroat_shiv",
+    "name": "Shiv",
+    "type": "attack",
+    "description": "A sharpened scrap, used close.",
+    "enemyGroup": "cutthroat",
+    "minBand": "intro",
     "effects": [{ "type": "damage", "value": 1 }]
   },
   {
-    "id": "enemy_attack_07",
-    "name": "Dark Bolt",
+    "id": "cutthroat_quick_cut",
+    "name": "Quick Cut",
+    "type": "attack",
+    "description": "Fast, shallow, and repeated.",
+    "enemyGroup": "cutthroat",
+    "minBand": "intro",
+    "effects": [{ "type": "damage", "value": 2 }]
+  },
+  {
+    "id": "cutthroat_backstab",
+    "name": "Backstab",
+    "type": "attack",
+    "description": "Finds the gap your guard cannot cover.",
+    "enemyGroup": "cutthroat",
+    "minBand": "common",
     "effects": [
       { "type": "ignoreShield" },
       { "type": "damage", "value": 2 }
     ]
   },
   {
-    "id": "enemy_attack_08",
-    "name": "Crushing Blow",
-    "effects": [{ "type": "damage", "value": 3 }]
+    "id": "cutthroat_venom_flask",
+    "name": "Venom Flask",
+    "type": "attack",
+    "description": "Something brewed in the dark and thrown.",
+    "enemyGroup": "cutthroat",
+    "minBand": "elite",
+    "effects": [{ "type": "poison", "damagePerTurn": 2, "duration": 3 }]
   },
   {
-    "id": "enemy_attack_09",
-    "name": "Tail Whip",
-    "effects": [{ "type": "damage", "value": 4 }]
-  },
-  {
-    "id": "enemy_attack_10",
-    "name": "Shadow Strike",
-    "effects": [{ "type": "damage", "value": 5 }]
-  },
-  {
-    "id": "enemy_attack_11",
-    "name": "Scratch",
+    "id": "ritualist_hex_bolt",
+    "name": "Hex Bolt",
+    "type": "attack",
+    "description": "A muttered word that lands like a stone.",
+    "enemyGroup": "ritualist",
+    "minBand": "intro",
     "effects": [{ "type": "damage", "value": 1 }]
   },
   {
-    "id": "enemy_attack_12",
+    "id": "ritualist_ward",
+    "name": "Ritual Ward",
+    "type": "defense",
+    "description": "Chalk and blood, holding the air still.",
+    "enemyGroup": "ritualist",
+    "minBand": "intro",
+    "effects": [{ "type": "barrier", "value": 2 }]
+  },
+  {
+    "id": "ritualist_dark_bolt",
+    "name": "Dark Bolt",
+    "type": "attack",
+    "description": "Passes through armour as if it were not there.",
+    "enemyGroup": "ritualist",
+    "minBand": "common",
+    "effects": [
+      { "type": "ignoreShield" },
+      { "type": "damage", "value": 2 }
+    ]
+  },
+  {
+    "id": "ritualist_unmaking",
+    "name": "Unmaking",
+    "type": "attack",
+    "description": "The ritual turned outward, all at once.",
+    "enemyGroup": "ritualist",
+    "minBand": "boss",
+    "effects": [
+      { "type": "ignoreShield" },
+      { "type": "damage", "value": 4 }
+    ]
+  },
+  {
+    "id": "beast_scratch",
+    "name": "Scratch",
+    "type": "attack",
+    "description": "Claws, without thought behind them.",
+    "enemyGroup": "beast",
+    "minBand": "intro",
+    "effects": [{ "type": "damage", "value": 1 }]
+  },
+  {
+    "id": "beast_bite",
     "name": "Bite",
+    "type": "attack",
+    "description": "Latches on and does not let go.",
+    "enemyGroup": "beast",
+    "minBand": "intro",
     "effects": [{ "type": "damage", "value": 2 }]
+  },
+  {
+    "id": "beast_poison_claws",
+    "name": "Poison Claws",
+    "type": "attack",
+    "description": "Filth under the claws does the rest.",
+    "enemyGroup": "beast",
+    "minBand": "common",
+    "effects": [
+      { "type": "damage", "value": 2 },
+      { "type": "poison", "damagePerTurn": 1, "duration": 3 }
+    ]
+  },
+  {
+    "id": "beast_tail_whip",
+    "name": "Tail Whip",
+    "type": "attack",
+    "description": "Turns and takes your legs out.",
+    "enemyGroup": "beast",
+    "minBand": "elite",
+    "effects": [{ "type": "damage", "value": 4 }]
+  },
+  {
+    "id": "undead_cold_grasp",
+    "name": "Cold Grasp",
+    "type": "attack",
+    "description": "Fingers that do not tire.",
+    "enemyGroup": "undead",
+    "minBand": "intro",
+    "effects": [{ "type": "damage", "value": 1 }]
+  },
+  {
+    "id": "undead_creeping_rot",
+    "name": "Creeping Rot",
+    "type": "attack",
+    "description": "Spreads slowly and never hurries.",
+    "enemyGroup": "undead",
+    "minBand": "intro",
+    "effects": [{ "type": "poison", "damagePerTurn": 1, "duration": 3 }]
+  },
+  {
+    "id": "undead_bone_guard",
+    "name": "Bone Guard",
+    "type": "defense",
+    "description": "What is left of the ribs still turns a blade.",
+    "enemyGroup": "undead",
+    "minBand": "common",
+    "effects": [{ "type": "shield", "value": 2 }]
+  },
+  {
+    "id": "undead_rise_again",
+    "name": "Rise Again",
+    "type": "defense",
+    "description": "Stands back up with its guard remade.",
+    "enemyGroup": "undead",
+    "minBand": "elite",
+    "effects": [
+      { "type": "restoreMaxShields" },
+      { "type": "damage", "value": 1 }
+    ]
+  },
+  {
+    "id": "brute_swipe",
+    "name": "Swipe",
+    "type": "attack",
+    "description": "Wide, slow, and heavy enough to matter.",
+    "enemyGroup": "brute",
+    "minBand": "intro",
+    "effects": [{ "type": "damage", "value": 2 }]
+  },
+  {
+    "id": "brute_thick_hide",
+    "name": "Thick Hide",
+    "type": "defense",
+    "description": "Too much bulk to cut through cleanly.",
+    "enemyGroup": "brute",
+    "minBand": "intro",
+    "effects": [{ "type": "shield", "value": 2 }]
+  },
+  {
+    "id": "brute_cleaver",
+    "name": "Cleaver",
+    "type": "attack",
+    "description": "A tool for meat, used the same way here.",
+    "enemyGroup": "brute",
+    "minBand": "common",
+    "effects": [{ "type": "damage", "value": 3 }]
+  },
+  {
+    "id": "brute_crushing_blow",
+    "name": "Crushing Blow",
+    "type": "attack",
+    "description": "Comes down with everything behind it.",
+    "enemyGroup": "brute",
+    "minBand": "elite",
+    "effects": [{ "type": "damage", "value": 4 }]
+  },
+  {
+    "id": "signature_warden_decree",
+    "name": "The Warden's Decree",
+    "type": "attack",
+    "description": "The old order, enforced one last time.",
+    "enemyGroup": "brute",
+    "minBand": "boss",
+    "signature": true,
+    "effects": [
+      { "type": "shield", "value": 2 },
+      { "type": "damage", "value": 3 }
+    ]
+  },
+  {
+    "id": "signature_inquisitor_judgment",
+    "name": "Judgment",
+    "type": "attack",
+    "description": "A sentence read out while it is carried out.",
+    "enemyGroup": "ritualist",
+    "minBand": "boss",
+    "signature": true,
+    "effects": [
+      { "type": "ignoreShield" },
+      { "type": "damage", "value": 3 },
+      { "type": "poison", "damagePerTurn": 1, "duration": 2 }
+    ]
+  },
+  {
+    "id": "signature_anarchist_uprising",
+    "name": "Final Uprising",
+    "type": "attack",
+    "description": "The revolution he never finished, answering to something else.",
+    "enemyGroup": "undead",
+    "minBand": "boss",
+    "signature": true,
+    "effects": [
+      { "type": "restoreMaxShields" },
+      { "type": "damage", "value": 3 }
+    ]
   }
 ]

@@ -10,6 +10,7 @@ import {
   createRun,
   normalizeSeed,
   rebuildExplorationDeck,
+  resolveEnemyBattleProfile,
 } from '@dark-fantasy/game-engine';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
@@ -514,8 +515,9 @@ function GameShell() {
       enemy: {
         name: enemy.name,
         portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
-        deckSize: enemy.deckSize,
-        barrierPerTurn: enemy.barrierPerTurn,
+        band: enemy.band,
+        group: enemy.group,
+        ...resolveEnemyBattleProfile(enemy),
       },
       rng: live.rng,
       playerPiles: {

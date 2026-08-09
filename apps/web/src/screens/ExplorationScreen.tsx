@@ -3,6 +3,7 @@ import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { explorationMachine } from '@dark-fantasy/game-engine/machine/explorationMachine';
 import type { PlayerGender } from '@dark-fantasy/shared/types/player';
+import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
 import {
   getActiveLocationEncounter,
   getBattleEnemy,
@@ -14,6 +15,7 @@ import { useAudio } from '@/audio/useAudio';
 import { PrisonMap } from '@/components/exploration/PrisonMap';
 import { LocationDetailPanel } from '@/components/exploration/LocationDetailPanel';
 import { ExplorationHandBar } from '@/components/exploration/ExplorationHandBar';
+import { ActionCardPickerModal } from '@/components/exploration/ActionCardPickerModal';
 import { EncounterModal } from '@/components/exploration/EncounterModal';
 import { NpcDialogModal } from '@/components/exploration/NpcDialogModal';
 import { LocationBattleModal } from '@/components/exploration/LocationBattleModal';
@@ -29,6 +31,12 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
+
+interface PendingAction {
+  action: ExplorationActionType;
+  targetId?: string;
+  interactionId?: string;
+}
 
 interface ExplorationScreenProps {
   actor: ActorRefFrom<typeof explorationMachine>;
@@ -58,6 +66,7 @@ export function ExplorationScreen({
   const context = snapshot.context;
   const { unlock } = useAudio();
   const [questLogOpen, setQuestLogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const { toasts, pushToast, dismissToast } = useExplorationToasts();
   useQuestToastWatcher(context.quests, context.flags, pushToast);
   const isIdle = snapshot.matches('idle');
@@ -84,7 +93,11 @@ export function ExplorationScreen({
   const moveCoach = useCoachStep(
     playerId,
     'move',
-    !isIdle && !dialogActive && !battleEnemy && !snapshot.matches('encounter'),
+    !isIdle &&
+      !dialogActive &&
+      !battleEnemy &&
+      !pendingAction &&
+      !snapshot.matches('encounter'),
   );
 
   useEffect(() => {
@@ -93,6 +106,28 @@ export function ExplorationScreen({
       onEscapeToWorld();
     }
   }, [actor, context.flags.escaped_hollowfort, onEscapeToWorld]);
+
+  const canAct = snapshot.matches('playerTurn') && context.actionsRemaining > 0;
+
+  useEffect(() => {
+    if (pendingAction && !canAct) {
+      setPendingAction(null);
+    }
+  }, [pendingAction, canAct]);
+
+  function requestAction(
+    action: ExplorationActionType,
+    options: Omit<PendingAction, 'action'> = {},
+  ) {
+    if (context.actionsRemaining <= 0) {
+      return;
+    }
+    if (context.selectedCardInstanceId) {
+      actor.send({ type: 'PLAY_ACTION', action, ...options });
+      return;
+    }
+    setPendingAction({ action, ...options });
+  }
 
   if (isIdle) {
     return (
@@ -249,9 +284,7 @@ export function ExplorationScreen({
           context={context}
           location={selected}
           onClose={() => actor.send({ type: 'CLEAR_SELECTION' })}
-          onTravel={(locationId) =>
-            actor.send({ type: 'PLAY_ACTION', action: 'MOVE', targetId: locationId })
-          }
+          onTravel={(locationId) => requestAction('MOVE', { targetId: locationId })}
           onTalk={(locationId, npcId) =>
             actor.send({ type: 'QUEUE_DIALOG', locationId, npcId })
           }
@@ -275,6 +308,25 @@ export function ExplorationScreen({
         <div className="rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(224,181,82,.08)] px-4 py-2 text-[13px] text-[#e8ddcf]">
           {context.lastActionMessage}
         </div>
+      )}
+
+      {pendingAction && (
+        <ActionCardPickerModal
+          action={pendingAction.action}
+          actionLabel={t(`actionPicker.action${pendingAction.action}`)}
+          hand={context.hand}
+          onPick={(cardInstanceId) => {
+            actor.send({
+              type: 'PLAY_ACTION',
+              action: pendingAction.action,
+              targetId: pendingAction.targetId,
+              interactionId: pendingAction.interactionId,
+              cardInstanceId,
+            });
+            setPendingAction(null);
+          }}
+          onCancel={() => setPendingAction(null)}
+        />
       )}
 
       {snapshot.matches('encounter') && context.pendingEncounter && (

@@ -3,6 +3,7 @@ import type { BattleLogEntry } from './log';
 import type { ActivePlay } from './animation';
 
 import type { EffectTarget } from './effect';
+import type { EnemyBand, EnemyGroup } from './enemy';
 import type { PlayerGender } from './player';
 import type { PlayerProgression } from './progression';
 import type { RngState } from './rng';
@@ -83,7 +84,13 @@ export interface BattleContext {
 export type BattleEnemyOverride = {
   name: string;
   portrait: string;
+  band?: EnemyBand;
+  group?: EnemyGroup;
+  signatureCardIds?: string[];
+  deckCardIds?: string[];
   deckSize?: number;
+  startingShield?: number;
+  maxShield?: number;
   barrierPerTurn?: number;
 };
 

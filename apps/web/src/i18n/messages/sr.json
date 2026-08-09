@@ -310,6 +310,20 @@
     "confirm": "OTKLJUČAJ",
     "cancel": "OTKAŽI"
   },
+  "actionPicker": {
+    "eyebrow": "POTROŠI AKCIJU",
+    "title": "Izaberi kartu za akciju",
+    "subtitle": "Izabrana karta se troši na {action} i ide u odbačeno.",
+    "handEmpty": "Nema više karata u ruci ovog poteza.",
+    "cancel": "OTKAŽI · IZABERI DRUGU AKCIJU",
+    "actionMOVE": "putovanje ovde",
+    "actionEXPLORE": "istraživanje",
+    "actionSEARCH": "pretragu",
+    "actionOPEN": "otvaranje puta",
+    "actionATTACK": "napad",
+    "actionTALK": "razgovor",
+    "actionREST": "odmor"
+  },
   "encounter": {
     "title": "SUSRET",
     "dismiss": "NASTAVI",

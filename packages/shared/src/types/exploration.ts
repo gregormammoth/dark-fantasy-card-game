@@ -1,4 +1,5 @@
 import type { CardClass, CardInstance } from './card';
+import type { EnemyBand, EnemyGroup } from './enemy';
 import type { RngState } from './rng';
 
 export type LocationType =
@@ -36,7 +37,12 @@ export interface LocationEnemy {
   defeated: boolean;
   requiresFlag?: string;
   skipAutoEncounter?: boolean;
+  band?: EnemyBand;
+  group?: EnemyGroup;
+  signatureCardIds?: string[];
   deckSize?: number;
+  startingShield?: number;
+  maxShield?: number;
   barrierPerTurn?: number;
 }
 
@@ -205,6 +211,7 @@ export type ExplorationEvent =
       action: ExplorationActionType;
       targetId?: string;
       interactionId?: string;
+      cardInstanceId?: string;
     }
   | { type: 'END_TURN' }
   | { type: 'DISMISS_ENCOUNTER' }
