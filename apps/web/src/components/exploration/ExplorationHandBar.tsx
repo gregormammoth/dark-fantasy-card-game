@@ -2,7 +2,7 @@
 
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import { Card } from '@/components/Card';
-import { ManaIcon, ShieldIcon } from '@/components/EffectIcons';
+import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useAudio } from '@/audio/useAudio';
 import { useTranslation } from '@/i18n/useTranslation';
 
@@ -67,7 +67,7 @@ export function ExplorationHandBar({
 
         <div className="flex flex-col items-center gap-2">
           <div className="flex h-24 w-[70px] flex-col items-center justify-center gap-1.5 rounded border border-[rgba(91,134,196,.35)] bg-[rgba(91,134,196,.08)]">
-            <ShieldIcon className="inline-block h-[22px] w-5" />
+            <ShieldBadgeIcon className="h-[25px] w-[22px]" />
             <span className="font-cinzel text-sm text-[#cfe0f5]">
               {context.shield}/{context.maxShield}
             </span>
@@ -78,14 +78,24 @@ export function ExplorationHandBar({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex h-24 w-[70px] flex-col items-center justify-center gap-1.5 rounded border border-[rgba(110,200,224,.35)] bg-[rgba(110,200,224,.08)]">
-            <ManaIcon className="inline-block h-[22px] w-5" />
-            <span className="font-cinzel text-sm text-[#d7f4fb]">
+          <div className="flex h-24 w-[70px] flex-col items-center justify-center gap-1.5 rounded border border-[rgba(79,164,184,.35)] bg-[rgba(79,164,184,.08)]">
+            <ManaOrbIcon className="h-[22px] w-[22px]" />
+            <span className="font-cinzel text-sm text-[#cdeef4]">
               {context.mana}/{context.maxMana}
             </span>
           </div>
           <span className="text-[8px] tracking-[.18em] text-[#8a7f72]">
             {t('exploration.manaLabel')}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex h-24 w-[70px] flex-col items-center justify-center gap-1.5 rounded border border-[rgba(224,181,82,.35)] bg-[rgba(201,150,47,.08)]">
+            <CrownsIcon className="h-[22px] w-[22px]" />
+            <span className="font-cinzel text-sm text-[#f3e2b8]">{context.money ?? 0}</span>
+          </div>
+          <span className="text-[8px] tracking-[.18em] text-[#8a7f72]">
+            {t('exploration.moneyLabel')}
           </span>
         </div>
       </div>

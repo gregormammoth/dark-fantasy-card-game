@@ -6,7 +6,7 @@ This document describes the game rules implemented today and the planned directi
 
 **Implemented now:** turn-based card battles, Hollowfort exploration with a shared run, class XP unlocks, player level + choosable combat skills, and prison encounter pressure on cards and shields.
 
-**Planned later:** money economy and further world content beyond the prison slice. See [Player Level and Combat Skills](#player-level-and-combat-skills) for the live progression model.
+**Planned later:** further world content beyond the prison slice. See [Player Level and Combat Skills](#player-level-and-combat-skills) and [Money](#money-crowns) for live progression and economy.
 
 Battles are the combat layer of the larger run. Exploration carries hand, deck, discard, and shield into fights.
 
@@ -30,6 +30,22 @@ Encounters can:
 | `modifyMana` | Change current mana (`value`) only; capped at `maxMana` |
 
 Exploration tracks `shield` / `maxShield` and `mana` / `maxMana`. Caps come from **player skills** (defaults 2 / 2); raising a skill mid-run updates the live exploration caps. Shield and mana carry into location battles; after a **won** battle, both restore to their max. The encounter modal lists cards, shield, and mana deltas that changed.
+
+---
+
+## Money (Crowns)
+
+Light run currency. Starts at **0**. Lives on exploration state and persists with the cloud save.
+
+| Source | Amount |
+|--------|-------:|
+| Complete Sorcerer ingredient quest | 20 |
+| Defeat Guard | 8 |
+| Defeat Butcher | 10 |
+
+**Spend:** The Smuggler in the Central Corridor sells restoratives (6 crowns each): restore shield to max, or restore mana to max. Refuses the sale if you cannot afford it or are already full.
+
+Money does not raise combat ceilings — that stays on player-level skills.
 
 ---
 

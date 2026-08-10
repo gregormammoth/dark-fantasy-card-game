@@ -45,6 +45,15 @@ export interface LocationEnemy {
   startingShield?: number;
   maxShield?: number;
   barrierPerTurn?: number;
+  rewardMoney?: number;
+}
+
+export type ShopServiceEffect = 'restoreShield' | 'restoreMana';
+
+export interface NpcShopService {
+  id: string;
+  cost: number;
+  effect: ShopServiceEffect;
 }
 
 export interface LocationEnemyPlacement {
@@ -64,6 +73,7 @@ export interface LocationNpc {
   talked: boolean;
   grantsQuestId?: string;
   requiresFlag?: string;
+  shopServices?: NpcShopService[];
 }
 
 export interface LocationQuest {
@@ -82,6 +92,7 @@ export interface QuestDefinition {
   completeOnReturnTo?: string;
   grantsQuestIdOnComplete?: string;
   setFlagOnComplete?: string;
+  rewardMoney?: number;
 }
 
 export type RunQuestStatus = 'active' | 'completed';
@@ -200,6 +211,7 @@ export interface ExplorationContext {
   maxShield: number;
   mana: number;
   maxMana: number;
+  money: number;
   actionsRemaining: number;
   maxActions: number;
   handSize: number;
@@ -240,6 +252,12 @@ export type ExplorationEvent =
   | { type: 'ADVANCE_DIALOG' }
   | { type: 'QUEUE_DIALOG'; locationId: string; npcId?: string }
   | { type: 'QUEUE_BATTLE'; locationId: string; enemyId?: string }
+  | {
+      type: 'BUY_SHOP_SERVICE';
+      locationId: string;
+      npcId: string;
+      serviceId: string;
+    }
   | { type: 'FLEE_LOCATION_BATTLE' }
   | {
       type: 'RESOLVE_LOCATION_BATTLE';

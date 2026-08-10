@@ -14,6 +14,7 @@ import {
   listAvailableNpcs,
   openCorridorByForce,
 } from './quests';
+import { grantMoney } from './money';
 
 const BOSS_FLAGS: Record<string, string> = {
   prison_warden_boss: 'boss_warden_defeated',
@@ -236,6 +237,9 @@ export function resolveLocationBattle(
         const [enemy] = location.enemies.splice(index, 1);
         defeatedEnemyId = enemy.id;
         appendExplorationLog(context, `Defeated ${enemy.name}.`, 'danger');
+        if (enemy.rewardMoney) {
+          grantMoney(context, enemy.rewardMoney);
+        }
         for (const interaction of location.interactions) {
           if (
             interaction.action === 'ATTACK' &&

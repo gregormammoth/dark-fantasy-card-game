@@ -36,6 +36,7 @@ export interface EnemyDefinition {
   startingShield?: number;
   maxShield?: number;
   barrierPerTurn?: number;
+  rewardMoney?: number;
 }
 
 export interface EnemyCatalogFile {

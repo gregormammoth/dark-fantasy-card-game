@@ -83,3 +83,10 @@ export {
   serializeLocalSave,
 } from './engine/persistence/localSave';
 export { rebuildExplorationDeck } from './engine/exploration/setup';
+export {
+  buyShopService,
+  canBuyShopService,
+  findShopService,
+  grantMoney,
+  normalizeMoney,
+} from './engine/exploration/money';

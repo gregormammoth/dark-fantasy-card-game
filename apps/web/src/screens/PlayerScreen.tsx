@@ -720,6 +720,7 @@ export function PlayerScreen({
             onSelect={setSelectedItemId}
             allItems={items}
             portrait={playerPortrait}
+            money={exploration?.money ?? 0}
           />
         )}
       </div>
@@ -913,6 +914,7 @@ function InventoryTab({
   onSelect,
   allItems,
   portrait,
+  money,
 }: {
   items: QuestItemView[];
   filter: ItemFilter;
@@ -921,6 +923,7 @@ function InventoryTab({
   onSelect: (id: string) => void;
   allItems: QuestItemView[];
   portrait: string;
+  money: number;
 }) {
   const { t } = useTranslation();
   const keyring = allItems.find((item) => item.id === 'dining_keyring');
@@ -930,6 +933,12 @@ function InventoryTab({
   return (
     <div className="-mt-px flex items-start gap-4">
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+        <div className="flex items-center justify-between gap-3 rounded-md border border-[rgba(201,162,74,.24)] bg-[rgba(0,0,0,.2)] px-4 py-3">
+          <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.crowns')}</span>
+          <span className="font-cinzel text-[18px] text-[#c9a24a]">
+            {t('player.crownsCount', { count: money })}
+          </span>
+        </div>
         <div className="flex gap-2">
           {(
             [

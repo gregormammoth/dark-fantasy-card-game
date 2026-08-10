@@ -93,6 +93,7 @@
     "endTurn": "КОНЕЦ ХОДА",
     "unnamedPrisoner": "Безымянный заключённый",
     "actionsTurn": "Действия {remaining}/{max} · Ход {turn}",
+    "actionsShort": "{remaining}/{max}",
     "exploredCount": "{visited} / {total} ИССЛЕДОВАНО",
     "mapRegionLabel": "ХОЛЛОУФОРТ — ПЕРВАЯ КРЕПОСТЬ",
     "zoomIn": "Приблизить",
@@ -102,6 +103,8 @@
     "shieldLabel": "ЩИТ",
     "mana": "Мана {current}/{max}",
     "manaLabel": "МАНА",
+    "money": "{count} крон",
+    "moneyLabel": "КРОНЫ",
     "actionsUntilEncounter": "{count} действий до встречи",
     "encounterImminent": "Встреча сработает сейчас",
     "actionsSpent": "{used}/{max} потрачено",
@@ -214,6 +217,8 @@
   "player": {
     "questLog": "ЖУРНАЛ КВЕСТОВ",
     "inventory": "ИНВЕНТАРЬ",
+    "crowns": "КРОНЫ",
+    "crownsCount": "{count}",
     "character": "ПЕРСОНАЖ",
     "ledger": "РЕЕСТР ХОЛЛОУФОРТА",
     "escapedFrom": "Сбежал из Холлоуфорта",
@@ -323,6 +328,13 @@
     "itemMushroomNotFound": "НЕ НАЙДЕНО · ПОДЗЕМНЫЕ ТУННЕЛИ",
     "itemMushroomQuest": "Ингредиенты для круга",
     "itemMushroomDesc": "Слабо светится синим. Колдун хочет им связать чары, которые чинит."
+  },
+  "shop": {
+    "services": "УСЛУГИ",
+    "crowns": "{count} крон",
+    "cost": "{cost} кр",
+    "restoreShield": "Восстановить щит",
+    "restoreMana": "Восстановить ману"
   },
   "unlockModal": {
     "title": "Открыть карту",

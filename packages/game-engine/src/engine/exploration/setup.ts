@@ -80,6 +80,7 @@ export function createInitialExploration(
     maxShield,
     mana: maxMana,
     maxMana,
+    money: 0,
     actionsRemaining: 4,
     maxActions: 4,
     handSize: 4,

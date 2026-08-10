@@ -27,7 +27,8 @@
       ],
       "completeOnReturnTo": "ritual_room",
       "grantsQuestIdOnComplete": "kill_inquisitor",
-      "setFlagOnComplete": "ritual_corridor_open"
+      "setFlagOnComplete": "ritual_corridor_open",
+      "rewardMoney": 20
     },
     {
       "id": "find_dining_way",
@@ -204,7 +205,25 @@
       "image": "/locations/central_corridor.png",
       "interactions": [],
       "enemies": [],
-      "npcs": [],
+      "npcs": [
+        {
+          "id": "smuggler",
+          "name": "The Smuggler",
+          "tag": "Black Market",
+          "description": "A corridor rat who sells restoratives for crowns — no questions, no refunds.",
+          "lines": [
+            "Keep your voice down. Crowns talk louder than prayers in this hall.",
+            "Shield patch or a shot of focus — pick one. I don't do charity.",
+            "You want to walk out of Hollowfort, you'll pay for the privilege of standing."
+          ],
+          "image": "/characters/smuggler.png",
+          "talked": false,
+          "shopServices": [
+            { "id": "restore_shield", "cost": 6, "effect": "restoreShield" },
+            { "id": "restore_mana", "cost": 6, "effect": "restoreMana" }
+          ]
+        }
+      ],
       "loot": [],
       "visited": false,
       "discovered": false,

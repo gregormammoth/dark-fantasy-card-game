@@ -372,6 +372,15 @@ export function ExplorationScreen({
             dialogIndex + 1 >= dialogLines.length ? t('common.close') : t('common.continue')
           }
           onNext={() => actor.send({ type: 'ADVANCE_DIALOG' })}
+          context={context}
+          onBuyService={(serviceId) =>
+            actor.send({
+              type: 'BUY_SHOP_SERVICE',
+              locationId: locationEncounter?.locationId ?? context.currentLocationId,
+              npcId: dialogNpc.id,
+              serviceId,
+            })
+          }
         />
       )}
 

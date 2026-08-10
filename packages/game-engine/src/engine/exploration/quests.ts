@@ -6,6 +6,7 @@ import type {
 } from '@dark-fantasy/shared/types/exploration';
 import prisonMapData from '@dark-fantasy/content/prisonMap.json';
 import { appendExplorationLog } from './log';
+import { grantMoney } from './money';
 
 interface PrisonMapQuestsFile {
   questDefinitions?: QuestDefinition[];
@@ -168,6 +169,9 @@ export function tryCompleteGatherIngredientsQuest(
   completeQuestById(context, 'gather_ritual_ingredients');
   if (definition.setFlagOnComplete) {
     context.flags[definition.setFlagOnComplete] = true;
+  }
+  if (definition.rewardMoney) {
+    grantMoney(context, definition.rewardMoney);
   }
 
   const sorcerer = context.locations.ritual_room?.npcs.find((npc) => npc.id === 'sorcerer');

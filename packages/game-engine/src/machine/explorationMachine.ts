@@ -17,6 +17,7 @@ import {
   queueDialog,
   resolveLocationBattle,
 } from '../engine/exploration/locationEncounters';
+import { buyShopService, normalizeMoney } from '../engine/exploration/money';
 import { syncExplorationLogCounter } from '../engine/exploration/log';
 import { cloneRng } from '../engine/rng';
 
@@ -98,6 +99,13 @@ export const explorationMachine = setup({
       const next = structuredClone(context);
       return resolveLocationBattle(next, event.won, event.locationId, event.enemyId);
     }),
+    buyShopService: assign(({ context, event }) => {
+      if (event.type !== 'BUY_SHOP_SERVICE') {
+        return context;
+      }
+      const next = structuredClone(context);
+      return buyShopService(next, event.locationId, event.npcId, event.serviceId);
+    }),
     ackEscape: assign(({ context }) => {
       const next = structuredClone(context);
       delete next.flags.escaped_hollowfort;
@@ -166,6 +174,7 @@ export const explorationMachine = setup({
         next.maxMana = 2;
       }
       next.mana = Math.max(0, Math.min(next.maxMana, next.mana));
+      next.money = normalizeMoney(next.money);
       syncExplorationLogCounter(next.log);
       return next;
     }),
@@ -201,6 +210,7 @@ export const explorationMachine = setup({
     ADVANCE_DIALOG: { actions: 'advanceDialog' },
     QUEUE_DIALOG: { actions: 'queueDialog' },
     QUEUE_BATTLE: { actions: 'queueBattle' },
+    BUY_SHOP_SERVICE: { actions: 'buyShopService' },
     FLEE_LOCATION_BATTLE: { actions: 'fleeLocationBattle' },
     RESOLVE_LOCATION_BATTLE: { actions: 'resolveLocationBattle' },
     ACK_ESCAPE: { actions: 'ackEscape' },

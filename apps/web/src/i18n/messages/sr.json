@@ -93,6 +93,7 @@
     "endTurn": "KRAJ POTEZA",
     "unnamedPrisoner": "Neimenovani zatvorenik",
     "actionsTurn": "Akcije {remaining}/{max} · Potez {turn}",
+    "actionsShort": "{remaining}/{max}",
     "exploredCount": "{visited} / {total} ISTRAŽENO",
     "mapRegionLabel": "HOLLOWFORT — PRVA TVRDAVA",
     "zoomIn": "Uvećaj",
@@ -102,6 +103,8 @@
     "shieldLabel": "ŠTIT",
     "mana": "Mana {current}/{max}",
     "manaLabel": "MANA",
+    "money": "{count} kruna",
+    "moneyLabel": "KRUNE",
     "actionsUntilEncounter": "{count} akcija do susreta",
     "encounterImminent": "Susret se okida sada",
     "actionsSpent": "{used}/{max} potrošeno",
@@ -214,6 +217,8 @@
   "player": {
     "questLog": "DNEVNIK ZADATAKA",
     "inventory": "INVENTAR",
+    "crowns": "KRUNE",
+    "crownsCount": "{count}",
     "character": "LIK",
     "ledger": "REGISTAR HOLLOWFORTA",
     "escapedFrom": "Pobegao iz Hollowforta",
@@ -323,6 +328,13 @@
     "itemMushroomNotFound": "NIJE PRONAĐENO · PODZEMNI TUNELI",
     "itemMushroomQuest": "Sastojci za krug",
     "itemMushroomDesc": "Slabo svetli plavo. Čarobnjak je želi da veže čarolije koje popravlja."
+  },
+  "shop": {
+    "services": "USLUGE",
+    "crowns": "{count} kruna",
+    "cost": "{cost} kr",
+    "restoreShield": "Obnovi štit",
+    "restoreMana": "Obnovi manu"
   },
   "unlockModal": {
     "title": "Otključaj kartu",

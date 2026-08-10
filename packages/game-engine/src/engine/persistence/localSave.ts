@@ -8,6 +8,7 @@ import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration'
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { createInitialProgression, normalizeLoadoutCardIds, normalizeProgression } from '../progression/xp';
 import { createInitialLoadout } from '../progression/loadout';
+import { normalizeMoney } from '../exploration/money';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -183,13 +184,20 @@ export function parseLocalSave(raw: string): LocalSaveFile | null {
       };
     }
     const loadout = coerceLoadout(state.loadout);
+    let exploration = state.exploration as ExplorationContext | null;
+    if (exploration) {
+      exploration = {
+        ...exploration,
+        money: normalizeMoney(exploration.money),
+      };
+    }
     return {
       schemaVersion: LOCAL_SAVE_SCHEMA_VERSION,
       savedAt: parsed.savedAt,
       state: {
         progression,
         loadout,
-        exploration: state.exploration,
+        exploration,
         explorationPhase: state.explorationPhase,
         screen: state.screen,
         playerReturnScreen: state.playerReturnScreen,

@@ -171,7 +171,7 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Progression stats (deck / shield / combo / mana / draw) | Live player-level skills (soft ceilings enforced on pick) |
 | Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
-| Money / light inventory | Not started |
+| Money / light inventory | Crowns + Smuggler restoratives live |
 | Save / load + save schema | Cloud save/load wired (`GET|PUT /saves/:playerId`); mid-battle snapshot still open |
 | Seeded RNG | Engine seed+cursor; debug seed in Settings / `?seed=` |
 | Guided tour (map + battle) | First pass — 5 coach marks (character, dialog, move, battle, progression), per-player persisted; enemy/quest/HP tips + settings toggle open |
@@ -248,7 +248,7 @@ CURRENT
 7. Reward loop + player-level skills              ← XP/unlocks exist; player level + skill picks + grant API open
   │
   ▼
-8. Quests (logic + UI) + money             ← quests done; money open
+8. Quests (logic + UI) + money             ← done (smuggler shop + crowns)
   │
   ▼
 9. Prison story vertical slice             ← playable escape path done; polish open
@@ -596,17 +596,17 @@ Accept / discover → Active → Objectives progress → Complete / Fail
 
 ### Money (light inventory)
 
-- [ ] Currency field on player inventory (`money` / crowns)
-- [ ] Earn from battles, loot, quests, NPC outcomes
-- [ ] Spend on story choices, bribes, shops, or quest payments (as content needs)
-- [ ] Show balance in Player / exploration HUD
-- [ ] Persist with cloud save (M4)
+- [x] Currency field on player inventory (`money` / crowns)
+- [x] Earn from battles, loot, quests, NPC outcomes (sorcerer quest, guard, butcher)
+- [x] Spend on shops (Smuggler restoratives in Central Corridor)
+- [x] Show balance in Player / exploration HUD
+- [x] Persist with cloud save (M4)
 
 Out of Beta scope for inventory: weapons, armour, potions, trinkets as a full equipment system (post-Beta). Quest keys/flags may live as flags or minimal item ids if a single key is needed.
 
 ### Deliverable
 
-Quest log is usable mid-run (**done**). Money appears in inventory and matters for at least one prison choice or reward (**open**).
+Quest log is usable mid-run (**done**). Money appears in inventory and matters for at least one prison choice or reward (**done** — Smuggler shop).
 
 ---
 
@@ -634,7 +634,7 @@ Quest log is usable mid-run (**done**). Money appears in inventory and matters f
 - [x] Quest log surfaces the three faction kill-quests ([HOLLOWFORT.md](./HOLLOWFORT.md))
 - [x] Quests appear only after dialog (Dead Anarchist / Sorcerer / Guard Captain)
 - [x] Exit Gate conditional NPCs after matching boss kills
-- [ ] At least one paid / bribe / buy choice using money
+- [x] At least one paid / bribe / buy choice using money (Smuggler restoratives)
 - [ ] Quest completion grants XP, money, and/or unlocks (completion works; reward grant polish open)
 
 ### Locations (handcrafted, ~10–12)
@@ -950,7 +950,7 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 - [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
 - [x] Quest log + at least 2–3 prison quests
-- [ ] Money in inventory (earn / spend in the slice)
+- [x] Money in inventory (earn / spend in the slice)
 - [ ] Localization: English + Russian + Serbian — UI chrome done; Hollowfort content JSON + engine strings follow-up (or documented fast-follow after English Beta)
 
 ### Explicitly out of Beta scope (Green)

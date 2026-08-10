@@ -25,6 +25,7 @@ import {
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
+import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useTranslation } from '@/i18n/useTranslation';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
@@ -736,23 +737,26 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
             <span className="font-cinzel text-[12px] tracking-wide text-[#e8ddcf]">
               {playerName || t('exploration.unnamedPrisoner')}
             </span>
-            <span className="text-[11px] text-[#b7ab9c]">
-              {t('exploration.actionsTurn', {
-                remaining: context.hand.length,
-                max: context.handSize,
-                turn: context.turnCount,
-              })}
-              {' · '}
-              {t('exploration.shield', {
-                current: context.shield ?? 0,
-                max: context.maxShield ?? 0,
-              })}
-              {' · '}
-              {t('exploration.mana', {
-                current: context.mana ?? 0,
-                max: context.maxMana ?? 0,
-              })}
-            </span>
+            <div className="flex items-center gap-2.5 text-[11px] text-[#b7ab9c]">
+              <span className="inline-flex items-center gap-1">
+                {t('exploration.actionsShort', {
+                  remaining: context.hand.length,
+                  max: context.handSize,
+                })}
+              </span>
+              <span className="inline-flex items-center gap-1 text-[#8fb0e0]">
+                <ShieldBadgeIcon className="h-2.5 w-[9px]" />
+                {context.shield ?? 0}/{context.maxShield ?? 0}
+              </span>
+              <span className="inline-flex items-center gap-1 text-[#7fc4d4]">
+                <ManaOrbIcon className="h-[9px] w-[9px]" style={{ boxShadow: 'none' }} />
+                {context.mana ?? 0}/{context.maxMana ?? 0}
+              </span>
+              <span className="inline-flex items-center gap-1 text-[#e0b552]">
+                <CrownsIcon className="h-[9px] w-[9px]" style={{ boxShadow: 'none' }} />
+                {context.money ?? 0}
+              </span>
+            </div>
           </div>
         </div>
         <span className="font-cinzel text-[15px] tracking-[.34em] text-[#b8917f]">

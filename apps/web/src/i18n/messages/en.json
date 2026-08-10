@@ -93,6 +93,7 @@
     "endTurn": "END TURN",
     "unnamedPrisoner": "Unnamed Prisoner",
     "actionsTurn": "Actions {remaining}/{max} · Turn {turn}",
+    "actionsShort": "{remaining}/{max}",
     "exploredCount": "{visited} / {total} EXPLORED",
     "mapRegionLabel": "HOLLOWFORT — FIRST FORTRESS",
     "zoomIn": "Zoom in",
@@ -102,6 +103,8 @@
     "shieldLabel": "SHIELD",
     "mana": "Mana {current}/{max}",
     "manaLabel": "MANA",
+    "money": "{count} crowns",
+    "moneyLabel": "CROWNS",
     "actionsUntilEncounter": "{count} actions until encounter",
     "encounterImminent": "Encounter fires next",
     "actionsSpent": "{used}/{max} spent",
@@ -217,6 +220,8 @@
   "player": {
     "questLog": "QUEST LOG",
     "inventory": "INVENTORY",
+    "crowns": "CROWNS",
+    "crownsCount": "{count}",
     "character": "CHARACTER",
     "ledger": "HOLLOWFORT LEDGER",
     "escapedFrom": "Escaped from Hollowfort",
@@ -326,6 +331,13 @@
     "itemMushroomNotFound": "NOT YET FOUND · UNDERGROUND TUNNELS",
     "itemMushroomQuest": "Ingredients for the Circle",
     "itemMushroomDesc": "Glows faintly blue. The Sorcerer wants it to bind the wards he's repairing."
+  },
+  "shop": {
+    "services": "SERVICES",
+    "crowns": "{count} crowns",
+    "cost": "{cost} cr",
+    "restoreShield": "Restore shield",
+    "restoreMana": "Restore mana"
   },
   "unlockModal": {
     "title": "Unlock card",

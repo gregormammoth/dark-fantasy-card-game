@@ -31,6 +31,54 @@ export function ManaIcon({ className, style }: IconProps) {
   return <Sparkles className={className} style={iconStyle('#6ec8e0', style)} strokeWidth={2.1} />;
 }
 
+export function ManaOrbIcon({ className, style }: IconProps) {
+  return (
+    <span
+      className={className}
+      style={{
+        display: 'inline-block',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle at 35% 30%, #bdeaf2, #4fa4b8 70%)',
+        boxShadow: '0 0 12px -2px rgba(79,164,184,.7)',
+        ...style,
+      }}
+      aria-hidden
+    />
+  );
+}
+
+export function CrownsIcon({ className, style }: IconProps) {
+  return (
+    <span
+      className={className}
+      style={{
+        display: 'inline-block',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle at 35% 30%, #f6e39a, #c9962f 70%)',
+        boxShadow: '0 0 12px -2px rgba(224,181,82,.7)',
+        ...style,
+      }}
+      aria-hidden
+    />
+  );
+}
+
+export function ShieldBadgeIcon({ className, style }: IconProps) {
+  return (
+    <span
+      className={className}
+      style={{
+        display: 'inline-block',
+        background: '#5b86c4',
+        clipPath: 'polygon(50% 0, 100% 22%, 100% 62%, 50% 100%, 0 62%, 0 22%)',
+        boxShadow: '0 0 12px -2px rgba(91,134,196,.7)',
+        ...style,
+      }}
+      aria-hidden
+    />
+  );
+}
+
 export function PoisonIcon({ className, style }: IconProps) {
   return <Droplets className={className} style={iconStyle('#6fae5a', style)} strokeWidth={2.1} />;
 }
