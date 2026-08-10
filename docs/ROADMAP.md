@@ -60,7 +60,7 @@ Use this as the primary compass. Systems work still matters; horizons decide *wh
 - Versioned **save / load** (schema in engine; **persist via NestJS + Postgres**)
 - **Seeded RNG** (required before Beta)
 - Hollowfort Prison story vertical slice
-- ~24–32 excellent player cards + 10–12 locations
+- ~24–32 excellent player cards + ~12–16 locations (live: 30 cards, 16 locations; balance / feel pass open)
 - Exploration **encounters that disturb cards** (shuffle / discard / add) **and/or shields** (increase / decrease)
 - **Enemy pacing** — early fights teach; later fights (elites / bosses) punish
 - **Enemy diversity** — distinct card groups / archetypes (warrior, rogue, wizard, monster, undead, …)
@@ -164,12 +164,12 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Character creation | Done — name + gender → `POST /players` → guest `playerId` |
 | Exploration ↔ Battle continuity | In place — location FIGHT → battle with carried piles + shield → victory syncs piles/shield back |
 | Exploration action economy + encounter pressure | In place — 4 actions/turn; encounters shuffle / discard / add cards and raise / lower shields; HUD + modal show timing and impact |
-| Battle core | Partial — playable; conditional combo bonuses order-independent; deck/shield caps still fixed content defaults |
+| Battle core | Playable — conditional combo bonuses order-independent; combo / shield / mana / deck / draw from player skills |
 | Class XP award + UI | In place |
-| Class levels / unlock curve | In place (10 XP = 1 level; 12 improved cards; mid-run unlock → deck) |
+| Class levels / unlock curve | In place (10 XP = 1 level; 15 improved cards; mid-run unlock → deck) |
 | Player level + choosable skills | Live — see [MECHANICS.md](./MECHANICS.md#player-level-and-combat-skills) |
 | Progression stats (deck / shield / combo / mana / draw) | Live player-level skills (soft ceilings enforced on pick) |
-| Reward loop | Fragmented — XP + level unlocks so far (no formal grant API yet) |
+| Reward loop | Partial — XP, unlocks, crowns, story flags live; no formal Run grant API / reward reveal UX yet |
 | Quests (logic + UI) | Run quests + Player quest log + map toasts; faction kill-quests + Escape → world |
 | Money / light inventory | Crowns + Smuggler restoratives live |
 | Save / load + save schema | Cloud save/load wired (`GET|PUT /saves/:playerId`); mid-battle snapshot still open |
@@ -177,12 +177,12 @@ Persistence Layer (NestJS + PostgreSQL; optional local cache)
 | Guided tour (map + battle) | First pass — 5 coach marks (character, dialog, move, battle, progression), per-player persisted; enemy/quest/HP tips + settings toggle open |
 | NestJS API + Postgres | Live locally (`apps/api` + Docker Compose); players / saves / analytics / feedback |
 | Analytics + feedback | Core client events instrumented; feedback form UI still open; no rollup queries yet |
-| Hollowfort map content | 13 locations + branch bosses + Exit Gate escape wired to world |
-| Enemy balance / diversity | Not started — shared enemy card pool; no early→late curve or archetypes yet |
-| Portraits / card art | Class+gender player portraits; 24 player card covers |
+| Hollowfort map content | 16 locations + branch bosses + Exit Gate escape wired to world |
+| Enemy balance / diversity | Bands + group decks live (`enemies.json` / `enemyCards.json`); balance / feel pass still open |
+| Portraits / card art | Class+gender player portraits (Warrior/Rogue/Wizard/Survivor); Seeker uses placeholder; ~30 player card covers |
 | Localization (en / ru / sr) | First pass — `/play` UI chrome (en/ru/sr), Settings switcher, localStorage; game content JSON + engine strings still English |
 | Inventory | Money for Beta; full items post-Beta |
-| Automated tests | E2E smoke + world→battle; XP / loadout unit tests (E2E needs guest+API bootstrap) |
+| Automated tests | Engine unit suite strong; E2E smoke + world→battle; full seeded journey E2E still open |
 
 Update this table as milestones land.
 
@@ -206,7 +206,7 @@ Update this table as milestones land.
 - [x] Fight again with a meaningfully different deck
 - [x] Enter battle carrying the current exploration hand / card state instead of a fully fresh draw
 - [x] Track and complete at least one quest from the quest log
-- [ ] Earn and spend money (light inventory)
+- [x] Earn and spend money (light inventory)
 - [x] Grow combat skills via **player level** picks (max shield, max combo, max mana, max deck, draw per turn) — see MECHANICS
 - [x] Face exploration encounters that shuffle / discard / add cards and/or raise / lower shields
 - [x] Defeat a prison branch boss (Chapel / Warden’s Tower / Political Wing)
@@ -227,7 +227,7 @@ Work in this order unless a dependency forces otherwise. Analytics may be instru
 CURRENT
   │
   ▼
-1. XP + progression (levels / unlocks)     ← done (levels + 12 improved cards)
+1. XP + progression (levels / unlocks)     ← done (levels + 15 improved cards)
   │
   ▼
 2. Shared Run State                        ← RunState done; app XState machine deferred
@@ -245,7 +245,7 @@ CURRENT
 6. Seeded RNG (required)                   ← done
   │
   ▼
-7. Reward loop + player-level skills              ← XP/unlocks exist; player level + skill picks + grant API open
+7. Reward loop + player-level skills       ← skills live; formal grant API / reward reveal open
   │
   ▼
 8. Quests (logic + UI) + money             ← done (smuggler shop + crowns)
@@ -254,7 +254,7 @@ CURRENT
 9. Prison story vertical slice             ← playable escape path done; polish open
   │
   ▼
-10. Content: cards · locations · enemy pacing ← locations/cards present; enemy curve + archetypes open
+10. Content: cards · locations · enemy pacing ← 30 player cards · 16 locations · bands/groups live; balance pass open
   │
   ▼
 11. Analytics events + product stats + feedback form ← core events live; feedback UI / queries open
@@ -488,7 +488,7 @@ Same seed ⇒ same random sequence ⇒ reproducible bugs and E2E scenarios.
 
 ### Class experience
 
-- [x] +1 class XP per successful player card play (Fighter / Rogue / Wizard / Survivor)
+- [x] +1 class XP per successful player card play (Warrior / Rogue / Wizard / Survivor / Seeker)
 - [x] Progression carried across battles in the current session
 - [x] Character screen shows live class XP and total XP
 - [x] Battle results show XP gained this fight
@@ -519,7 +519,7 @@ Combat ceilings are **player skills** chosen at player level-up (gear/items may 
 
 - [x] Character screen deck composition (add / remove, deck cap)
 - [x] Unlock cards by spending free class levels (bound to loadout + battles)
-- [x] Twelve improved cards available on Character screen (1 level each)
+- [x] Fifteen improved cards available on Character screen (1 level each)
 - [x] Mid-run unlock rebuilds exploration/battle deck for the next fight
 - [x] **Max shield** — live skill; battles + exploration share the same cap
 - [x] **Max combo** — cap cards in the combo (start 2)
@@ -527,24 +527,26 @@ Combat ceilings are **player skills** chosen at player level-up (gear/items may 
 - [x] **Max deck** — live loadout/HP ceiling
 - [x] **Draw per turn** — skill (start 1; soft ceiling 3)
 - [x] Character UI shows skills + unspent player-level picks
-- [ ] At least one Hollowfort path that makes a skill pick or upgrade feel earned (level-up is the primary path; optional quest/item later)
+- [x] At least one Hollowfort path that makes a skill pick feel earned (player level-up on Character screen; optional quest/item skill bump later)
 - [x] Encounters / events can still change *current* shield without raising the skill cap
 - [ ] Permanent card removal (optional for Beta)
 - [ ] Card upgrades (post-Beta unless one upgrade proves the loop)
 
-### Seeker class (post–four-skill frame or late Beta)
+### Seeker class (partial — mark/dig live)
 
-- [ ] Fifth class: dig / mark / deduce — mono-viable (not draw-only splash)
-- [ ] Loops: **Expose → Exploit** (mark then payoff); **Deduce the next blow** (peek enemy 1–N, cancel/blunt known attacks)
-- [ ] Base + improved cards: dig, search deck, mark, peek enemy, draw-scaled / marked attacks, cancel-known defense
-- [ ] Engine pieces as needed: mark, peek enemy deck, known-card memory, cancel next enemy card, bonus per cards drawn, search UI
-- [ ] Portraits + class XP like existing classes
-- [ ] Prefer shipping player-level skills with the current four classes first
-- [ ] Design detail: [MECHANICS.md — Seeker](./MECHANICS.md#seeker-class-planned)
+- [x] Fifth class id + XP path + base/improved cards (Quick Survey, Mark the Joint, Weak-Point Strike + improved)
+- [x] Loop: **Expose → Exploit** (mark then marked payoff / pierce)
+- [ ] Loop: **Deduce the next blow** (peek enemy 1–N, cancel/blunt known attacks)
+- [x] Dig cards as **instant draw** (no combo slot)
+- [x] Engine: mark, ignore-shield-if-marked, bonus-if-marked, bonus damage per cards drawn
+- [ ] Engine: peek enemy deck, known-card memory, cancel next enemy card, search UI
+- [ ] Dedicated Seeker portraits (class+gender)
+- [x] Player-level skills shipped alongside Seeker (not blocked on Seeker finish)
+- Design detail: [MECHANICS.md — Seeker](./MECHANICS.md#seeker-class)
 
 ### Reward loop (explicit system)
 
-Fragmented today across battle XP, character UI, and future loot. Make it one loop:
+Partial today: battle XP, card unlocks, crowns, and story flags. Still missing one grant API + clear reward reveal.
 
 ```text
 ACTION → REWARD → PROGRESSION → NEW OPTIONS
@@ -554,15 +556,15 @@ Example:
 
 ```text
 Win battle
-  → + Fighter XP (+ optional card opportunity / story flag)
-  → Unlock Heavy Strike
+  → + Warrior XP (+ optional crowns / story flag)
+  → Unlock Crushing Blow
   → Modify deck
   → Next battle feels different
 ```
 
 - [ ] Define reward grant API on the Run (XP, unlocks, flags, money, skill deltas, optional card offers)
-- [ ] Battle end applies rewards into the Run (not only UI counters)
-- [ ] At least one non-XP reward path for the prison slice (card offer, money, skill bump, or story unlock)
+- [ ] Battle end applies rewards into the Run through that API (not only ad-hoc XP / money calls)
+- [x] At least one non-XP reward path for the prison slice (crowns from quests/enemies; corridor / story flags)
 - [ ] Reward reveal UX (can be simple for Beta)
 
 ### Deliverable
@@ -591,7 +593,7 @@ Accept / discover → Active → Objectives progress → Complete / Fail
 - [x] At least 3 Hollowfort faction quests (kill Warden / Inquisitor / Resurrected Anarchist)
 - [x] Quests granted only after dialog with Dead Anarchist, Sorcerer (post-Demon), Guard Captain
 - [x] Exit Gate shows the matching faction NPC when that quest’s boss is dead
-- [ ] Fail states / pay-money quest progress (when money exists)
+- [ ] Fail states / pay-money quest progress
 - [ ] Quest reward XP / money grants unified through Run reward API
 
 ### Money (light inventory)
@@ -620,10 +622,10 @@ Quest log is usable mid-run (**done**). Money appears in inventory and matters f
 
 - [x] Wake in prison cell
 - [x] Escape first cell (travel to Cell Block)
-- [x] Explore prison (12-location graph + encounter queue)
-- [ ] Discover monster invasion (story beat polish)
+- [x] Explore prison (16-location graph + encounter queue)
+- [x] Discover monster invasion (story beat present; polish open)
 - [ ] Rescue survivor (optional quest)
-- [ ] Find money / card reward (full equipment inventory still post-Beta)
+- [x] Find money / card reward (crowns from quests/enemies + Smuggler spend; full equipment inventory still post-Beta)
 - [x] Reach courtyard
 - [x] Defeat prison boss (one of three sealed branches)
 - [x] Escape Hollowfort (Exit Gate OPEN → `escaped_hollowfort` → world)
@@ -635,9 +637,9 @@ Quest log is usable mid-run (**done**). Money appears in inventory and matters f
 - [x] Quests appear only after dialog (Dead Anarchist / Sorcerer / Guard Captain)
 - [x] Exit Gate conditional NPCs after matching boss kills
 - [x] At least one paid / bribe / buy choice using money (Smuggler restoratives)
-- [ ] Quest completion grants XP, money, and/or unlocks (completion works; reward grant polish open)
+- [x] Quest completion grants money and/or unlocks (ingredient quest crowns + flags; kill quests complete; unified grant API still open)
 
-### Locations (handcrafted, ~10–12)
+### Locations (handcrafted, 16 live)
 
 Current roster in `prisonMap.json` (see also [HOLLOWFORT.md](./HOLLOWFORT.md) — may lag map):
 
@@ -660,10 +662,10 @@ Current roster in `prisonMap.json` (see also [HOLLOWFORT.md](./HOLLOWFORT.md) �
 - [x] Artwork (some rooms still reuse aliased art)
 - [x] Description
 - [x] Enemies / encounters
-- [ ] Loot or card / money opportunities
+- [x] Loot or card / money opportunities (crowns + Smuggler; key/ingredient loot)
 - [x] Interactions
 - [ ] Story events (dialog present; deeper beats pending)
-- [ ] Quest hooks where the location owns an objective
+- [x] Quest hooks where the location owns an objective
 
 ### Enemy pacing & diversity (Hollowfort)
 
@@ -671,11 +673,11 @@ Current roster in `prisonMap.json` (see also [HOLLOWFORT.md](./HOLLOWFORT.md) �
 
 #### Difficulty curve
 
-- [ ] Tag enemies by power band (`intro` / `common` / `elite` / `boss`) mapped to prison depth
-- [ ] Early fights (Prison Cell → Cell Block / early corridors): smaller decks, telegraphed attacks, low shield/barrier
-- [ ] Mid prison: mixed threats, status effects, light defence
-- [ ] Late / branch bosses: larger decks, stronger defence, signature tools
-- [ ] Tune `deckSize`, starting shield/barrier, and card pools per band (not one global enemy deck for all)
+- [x] Tag enemies by power band (`intro` / `common` / `elite`) mapped to prison depth
+- [x] Early fights (Prison Cell → Cell Block / early corridors): smaller decks, telegraphed attacks, low shield/barrier
+- [x] Mid prison: mixed threats, status effects, light defence
+- [x] Late / branch bosses: larger decks, stronger defence, signature tools
+- [ ] Tune `deckSize`, starting shield/barrier, and card pools per band (balance pass)
 
 #### Enemy card groups / archetypes
 
@@ -690,11 +692,12 @@ Ideally each enemy draws from a named group (or small mix), not one shared pool:
 | Undead / Bound | Persist, drain, grim defence | Resurrected Anarchist |
 | Brute / Survivor scrap | High HP trades, messy defence | Fat Prisoner, Butcher, Prison Warden |
 
-- [ ] Content schema: `enemyGroup` / `cardPoolIds` on enemy definitions
-- [ ] Split `enemyCards.json` into group pools (start lean: 4–6 cards per group)
-- [ ] Assign each Hollowfort enemy a primary group (+ optional splash cards)
-- [ ] Bosses get a unique signature card or two on top of their group
-- [ ] Player-facing telegraph: intent / portrait / tier already hint the group
+- [x] Content schema: `band` / `group` on enemy definitions
+- [x] Split `enemyCards.json` into group pools via `enemyGroup` + `minBand`
+- [x] Assign each Hollowfort enemy a primary group
+- [x] Bosses get a unique signature card or two on top of their group
+- [x] Player-facing telegraph: intent / portrait / tier already hint the group
+- [ ] Balance pass so early→late feel is proven in playtests
 
 Public Regions / Lore site pages may mirror this via SSG without embedding engine code.
 
@@ -712,35 +715,37 @@ A finished narrative vertical slice of Hollowfort Prison — with fights that ra
 
 ### Target for Beta (player)
 
-| Class | Cards |
+| Class | Cards (base + improved) |
 |-------|------:|
-| Fighter | ~8 |
-| Rogue | ~8 |
-| Wizard | ~8 |
-| Survivor | ~8 |
-| **Total** | **~24–32** |
+| Warrior | 6 |
+| Rogue | 6 |
+| Wizard | 6 |
+| Survivor | 6 |
+| Seeker | 6 |
+| **Total** | **30** (target band was ~24–32) |
 
 Then expand: 32 → 50 → 80 → 120 after the system feels right.
 
 ### Tasks (player)
 
-- [x] Fighter, Rogue, Wizard, Survivor as class ids + XP paths
+- [x] Warrior, Rogue, Wizard, Survivor, Seeker as class ids + XP paths
 - [x] Attack / defence effects + combos (base resolve path)
 - [x] Align combo logic for conditional bonuses (e.g. `bonusIfLowerHp` / “+2 damage if &lt; 50% HP”) — effect must not depend on card position in the combo; combo preview must match actual resolve
-- [ ] Balance ~24–32 cards so classes feel distinct
+- [ ] Balance ~30 cards so classes feel distinct
 - [ ] Utility / event / equipment categories only if the slice needs them
 - [ ] Synergies / rarity / upgrades — lean for Beta; expand post-Beta
 
 ### Tasks (enemy cards — pairs with M7)
 
-- [ ] Replace the single shared enemy deck with group pools (warrior, rogue, wizard, monster, undead, brute, …)
-- [ ] Early-pool cards are weaker / simpler than late-pool cards
-- [ ] Bosses mix group identity + 1–2 exclusive cards
-- [ ] Keep total enemy card count lean for Beta (~20–30 across groups, not a second player library)
+- [x] Replace the single shared enemy deck with group pools (warrior, cutthroat, ritualist, beast, undead, brute)
+- [x] Early-pool cards gated by `minBand` (weaker / simpler than late-pool cards)
+- [x] Bosses mix group identity + 1–2 exclusive / signature cards
+- [x] Keep total enemy card count lean for Beta (~27 across groups, not a second player library)
+- [ ] Balance / feel pass so early→late and group identity read clearly in playtests
 
 ### Deliverable
 
-Four readable player class identities **and** enemies that play differently across the prison run.
+Five readable player class identities (Seeker peek/cancel still open) **and** enemies that play differently across the prison run (bands + groups live; balance open).
 
 ---
 
@@ -885,7 +890,7 @@ Translate all player-facing shell text:
 
 Translate data-driven strings shown at runtime:
 
-- [ ] Player card names + descriptions (~24 cards)
+- [ ] Player card names + descriptions (~30 cards)
 - [ ] Enemy names + battle log templates where fixed English
 - [ ] Hollowfort location names + short blurbs
 - [ ] NPC dialog lines + quest names / descriptions / step labels
@@ -917,9 +922,9 @@ A player can switch language in Settings and play Hollowfort with localized **UI
 
 - [x] XP / progression unit tests
 - [x] E2E smoke: `/play` entry + marketing home
-- [ ] Unit: damage, card effects, deck ops, status, RNG
+- [x] Unit: damage, card effects, deck ops, status, RNG (engine suite; keep expanding with new effects)
 - [x] Unit: conditional combo bonuses (`bonusIfLowerHp` and similar) are order-independent and match `previewCombo`
-- [ ] Integration: exploration ↔ battle, rewards, save/load
+- [ ] Integration: exploration ↔ battle, rewards, save/load (handoff / save unit coverage exists; full integration path open)
 - [ ] E2E: new run → fight → XP → unlock → save/load → boss → escape (seeded)
 - [ ] E2E: first-run tour appears once, dismissible, does not block travel/fight
 
@@ -935,17 +940,17 @@ Stable Beta build on Vercel — including a short guided tour for map + battle f
 
 ### Required
 
-- [ ] Hollowfort Prison vertical slice playable end-to-end
+- [x] Hollowfort Prison vertical slice playable end-to-end (escape path live; polish / balance open)
 - [x] Public site + `/play` (repo ready)
 - [ ] Deployed web + API (Vercel / Railway / similar)
 - [x] Cloud save / load working (guest player id + name/gender)
 - [ ] Analytics ingest + product stats queries (ingest live; queries / duration still open)
 - [ ] Feedback form live and stored
-- [ ] Seeded RNG in production builds
-- [x] ~24 player cards · ~13 locations · branch bosses (polish / balance open)
+- [x] Seeded RNG in engine + client (debug seed / `?seed=`); keep wired through production deploy
+- [x] ~30 player cards · 16 locations · branch bosses (polish / balance open)
 - [x] Enemy difficulty curve (weak early → strong late) + archetype card groups (`enemies.json` roster + band table; balance pass open)
-- [ ] Reward loop + class progression readable without a tutorial wall
-- [ ] Player level + choosable skills (max shield / combo / mana / deck / draw); hand size constant — see MECHANICS
+- [ ] Reward loop + class progression readable without a tutorial wall (skills/XP/money live; formal grant API + reward reveal UX open)
+- [x] Player level + choosable skills (max shield / combo / mana / deck / draw); hand size constant — see MECHANICS
 - [x] Exploration encounters that disturb **cards** (shuffle / discard / add) and/or **shields** (increase / decrease)
 - [x] Combo conditional effects correct (order-independent; preview matches resolve — e.g. +damage if HP &lt; 50%)
 - [x] Guided tour: dismissible coach marks (character, dialog, move, battle, progression) — first pass
@@ -1030,7 +1035,7 @@ Cards stay primary. Beta already includes **quests + money**; grow item loadouts
 - Building full auth + profiles + leaderboards before the prison loop is fun
 - Expanding **full item inventory** before card progression, quests, and money feel good
 - Inflating to 40–60 cards before ~24–32 feel distinct
-- Shipping Hollowfort with one shared enemy deck and flat difficulty (no early→late curve, no archetypes)
+- Shipping Hollowfort with flat difficulty and no enemy archetypes (bands + group pools already live; do not regress to one shared deck)
 - Treating Exploration and Battle as separate demos
 - Shipping without seeded RNG or versioned cloud saves
 - Building a warehouse / ClickHouse stack for a handful of Beta events
