@@ -392,6 +392,26 @@
     "changeShuffledDeck": "Колода перемешана",
     "changeShuffledDiscard": "Сброс перемешан"
   },
+  "rewards": {
+    "earned": "НАГРАДЫ",
+    "classXp": "+{amount} XP класса",
+    "crowns": "+{amount} крон",
+    "crownsShort": "+{amount} крон",
+    "crownsEarned": "КРОНЫ ПОЛУЧЕНЫ",
+    "cardUnlockOne": "Доступно улучшение карты",
+    "cardUnlockMany": "Доступно {count} улучшений карт",
+    "skillPointOne": "Доступно очко навыка",
+    "skillPointMany": "Доступно {count} очков навыка",
+    "visitCharacter": "Откройте Персонажа, чтобы потратить",
+    "questStarted": "КВЕСТ НАЧАТ",
+    "questComplete": "КВЕСТ ЗАВЕРШЁН",
+    "questUpdated": "КВЕСТ ОБНОВЛЁН",
+    "unlockAvailable": "ПРОГРЕСС",
+    "ingredientLavender": "Сушёная лаванда найдена — Лазарет.",
+    "ingredientMushroom": "Гриб lowcap найден — Подземные туннели.",
+    "keyringFound": "Ключи палача найдены.",
+    "diningOpened": "Путь в трапезную открыт."
+  },
   "locationBattle": {
     "title": "БОЕВАЯ ВСТРЕЧА",
     "fight": "СРАЖАТЬСЯ"

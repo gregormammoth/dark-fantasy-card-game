@@ -395,6 +395,26 @@
     "changeShuffledDeck": "Deck shuffled",
     "changeShuffledDiscard": "Discard shuffled"
   },
+  "rewards": {
+    "earned": "REWARDS EARNED",
+    "classXp": "+{amount} class XP",
+    "crowns": "+{amount} crowns",
+    "crownsShort": "+{amount} crowns",
+    "crownsEarned": "CROWNS EARNED",
+    "cardUnlockOne": "Improved card unlock available",
+    "cardUnlockMany": "{count} improved card unlocks available",
+    "skillPointOne": "Skill point available",
+    "skillPointMany": "{count} skill points available",
+    "visitCharacter": "Open Character to spend it",
+    "questStarted": "QUEST STARTED",
+    "questComplete": "QUEST COMPLETE",
+    "questUpdated": "QUEST UPDATED",
+    "unlockAvailable": "PROGRESSION",
+    "ingredientLavender": "Dried lavender recovered — Infirmary.",
+    "ingredientMushroom": "Lowcap mushroom recovered — Underground Tunnels.",
+    "keyringFound": "Executioner's keyring recovered.",
+    "diningOpened": "Dining Hall path opened."
+  },
   "locationBattle": {
     "title": "COMBAT ENCOUNTER",
     "fight": "FIGHT"

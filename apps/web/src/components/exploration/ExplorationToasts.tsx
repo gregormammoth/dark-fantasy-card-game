@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { getQuestDefinition } from '@dark-fantasy/game-engine/engine/exploration/quests';
+import type { TranslateFn } from '@/i18n/types';
 
-export type ToastKind = 'started' | 'updated' | 'completed' | 'failed';
+export type ToastKind = 'started' | 'updated' | 'completed' | 'failed' | 'reward';
 
 export interface ExplorationToastItem {
   id: number;
@@ -16,6 +18,7 @@ const KIND_COLOR: Record<ToastKind, string> = {
   updated: '#e0b552',
   completed: '#4a965e',
   failed: '#d6443a',
+  reward: '#e0b552',
 };
 
 interface ExplorationToastsProps {
@@ -42,7 +45,12 @@ export function ExplorationToasts({ toasts, onDismiss }: ExplorationToastsProps)
             <div className="flex-1">
               <div
                 className="font-cinzel text-[12px] tracking-wide"
-                style={{ color: toast.kind === 'started' || toast.kind === 'updated' ? '#f0dfcb' : color }}
+                style={{
+                  color:
+                    toast.kind === 'started' || toast.kind === 'updated' || toast.kind === 'reward'
+                      ? '#f0dfcb'
+                      : color,
+                }}
               >
                 {toast.title}
               </div>
@@ -86,6 +94,7 @@ export function useQuestToastWatcher(
   quests: Array<{ id: string; name: string; status: string }>,
   flags: Record<string, boolean>,
   pushToast: (kind: ToastKind, title: string, body: string) => void,
+  t: TranslateFn,
 ) {
   useEffect(() => {
     const key = 'dfcg-quest-toast-snap';
@@ -112,25 +121,30 @@ export function useQuestToastWatcher(
     for (const quest of snapshot.quests) {
       const old = prev.quests.find((item) => item.id === quest.id);
       if (!old) {
-        pushToast('started', 'QUEST STARTED', quest.name);
+        pushToast('started', t('rewards.questStarted'), quest.name);
       } else if (old.status === 'active' && quest.status === 'completed') {
-        pushToast('completed', 'QUEST COMPLETE', quest.name);
+        const rewardMoney = getQuestDefinition(quest.id)?.rewardMoney;
+        const body =
+          rewardMoney && rewardMoney > 0
+            ? `${quest.name} · ${t('rewards.crownsShort', { amount: rewardMoney })}`
+            : quest.name;
+        pushToast('completed', t('rewards.questComplete'), body);
       }
     }
 
     if (!prev.lavender && snapshot.lavender) {
-      pushToast('updated', 'QUEST UPDATED', 'Dried lavender recovered — Infirmary.');
+      pushToast('updated', t('rewards.questUpdated'), t('rewards.ingredientLavender'));
     }
     if (!prev.mushroom && snapshot.mushroom) {
-      pushToast('updated', 'QUEST UPDATED', 'Lowcap mushroom recovered — Underground Tunnels.');
+      pushToast('updated', t('rewards.questUpdated'), t('rewards.ingredientMushroom'));
     }
     if (!prev.keyring && snapshot.keyring) {
-      pushToast('updated', 'QUEST UPDATED', "Executioner's keyring recovered.");
+      pushToast('updated', t('rewards.questUpdated'), t('rewards.keyringFound'));
     }
     if (!prev.dining && snapshot.dining) {
-      pushToast('updated', 'QUEST UPDATED', 'Dining Hall path opened.');
+      pushToast('updated', t('rewards.questUpdated'), t('rewards.diningOpened'));
     }
 
     sessionStorage.setItem(key, JSON.stringify(snapshot));
-  }, [quests, flags, pushToast]);
+  }, [quests, flags, pushToast, t]);
 }

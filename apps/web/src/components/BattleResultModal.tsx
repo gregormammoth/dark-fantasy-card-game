@@ -31,6 +31,9 @@ interface BattleResultModalProps {
   logEntries: BattleLogEntry[];
   xpGained: Record<CardClass, number>;
   totalXpGained: number;
+  crownsEarned?: number;
+  newCardUnlocks?: number;
+  newSkillPoints?: number;
   onReturnToExploration: () => void;
   onResumeFromSave?: () => void;
   onStartOver?: () => void;
@@ -44,6 +47,9 @@ export function BattleResultModal({
   logEntries,
   xpGained,
   totalXpGained,
+  crownsEarned = 0,
+  newCardUnlocks = 0,
+  newSkillPoints = 0,
   onReturnToExploration,
   onResumeFromSave,
   onStartOver,
@@ -65,6 +71,9 @@ export function BattleResultModal({
     }),
   );
   const showGameOverChoices = !victory && onResumeFromSave && onStartOver;
+  const showRewards =
+    victory &&
+    (totalXpGained > 0 || crownsEarned > 0 || newCardUnlocks > 0 || newSkillPoints > 0);
 
   useEffect(() => {
     play('modal_open');
@@ -118,13 +127,54 @@ export function BattleResultModal({
           <StatCell label={t('battle.xp')} value={`+${totalXpGained}`} color="#7ecb6a" />
         </div>
 
-        {classGains.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 border-b border-[rgba(201,162,74,.12)] px-6 py-3 text-[11px]">
-            {classGains.map((gain) => (
-              <span key={gain.classId} style={{ color: gain.color }}>
-                {gain.label} +{gain.amount}
-              </span>
-            ))}
+        {showRewards && (
+          <div className="border-b border-[rgba(201,162,74,.12)] px-6 py-4">
+            <span className="text-[10px] tracking-[.24em] text-[#c9a24a]">
+              {t('rewards.earned')}
+            </span>
+            <div className="mt-3 flex flex-col gap-2">
+              {totalXpGained > 0 && (
+                <RewardRow
+                  label={t('rewards.classXp', { amount: totalXpGained })}
+                  sub={
+                    classGains.length > 0
+                      ? classGains.map((gain) => `${gain.label} +${gain.amount}`).join(' · ')
+                      : undefined
+                  }
+                  color="#7ecb6a"
+                  bg="rgba(126,203,106,.1)"
+                />
+              )}
+              {crownsEarned > 0 && (
+                <RewardRow
+                  label={t('rewards.crowns', { amount: crownsEarned })}
+                  color="#e0b552"
+                  bg="rgba(224,181,82,.1)"
+                />
+              )}
+              {newCardUnlocks > 0 && (
+                <RewardRow
+                  label={t(
+                    newCardUnlocks === 1 ? 'rewards.cardUnlockOne' : 'rewards.cardUnlockMany',
+                    newCardUnlocks === 1 ? undefined : { count: newCardUnlocks },
+                  )}
+                  sub={t('rewards.visitCharacter')}
+                  color="#c9a24a"
+                  bg="rgba(201,162,74,.1)"
+                />
+              )}
+              {newSkillPoints > 0 && (
+                <RewardRow
+                  label={t(
+                    newSkillPoints === 1 ? 'rewards.skillPointOne' : 'rewards.skillPointMany',
+                    newSkillPoints === 1 ? undefined : { count: newSkillPoints },
+                  )}
+                  sub={t('rewards.visitCharacter')}
+                  color="#9a7ae0"
+                  bg="rgba(154,122,224,.1)"
+                />
+              )}
+            </div>
           </div>
         )}
 
@@ -177,6 +227,30 @@ export function BattleResultModal({
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function RewardRow({
+  label,
+  sub,
+  color,
+  bg,
+}: {
+  label: string;
+  sub?: string;
+  color: string;
+  bg: string;
+}) {
+  return (
+    <div
+      className="rounded-md border px-3.5 py-2.5"
+      style={{ borderColor: `${color}44`, background: bg }}
+    >
+      <div className="text-[13px] font-medium" style={{ color }}>
+        {label}
+      </div>
+      {sub && <div className="mt-1 text-[11px] leading-snug text-[#8a7f72]">{sub}</div>}
+    </div>
   );
 }
 

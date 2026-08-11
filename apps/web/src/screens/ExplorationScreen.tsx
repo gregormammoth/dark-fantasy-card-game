@@ -72,7 +72,7 @@ export function ExplorationScreen({
   const [questLogOpen, setQuestLogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const { toasts, pushToast, dismissToast } = useExplorationToasts();
-  useQuestToastWatcher(context.quests, context.flags, pushToast);
+  useQuestToastWatcher(context.quests, context.flags, pushToast, t);
   const isIdle = snapshot.matches('idle');
   const selected = context.selectedLocationId
     ? context.locations[context.selectedLocationId] ?? null

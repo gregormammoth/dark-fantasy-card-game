@@ -392,6 +392,26 @@
     "changeShuffledDeck": "Špil promešan",
     "changeShuffledDiscard": "Odbačeno promešano"
   },
+  "rewards": {
+    "earned": "ZARADA",
+    "classXp": "+{amount} XP klase",
+    "crowns": "+{amount} kruna",
+    "crownsShort": "+{amount} kruna",
+    "crownsEarned": "ZARAĐENE KRUNE",
+    "cardUnlockOne": "1 otključavanje karte dostupno",
+    "cardUnlockMany": "{count} otključavanja karata dostupno",
+    "skillPointOne": "1 poen veštine dostupan",
+    "skillPointMany": "{count} poena veštine dostupno",
+    "visitCharacter": "Otvori Karakter da potrošiš",
+    "questStarted": "ZADATAK ZAPOČET",
+    "questComplete": "ZADATAK ZAVRŠEN",
+    "questUpdated": "ZADATAK AŽURIRAN",
+    "unlockAvailable": "NAPREDAK",
+    "ingredientLavender": "Suva lavanda pronađena — Bolnica.",
+    "ingredientMushroom": "Pečurka lowcap pronađena — Podzemni tuneli.",
+    "keyringFound": "Ključevi kata staratelja pronađeni.",
+    "diningOpened": "Put ka trpezariji otvoren."
+  },
   "locationBattle": {
     "title": "BORBA",
     "fight": "BORBA"

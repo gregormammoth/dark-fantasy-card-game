@@ -13,6 +13,7 @@ import {
   normalizeSeed,
   rebuildExplorationDeck,
   resolveEnemyBattleProfile,
+  getEnemyDefinition,
 } from '@dark-fantasy/game-engine';
 import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
@@ -583,12 +584,18 @@ function GameShell() {
   );
 
   if (screen === 'battle') {
+    const battleCrownsEarned =
+      pendingLocationFight && battleActor.getSnapshot().matches('victory')
+        ? getEnemyDefinition(pendingLocationFight.enemyId)?.rewardMoney ?? 0
+        : 0;
     content = (
       <BattleScreen
         actor={battleActor}
         playerId={profile.playerId}
         progression={progression}
+        loadout={loadout}
         onProgressionChange={handleProgressionChange}
+        crownsEarned={battleCrownsEarned}
         onReturnToExploration={() => {
           const snap = battleActor.getSnapshot();
           returnToExploration(

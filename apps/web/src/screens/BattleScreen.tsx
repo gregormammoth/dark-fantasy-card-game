@@ -3,10 +3,10 @@ import { useSelector } from '@xstate/react';
 import type { ActorRefFrom } from 'xstate';
 import type { battleMachine } from '@dark-fantasy/game-engine/machine/battleMachine';
 import type { BattleContext } from '@dark-fantasy/shared/types/battle';
-import type { PlayerProgression } from '@dark-fantasy/shared/types/progression';
+import type { PlayerLoadout, PlayerProgression } from '@dark-fantasy/shared/types/progression';
 import { getPlayerHealth, getEnemyHealth } from '@dark-fantasy/game-engine/engine/health';
 import { previewCombo } from '@dark-fantasy/game-engine/engine/comboPreview';
-import { getComboCap, getTotalXpGained, getXpGained } from '@dark-fantasy/game-engine';
+import { getComboCap, getTotalXpGained, getXpGained, getAvailableSkillPoints } from '@dark-fantasy/game-engine';
 import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
 import { useGameOverAudio } from '@/audio/useGameOverAudio';
@@ -22,6 +22,7 @@ import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
+import { unclaimedCardChoices } from '@/data/playerProgress';
 import type { TranslateFn } from '@/i18n/types';
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
@@ -29,11 +30,15 @@ interface BattleScreenProps {
   actor: BattleActor;
   playerId: string;
   progression: PlayerProgression;
+  loadout: PlayerLoadout;
   onProgressionChange: (progression: PlayerProgression) => void;
   onReturnToExploration: () => void;
   onDefeatResume?: () => void;
   onDefeatRestart?: () => void;
   canResumeFromSave?: boolean;
+  crownsEarned?: number;
+  newCardUnlocks?: number;
+  newSkillPoints?: number;
 }
 
 interface StackSpendState {
@@ -117,11 +122,13 @@ export function BattleScreen({
   actor,
   playerId,
   progression,
+  loadout,
   onProgressionChange,
   onReturnToExploration,
   onDefeatResume,
   onDefeatRestart,
   canResumeFromSave = false,
+  crownsEarned = 0,
 }: BattleScreenProps) {
   const { t } = useTranslation();
   const snapshot = useSelector(actor, (s) => s);
@@ -160,6 +167,24 @@ export function BattleScreen({
   );
   const totalXpGained = useMemo(
     () => getTotalXpGained(battle.progressionAtBattleStart, battle.progression),
+    [battle.progression, battle.progressionAtBattleStart],
+  );
+  const newCardUnlocks = useMemo(
+    () =>
+      Math.max(
+        0,
+        unclaimedCardChoices(battle.progression, loadout) -
+          unclaimedCardChoices(battle.progressionAtBattleStart, loadout),
+      ),
+    [battle.progression, battle.progressionAtBattleStart, loadout],
+  );
+  const newSkillPoints = useMemo(
+    () =>
+      Math.max(
+        0,
+        getAvailableSkillPoints(battle.progression) -
+          getAvailableSkillPoints(battle.progressionAtBattleStart),
+      ),
     [battle.progression, battle.progressionAtBattleStart],
   );
 
@@ -407,6 +432,9 @@ export function BattleScreen({
           logEntries={battle.log}
           xpGained={xpGained}
           totalXpGained={totalXpGained}
+          crownsEarned={crownsEarned}
+          newCardUnlocks={newCardUnlocks}
+          newSkillPoints={newSkillPoints}
           onReturnToExploration={onReturnToExploration}
           onResumeFromSave={onDefeatResume}
           onStartOver={onDefeatRestart}
