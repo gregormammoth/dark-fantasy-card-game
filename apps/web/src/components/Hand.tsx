@@ -14,7 +14,7 @@ export function Hand({ cards, onAddToCombo, disabled, comboAtCap = false }: Hand
   return (
     <div className='flex flex-1 items-end justify-center overflow-visible pb-1' style={{ height: 200 }}>
       <div className='flex items-end overflow-visible'>
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence>
           {cards.map((card, index) => {
             const instant = isInstantPlayCard(card);
             const cardDisabled = disabled || (!instant && comboAtCap);

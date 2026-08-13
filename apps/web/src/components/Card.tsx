@@ -89,6 +89,7 @@ export function Card({
   const cardHeight = getCardHeight();
   const { play } = useAudio();
   const hover = useHoverSound('card_hover', 0.2);
+  const sharedLayout = Boolean(layoutId);
 
   return (
     <motion.button
@@ -102,9 +103,9 @@ export function Card({
       onPointerEnter={hover.onPointerEnter}
       onPointerLeave={hover.onPointerLeave}
       disabled={disabled || locked}
-      initial={variant === 'collection' ? false : { opacity: 0, y: 24, scale: 0.9 }}
+      initial={sharedLayout || variant === 'collection' ? false : { opacity: 0, y: 24, scale: 0.9 }}
       animate={{ opacity: locked ? 0.55 : 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.85, y: -12 }}
+      exit={sharedLayout ? undefined : { opacity: 0, scale: 0.85, y: -12 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`ember-card group flex shrink-0 flex-col overflow-hidden rounded-[11px] bg-[#12100f] text-left transition-[transform,box-shadow] duration-[180ms] ease-out ${
         disabled || locked ? 'cursor-not-allowed' : 'cursor-pointer'

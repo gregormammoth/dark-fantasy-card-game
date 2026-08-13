@@ -36,13 +36,13 @@ export function Combo({ cards, onRemoveCard, disabled, comboCap = COMBO_CAP }: C
         <span className="text-[11px] text-[#6f6659]">{t('battle.comboResolves')}</span>
       </div>
       <div className="flex min-h-[180px] flex-wrap gap-3.5">
-        <AnimatePresence mode="popLayout">
-          {cards.length === 0 ? (
-            <p className="self-center text-sm text-[#5a5147]">
-              {t('battle.addCardsToCombo', { cap: comboCap })}
-            </p>
-          ) : (
-            cards.map((card) => (
+        {cards.length === 0 ? (
+          <p className="self-center text-sm text-[#5a5147]">
+            {t('battle.addCardsToCombo', { cap: comboCap })}
+          </p>
+        ) : (
+          <AnimatePresence>
+            {cards.map((card) => (
               <Card
                 key={card.instanceId}
                 card={card}
@@ -51,9 +51,9 @@ export function Combo({ cards, onRemoveCard, disabled, comboCap = COMBO_CAP }: C
                 disabled={disabled}
                 onClick={() => onRemoveCard(card.instanceId)}
               />
-            ))
-          )}
-        </AnimatePresence>
+            ))}
+          </AnimatePresence>
+        )}
       </div>
     </div>
   );
