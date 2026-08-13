@@ -56,3 +56,51 @@ a {
     transform: translateY(0);
   }
 }
+
+@keyframes fogDrift {
+  0% {
+    transform: translateX(-4%);
+  }
+  50% {
+    transform: translateX(4%);
+  }
+  100% {
+    transform: translateX(-4%);
+  }
+}
+
+@keyframes emberRise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-90vh) translateX(var(--drift, 24px));
+    opacity: 0;
+  }
+}
+
+@keyframes titleGlow {
+  0%,
+  100% {
+    text-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(224, 181, 82, 0);
+  }
+  50% {
+    text-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 46px rgba(224, 181, 82, 0.18);
+  }
+}
+
+@keyframes shimmerBtn {
+  0% {
+    background-position: -140px 0;
+  }
+  100% {
+    background-position: 240px 0;
+  }
+}
