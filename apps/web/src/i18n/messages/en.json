@@ -240,12 +240,12 @@
     "statusHeader": "STATUS",
     "questProgress": "QUEST",
     "improvedCost": "IMPROVED · 1 LEVEL",
-    "inDeckRemove": "In deck — click to remove",
+    "inDeck": "In deck",
     "unlockedAdd": "Unlocked — click to add",
+    "swapIntoDeck": "SWAP INTO DECK",
     "unlockCost": "Unlock — {cost} Level",
     "needsLevel": "Needs {cost} Level (have {available})",
     "lockedStatus": "Locked",
-    "removeFromDeck": "REMOVE FROM DECK",
     "addToDeck": "ADD TO DECK",
     "unlockLevel": "UNLOCK · {cost} LVL",
     "currentDeck": "Current Deck",
@@ -269,6 +269,13 @@
       "maxMana": "Max Mana",
       "maxDeck": "Max Deck",
       "drawPerTurn": "Draw Per Turn"
+    },
+    "skillDesc": {
+      "maxShield": "Highest shield you can hold in battle and while exploring.",
+      "maxCombo": "How many cards you can stack into one combo.",
+      "maxMana": "Highest mana you can hold in battle and while exploring.",
+      "maxDeck": "How many cards your deck must hold. Raising this opens an empty slot.",
+      "drawPerTurn": "Cards drawn at the start of each battle turn after the first."
     }
   },
   "settings": {
@@ -362,6 +369,13 @@
     "atCap": "At maximum",
     "choose": "+1",
     "later": "LATER"
+  },
+  "deckSwap": {
+    "eyebrow": "DECK IS FULL",
+    "title": "Choose a card to remove",
+    "subtitle": "{name} will take its place in your deck.",
+    "replace": "Replace this card",
+    "cancel": "CANCEL"
   },
   "actionPicker": {
     "eyebrow": "SPEND AN ACTION",

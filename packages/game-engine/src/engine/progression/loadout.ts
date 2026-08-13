@@ -92,25 +92,52 @@ export function canUnlockImprovedCard(
   return availableLevelsForClass(progression, loadout, card.class) >= getImprovedUnlockCost();
 }
 
+export function replaceDeckCard(
+  loadout: PlayerLoadout,
+  addCardId: string,
+  removeCardId: string,
+): PlayerLoadout | null {
+  if (addCardId === removeCardId) {
+    return null;
+  }
+  if (!loadout.unlockedCardIds.includes(addCardId)) {
+    return null;
+  }
+  if (loadout.deckCardIds.includes(addCardId)) {
+    return null;
+  }
+  if (!loadout.deckCardIds.includes(removeCardId)) {
+    return null;
+  }
+  return {
+    ...loadout,
+    deckCardIds: loadout.deckCardIds.map((id) => (id === removeCardId ? addCardId : id)),
+  };
+}
+
 export function unlockImprovedCard(
   progression: PlayerProgression,
   loadout: PlayerLoadout,
   cardId: string,
+  replaceCardId?: string,
 ): PlayerLoadout | null {
   if (!canUnlockImprovedCard(progression, loadout, cardId)) {
     return null;
   }
   const deckCap = getDeckCap(progression);
-  if (loadout.deckCardIds.length >= deckCap) {
+  const unlockedCardIds = [...loadout.unlockedCardIds, cardId];
+  if (loadout.deckCardIds.length < deckCap) {
     return {
-      unlockedCardIds: [...loadout.unlockedCardIds, cardId],
-      deckCardIds: [...loadout.deckCardIds],
+      unlockedCardIds,
+      deckCardIds: [...loadout.deckCardIds, cardId],
     };
   }
-  return {
-    unlockedCardIds: [...loadout.unlockedCardIds, cardId],
-    deckCardIds: [...loadout.deckCardIds, cardId],
-  };
+  const swapped = replaceDeckCard(
+    { unlockedCardIds, deckCardIds: loadout.deckCardIds },
+    cardId,
+    replaceCardId ?? '',
+  );
+  return swapped;
 }
 
 export function toggleDeckCard(
@@ -122,10 +149,7 @@ export function toggleDeckCard(
     return loadout;
   }
   if (loadout.deckCardIds.includes(cardId)) {
-    return {
-      ...loadout,
-      deckCardIds: loadout.deckCardIds.filter((id) => id !== cardId),
-    };
+    return loadout;
   }
   const deckCap = progression ? getDeckCap(progression) : DECK_CAP;
   if (loadout.deckCardIds.length >= deckCap) {

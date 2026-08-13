@@ -146,7 +146,7 @@ export default function HomePage() {
           </div>
         </section>
       </RevealOnScroll>
-
+      Raise a combat skill
       <RevealOnScroll className="mx-auto mt-[150px] max-w-[1180px] px-6 lg:px-10">
         <div className="grid gap-[22px] md:grid-cols-3">
           {homeFeatures.map((feature) => (

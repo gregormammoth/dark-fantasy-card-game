@@ -237,12 +237,12 @@
     "statusHeader": "STATUS",
     "questProgress": "ZADATAK",
     "improvedCost": "POBOLJŠ. · 1 NIVO",
-    "inDeckRemove": "U špilu — klikni da ukloniš",
+    "inDeck": "U špilu",
     "unlockedAdd": "Otključano — klikni da dodaš",
+    "swapIntoDeck": "ZAMENI U ŠPIL",
     "unlockCost": "Otključaj — {cost} nivo",
     "needsLevel": "Treba {cost} nivo (imaš {available})",
     "lockedStatus": "Zaključano",
-    "removeFromDeck": "UKLONI IZ ŠPILA",
     "addToDeck": "DODAJ U ŠPIL",
     "unlockLevel": "OTKLJUČAJ · {cost} NIV.",
     "currentDeck": "Trenutni špil",
@@ -266,6 +266,13 @@
       "maxMana": "Maks. mana",
       "maxDeck": "Maks. špil",
       "drawPerTurn": "Vuča po potezu"
+    },
+    "skillDesc": {
+      "maxShield": "Najveći štit koji možeš da držiš u borbi i tokom istraživanja.",
+      "maxCombo": "Koliko karata možeš da složiš u jedan kombo.",
+      "maxMana": "Najveća mana koju možeš da držiš u borbi i tokom istraživanja.",
+      "maxDeck": "Koliko karata špil mora da ima. Povećanje otvara prazno mesto.",
+      "drawPerTurn": "Koliko karata vučeš na početku svakog poteza borbe posle prvog."
     }
   },
   "settings": {
@@ -359,6 +366,13 @@
     "atCap": "Na maksimumu",
     "choose": "+1",
     "later": "KASNIJE"
+  },
+  "deckSwap": {
+    "eyebrow": "ŠPIL JE PUN",
+    "title": "Izaberi kartu koju uklanjaš",
+    "subtitle": "{name} će zauzeti njeno mesto u špilu.",
+    "replace": "Zameni ovu kartu",
+    "cancel": "OTKAŽI"
   },
   "actionPicker": {
     "eyebrow": "POTROŠI AKCIJU",

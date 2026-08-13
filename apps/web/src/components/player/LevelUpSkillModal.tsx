@@ -22,6 +22,14 @@ const SKILL_LABEL_KEYS: Record<PlayerSkillId, MessageKey> = {
   drawPerTurn: 'player.skill.drawPerTurn',
 };
 
+const SKILL_DESC_KEYS: Record<PlayerSkillId, MessageKey> = {
+  maxShield: 'player.skillDesc.maxShield',
+  maxCombo: 'player.skillDesc.maxCombo',
+  maxMana: 'player.skillDesc.maxMana',
+  maxDeck: 'player.skillDesc.maxDeck',
+  drawPerTurn: 'player.skillDesc.drawPerTurn',
+};
+
 export function LevelUpSkillModal({
   progression,
   availablePoints,
@@ -33,7 +41,7 @@ export function LevelUpSkillModal({
 
   return (
     <div className="fixed inset-0 z-50 flex animate-[fadeIn_.15s_ease-out] items-center justify-center bg-[rgba(6,5,4,.7)] backdrop-blur-[2px]">
-      <div className="w-[420px] animate-[modalIn_.18s_ease-out] rounded-[14px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,#181211,#100c0b)] px-7 py-[26px] shadow-[0_40px_90px_-20px_#000]">
+      <div className="w-[460px] max-w-[calc(100vw-32px)] animate-[modalIn_.18s_ease-out] rounded-[14px] border border-[rgba(201,162,74,.45)] bg-[linear-gradient(180deg,#181211,#100c0b)] px-7 py-[26px] shadow-[0_40px_90px_-20px_#000]">
         <div className="text-[10px] tracking-[.2em] text-[#8a7f72]">{t('levelUpModal.title')}</div>
         <div className="mt-1.5 font-cinzel text-[20px] text-[#e0b552]">
           {t('levelUpModal.headline')}
@@ -55,17 +63,20 @@ export function LevelUpSkillModal({
                 type="button"
                 disabled={!choosable}
                 onClick={() => onChoose(skillId)}
-                className="flex items-center justify-between rounded-[10px] border px-3.5 py-3 text-left transition disabled:cursor-not-allowed disabled:opacity-40"
-                style={{
-                  borderColor: choosable ? 'rgba(224,181,82,.45)' : 'rgba(201,162,74,.18)',
-                  background: choosable ? 'rgba(224,181,82,.08)' : 'rgba(0,0,0,.2)',
-                }}
+                className={
+                  choosable
+                    ? 'flex items-center justify-between rounded-[10px] border border-[rgba(224,181,82,.45)] bg-[rgba(224,181,82,.08)] px-3.5 py-3 text-left transition duration-150 hover:-translate-y-px hover:border-[rgba(224,181,82,.9)] hover:bg-[rgba(224,181,82,.18)] hover:shadow-[0_0_18px_-4px_rgba(224,181,82,.55)] hover:brightness-110'
+                    : 'flex cursor-not-allowed items-center justify-between rounded-[10px] border border-[rgba(201,162,74,.18)] bg-[rgba(0,0,0,.2)] px-3.5 py-3 text-left opacity-40'
+                }
               >
-                <span>
+                <span className="pr-3">
                   <span className="block font-cinzel text-[13px] text-[#f0dfcb]">
                     {t(SKILL_LABEL_KEYS[skillId])}
                   </span>
-                  <span className="mt-0.5 block text-[11px] text-[#8a7f72]">
+                  <span className="mt-1 block text-[12px] leading-snug text-[#b7ab9c]">
+                    {t(SKILL_DESC_KEYS[skillId])}
+                  </span>
+                  <span className="mt-1 block text-[11px] text-[#8a7f72]">
                     {atCap
                       ? t('levelUpModal.atCap')
                       : t('levelUpModal.nextValue', { current, next: current + 1 })}

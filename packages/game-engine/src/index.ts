@@ -68,6 +68,7 @@ export {
   listBasePlayerCards,
   listImprovedPlayerCards,
   spentLevelsForClass,
+  replaceDeckCard,
   toggleDeckCard,
   unlockImprovedCard,
   resolveLoadoutDeckDefinitions,

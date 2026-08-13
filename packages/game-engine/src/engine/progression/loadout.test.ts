@@ -17,7 +17,9 @@ import {
   getDominantDeckClass,
   getPlayerPortraitForDeck,
   listImprovedPlayerCards,
+  replaceDeckCard,
   spentLevelsForClass,
+  toggleDeckCard,
   unlockImprovedCard,
 } from './loadout';
 
@@ -53,13 +55,40 @@ describe('improved card unlocks', () => {
     expect(getClassXp(progression, 'warrior')).toBe(10);
     expect(canUnlockImprovedCard(progression, loadout, cardId)).toBe(true);
 
-    const next = unlockImprovedCard(progression, loadout, cardId);
+    const replaceId = loadout.deckCardIds[0];
+    expect(unlockImprovedCard(progression, loadout, cardId)).toBeNull();
+
+    const next = unlockImprovedCard(progression, loadout, cardId, replaceId);
     expect(next).not.toBeNull();
     expect(next?.unlockedCardIds).toContain(cardId);
-    expect(next?.deckCardIds).not.toContain(cardId);
+    expect(next?.deckCardIds).toContain(cardId);
+    expect(next?.deckCardIds).not.toContain(replaceId);
     expect(next?.deckCardIds).toHaveLength(DECK_CAP);
     expect(spentLevelsForClass(next!, 'warrior')).toBe(1);
     expect(canUnlockImprovedCard(progression, next!, cardId)).toBe(false);
+  });
+});
+
+describe('deck size', () => {
+  it('does not remove a card when the deck is at the cap', () => {
+    const loadout = createInitialLoadout();
+    const cardId = loadout.deckCardIds[0];
+    const next = toggleDeckCard(loadout, cardId);
+    expect(next.deckCardIds).toEqual(loadout.deckCardIds);
+  });
+
+  it('swaps a deck card for an unlocked card that is not in the deck', () => {
+    const loadout = createInitialLoadout();
+    const removeId = loadout.deckCardIds[0];
+    const addId = 'improved_warrior_crushing_blow';
+    const unlocked = {
+      ...loadout,
+      unlockedCardIds: [...loadout.unlockedCardIds, addId],
+    };
+    const next = replaceDeckCard(unlocked, addId, removeId);
+    expect(next?.deckCardIds).toContain(addId);
+    expect(next?.deckCardIds).not.toContain(removeId);
+    expect(next?.deckCardIds).toHaveLength(DECK_CAP);
   });
 });
 

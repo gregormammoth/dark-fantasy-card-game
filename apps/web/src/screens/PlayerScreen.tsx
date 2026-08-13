@@ -20,14 +20,17 @@ import {
   getTotalXp,
   getXpIntoLevel,
   unlockImprovedCard,
+  replaceDeckCard,
   toggleDeckCard,
 } from '@dark-fantasy/game-engine';
 import { ClaimBadge } from '@/components/ClaimBadge';
+import { DeckSwapPicker } from '@/components/player/DeckSwapPicker';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
+import type { MessageKey } from '@/i18n/types';
 import { classThemes, getCardEffectSummary, getCardType, getClassLabel } from '@/lib/cardTheme';
 import {
   getQuestSteps,
@@ -50,6 +53,22 @@ import {
 type TabId = 'character' | 'quests' | 'inventory';
 type QuestFilter = 'all' | 'active' | 'completed';
 type ItemFilter = 'all' | 'key' | 'ingredient';
+
+const SKILL_LABEL_KEYS: Record<PlayerSkillId, MessageKey> = {
+  maxShield: 'player.skill.maxShield',
+  maxCombo: 'player.skill.maxCombo',
+  maxMana: 'player.skill.maxMana',
+  maxDeck: 'player.skill.maxDeck',
+  drawPerTurn: 'player.skill.drawPerTurn',
+};
+
+const SKILL_DESC_KEYS: Record<PlayerSkillId, MessageKey> = {
+  maxShield: 'player.skillDesc.maxShield',
+  maxCombo: 'player.skillDesc.maxCombo',
+  maxMana: 'player.skillDesc.maxMana',
+  maxDeck: 'player.skillDesc.maxDeck',
+  drawPerTurn: 'player.skillDesc.drawPerTurn',
+};
 
 interface PlayerScreenProps {
   progression: PlayerProgression;
@@ -80,7 +99,7 @@ function statusCopy(
 ): { label: string; color: string } {
   if (status === 'unlocked') {
     return {
-      label: inDeck ? t('player.inDeckRemove') : t('player.unlockedAdd'),
+      label: inDeck ? t('player.inDeck') : t('player.unlockedAdd'),
       color: '#7fb08a',
     };
   }
@@ -117,6 +136,9 @@ export function PlayerScreen({
     {},
   );
   const [confirmCardId, setConfirmCardId] = useState<string | null>(null);
+  const [swapIntent, setSwapIntent] = useState<{ mode: 'add' | 'unlock'; cardId: string } | null>(
+    null,
+  );
   const [levelUpOpen, setLevelUpOpen] = useState(false);
   const [questFilter, setQuestFilter] = useState<QuestFilter>('all');
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
@@ -243,7 +265,14 @@ export function PlayerScreen({
     }
     const status = cardStatusFor(card, progression, loadout);
     if (status === 'unlocked') {
-      onLoadoutChange(toggleDeckCard(loadout, card.id, progression));
+      if (deck.includes(card.id)) {
+        return;
+      }
+      if (deck.length < deckCap) {
+        onLoadoutChange(toggleDeckCard(loadout, card.id, progression));
+        return;
+      }
+      setSwapIntent({ mode: 'add', cardId: card.id });
       return;
     }
     if (status === 'available') {
@@ -255,11 +284,30 @@ export function PlayerScreen({
     if (!confirmCardId) {
       return;
     }
-    const next = unlockImprovedCard(progression, loadout, confirmCardId);
+    if (deck.length < deckCap) {
+      const next = unlockImprovedCard(progression, loadout, confirmCardId);
+      if (next) {
+        onLoadoutChange(next);
+      }
+      setConfirmCardId(null);
+      return;
+    }
+    setSwapIntent({ mode: 'unlock', cardId: confirmCardId });
+    setConfirmCardId(null);
+  }
+
+  function confirmSwap(removeCardId: string) {
+    if (!swapIntent) {
+      return;
+    }
+    const next =
+      swapIntent.mode === 'unlock'
+        ? unlockImprovedCard(progression, loadout, swapIntent.cardId, removeCardId)
+        : replaceDeckCard(loadout, swapIntent.cardId, removeCardId);
     if (next) {
       onLoadoutChange(next);
     }
-    setConfirmCardId(null);
+    setSwapIntent(null);
   }
 
   function onChooseSkill(skillId: PlayerSkillId) {
@@ -277,10 +325,19 @@ export function PlayerScreen({
     const status = cardStatusFor(card, progression, loadout);
     const inDeck = deck.includes(card.id);
     if (status === 'unlocked') {
+      if (inDeck) {
+        return {
+          label: t('player.inDeck'),
+          border: 'rgba(201,162,74,.2)',
+          bg: 'transparent',
+          color: '#6a6058',
+          enabled: false,
+        };
+      }
       return {
-        label: inDeck ? t('player.removeFromDeck') : t('player.addToDeck'),
+        label: deck.length < deckCap ? t('player.addToDeck') : t('player.swapIntoDeck'),
         border: `${selectedTheme.accent}66`,
-        bg: inDeck ? 'transparent' : `${selectedTheme.accent}22`,
+        bg: `${selectedTheme.accent}22`,
         color: selectedTheme.accent,
         enabled: true,
       };
@@ -426,24 +483,18 @@ export function PlayerScreen({
 
             <div className="mt-1 flex flex-wrap items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(0,0,0,.2)] px-4 py-3">
               <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.skills')}</span>
-              <div className="flex flex-1 flex-wrap gap-x-4 gap-y-1">
+              <div className="flex flex-1 flex-wrap gap-2">
                 {PLAYER_SKILL_IDS.map((skillId) => (
-                  <span key={skillId} className="text-[12px] text-[#e8ddcf]">
-                    <span className="text-[#8a7f72]">
-                      {t(
-                        (
-                          {
-                            maxShield: 'player.skill.maxShield',
-                            maxCombo: 'player.skill.maxCombo',
-                            maxMana: 'player.skill.maxMana',
-                            maxDeck: 'player.skill.maxDeck',
-                            drawPerTurn: 'player.skill.drawPerTurn',
-                          } as const
-                        )[skillId],
-                      )}
-                    </span>
+                  <span
+                    key={skillId}
+                    className="group relative rounded-[5px] border border-transparent px-2 py-1 text-[12px] text-[#e8ddcf] transition duration-150 hover:border-[rgba(224,181,82,.7)] hover:bg-[rgba(224,181,82,.14)]"
+                  >
+                    <span className="text-[#8a7f72]">{t(SKILL_LABEL_KEYS[skillId])}</span>
                     {' '}
                     <span className="font-cinzel text-[#c9a24a]">{progression.skills[skillId]}</span>
+                    <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-1.5 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-[11px] leading-snug text-[#d8cbb8] shadow-[0_12px_28px_-10px_#000] group-hover:block">
+                      {t(SKILL_DESC_KEYS[skillId])}
+                    </span>
                   </span>
                 ))}
               </div>
@@ -719,6 +770,17 @@ export function PlayerScreen({
           />
         )}
       </div>
+
+      {swapIntent && (
+        <DeckSwapPicker
+          incomingName={cardById[swapIntent.cardId]?.name ?? swapIntent.cardId}
+          deckCards={deck
+            .map((id) => cardById[id])
+            .filter((card): card is CardDefinition => Boolean(card))}
+          onPick={confirmSwap}
+          onCancel={() => setSwapIntent(null)}
+        />
+      )}
 
       {confirmCard && confirmClassId && (
         <UnlockCardModal
