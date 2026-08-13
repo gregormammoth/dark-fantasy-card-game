@@ -1,9 +1,9 @@
 import type { ExplorationEffectHandler } from '@dark-fantasy/shared/types/explorationEffect';
 import { applyMove, isFinalBranch } from '../map';
-import { setLocationEncounterQueue } from '../locationEncounters';
+import { listAvailableEnemies, setLocationEncounterQueue } from '../locationEncounters';
 import { appendExplorationLog } from '../log';
 import {
-  trackIngredientVisit,
+  grantLocationIngredient,
   tryCompleteGatherIngredientsQuest,
   resolveDiningWayProgress,
 } from '../quests';
@@ -25,7 +25,9 @@ export const moveToHandler: ExplorationEffectHandler = (effect, ctx) => {
         'system',
       );
     }
-    next = trackIngredientVisit(next, targetId);
+    if (listAvailableEnemies(next, targetId).length === 0) {
+      next = grantLocationIngredient(next, targetId);
+    }
     next = tryCompleteGatherIngredientsQuest(next, targetId);
     next = resolveDiningWayProgress(next, targetId);
     next = setLocationEncounterQueue(next, targetId);

@@ -383,7 +383,7 @@ Every enemy is authored once in `enemies.json`, which holds both the band table 
 | `elite` | 16 | 2 | 3 | 0 |
 | `boss` | 22 | 3 | 4 | 1 |
 
-The Hollowfort curve: `prisoner` and `giant_rat` are `intro`; `crazy_prisoner`, `guard`, and `fat_prisoner` are `common`; `butcher`, `knight`, and `demon` are `elite`; `sorcerer_enemy`, `inquisitor_boss`, `prison_warden_boss`, and `corrupted_anarchist` are `boss`.
+The Hollowfort curve: `prisoner` and `giant_rat` are `intro`; `crazy_prisoner`, `guard`, and `fat_prisoner` are `common`; `butcher`, `knight`, and `demon` are `elite`; `inquisitor_boss`, `prison_warden_boss`, and `corrupted_anarchist` are `boss`. The Sorcerer is an NPC in the Ritual Room, not a fight.
 
 Rules:
 

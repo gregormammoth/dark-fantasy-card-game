@@ -9,6 +9,7 @@ import { appendExplorationLog } from './log';
 import {
   completeQuestForEnemy,
   giveDiningKeyring,
+  grantLocationIngredient,
   grantQuest,
   isNpcAvailable,
   listAvailableNpcs,
@@ -240,6 +241,7 @@ export function resolveLocationBattle(
         if (enemy.rewardMoney) {
           grantMoney(context, enemy.rewardMoney);
         }
+        grantLocationIngredient(context, resolvedLocationId);
         for (const interaction of location.interactions) {
           if (
             interaction.action === 'ATTACK' &&

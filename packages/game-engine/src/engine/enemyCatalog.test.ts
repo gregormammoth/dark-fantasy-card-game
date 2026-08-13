@@ -51,12 +51,12 @@ describe('enemy catalog', () => {
 
   it('hydrates a placement into a live enemy with placement rules applied', () => {
     const enemy = hydrateEnemyPlacement({
-      id: 'sorcerer_enemy',
+      id: 'demon',
       requiresFlag: 'ritual_demon_cleared',
       skipAutoEncounter: true,
     });
-    expect(enemy.name).toBe('The Sorcerer');
-    expect(enemy.band).toBe('elite');
+    expect(enemy.name).toBe('Demon');
+    expect(enemy.band).toBe('common');
     expect(enemy.group).toBe('ritualist');
     expect(enemy.defeated).toBe(false);
     expect(enemy.requiresFlag).toBe('ritual_demon_cleared');
@@ -93,9 +93,8 @@ describe('enemy catalog', () => {
     expect(warden.deckCardIds).toContain('signature_warden_decree');
   });
 
-  it('keeps the sorcerer oversized with regenerating barriers', () => {
-    const profile = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'sorcerer_enemy' }));
-    expect(profile.deckSize).toBe(30);
-    expect(profile.barrierPerTurn).toBe(2);
+  it('gives the inquisitor a signature mix on top of the ritualist pool', () => {
+    const profile = resolveEnemyBattleProfile(hydrateEnemyPlacement({ id: 'inquisitor_boss' }));
+    expect(profile.deckCardIds).toContain('signature_inquisitor_judgment');
   });
 });

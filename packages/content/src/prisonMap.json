@@ -124,12 +124,7 @@
       "description": "A sunken circle of stone carved with wards, candles burning along every column. This is where the ritual beneath Hollowfort was cast.",
       "image": "/locations/ritual_room.png",
       "enemies": [
-        { "id": "demon" },
-        {
-          "id": "sorcerer_enemy",
-          "requiresFlag": "ritual_demon_cleared",
-          "skipAutoEncounter": true
-        }
+        { "id": "demon" }
       ],
       "npcs": [
         {
@@ -140,7 +135,7 @@
           "lines": [
             "You put the demon down. Good. Now you work for me.",
             "I need dried lavender from the Infirmary and a lowcap mushroom from the tunnels beneath.",
-            "Bring them back and I'll open the corridor. Refuse, and you can try the hard way."
+            "Bring them back and I'll open the corridor. That is the only way through."
           ],
           "followUpLines": [
             "Lavender. Mushroom. The circle will hold a little longer.",

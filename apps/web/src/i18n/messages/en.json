@@ -118,7 +118,7 @@
     "branchLockedDesc": "You committed to another path out of Hollowfort. This door will not open again.",
     "unexploredDesc": "This part of the prison is still unexplored. Find a path through a nearby room first.",
     "exitBlocked": "Defeat the boss on your chosen path before the Exit Gate will open.",
-    "corridorBlocked": "The Sorcerer bars the Central Corridor until his ingredients are delivered — or until he falls.",
+    "corridorBlocked": "The Sorcerer bars the Central Corridor until his ingredients are delivered.",
     "diningBlocked": "The Dining Hall door is barred from this side. Go through the Kitchen, or fetch the Executioner's keyring from the Torture Chamber.",
     "availableHere": "AVAILABLE HERE",
     "chipCombat": "Combat",

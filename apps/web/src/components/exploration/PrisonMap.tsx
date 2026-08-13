@@ -23,7 +23,7 @@ import {
   isCorridorBlocked,
 } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
-import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
+import { isNpcAvailable, locationHasQuestMark } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
 import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -591,7 +591,8 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
             );
             const hasThreat = !!liveEnemy;
             const occupant = showInfo ? getOccupantCard(context, location) : null;
-            const showQuestBadge = showInfo && !!location.quest;
+            const showQuestBadge =
+              showInfo && locationHasQuestMark(context, location.id);
             const marker = getLocationMarker(context, location, { locked, showInfo });
             const MarkerIcon = marker.Icon;
             const iconSize = location.type === 'boss' || location.type === 'gate' ? 22 : 18;

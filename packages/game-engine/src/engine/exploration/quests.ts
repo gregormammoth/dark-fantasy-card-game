@@ -20,6 +20,11 @@ const INGREDIENT_FLAGS: Record<string, string> = {
   underground_tunnels: 'ingredient_mushroom',
 };
 
+const INGREDIENT_LOOT: Record<string, string> = {
+  infirmary: 'dried_lavender',
+  underground_tunnels: 'lowcap_mushroom',
+};
+
 export function isNpcAvailable(context: ExplorationContext, npc: LocationNpc): boolean {
   if (npc.requiresFlag && !context.flags[npc.requiresFlag]) {
     return false;
@@ -125,7 +130,89 @@ export function listActiveQuests(context: ExplorationContext): RunQuest[] {
   return context.quests.filter((quest) => quest.status === 'active');
 }
 
-export function trackIngredientVisit(
+export interface QuestLocationMark {
+  questId: string;
+  questName: string;
+  hint: string;
+}
+
+function pushMark(
+  marks: QuestLocationMark[],
+  locationId: string,
+  wantedId: string,
+  quest: RunQuest,
+  hint: string,
+) {
+  if (locationId !== wantedId) {
+    return;
+  }
+  marks.push({ questId: quest.id, questName: quest.name, hint });
+}
+
+export function listQuestMarksForLocation(
+  context: ExplorationContext,
+  locationId: string,
+): QuestLocationMark[] {
+  const marks: QuestLocationMark[] = [];
+  const flags = context.flags;
+
+  for (const quest of listActiveQuests(context)) {
+    if (quest.id === 'gather_ritual_ingredients') {
+      if (!flags.ingredient_lavender) {
+        pushMark(marks, locationId, 'infirmary', quest, 'Find dried lavender.');
+      }
+      if (!flags.ingredient_mushroom) {
+        pushMark(marks, locationId, 'underground_tunnels', quest, 'Find a lowcap mushroom.');
+      }
+      pushMark(
+        marks,
+        locationId,
+        'ritual_room',
+        quest,
+        flags.ingredient_lavender && flags.ingredient_mushroom
+          ? 'Return the ingredients to the Sorcerer.'
+          : 'The Sorcerer waits for the ingredients.',
+      );
+    }
+
+    if (quest.id === 'find_dining_way') {
+      if (!flags.has_dining_keyring) {
+        pushMark(
+          marks,
+          locationId,
+          'torture_chamber',
+          quest,
+          "Find the Executioner's keyring.",
+        );
+      }
+      pushMark(marks, locationId, 'kitchen', quest, 'Reach the Dining Hall through the kitchen.');
+      pushMark(
+        marks,
+        locationId,
+        'central_corridor',
+        quest,
+        'The Dining Hall door is barred from this side.',
+      );
+      pushMark(marks, locationId, 'dining_hall', quest, 'Open the Dining Hall path.');
+    }
+
+    if (quest.targetLocationId) {
+      pushMark(marks, locationId, quest.targetLocationId, quest, quest.description);
+    }
+  }
+
+  return marks;
+}
+
+export function locationHasQuestMark(context: ExplorationContext, locationId: string): boolean {
+  const location = context.locations[locationId];
+  if (location?.quest) {
+    return true;
+  }
+  return listQuestMarksForLocation(context, locationId).length > 0;
+}
+
+export function grantLocationIngredient(
   context: ExplorationContext,
   locationId: string,
 ): ExplorationContext {
@@ -140,6 +227,11 @@ export function trackIngredientVisit(
     return context;
   }
   context.flags[flag] = true;
+  const lootId = INGREDIENT_LOOT[locationId];
+  const loot = context.locations[locationId]?.loot.find((item) => item.id === lootId);
+  if (loot && !loot.claimed) {
+    loot.claimed = true;
+  }
   if (locationId === 'infirmary') {
     appendExplorationLog(context, 'You find dried lavender among the Infirmary shelves.', 'loot');
   } else if (locationId === 'underground_tunnels') {

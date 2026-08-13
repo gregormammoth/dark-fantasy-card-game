@@ -5,7 +5,7 @@ import type {
   LocationDefinition,
 } from '@dark-fantasy/shared/types/exploration';
 import { canMoveTo, getLocationStatus, isLocationLocked, isExitBlocked, isCorridorBlocked, isDiningHallPathBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
-import { isNpcAvailable } from '@dark-fantasy/game-engine/engine/exploration/quests';
+import { isNpcAvailable, listQuestMarksForLocation } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -55,7 +55,19 @@ export function LocationDetailPanel({
   const availableEnemies = location.enemies.filter((enemy) => isEnemyAvailable(context, enemy));
   const activeEnemy = availableEnemies[0];
   const availableNpcs = location.npcs.filter((npc) => isNpcAvailable(context, npc));
-  const unclaimedLoot = location.loot.filter((item) => !item.claimed);
+  const unclaimedLoot =
+    availableEnemies.length > 0 ? [] : location.loot.filter((item) => !item.claimed);
+  const questMarks = listQuestMarksForLocation(context, location.id);
+  const questCards = [
+    ...(location.quest
+      ? [{ key: 'location-quest', name: location.quest.name, description: location.quest.description }]
+      : []),
+    ...questMarks.map((mark) => ({
+      key: mark.questId,
+      name: mark.questName,
+      description: mark.hint,
+    })),
+  ];
 
   const chips = locked
     ? []
@@ -63,7 +75,9 @@ export function LocationDetailPanel({
         ...availableEnemies.map(() => ({ label: t('location.chipCombat'), color: activityColors.combat })),
         ...unclaimedLoot.map(() => ({ label: t('location.chipLoot'), color: activityColors.loot })),
         ...availableNpcs.map(() => ({ label: t('location.chipNpc'), color: activityColors.npc })),
-        ...(location.quest ? [{ label: t('location.chipQuest'), color: activityColors.quest }] : []),
+        ...(questCards.length > 0
+          ? [{ label: t('location.chipQuest'), color: activityColors.quest }]
+          : []),
       ];
 
   return (
@@ -202,15 +216,18 @@ export function LocationDetailPanel({
           </div>
         )}
 
-        {showInfo && location.quest && (
-          <div className="flex flex-col gap-1.5 rounded-[5px] border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-4 py-3.5">
+        {showInfo && questCards.map((quest) => (
+          <div
+            key={quest.key}
+            className="flex flex-col gap-1.5 rounded-[5px] border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-4 py-3.5"
+          >
             <span className="font-cinzel text-[9px] tracking-[.2em] text-[#6b5a38]">{t('common.quest')}</span>
-            <div className="font-cinzel text-[14px] text-[#2b2116]">{location.quest.name}</div>
+            <div className="font-cinzel text-[14px] text-[#2b2116]">{quest.name}</div>
             <div className="text-[12px] leading-relaxed text-[#3a2c1a]">
-              {location.quest.description}
+              {quest.description}
             </div>
           </div>
-        )}
+        ))}
 
         {showInfo && unclaimedLoot.length > 0 && (
           <div className="flex flex-col gap-2">

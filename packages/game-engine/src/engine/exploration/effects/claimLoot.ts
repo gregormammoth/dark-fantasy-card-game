@@ -21,6 +21,12 @@ export const claimLootHandler: ExplorationEffectHandler = (effect, ctx) => {
   if (loot.id === 'dining_keyring') {
     ctx.exploration.flags.has_dining_keyring = true;
   }
+  if (loot.id === 'dried_lavender') {
+    ctx.exploration.flags.ingredient_lavender = true;
+  }
+  if (loot.id === 'lowcap_mushroom') {
+    ctx.exploration.flags.ingredient_mushroom = true;
+  }
   appendExplorationLog(ctx.exploration, `Claimed loot: ${loot.name}.`, 'loot');
   return ctx.exploration;
 };

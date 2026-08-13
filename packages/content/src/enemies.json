@@ -80,17 +80,6 @@
       "group": "ritualist"
     },
     {
-      "id": "sorcerer_enemy",
-      "name": "The Sorcerer",
-      "tier": "Elite · Ritual",
-      "description": "Refuse his errand and he will burn you where you stand. Twenty wards, two barriers every breath.",
-      "image": "/characters/sorcerer.png",
-      "band": "elite",
-      "group": "ritualist",
-      "deckSize": 30,
-      "barrierPerTurn": 2
-    },
-    {
       "id": "inquisitor_boss",
       "name": "The Inquisitor",
       "tier": "Elite · Ritualist",
