@@ -57,7 +57,7 @@
         "duration": 2
       }
     ],
-    "description": "Apply Poison (2 damage each turn for 2 turns). Reduce incoming damage by 25%.",
+    "description": "Apply Poison (2 damage each turn for 2 turns).",
     "improved": true
   },
   {
@@ -161,7 +161,7 @@
         "value": 3
       }
     ],
-    "description": "Deal 3 damage. If your HP is below 50%, deal 6 instead.",
+    "description": "Deal 3 damage. If your HP is below 50%, deal 5 instead.",
     "improved": true
   },
   {
@@ -197,7 +197,7 @@
         "value": 2
       }
     ],
-    "description": "Restore Shield to maximum, then gain 1 Shield.",
+    "description": "Return 2 cards from your discard pile to your hand, then gain 2 Shield.",
     "improved": true
   },
   {

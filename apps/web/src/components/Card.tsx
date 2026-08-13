@@ -38,30 +38,29 @@ function getHandOverlap(total: number): number {
   return -20;
 }
 
-function getHandStyle(index: number, total: number): CSSProperties {
+function getHandLayoutStyle(index: number, total: number): CSSProperties {
   const overlap = getHandOverlap(total);
-
   if (total <= 1) {
-    return {
-      transform: 'rotate(0deg) translateY(2px)',
-      transformOrigin: 'bottom center',
-      marginRight: 0,
-      zIndex: 1,
-      position: 'relative',
-    };
+    return { marginRight: 0, zIndex: 1, position: 'relative' };
   }
+  return {
+    marginRight: index < total - 1 ? overlap : 0,
+    zIndex: index + 1,
+    position: 'relative',
+  };
+}
 
+function getHandTiltStyle(index: number, total: number): CSSProperties {
+  if (total <= 1) {
+    return { transform: 'rotate(0deg) translateY(2px)', transformOrigin: 'bottom center' };
+  }
   const maxRot = 7;
   const t = index / (total - 1);
   const rot = -maxRot + t * 2 * maxRot;
   const y = (Math.abs(rot) / maxRot) * 12 + (Math.abs(rot) < 0.1 ? 2 : 0);
-
   return {
     transform: `rotate(${rot}deg) translateY(${y}px)`,
     transformOrigin: 'bottom center',
-    marginRight: index < total - 1 ? overlap : 0,
-    zIndex: index + 1,
-    position: 'relative',
   };
 }
 
@@ -90,8 +89,13 @@ export function Card({
   const { play } = useAudio();
   const hover = useHoverSound('card_hover', 0.2);
   const sharedLayout = Boolean(layoutId);
+  const description = definition.description?.trim() || summary;
 
   return (
+    <span
+      className={`group/card relative inline-flex shrink-0 ${isHand ? 'hover:z-40' : ''}`}
+      style={isHand ? getHandLayoutStyle(handIndex, handTotal) : undefined}
+    >
     <motion.button
       layoutId={layoutId}
       type="button"
@@ -107,9 +111,9 @@ export function Card({
       animate={{ opacity: locked ? 0.55 : 1, y: 0, scale: 1 }}
       exit={sharedLayout ? undefined : { opacity: 0, scale: 0.85, y: -12 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className={`ember-card group flex shrink-0 flex-col overflow-hidden rounded-[11px] bg-[#12100f] text-left transition-[transform,box-shadow] duration-[180ms] ease-out ${
+      className={`ember-card flex shrink-0 flex-col overflow-hidden rounded-[11px] bg-[#12100f] text-left transition-[transform,box-shadow] duration-[180ms] ease-out ${
         disabled || locked ? 'cursor-not-allowed' : 'cursor-pointer'
-      } ${isHand ? 'hover:z-30' : ''} ${variant === 'collection' && !locked ? 'hover:-translate-y-1' : ''}`}
+      } ${variant === 'collection' && !locked ? 'hover:-translate-y-1' : ''}`}
       style={{
         width: cardLayout.width,
         height: cardHeight,
@@ -118,7 +122,7 @@ export function Card({
         }`,
         boxShadow: `0 0 22px -10px ${theme.glow}`,
         ['--card-glow' as string]: theme.glow,
-        ...(isHand ? getHandStyle(handIndex, handTotal) : {}),
+        ...(isHand ? getHandTiltStyle(handIndex, handTotal) : {}),
       }}
     >
       <div
@@ -193,5 +197,17 @@ export function Card({
         )}
       </div>
     </motion.button>
+      {description && (
+        <span
+          role="tooltip"
+          className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-left shadow-[0_12px_28px_-10px_#000] group-hover/card:block"
+        >
+          <span className="block font-cinzel text-[11px] leading-tight text-[#e0b552]">
+            {definition.name}
+          </span>
+          <span className="mt-1 block text-[11px] leading-snug text-[#d8cbb8]">{description}</span>
+        </span>
+      )}
+    </span>
   );
 }
