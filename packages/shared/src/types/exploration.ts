@@ -291,7 +291,6 @@ export type ExplorationEvent =
     };
 
 export interface ActionOutcomeDefinition {
-  message: string;
   effects: ExplorationEffect[];
 }
 

@@ -374,7 +374,6 @@
     "eyebrow": "DECK IS FULL",
     "title": "Choose a card to remove",
     "subtitle": "{name} will take its place in your deck.",
-    "replace": "Replace this card",
     "cancel": "CANCEL"
   },
   "actionPicker": {

@@ -317,15 +317,8 @@ export function ExplorationScreen({
         <ExplorationLog entries={context.log} />
       </div>
 
-      {context.lastActionMessage && (
-        <div className="rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(224,181,82,.08)] px-4 py-2 text-[13px] text-[#e8ddcf]">
-          {context.lastActionMessage}
-        </div>
-      )}
-
       {pendingAction && (
         <ActionCardPickerModal
-          action={pendingAction.action}
           actionLabel={t(`actionPicker.action${pendingAction.action}`)}
           hand={context.hand}
           onPick={(cardInstanceId) => {

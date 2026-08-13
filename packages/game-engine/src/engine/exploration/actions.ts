@@ -1,5 +1,5 @@
 import actionOutcomesData from '@dark-fantasy/content/actionOutcomes.json';
-import type { CardClass, CardInstance } from '@dark-fantasy/shared/types/card';
+import type { CardClass } from '@dark-fantasy/shared/types/card';
 import type {
   ActionOutcomeTable,
   ExplorationActionType,
@@ -20,14 +20,13 @@ function getOutcome(action: ExplorationActionType, cardClass: CardClass | undefi
   const table = actionOutcomes[action];
   if (!table) {
     return {
-      message: 'Nothing happens.',
       effects: [{ type: 'nothing' as const }],
     };
   }
   if (cardClass && table[cardClass]) {
     return table[cardClass]!;
   }
-  return table.default ?? { message: 'Nothing happens.', effects: [{ type: 'nothing' as const }] };
+  return table.default ?? { effects: [{ type: 'nothing' as const }] };
 }
 
 export function canPlayAction(
@@ -97,12 +96,8 @@ export function playExplorationAction(
   }
 
   const outcome = getOutcome(action, cardClass);
-  appendExplorationLog(
-    next,
-    `Played ${card.definition.name} → ${action}. ${outcome.message}`,
-    'action',
-  );
-  next.lastActionMessage = outcome.message;
+  appendExplorationLog(next, `Played ${card.definition.name} → ${action}.`, 'action');
+  next.lastActionMessage = null;
 
   next = resolveExplorationEffects(next, outcome.effects, {
     cardClass,
@@ -115,9 +110,4 @@ export function playExplorationAction(
   }
 
   return next;
-}
-
-export function describeCardForAction(card: CardInstance, action: ExplorationActionType): string {
-  const outcome = getOutcome(action, card.definition.class);
-  return outcome.message;
 }

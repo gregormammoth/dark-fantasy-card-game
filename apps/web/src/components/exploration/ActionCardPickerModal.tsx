@@ -2,14 +2,11 @@
 
 import { useEffect } from 'react';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
-import type { ExplorationActionType } from '@dark-fantasy/shared/types/exploration';
-import { describeCardForAction } from '@dark-fantasy/game-engine/engine/exploration/actions';
 import { Card } from '@/components/Card';
 import { useAudio } from '@/audio/useAudio';
 import { useTranslation } from '@/i18n/useTranslation';
 
 interface ActionCardPickerModalProps {
-  action: ExplorationActionType;
   actionLabel: string;
   hand: CardInstance[];
   onPick: (cardInstanceId: string) => void;
@@ -17,7 +14,6 @@ interface ActionCardPickerModalProps {
 }
 
 export function ActionCardPickerModal({
-  action,
   actionLabel,
   hand,
   onPick,
@@ -62,7 +58,6 @@ export function ActionCardPickerModal({
               card={card}
               variant="collection"
               onClick={() => onPick(card.instanceId)}
-              footer={describeCardForAction(card, action)}
             />
           ))}
         </div>

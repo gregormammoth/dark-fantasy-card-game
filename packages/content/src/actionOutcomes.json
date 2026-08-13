@@ -1,7 +1,6 @@
 {
   "MOVE": {
     "default": {
-      "message": "You move carefully to a new chamber.",
       "effects": [
         {
           "type": "moveTo"
@@ -9,7 +8,6 @@
       ]
     },
     "warrior": {
-      "message": "You force your way through and arrive ready for trouble.",
       "effects": [
         {
           "type": "moveTo"
@@ -20,7 +18,6 @@
       ]
     },
     "rogue": {
-      "message": "You slip between shadows and arrive unseen.",
       "effects": [
         {
           "type": "moveTo"
@@ -28,7 +25,6 @@
       ]
     },
     "wizard": {
-      "message": "A whispered cantrip steadies your step as you travel.",
       "effects": [
         {
           "type": "moveTo"
@@ -36,7 +32,6 @@
       ]
     },
     "survivor": {
-      "message": "You take the safer route and note every exit.",
       "effects": [
         {
           "type": "moveTo"
@@ -47,7 +42,6 @@
       ]
     },
     "seeker": {
-      "message": "You map the route as you go, noting every junction.",
       "effects": [
         {
           "type": "moveTo"
@@ -60,7 +54,6 @@
   },
   "EXPLORE": {
     "default": {
-      "message": "You take in the chamber and mark what matters.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -71,7 +64,6 @@
       ]
     },
     "warrior": {
-      "message": "You kick over debris and map the room by force of habit.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -82,7 +74,6 @@
       ]
     },
     "rogue": {
-      "message": "Your eyes catch seams and false panels others miss.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -96,7 +87,6 @@
       ]
     },
     "wizard": {
-      "message": "Arcane sense brushes the walls and reveals nearby paths.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -107,7 +97,6 @@
       ]
     },
     "survivor": {
-      "message": "You read the room for danger, exits, and anything useful.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -121,7 +110,6 @@
       ]
     },
     "seeker": {
-      "message": "You catalogue seams, marks, and paths others overlook.",
       "effects": [
         {
           "type": "discoverConnected"
@@ -137,7 +125,6 @@
   },
   "SEARCH": {
     "default": {
-      "message": "You search the area thoroughly.",
       "effects": [
         {
           "type": "claimLoot"
@@ -148,7 +135,6 @@
       ]
     },
     "warrior": {
-      "message": "You tear through crates until something useful turns up.",
       "effects": [
         {
           "type": "claimLoot"
@@ -159,7 +145,6 @@
       ]
     },
     "rogue": {
-      "message": "Nimble fingers find what was meant to stay hidden.",
       "effects": [
         {
           "type": "claimLoot"
@@ -174,7 +159,6 @@
       ]
     },
     "wizard": {
-      "message": "A detection charm pulls your gaze to the right place.",
       "effects": [
         {
           "type": "claimLoot"
@@ -185,7 +169,6 @@
       ]
     },
     "survivor": {
-      "message": "You know how to live off scraps — and you find some.",
       "effects": [
         {
           "type": "claimLoot"
@@ -200,7 +183,6 @@
       ]
     },
     "seeker": {
-      "message": "A methodical sweep turns up what was meant to stay buried.",
       "effects": [
         {
           "type": "claimLoot"
@@ -217,7 +199,6 @@
   },
   "OPEN": {
     "default": {
-      "message": "You open what stands in your way.",
       "effects": [
         {
           "type": "claimLoot"
@@ -234,7 +215,6 @@
       ]
     },
     "warrior": {
-      "message": "You break the lock with raw force.",
       "effects": [
         {
           "type": "claimLoot"
@@ -256,7 +236,6 @@
       ]
     },
     "rogue": {
-      "message": "You pick the lock in a few quiet breaths.",
       "effects": [
         {
           "type": "claimLoot"
@@ -273,7 +252,6 @@
       ]
     },
     "wizard": {
-      "message": "A soft unlock charm melts the mechanism open.",
       "effects": [
         {
           "type": "claimLoot"
@@ -290,7 +268,6 @@
       ]
     },
     "survivor": {
-      "message": "You find another way in — a seam, a hinge, a forgotten latch.",
       "effects": [
         {
           "type": "claimLoot"
@@ -307,7 +284,6 @@
       ]
     },
     "seeker": {
-      "message": "You deduce the latch from scratches and wear, then open it.",
       "effects": [
         {
           "type": "claimLoot"
@@ -326,7 +302,6 @@
   },
   "ATTACK": {
     "default": {
-      "message": "Something hostile steps into your path.",
       "effects": [
         {
           "type": "queueBattle"
@@ -337,7 +312,6 @@
       ]
     },
     "warrior": {
-      "message": "You square up as the threat closes in.",
       "effects": [
         {
           "type": "queueBattle"
@@ -348,7 +322,6 @@
       ]
     },
     "rogue": {
-      "message": "You feel the ambush before it lands.",
       "effects": [
         {
           "type": "queueBattle"
@@ -359,7 +332,6 @@
       ]
     },
     "wizard": {
-      "message": "Arcane sense flares — a fight is coming.",
       "effects": [
         {
           "type": "queueBattle"
@@ -370,7 +342,6 @@
       ]
     },
     "survivor": {
-      "message": "You brace yourself; this will not end quietly.",
       "effects": [
         {
           "type": "queueBattle"
@@ -381,7 +352,6 @@
       ]
     },
     "seeker": {
-      "message": "You already know where they will strike — and where you will.",
       "effects": [
         {
           "type": "queueBattle"
@@ -394,7 +364,6 @@
   },
   "TALK": {
     "default": {
-      "message": "You speak carefully and learn what you can.",
       "effects": [
         {
           "type": "talkNpc"
@@ -408,7 +377,6 @@
       ]
     },
     "warrior": {
-      "message": "Your blunt questions still get answers.",
       "effects": [
         {
           "type": "talkNpc"
@@ -422,7 +390,6 @@
       ]
     },
     "rogue": {
-      "message": "A few well-chosen words loosen tongues.",
       "effects": [
         {
           "type": "talkNpc"
@@ -440,7 +407,6 @@
       ]
     },
     "wizard": {
-      "message": "Calm speech and a touch of presence draw out secrets.",
       "effects": [
         {
           "type": "talkNpc"
@@ -454,7 +420,6 @@
       ]
     },
     "survivor": {
-      "message": "Shared hardship makes them trust you enough to talk.",
       "effects": [
         {
           "type": "talkNpc"
@@ -472,7 +437,6 @@
       ]
     },
     "seeker": {
-      "message": "Careful questions pry loose a useful detail.",
       "effects": [
         {
           "type": "talkNpc"
@@ -491,7 +455,6 @@
   },
   "REST": {
     "default": {
-      "message": "You catch your breath and gather yourself.",
       "effects": [
         {
           "type": "recoverDiscard",
@@ -503,7 +466,6 @@
       ]
     },
     "warrior": {
-      "message": "You brace against the wall and recover your strength.",
       "effects": [
         {
           "type": "recoverDiscard",
@@ -515,7 +477,6 @@
       ]
     },
     "rogue": {
-      "message": "A short rest in cover is enough to reset your nerves.",
       "effects": [
         {
           "type": "recoverDiscard",
@@ -527,7 +488,6 @@
       ]
     },
     "wizard": {
-      "message": "Meditation restores a measure of focus.",
       "effects": [
         {
           "type": "recoverDiscard",
@@ -539,7 +499,6 @@
       ]
     },
     "survivor": {
-      "message": "You rest like someone who has done this too many times.",
       "effects": [
         {
           "type": "recoverDiscard",
@@ -551,7 +510,6 @@
       ]
     },
     "seeker": {
-      "message": "You rest while reviewing every mark and exit you noted.",
       "effects": [
         {
           "type": "recoverDiscard",

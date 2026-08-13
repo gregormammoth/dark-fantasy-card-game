@@ -62,7 +62,6 @@ export function DeckSwapPicker({
               card={asInstance(definition)}
               variant="collection"
               onClick={() => onPick(definition.id)}
-              footer={t('deckSwap.replace')}
             />
           ))}
         </div>
