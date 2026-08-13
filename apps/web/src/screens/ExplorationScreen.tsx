@@ -28,6 +28,7 @@ import {
 import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
+import { ClaimBadge } from '@/components/ClaimBadge';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
@@ -200,31 +201,16 @@ export function ExplorationScreen({
             <button
               type="button"
               onClick={onOpenPlayer}
-              title={
-                unclaimedSkillCount > 0
-                  ? t('exploration.unclaimedSkills', { count: unclaimedSkillCount })
-                  : unclaimedCardCount > 0
-                    ? t('exploration.unclaimedCards', { count: unclaimedCardCount })
-                    : undefined
-              }
-              className="relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
+              className={`relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] leading-none tracking-[.18em] text-[#e0b552] transition hover:brightness-110${
+                unclaimedSkillCount > 0 || unclaimedCardCount > 0 ? ' claim-glow' : ''
+              }`}
             >
               {t('common.character')}
               {unclaimedSkillCount > 0 && (
-                <span
-                  aria-label={t('exploration.unclaimedSkills', { count: unclaimedSkillCount })}
-                  className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]"
-                >
-                  {unclaimedSkillCount}
-                </span>
+                <ClaimBadge kind="level" count={unclaimedSkillCount} />
               )}
               {unclaimedCardCount > 0 && (
-                <span
-                  aria-label={t('exploration.unclaimedCards', { count: unclaimedCardCount })}
-                  className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]"
-                >
-                  {unclaimedCardCount}
-                </span>
+                <ClaimBadge kind="card" count={unclaimedCardCount} />
               )}
             </button>
           )}

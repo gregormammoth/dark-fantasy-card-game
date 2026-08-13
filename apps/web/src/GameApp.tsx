@@ -579,8 +579,16 @@ function GameShell() {
     );
   }
 
+  const unclaimedCardCount = unclaimedCardChoices(progression, loadout);
+  const unclaimedSkillCount = getAvailableSkillPoints(progression);
+
   let content = (
-    <WorldMapScreen onEnterLocation={enterLocation} onOpenPlayer={openPlayer} />
+    <WorldMapScreen
+      onEnterLocation={enterLocation}
+      onOpenPlayer={openPlayer}
+      unclaimedCardCount={unclaimedCardCount}
+      unclaimedSkillCount={unclaimedSkillCount}
+    />
   );
 
   if (screen === 'battle') {
@@ -626,8 +634,8 @@ function GameShell() {
         deckCardIds={loadout.deckCardIds}
         playerGender={profile.gender}
         playerName={profile.name}
-        unclaimedCardCount={unclaimedCardChoices(progression, loadout)}
-        unclaimedSkillCount={getAvailableSkillPoints(progression)}
+        unclaimedCardCount={unclaimedCardCount}
+        unclaimedSkillCount={unclaimedSkillCount}
       />
     );
   } else if (screen === 'player') {

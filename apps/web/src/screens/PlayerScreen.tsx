@@ -22,6 +22,7 @@ import {
   unlockImprovedCard,
   toggleDeckCard,
 } from '@dark-fantasy/game-engine';
+import { ClaimBadge } from '@/components/ClaimBadge';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
 import { CoachMark } from '@/components/tour/CoachMark';
@@ -381,12 +382,10 @@ export function PlayerScreen({
                   </div>
                   <div>
                     <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.level')}</div>
-                    <div className="mt-1 flex items-center gap-2 font-cinzel text-[14px] text-[#c9a24a]">
+                    <div className="mt-1 flex items-center gap-2 font-cinzel text-[14px] leading-none text-[#c9a24a]">
                       {playerLevel}
                       {availableSkillPoints > 0 && (
-                        <span className="rounded-[3px] bg-[#c9a24a] px-1.5 py-0.5 font-cinzel text-[9px] tracking-wide text-[#1a1208]">
-                          +{availableSkillPoints}
-                        </span>
+                        <ClaimBadge kind="level" count={availableSkillPoints} />
                       )}
                     </div>
                   </div>
@@ -452,9 +451,10 @@ export function PlayerScreen({
                 <button
                   type="button"
                   onClick={() => setLevelUpOpen(true)}
-                  className="rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[rgba(224,181,82,.12)] px-3 py-1.5 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:brightness-110"
+                  className="claim-glow inline-flex items-center gap-1.5 rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[rgba(224,181,82,.12)] px-3 py-1.5 font-cinzel text-[11px] leading-none tracking-[.12em] text-[#e0b552] transition hover:brightness-110"
                 >
                   {t('player.chooseSkill')}
+                  <ClaimBadge kind="level" count={availableSkillPoints} />
                 </button>
               )}
             </div>
@@ -479,21 +479,16 @@ export function PlayerScreen({
                       borderColor: selected ? theme.accent : 'rgba(201,162,74,.2)',
                     }}
                   >
-                    <div className="flex items-baseline justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="flex items-center gap-[7px]">
                         <span
-                          className="font-cinzel text-[14px] tracking-wide"
+                          className="font-cinzel text-[14px] leading-none tracking-wide"
                           style={{ color: theme.accent }}
                         >
                           {getClassLabel(classId, t)}
                         </span>
                         {unclaimedCount > 0 && (
-                          <span
-                            className="rounded-[3px] px-1.5 py-0.5 font-cinzel text-[9px] tracking-wide text-[#1a1208]"
-                            style={{ background: theme.accent }}
-                          >
-                            +{unclaimedCount}
-                          </span>
+                          <ClaimBadge kind="card" count={unclaimedCount} accent={theme.accent} />
                         )}
                       </span>
                       <span className="shrink-0 text-[11px] text-[#8a7f72]">

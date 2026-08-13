@@ -5,6 +5,7 @@ import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldLocationDefinition, WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import { getWorldCategoryLabel, iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
 import { useTranslation } from '@/i18n/useTranslation';
+import { ClaimBadge } from '@/components/ClaimBadge';
 import { WorldMapClouds } from '@/components/world/WorldMapClouds';
 
 const worldMap = worldMapData as WorldMapDefinition;
@@ -12,9 +13,16 @@ const worldMap = worldMapData as WorldMapDefinition;
 interface WorldMapScreenProps {
   onEnterLocation: (locationId: string) => void;
   onOpenPlayer?: () => void;
+  unclaimedCardCount?: number;
+  unclaimedSkillCount?: number;
 }
 
-export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreenProps) {
+export function WorldMapScreen({
+  onEnterLocation,
+  onOpenPlayer,
+  unclaimedCardCount = 0,
+  unclaimedSkillCount = 0,
+}: WorldMapScreenProps) {
   const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState<string | null>(worldMap.startLocationId);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
@@ -200,9 +208,17 @@ export function WorldMapScreen({ onEnterLocation, onOpenPlayer }: WorldMapScreen
             <button
               type="button"
               onClick={onOpenPlayer}
-              className="rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] tracking-[.18em] text-[#e0b552] transition hover:brightness-110"
+              className={`relative flex items-center gap-2 rounded-lg border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] leading-none tracking-[.18em] text-[#e0b552] transition hover:brightness-110${
+                unclaimedSkillCount > 0 || unclaimedCardCount > 0 ? ' claim-glow' : ''
+              }`}
             >
               {t('common.character')}
+              {unclaimedSkillCount > 0 && (
+                <ClaimBadge kind="level" count={unclaimedSkillCount} />
+              )}
+              {unclaimedCardCount > 0 && (
+                <ClaimBadge kind="card" count={unclaimedCardCount} />
+              )}
             </button>
           )}
           <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
