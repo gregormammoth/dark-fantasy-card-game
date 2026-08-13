@@ -4,7 +4,8 @@ import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Lore',
-  description: 'Stories and myths from Hollowfort and the wider realm.',
+  description:
+    'Lore of Hollowfort Prison — a fortress of executions, a failed ritual, and a deck that is also your flesh.',
 };
 
 export default function LoreIndexPage() {

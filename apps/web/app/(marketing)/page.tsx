@@ -63,7 +63,7 @@ export default function HomePage() {
         <div className="mb-[34px] flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
           <div>
             <p className="mb-2.5 text-[11px] tracking-[0.28em] text-[#8a7f72]">CHOOSE YOUR PATH</p>
-            <h2 className="font-cinzel text-[34px] text-[#f0dfcb]">Four Classes. One Deck.</h2>
+            <h2 className="font-cinzel text-[34px] text-[#f0dfcb]">Five Classes. One Deck.</h2>
           </div>
           <Link
             href="/classes"
@@ -72,7 +72,7 @@ export default function HomePage() {
             View progression →
           </Link>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {homeClassShowcase.map((item) => (
             <Link
               key={item.id}
@@ -116,8 +116,8 @@ export default function HomePage() {
           <p className="text-[11px] tracking-[0.28em] text-[#8a7f72]">THE WORLD</p>
           <h2 className="font-cinzel text-4xl leading-snug text-[#f0dfcb]">Chart your escape</h2>
           <p className="text-[15px] leading-relaxed text-[#a99c8d]">
-            Fog-of-war exploration across ruined roads and the prison&apos;s own corridors. Enter the
-            realm, descend into Hollowfort, and fight for every card that keeps you alive.
+            Sixteen handcrafted rooms, three faction bosses, and an Exit Gate that only opens after
+            you pick a side. Your exploration hand, deck, and shield carry into every fight.
           </p>
           <div className="mt-1.5 flex flex-wrap gap-4">
             <Link
@@ -153,10 +153,10 @@ export default function HomePage() {
 
       <section className="mx-auto mt-[150px] max-w-[1180px] px-6 lg:px-10">
         <div className="relative overflow-hidden rounded-[20px] border border-[rgba(201,162,74,.3)] bg-[radial-gradient(900px_300px_at_50%_-30%,rgba(201,162,74,.16),transparent),linear-gradient(180deg,#171210,#0d0a09)] px-8 py-[70px] text-center sm:px-[60px]">
-          <p className="text-[11px] tracking-[0.3em] text-[#8a7f72]">NO SAVE FILE SURVIVES TWICE</p>
+          <p className="text-[11px] tracking-[0.3em] text-[#8a7f72]">YOUR RUN WAITS IN THE CELL</p>
           <h2 className="mt-3.5 font-cinzel text-[42px] text-[#f3e6d6]">Begin your escape</h2>
           <p className="mx-auto mt-3.5 max-w-[480px] text-[15px] text-[#a99c8d]">
-            Draft your deck, learn the fog, and find the one door out of Hollowfort.
+            Name a prisoner, spend class XP, pick combat skills, and find the door out of Hollowfort.
           </p>
           <Link
             href="/play"

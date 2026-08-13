@@ -4,7 +4,8 @@ import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Regions',
-  description: 'Handcrafted locations you can explore in Hollowfort.',
+  description:
+    'Hollowfort Prison — sixteen handcrafted rooms, three faction branches, and an Exit Gate that opens after you pick a side.',
 };
 
 export default function RegionsPage() {
@@ -14,7 +15,7 @@ export default function RegionsPage() {
       <PageHero
         eyebrow="THE REALM"
         title="Regions"
-        description="Each region is authored content — maps, encounters, and story — not a procedural blur."
+        description="Hollowfort Prison is the Beta region — sixteen authored rooms, not a procedural blur."
       />
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map((doc) => (

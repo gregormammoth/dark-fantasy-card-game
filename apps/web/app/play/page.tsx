@@ -4,7 +4,8 @@ import { GameApp } from '@/GameApp';
 
 export const metadata: Metadata = {
   title: 'Play',
-  description: 'Enter the realm — explore Hollowfort Prison and duel with cards.',
+  description:
+    'Play Hollowfort in the browser. Explore sixteen prison rooms, fight with your deck as health, and escape through a faction gate.',
   robots: {
     index: false,
     follow: true,

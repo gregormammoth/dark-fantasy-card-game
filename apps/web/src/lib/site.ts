@@ -2,7 +2,7 @@ export const siteConfig = {
   name: process.env.NEXT_PUBLIC_SITE_NAME ?? 'Hollowfort',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   description:
-    'A dark fantasy deckbuilder of prison escapes, class progression, and deadly card combat.',
+    'Escape Hollowfort Prison in a dark fantasy deckbuilder. Five classes, thirty cards, quests, crowns, and one continuous run from cell to gate.',
   playPath: '/play',
 };
 
@@ -32,9 +32,9 @@ export const legalNav = [
 
 export const homeStats = [
   { value: '5', label: 'CLASSES TO MASTER' },
-  { value: '30+', label: 'UNLOCKABLE CARDS' },
-  { value: '11', label: 'PRISON ROOMS' },
-  { value: '1', label: 'VERTICAL SLICE' },
+  { value: '30', label: 'PLAYER CARDS' },
+  { value: '16', label: 'PRISON ROOMS' },
+  { value: '3', label: 'FACTION PATHS' },
 ] as const;
 
 export const homeClassShowcase = [
@@ -91,24 +91,24 @@ export const homeClassShowcase = [
     glow: 'rgba(201,162,74,.35)',
     image: '/characters/player.png',
     blurb: 'Mark weak points, dig for answers, then strike where the armor fails.',
-    tag: 'DIG · DEDUCE',
+    tag: 'MARK · EXPLOIT',
   },
 ] as const;
 
 export const homeFeatures = [
   {
     tag: 'PROGRESSION',
-    title: 'Spend XP, Not Just Earn It',
-    desc: 'Every class levels independently. Unlock new cards by spending the XP that class alone has earned.',
+    title: 'Cards And Skills Grow Together',
+    desc: 'Class XP unlocks improved cards. Player levels let you raise max shield, combo, mana, deck, or draw — without binding skills to a class.',
   },
   {
     tag: 'COMBAT',
-    title: 'Combos Carve the Fight',
-    desc: 'Stack cards into a combo line, read the preview, then burn through shields, barriers, and decks.',
+    title: 'Your Deck Is Your Life',
+    desc: 'Stack combos, read the preview, then burn through shields and barriers. Damage eats cards. The last card is the last breath.',
   },
   {
     tag: 'EXPLORATION',
-    title: 'Fog of War, Real Stakes',
-    desc: 'Hollowfort hides what you have not seen — rooms, encounters, and danger wait behind every corridor.',
+    title: 'Quests, Crowns, And Loyalty',
+    desc: 'Sixteen rooms, faction kill-quests, and a Smuggler who sells restoratives. Your hand and shield carry from corridor into the fight.',
   },
 ] as const;

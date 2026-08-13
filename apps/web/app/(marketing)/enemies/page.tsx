@@ -1,46 +1,57 @@
 import type { Metadata } from 'next';
-import enemyCards from '@dark-fantasy/content/enemyCards.json';
-import battle from '@dark-fantasy/content/battle.json';
-import type { CardDefinition } from '@dark-fantasy/shared/types/card';
+import enemiesData from '@dark-fantasy/content/enemies.json';
+import type { EnemyCatalogFile } from '@dark-fantasy/shared/types/enemy';
 import { PageHero, PageShell } from '@/components/site/PageBits';
 
 export const metadata: Metadata = {
   title: 'Enemies',
-  description: 'Foes of Hollowfort — starting with the Shadow Beast duel.',
+  description:
+    'Twelve Hollowfort foes across intro, common, and elite bands — guards, beasts, ritualists, and three branch bosses.',
+};
+
+const GROUP_LABEL: Record<string, string> = {
+  warrior: 'Warrior',
+  cutthroat: 'Cutthroat',
+  ritualist: 'Ritualist',
+  beast: 'Beast',
+  undead: 'Undead',
+  brute: 'Brute',
 };
 
 export default function EnemiesPage() {
-  const cards = enemyCards as CardDefinition[];
-  const enemyName = (battle as { enemy?: { name?: string } }).enemy?.name ?? 'Unknown Beast';
+  const catalog = enemiesData as EnemyCatalogFile;
+  const enemies = catalog.enemies;
 
   return (
     <PageShell>
       <PageHero
         eyebrow="FOES"
         title="Enemies"
-        description="Enemy decks and intents are content. More elites and bosses arrive with the prison vertical slice."
+        description="Early rooms teach the loop. Later rooms and branch bosses play from their own card groups — not one shared deck."
       />
-      <article className="mb-8 border border-[rgba(201,162,74,.2)] bg-[linear-gradient(180deg,#161110,#100c0b)] px-6 py-6">
-        <p className="text-[10px] tracking-[0.24em] text-ember-500">FEATURED DUEL</p>
-        <h2 className="mt-2 font-cinzel text-2xl text-parchment-100">{enemyName}</h2>
-        <p className="mt-3 max-w-2xl text-parchment-400">
-          A deck-driven adversary with shields, poison pressure, and readable intents. Defeat it to
-          claim class experience.
-        </p>
-      </article>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((card) => (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {enemies.map((enemy) => (
           <article
-            key={card.id}
-            className="border border-[rgba(201,162,74,.14)] bg-[linear-gradient(180deg,#161110,#100c0b)] px-4 py-4"
+            key={enemy.id}
+            className="overflow-hidden border border-[rgba(201,162,74,.16)] bg-[linear-gradient(180deg,#161110,#100c0b)]"
           >
-            <p className="text-[10px] tracking-[0.2em] text-parchment-500">
-              {(card.type ?? 'attack').toUpperCase()}
-            </p>
-            <h3 className="mt-2 font-cinzel text-lg text-parchment-100">{card.name}</h3>
-            {card.description ? (
-              <p className="mt-2 text-sm text-parchment-400">{card.description}</p>
+            {enemy.image ? (
+              <div className="relative h-[180px]">
+                <img src={enemy.image} alt="" className="h-full w-full object-cover object-top" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(12,9,8,.94))]" />
+              </div>
             ) : null}
+            <div className="px-5 py-5">
+              <p className="text-[10px] tracking-[0.2em] text-ember-500">
+                {enemy.band.toUpperCase()}
+                {enemy.group ? ` · ${GROUP_LABEL[enemy.group] ?? enemy.group}` : ''}
+              </p>
+              <h2 className="mt-2 font-cinzel text-xl text-parchment-100">{enemy.name}</h2>
+              <p className="mt-1 text-[11px] tracking-[0.12em] text-[#8a7f72]">{enemy.tier}</p>
+              {enemy.description ? (
+                <p className="mt-3 text-sm leading-relaxed text-parchment-400">{enemy.description}</p>
+              ) : null}
+            </div>
           </article>
         ))}
       </div>

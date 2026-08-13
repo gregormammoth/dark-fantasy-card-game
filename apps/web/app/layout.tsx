@@ -22,10 +22,17 @@ const spectral = Spectral({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — Dark Fantasy Deckbuilder`,
+    default: `${siteConfig.name} — Escape the Prison Deckbuilder`,
     template: `%s · ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: [
+    'dark fantasy deckbuilder',
+    'Hollowfort',
+    'browser card game',
+    'prison escape',
+    'roguelike deckbuilder',
+  ],
   alternates: {
     canonical: '/',
   },
@@ -34,12 +41,12 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: siteConfig.url,
     siteName: siteConfig.name,
-    title: `${siteConfig.name} — Dark Fantasy Deckbuilder`,
+    title: `${siteConfig.name} — Escape the Prison Deckbuilder`,
     description: siteConfig.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteConfig.name} — Dark Fantasy Deckbuilder`,
+    title: `${siteConfig.name} — Escape the Prison Deckbuilder`,
     description: siteConfig.description,
   },
   robots: {

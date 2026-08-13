@@ -4,7 +4,8 @@ import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Patch Notes',
-  description: 'What changed in each Hollowfort release.',
+  description:
+    'Hollowfort patch notes — platform shell, prison slice, skills, quests, crowns, and reward reveals.',
 };
 
 export default function PatchNotesPage() {

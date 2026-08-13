@@ -5,7 +5,8 @@ import { homeClassShowcase } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Classes',
-  description: 'Four class paths — specialise or hybridise through your deck.',
+  description:
+    'Five class paths in Hollowfort — Warrior, Rogue, Wizard, Survivor, and Seeker. Specialise or hybridise through your deck.',
 };
 
 export default function ClassesPage() {
@@ -13,8 +14,8 @@ export default function ClassesPage() {
     <PageShell>
       <PageHero
         eyebrow="CHOOSE YOUR PATH"
-        title="Four Classes. One Deck."
-        description="Each played card grants experience to its class. Build a specialist — or a hybrid."
+        title="Five Classes. One Deck."
+        description="Each played card grants class XP. Spend levels on improved cards. Player levels raise combat skills shared by every class."
       />
       <div className="grid gap-6 sm:grid-cols-2">
         {homeClassShowcase.map((item) => (

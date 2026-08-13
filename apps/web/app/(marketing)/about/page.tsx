@@ -5,7 +5,8 @@ import { getSingleton } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'What Hollowfort is and where the Beta is headed.',
+  description:
+    'Hollowfort is a playable dark fantasy deckbuilder: prison exploration, combo combat, class XP, player skills, quests, and crowns.',
 };
 
 export default function AboutPage() {

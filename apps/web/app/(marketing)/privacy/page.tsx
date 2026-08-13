@@ -5,7 +5,7 @@ import { getDoc } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'How Hollowfort handles data during early development.',
+  description: 'How Hollowfort handles guest play, cloud saves, and analytics during Beta.',
 };
 
 export default function PrivacyPage() {

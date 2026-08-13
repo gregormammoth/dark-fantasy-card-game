@@ -1,25 +1,20 @@
 ---
 title: Roadmap
-description: Beta vertical slice priorities — run state, rewards, saves, then Hollowfort.
+description: The Hollowfort prison slice is playable. Remaining Beta work is ship-gate polish, not new core systems.
 ---
 
 ## Horizons
 
-- **Now (Beta-critical):** shared Run, exploration ↔ battle, XP levels, reward loop, versioned local saves, seeded RNG, prison story, ~24–32 cards, light analytics, polish + E2E
-- **Beta-supporting:** Next.js `/play`, SEO, content SSG, docs, Vercel
-- **Post-Beta:** auth, cloud saves, full inventory, leaderboards, large content expansion
+- **Now (Beta-critical remaining):** production deploy, in-game feedback form, enemy/class balance pass, reward readability, seeded E2E journey, Hollowfort content localization
+- **Already live:** shared Run, exploration ↔ battle, class XP + unlocks, player-level skills, quests, crowns, cloud save, seeded RNG, 16-room prison escape
+- **Post-Beta:** full auth, item inventory, leaderboards, large content expansion
 
 ## Near-term order
 
-1. XP → class levels → unlocks → deck changes
-2. Shared Run state
-3. Exploration ↔ Battle on the same run
-4. Save / load + versioned schema (`localStorage`)
-5. Seeded RNG (required)
-6. Reward loop
-7. Hollowfort story vertical slice
-8. Content (~24–32 cards, 10–12 locations)
-9. Analytics foundation
-10. Polish + E2E → Beta
+1. Deploy web + API
+2. Feedback form (API already stores rows)
+3. Balance / feel pass across enemy bands
+4. Seeded E2E: new run → fight → unlock → boss → escape
+5. Content localization (en / ru / sr UI chrome is live; prison text still English)
 
-See `docs/ROADMAP.md` for full checklists.
+See `docs/ROADMAP.md` in the repository for full checklists.

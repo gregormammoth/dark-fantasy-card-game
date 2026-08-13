@@ -5,7 +5,8 @@ import { getSingleton } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Roadmap',
-  description: 'Platform and Hollowfort Prison development milestones.',
+  description:
+    'Hollowfort Beta roadmap — playable prison slice live; deploy, feedback, balance, and content localization still open.',
 };
 
 export default function RoadmapPage() {
