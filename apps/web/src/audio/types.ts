@@ -34,11 +34,22 @@ export type GameOverSoundId = 'victory_sting' | 'defeat_sting';
 
 export type EventSoundId = 'encounter_sting' | 'combat_hit';
 
+export type CombatSoundId =
+  | 'combat_sword'
+  | 'combat_shield'
+  | 'combat_poison'
+  | 'combat_dodge'
+  | 'combat_magic'
+  | 'combat_mana'
+  | 'combat_barrier'
+  | 'combat_heal';
+
 export type WorldOneShotId = 'distant_howl';
 
 export type SoundId =
   | UiSoundId
   | EventSoundId
+  | CombatSoundId
   | WorldOneShotId
   | AmbienceLoopId
   | MusicLayerId
@@ -71,6 +82,7 @@ export type SoundDefinition = {
   procedural?: boolean;
   spatial?: boolean;
   oneShotIntervalMs?: number;
+  maxDurationMs?: number;
 };
 
 export type PlayOptions = {

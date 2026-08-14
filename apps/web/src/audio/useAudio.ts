@@ -29,6 +29,10 @@ export function useAudio() {
     [unlocked, settings.muted]
   );
 
+  const stop = useCallback((soundId: SoundId) => {
+    getAudioManager().stop(soundId);
+  }, []);
+
   const playPositional = useCallback(
     (soundId: SoundId, options: PositionalSoundOptions) => {
       if (!unlocked || settings.muted) return;
@@ -43,6 +47,7 @@ export function useAudio() {
     hydrated,
     unlock,
     play,
+    stop,
     playPositional,
     setMasterVolume,
     setMusicVolume,

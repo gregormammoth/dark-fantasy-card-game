@@ -7,6 +7,7 @@ import { classThemes, enemyTheme } from '@/lib/cardTheme';
 import { getCardEffectSummary } from '@/lib/cardTheme';
 import type { CardClass } from '@dark-fantasy/shared/types/card';
 import { useAudio } from '@/audio/useAudio';
+import { getCombatSoundForCard } from '@/audio/combatCardSound';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 const duration = 0.45;
@@ -273,7 +274,7 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
   const [phase, setPhase] = useState<Phase>('play');
   const onImpactRef = useRef(onImpact);
   const onCompleteRef = useRef(onComplete);
-  const { play } = useAudio();
+  const { play, stop } = useAudio();
 
   useEffect(() => {
     onImpactRef.current = onImpact;
@@ -291,7 +292,18 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
       : cue.playerDeckCardsLost ?? cue.damageToPlayer ?? 0;
 
   useEffect(() => {
+    const definition = getCardDefinition(cue.cardId);
+    if (!definition) return;
+    const soundId = getCombatSoundForCard(definition);
+    play(soundId);
+    return () => {
+      stop(soundId);
+    };
+  }, [cue.cardId, play, stop]);
+
+  useEffect(() => {
     setPhase('play');
+
     const impactTimer = window.setTimeout(() => {
       setPhase('impact');
       const stackSpend =
@@ -313,9 +325,6 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
         }
       } else if (isDefense && cue.source === 'player') {
         onImpactRef.current('player', 0);
-        if ((cue.shieldGained ?? 0) > 0 || (cue.barrierGained ?? 0) > 0) {
-          play('shield_gain');
-        }
       }
     }, 520);
 
@@ -341,8 +350,6 @@ export function BattlePlayAnimation({ cue, onImpact, onComplete }: BattlePlayAni
     cue.damageToPlayer,
     cue.shieldBlocked,
     cue.barrierBlocked,
-    cue.shieldGained,
-    cue.barrierGained,
     play,
   ]);
 

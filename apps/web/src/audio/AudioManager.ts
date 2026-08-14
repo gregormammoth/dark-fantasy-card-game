@@ -47,6 +47,8 @@ export class AudioManager {
   private layers = new Map<MusicLayerId, LayerRuntime>();
   private ambience = new Map<AmbienceLoopId, LayerRuntime>();
   private procedural = new ProceduralAudioEngine();
+  private oneShotGeneration = new Map<SoundId, number>();
+  private oneShotStopTimers = new Map<SoundId, number>();
   private settings: AudioSettings = {
     masterVolume: 0.85,
     musicVolume: 0.55,
@@ -292,6 +294,21 @@ export class AudioManager {
     this.playOneShot(soundId, options);
   }
 
+  stop(soundId: SoundId): void {
+    const next = (this.oneShotGeneration.get(soundId) ?? 0) + 1;
+    this.oneShotGeneration.set(soundId, next);
+    const timer = this.oneShotStopTimers.get(soundId);
+    if (timer) {
+      window.clearTimeout(timer);
+      this.oneShotStopTimers.delete(soundId);
+    }
+    const cached = this.cache.get(soundId);
+    if (cached) {
+      cached.howl.loop(false);
+      cached.howl.stop();
+    }
+  }
+
   playPositional(soundId: SoundId, options: PositionalSoundOptions): void {
     if (!this.unlocked || this.disposed || this.settings.muted) return;
     this.playOneShot(soundId, options, {
@@ -365,6 +382,11 @@ export class AudioManager {
     if (this.sirenTimer) clearInterval(this.sirenTimer);
     this.fadeTimer = null;
     this.sirenTimer = null;
+    for (const timer of this.oneShotStopTimers.values()) {
+      window.clearTimeout(timer);
+    }
+    this.oneShotStopTimers.clear();
+    this.oneShotGeneration.clear();
     for (const entry of this.cache.values()) {
       entry.howl.unload();
     }
@@ -393,17 +415,39 @@ export class AudioManager {
     if (!def) return;
 
     const vol = (options.volume ?? def.volume ?? 1) * this.effectiveSfxGain();
+    const generation = (this.oneShotGeneration.get(soundId) ?? 0) + 1;
+    this.oneShotGeneration.set(soundId, generation);
+
+    const startPlayback = (loaded: LoadedHowl) => {
+      if (this.disposed) return;
+      if (this.oneShotGeneration.get(soundId) !== generation) return;
+      loaded.howl.loop(false);
+      loaded.howl.stop();
+      const playId = loaded.howl.play();
+      loaded.howl.volume(vol, playId);
+      if (options.rate) loaded.howl.rate(options.rate, playId);
+      if (position && def.spatial) {
+        loaded.howl.pos(position.x, position.y, position.z, playId);
+      }
+      const existingTimer = this.oneShotStopTimers.get(soundId);
+      if (existingTimer) {
+        window.clearTimeout(existingTimer);
+      }
+      if (def.maxDurationMs && def.maxDurationMs > 0) {
+        const timer = window.setTimeout(() => {
+          this.oneShotStopTimers.delete(soundId);
+          if (this.oneShotGeneration.get(soundId) !== generation) return;
+          loaded.howl.stop(playId);
+        }, def.maxDurationMs);
+        this.oneShotStopTimers.set(soundId, timer);
+      }
+      this.log(`playback started: ${soundId}`);
+    };
 
     if (def.procedural && this.prefersImmediatePlayback(soundId)) {
       const cached = this.cache.get(soundId);
       if (cached && !cached.failed) {
-        const playId = cached.howl.play();
-        cached.howl.volume(vol, playId);
-        if (options.rate) cached.howl.rate(options.rate, playId);
-        if (position && def.spatial) {
-          cached.howl.pos(position.x, position.y, position.z, playId);
-        }
-        this.log(`playback started (cached): ${soundId}`);
+        startPlayback(cached);
         return;
       }
 
@@ -415,14 +459,9 @@ export class AudioManager {
 
     void this.ensureHowl(soundId).then((loaded) => {
       if (this.disposed) return;
+      if (this.oneShotGeneration.get(soundId) !== generation) return;
       if (loaded && !loaded.failed) {
-        const playId = loaded.howl.play();
-        loaded.howl.volume(vol, playId);
-        if (options.rate) loaded.howl.rate(options.rate, playId);
-        if (position && def.spatial) {
-          loaded.howl.pos(position.x, position.y, position.z, playId);
-        }
-        this.log(`playback started: ${soundId}`);
+        startPlayback(loaded);
         return;
       }
       if (def.procedural) {
@@ -603,7 +642,7 @@ export class AudioManager {
 
       const howl = new Howl({
         src: def.src,
-        loop: def.loop ?? false,
+        loop: false,
         volume: 0,
         preload: def.preload ?? true,
         html5: false,
@@ -615,6 +654,7 @@ export class AudioManager {
           finish({ howl, def, failed: true });
         },
       });
+      howl.loop(def.loop ?? false);
 
       window.setTimeout(() => {
         if (settled) return;

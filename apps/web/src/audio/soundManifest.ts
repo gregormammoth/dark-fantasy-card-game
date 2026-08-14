@@ -32,6 +32,17 @@ export const EVENT_SOUNDS: SoundDefinition[] = [
   { id: 'combat_hit', category: 'combat', src: src(`${base}/combat/combat-hit.ogg`), volume: 0.42, procedural: true },
 ];
 
+export const COMBAT_SOUNDS: SoundDefinition[] = [
+  { id: 'combat_sword', category: 'combat', src: src(`${base}/combat/sword.ogg`), volume: 0.55, preload: true, maxDurationMs: 1200 },
+  { id: 'combat_shield', category: 'combat', src: src(`${base}/combat/shield.ogg`), volume: 0.52, preload: true, maxDurationMs: 1200 },
+  { id: 'combat_poison', category: 'combat', src: src(`${base}/combat/poison.ogg`), volume: 0.5, preload: true, maxDurationMs: 1100 },
+  { id: 'combat_dodge', category: 'combat', src: src(`${base}/combat/dodge.ogg`), volume: 0.5, preload: true, maxDurationMs: 1200 },
+  { id: 'combat_magic', category: 'combat', src: src(`${base}/combat/magic.ogg`), volume: 0.55, preload: true, maxDurationMs: 1300 },
+  { id: 'combat_mana', category: 'combat', src: src(`${base}/combat/mana.ogg`), volume: 0.5, preload: true, maxDurationMs: 1200 },
+  { id: 'combat_barrier', category: 'combat', src: src(`${base}/combat/barrier.ogg`), volume: 0.52, preload: true, maxDurationMs: 1300 },
+  { id: 'combat_heal', category: 'combat', src: src(`${base}/combat/heal.ogg`), volume: 0.5, preload: true, maxDurationMs: 1300 },
+];
+
 export const WORLD_SOUNDS: SoundDefinition[] = [
   {
     id: 'distant_howl',
@@ -62,6 +73,7 @@ export const MUSIC_LAYERS: SoundDefinition[] = [
 export const SOUND_MANIFEST: SoundDefinition[] = [
   ...UI_SOUNDS,
   ...EVENT_SOUNDS,
+  ...COMBAT_SOUNDS,
   ...WORLD_SOUNDS,
   ...AMBIENCE_LOOPS,
   ...MUSIC_LAYERS,
@@ -94,4 +106,4 @@ export const AMBIENCE_LOOP_IDS: AmbienceLoopId[] = [
   'low_drone',
 ];
 
-export const PRELOAD_ON_UNLOCK: SoundDefinition['category'][] = ['ui', 'event'];
+export const PRELOAD_ON_UNLOCK: SoundDefinition['category'][] = ['ui', 'event', 'combat'];
