@@ -23,6 +23,7 @@ interface CardProps {
   handTotal?: number;
   locked?: boolean;
   inDeck?: boolean;
+  showTooltip?: boolean;
   statusLabel?: string;
   statusColor?: string;
   footer?: ReactNode;
@@ -74,6 +75,7 @@ export function Card({
   handTotal = 1,
   locked = false,
   inDeck = false,
+  showTooltip = true,
   statusLabel,
   statusColor,
   footer,
@@ -197,7 +199,7 @@ export function Card({
         )}
       </div>
     </motion.button>
-      {description && (
+      {showTooltip && description && (
         <span
           role="tooltip"
           className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-left shadow-[0_12px_28px_-10px_#000] group-hover/card:block"

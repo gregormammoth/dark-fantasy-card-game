@@ -5,6 +5,7 @@ import { Card } from '@/components/Card';
 import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useAudio } from '@/audio/useAudio';
 import { useTranslation } from '@/i18n/useTranslation';
+import { getCardHeight } from '@/lib/cardTheme';
 
 interface ExplorationHandBarProps {
   context: ExplorationContext;
@@ -21,6 +22,7 @@ export function ExplorationHandBar({
   const { play } = useAudio();
   const deckStack = [0, 1, 2, 3, 4, 5];
   const discardEmpty = context.discard.length === 0;
+  const cardHeight = getCardHeight();
 
   return (
     <div className="flex items-end gap-[22px] rounded-md border border-[rgba(201,162,74,.16)] bg-[linear-gradient(180deg,rgba(20,15,12,.9),rgba(12,9,8,.94))] px-5 py-4">
@@ -102,12 +104,12 @@ export function ExplorationHandBar({
 
       <div className="w-px self-stretch bg-[rgba(201,162,74,.16)]" />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="relative z-20 flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">
             {t('exploration.cardsInHandTurn', { turn: context.turnCount })}
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-end gap-4">
             <div className="flex items-center gap-2">
               <span className="text-[9px] tracking-[.16em] text-[#8a7f72]">
                 {t('exploration.actionsLabel')}
@@ -143,7 +145,10 @@ export function ExplorationHandBar({
           </div>
         </div>
 
-        <div className="flex h-[150px] items-end overflow-visible">
+        <div
+          className="relative z-10 -mt-5 flex items-end overflow-x-auto pt-8"
+          style={{ minHeight: cardHeight + 32 }}
+        >
           {context.hand.map((card, index) => {
             const selected = context.selectedCardInstanceId === card.instanceId;
             return (
@@ -154,6 +159,7 @@ export function ExplorationHandBar({
                 <Card
                   card={card}
                   variant="hand"
+                  showTooltip={false}
                   handIndex={index}
                   handTotal={context.hand.length}
                   onClick={() => onSelectCard(card.instanceId)}

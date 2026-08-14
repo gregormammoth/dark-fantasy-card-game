@@ -57,6 +57,7 @@ export function ActionCardPickerModal({
               key={card.instanceId}
               card={card}
               variant="collection"
+              showTooltip={false}
               onClick={() => onPick(card.instanceId)}
             />
           ))}

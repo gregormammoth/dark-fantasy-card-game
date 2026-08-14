@@ -574,6 +574,7 @@ export function PlayerScreen({
                   const status = cardStatusFor(definition, progression, loadout);
                   const inDeck = deck.includes(definition.id);
                   const selected = definition.id === selectedCardId;
+                  const unlockable = status === 'available';
                   const locked = status === 'locked-xp';
                   const copy = statusCopy(
                     status,
@@ -586,6 +587,18 @@ export function PlayerScreen({
                   const imageSrc =
                     definition.image ??
                     (definition.class ? `/cards/${definition.id}.png` : undefined);
+                  const thumbFilter = unlockable
+                    ? 'grayscale(1) brightness(.68)'
+                    : locked
+                      ? 'grayscale(1) brightness(.55)'
+                      : 'none';
+                  const nameColor = unlockable
+                    ? selectedTheme.accent
+                    : locked
+                      ? '#6a6058'
+                      : selected
+                        ? '#e0b552'
+                        : '#f0dfcb';
                   return (
                     <button
                       key={definition.id}
@@ -596,19 +609,29 @@ export function PlayerScreen({
                           [selectedClassId]: definition.id,
                         }))
                       }
-                      className="flex w-full items-center border-b border-[rgba(201,162,74,.08)] px-4 py-2 text-left transition hover:bg-[rgba(224,181,82,.1)]"
+                      className={`flex w-full items-center border-b border-[rgba(201,162,74,.08)] px-4 py-2 text-left transition hover:bg-[rgba(224,181,82,.1)]${
+                        unlockable ? ' card-unlockable' : ''
+                      }`}
                       style={{
-                        background: selected ? 'rgba(224,181,82,.12)' : 'transparent',
+                        background: selected ? 'rgba(224,181,82,.12)' : undefined,
+                        ['--unlock-accent' as string]: unlockable ? selectedTheme.accent : undefined,
                       }}
                     >
                       <span className="w-12 shrink-0">
-                        <span className="block h-[38px] w-[38px] overflow-hidden rounded">
+                        <span
+                          className="block h-[38px] w-[38px] overflow-hidden rounded"
+                          style={
+                            unlockable
+                              ? { boxShadow: `0 0 0 2px ${selectedTheme.accent}88` }
+                              : undefined
+                          }
+                        >
                           {imageSrc ? (
                             <img
                               src={imageSrc}
                               alt=""
                               className="h-full w-full object-cover"
-                              style={{ filter: locked ? 'grayscale(1) brightness(.55)' : 'none' }}
+                              style={{ filter: thumbFilter }}
                             />
                           ) : (
                             <span className="block h-full w-full bg-[#0c0908]" />
@@ -617,7 +640,7 @@ export function PlayerScreen({
                       </span>
                       <span
                         className="flex-1 pl-1.5 font-cinzel text-[13px]"
-                        style={{ color: locked ? '#6a6058' : selected ? '#e0b552' : '#f0dfcb' }}
+                        style={{ color: nameColor }}
                       >
                         {definition.improved ? '★ ' : ''}
                         {definition.name}
@@ -644,8 +667,16 @@ export function PlayerScreen({
 
               {activeCard && detailBtn && (
                 <div
-                  className="w-[300px] shrink-0 overflow-hidden rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]"
-                  style={{ border: `1px solid ${selectedTheme.accent}55` }}
+                  className={`w-[300px] shrink-0 overflow-hidden rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]${
+                    activeStatus === 'available' ? ' card-unlockable-panel' : ''
+                  }`}
+                  style={{
+                    border: `1px solid ${
+                      activeStatus === 'available' ? selectedTheme.accent : `${selectedTheme.accent}55`
+                    }`,
+                    ['--unlock-accent' as string]:
+                      activeStatus === 'available' ? selectedTheme.accent : undefined,
+                  }}
                 >
                   <div className="relative h-[300px] bg-[#0c0908]">
                     {(activeCard.image ??
@@ -661,7 +692,9 @@ export function PlayerScreen({
                           filter:
                             activeStatus === 'locked-xp'
                               ? 'grayscale(1) brightness(.55)'
-                              : 'none',
+                              : activeStatus === 'available'
+                                ? 'grayscale(1) brightness(.68)'
+                                : 'none',
                         }}
                       />
                     )}

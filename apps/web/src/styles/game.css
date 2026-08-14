@@ -258,6 +258,40 @@ body {
   animation: claimglow 1.8s ease-in-out infinite;
 }
 
+@keyframes unlockable-pulse {
+  0%,
+  100% {
+    box-shadow: inset 3px 0 0 color-mix(in srgb, var(--unlock-accent) 45%, transparent);
+    background-color: color-mix(in srgb, var(--unlock-accent) 6%, transparent);
+  }
+  50% {
+    box-shadow: inset 3px 0 0 var(--unlock-accent);
+    background-color: color-mix(in srgb, var(--unlock-accent) 14%, transparent);
+  }
+}
+
+.card-unlockable {
+  animation: unlockable-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes unlockable-frame {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--unlock-accent) 45%, transparent),
+      0 0 14px -4px color-mix(in srgb, var(--unlock-accent) 35%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px var(--unlock-accent),
+      0 0 22px -2px color-mix(in srgb, var(--unlock-accent) 55%, transparent);
+  }
+}
+
+.card-unlockable-panel {
+  animation: unlockable-frame 1.8s ease-in-out infinite;
+}
+
 @keyframes slidein {
   from {
     transform: translateX(24px);
