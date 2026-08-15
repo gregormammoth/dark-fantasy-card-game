@@ -86,7 +86,10 @@ export function grantQuest(context: ExplorationContext, questId: string): Explor
     branchId: definition.branchId,
   };
   context.quests = [...context.quests, quest];
-  appendExplorationLog(context, `Quest started: ${quest.name}.`, 'action');
+  appendExplorationLog(context, `Quest started: ${quest.name}.`, 'action', {
+    messageKey: 'questLog.started',
+    params: { questId: quest.id },
+  });
   return context;
 }
 
@@ -99,7 +102,10 @@ export function completeQuestById(
     return context;
   }
   quest.status = 'completed';
-  appendExplorationLog(context, `Quest complete: ${quest.name}.`, 'action');
+  appendExplorationLog(context, `Quest complete: ${quest.name}.`, 'action', {
+    messageKey: 'questLog.complete',
+    params: { questId: quest.id },
+  });
   return context;
 }
 
@@ -120,7 +126,10 @@ export function completeQuestForEnemy(
       (item) => item.targetEnemyId === enemyId && item.status === 'completed',
     );
     if (quest) {
-      appendExplorationLog(context, `Quest complete: ${quest.name}.`, 'action');
+      appendExplorationLog(context, `Quest complete: ${quest.name}.`, 'action', {
+        messageKey: 'questLog.complete',
+        params: { questId: quest.id },
+      });
     }
   }
   return context;
@@ -130,10 +139,22 @@ export function listActiveQuests(context: ExplorationContext): RunQuest[] {
   return context.quests.filter((quest) => quest.status === 'active');
 }
 
+export type QuestMarkHintKey =
+  | 'findLavender'
+  | 'findMushroom'
+  | 'returnIngredients'
+  | 'sorcererWaits'
+  | 'findKeyring'
+  | 'kitchenPath'
+  | 'diningBarred'
+  | 'openDining'
+  | 'questDescription';
+
 export interface QuestLocationMark {
   questId: string;
   questName: string;
   hint: string;
+  hintKey: QuestMarkHintKey;
 }
 
 function pushMark(
@@ -141,12 +162,13 @@ function pushMark(
   locationId: string,
   wantedId: string,
   quest: RunQuest,
+  hintKey: QuestMarkHintKey,
   hint: string,
 ) {
   if (locationId !== wantedId) {
     return;
   }
-  marks.push({ questId: quest.id, questName: quest.name, hint });
+  marks.push({ questId: quest.id, questName: quest.name, hint, hintKey });
 }
 
 export function listQuestMarksForLocation(
@@ -159,16 +181,33 @@ export function listQuestMarksForLocation(
   for (const quest of listActiveQuests(context)) {
     if (quest.id === 'gather_ritual_ingredients') {
       if (!flags.ingredient_lavender) {
-        pushMark(marks, locationId, 'infirmary', quest, 'Find dried lavender.');
+        pushMark(
+          marks,
+          locationId,
+          'infirmary',
+          quest,
+          'findLavender',
+          'Find dried lavender.',
+        );
       }
       if (!flags.ingredient_mushroom) {
-        pushMark(marks, locationId, 'underground_tunnels', quest, 'Find a lowcap mushroom.');
+        pushMark(
+          marks,
+          locationId,
+          'underground_tunnels',
+          quest,
+          'findMushroom',
+          'Find a lowcap mushroom.',
+        );
       }
       pushMark(
         marks,
         locationId,
         'ritual_room',
         quest,
+        flags.ingredient_lavender && flags.ingredient_mushroom
+          ? 'returnIngredients'
+          : 'sorcererWaits',
         flags.ingredient_lavender && flags.ingredient_mushroom
           ? 'Return the ingredients to the Sorcerer.'
           : 'The Sorcerer waits for the ingredients.',
@@ -182,22 +221,45 @@ export function listQuestMarksForLocation(
           locationId,
           'torture_chamber',
           quest,
+          'findKeyring',
           "Find the Executioner's keyring.",
         );
       }
-      pushMark(marks, locationId, 'kitchen', quest, 'Reach the Dining Hall through the kitchen.');
+      pushMark(
+        marks,
+        locationId,
+        'kitchen',
+        quest,
+        'kitchenPath',
+        'Reach the Dining Hall through the kitchen.',
+      );
       pushMark(
         marks,
         locationId,
         'central_corridor',
         quest,
+        'diningBarred',
         'The Dining Hall door is barred from this side.',
       );
-      pushMark(marks, locationId, 'dining_hall', quest, 'Open the Dining Hall path.');
+      pushMark(
+        marks,
+        locationId,
+        'dining_hall',
+        quest,
+        'openDining',
+        'Open the Dining Hall path.',
+      );
     }
 
     if (quest.targetLocationId) {
-      pushMark(marks, locationId, quest.targetLocationId, quest, quest.description);
+      pushMark(
+        marks,
+        locationId,
+        quest.targetLocationId,
+        quest,
+        'questDescription',
+        quest.description,
+      );
     }
   }
 
@@ -233,9 +295,19 @@ export function grantLocationIngredient(
     loot.claimed = true;
   }
   if (locationId === 'infirmary') {
-    appendExplorationLog(context, 'You find dried lavender among the Infirmary shelves.', 'loot');
+    appendExplorationLog(
+      context,
+      'You find dried lavender among the Infirmary shelves.',
+      'loot',
+      { messageKey: 'questLog.foundLavender' },
+    );
   } else if (locationId === 'underground_tunnels') {
-    appendExplorationLog(context, 'You pluck a lowcap mushroom from the tunnel damp.', 'loot');
+    appendExplorationLog(
+      context,
+      'You pluck a lowcap mushroom from the tunnel damp.',
+      'loot',
+      { messageKey: 'questLog.foundMushroom' },
+    );
   }
   return context;
 }
@@ -281,6 +353,7 @@ export function tryCompleteGatherIngredientsQuest(
     context,
     'The Sorcerer accepts the ingredients. The corridor beyond stirs open.',
     'action',
+    { messageKey: 'questLog.sorcererAccepts' },
   );
   return context;
 }
@@ -292,7 +365,12 @@ export function openCorridorByForce(context: ExplorationContext): ExplorationCon
   if (sorcerer) {
     sorcerer.talked = true;
   }
-  appendExplorationLog(context, 'The Sorcerer falls. The corridor no longer bars your way.', 'danger');
+  appendExplorationLog(
+    context,
+    'The Sorcerer falls. The corridor no longer bars your way.',
+    'danger',
+    { messageKey: 'questLog.sorcererFalls' },
+  );
   return context;
 }
 
@@ -312,7 +390,9 @@ export function giveDiningKeyring(context: ExplorationContext): ExplorationConte
   if (loot && !loot.claimed) {
     loot.claimed = true;
   }
-  appendExplorationLog(context, 'You take the Dining Keyring.', 'loot');
+  appendExplorationLog(context, 'You take the Dining Keyring.', 'loot', {
+    messageKey: 'questLog.takeKeyring',
+  });
   return context;
 }
 
@@ -330,12 +410,14 @@ export function openDiningHallPath(
       context,
       'The keyring turns. The Dining Hall door off the corridor swings open.',
       'action',
+      { messageKey: 'questLog.diningOpenedKeyring' },
     );
   } else {
     appendExplorationLog(
       context,
       'You reached the Dining Hall through the Kitchen. The corridor door can be forced from this side.',
       'action',
+      { messageKey: 'questLog.diningOpenedKitchen' },
     );
   }
   return context;

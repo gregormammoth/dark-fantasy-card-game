@@ -25,10 +25,10 @@ import {
   useExplorationToasts,
   useQuestToastWatcher,
 } from '@/components/exploration/ExplorationToasts';
-import { CoachMark } from '@/components/tour/CoachMark';
-import { useCoachStep } from '@/components/tour/useCoachStep';
+import { ExplorationTutorialModal } from '@/components/exploration/ExplorationTutorialModal';
 import { useTranslation } from '@/i18n/useTranslation';
 import { ClaimBadge } from '@/components/ClaimBadge';
+import { isStepSeen, markStepSeen } from '@/lib/tour';
 import { getQuestDescription, getQuestName, getNpcLines } from '@/lib/contentLabels';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
@@ -104,17 +104,21 @@ export function ExplorationScreen({
       ? getBattleEnemy(context, locationEncounter)
       : null;
 
-  const dialogActive = Boolean(dialogNpc) && dialogLines.length > 0;
-  const dialogCoach = useCoachStep(playerId, 'dialog', dialogActive);
-  const moveCoach = useCoachStep(
-    playerId,
-    'move',
-    !isIdle &&
-      !dialogActive &&
-      !battleEnemy &&
-      !pendingAction &&
-      !snapshot.matches('encounter'),
+  const [tutorialOpen, setTutorialOpen] = useState(
+    () => !isIdle && !isStepSeen(playerId, 'move'),
   );
+
+  useEffect(() => {
+    if (isIdle || isStepSeen(playerId, 'move')) {
+      return;
+    }
+    setTutorialOpen(true);
+  }, [isIdle, playerId]);
+
+  function closeTutorial() {
+    markStepSeen(playerId, 'move');
+    setTutorialOpen(false);
+  }
 
   useEffect(() => {
     if (context.flags.escaped_hollowfort && onEscapeToWorld) {
@@ -172,22 +176,7 @@ export function ExplorationScreen({
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
       <ExplorationToasts toasts={toasts} onDismiss={dismissToast} />
-      {moveCoach.show && (
-        <CoachMark
-          title={t('tour.exploreTitle')}
-          body={t('tour.exploreBody')}
-          placement="top"
-          onDismiss={moveCoach.dismiss}
-        />
-      )}
-      {dialogCoach.show && (
-        <CoachMark
-          title={t('tour.dialogTitle')}
-          body={t('tour.dialogBody')}
-          placement="top"
-          onDismiss={dialogCoach.dismiss}
-        />
-      )}
+      <ExplorationTutorialModal open={tutorialOpen} onClose={closeTutorial} />
       <div className="relative flex items-center justify-between gap-3">
         <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
           {t('exploration.header')}
@@ -196,6 +185,14 @@ export function ExplorationScreen({
           {t('exploration.seedLabel', { seed: context.rng.seed })}
         </span>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setTutorialOpen(true)}
+            title={t('explorationTutorial.helpTitle')}
+            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] font-cinzel text-[13px] text-[#e0b552] transition hover:border-[#e0b552] hover:text-[#f0dfcb]"
+          >
+            ?
+          </button>
           <button
             type="button"
             onClick={() => setQuestLogOpen((open) => !open)}

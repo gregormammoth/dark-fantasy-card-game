@@ -14,15 +14,15 @@ import { Combo } from '@/components/Combo';
 import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
 import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
 import { BattleResultModal } from '@/components/BattleResultModal';
+import { BattleTutorialModal } from '@/components/BattleTutorialModal';
 import { TopBar } from '@/components/TopBar';
 import { EnemyZone } from '@/components/EnemyZone';
 import { PlayerZone } from '@/components/PlayerZone';
 import { EndTurnButton } from '@/components/EndTurnButton';
 import { buildSpendIndices, type StackSpendMode } from '@/components/CardStack';
-import { CoachMark } from '@/components/tour/CoachMark';
-import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
 import { unclaimedCardChoices } from '@/data/playerProgress';
+import { isStepSeen, markStepSeen } from '@/lib/tour';
 import type { TranslateFn } from '@/i18n/types';
 import { getEnemyName } from '@/lib/contentLabels';
 type BattleActor = ActorRefFrom<typeof battleMachine>;
@@ -153,7 +153,21 @@ export function BattleScreen({
   const isDefeat = state === 'defeat';
   const isAnimating = state === 'animatingPlayerCard' || state === 'animatingEnemyCard';
   const isResolving = isAnimating || state === 'resolvingPlayerCombo';
-  const battleCoach = useCoachStep(playerId, 'battle', isPlayerTurn);
+  const [tutorialOpen, setTutorialOpen] = useState(
+    () => !isIdle && !isStepSeen(playerId, 'battle'),
+  );
+
+  useEffect(() => {
+    if (isIdle || isStepSeen(playerId, 'battle')) {
+      return;
+    }
+    setTutorialOpen(true);
+  }, [isIdle, playerId]);
+
+  function closeTutorial() {
+    markStepSeen(playerId, 'battle');
+    setTutorialOpen(false);
+  }
 
   useEffect(() => {
     if (state === 'idle') {
@@ -345,20 +359,14 @@ export function BattleScreen({
 
   return (
     <div className="relative min-h-screen overflow-visible px-7 py-6 font-spectral text-[#e8ddcf]">
-      {battleCoach.show && (
-        <CoachMark
-          title={t('tour.battleTitle')}
-          body={t('tour.battleBody')}
-          placement="top"
-          onDismiss={battleCoach.dismiss}
-        />
-      )}
+      <BattleTutorialModal open={tutorialOpen} onClose={closeTutorial} />
       <div className="relative z-0 mx-auto flex w-full max-w-[1240px] flex-col gap-4">
         <TopBar
           turnLabel={formatTurnLabel(state, t)}
           logEntries={battle.log}
           emptyLogLabel={t('battle.battleBegins')}
           roundCount={battle.battleStats.turnCount}
+          onOpenTutorial={() => setTutorialOpen(true)}
         />
 
         {battle.activePlay && isAnimating && (

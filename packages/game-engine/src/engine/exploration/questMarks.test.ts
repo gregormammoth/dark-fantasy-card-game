@@ -16,7 +16,7 @@ describe('quest location marks', () => {
     expect(locationHasQuestMark(exploration, 'kitchen')).toBe(false);
 
     const infirmary = listQuestMarksForLocation(exploration, 'infirmary');
-    expect(infirmary[0]?.hint).toMatch(/lavender/i);
+    expect(infirmary[0]?.hintKey).toBe('findLavender');
   });
 
   it('drops an ingredient mark after that item is found', () => {
@@ -26,7 +26,7 @@ describe('quest location marks', () => {
 
     expect(listQuestMarksForLocation(exploration, 'infirmary')).toHaveLength(0);
     expect(listQuestMarksForLocation(exploration, 'underground_tunnels').length).toBeGreaterThan(0);
-    expect(listQuestMarksForLocation(exploration, 'ritual_room')[0]?.hint).toMatch(/waits/i);
+    expect(listQuestMarksForLocation(exploration, 'ritual_room')[0]?.hintKey).toBe('sorcererWaits');
   });
 
   it('marks dining-path rooms and kill-quest targets', () => {

@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
-import { CoachMark } from '@/components/tour/CoachMark';
+import { TourModal } from '@/components/tour/TourModal';
 import { useTranslation } from '@/i18n/useTranslation';
 import { isCharacterCoachSeen, markCharacterCoachSeen } from '@/lib/tour';
 
@@ -17,7 +17,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
   const [gender, setGender] = useState<PlayerGender>('woman');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [coachSeen, setCoachSeen] = useState(() => isCharacterCoachSeen());
+  const [tutorialOpen, setTutorialOpen] = useState(() => !isCharacterCoachSeen());
   const trimmedName = name.trim();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -35,20 +35,23 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
     }
   }
 
+  function closeTutorial() {
+    markCharacterCoachSeen();
+    setTutorialOpen(false);
+  }
+
   return (
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#090706] px-5 py-10 text-[#e8ddcf]">
-      {!coachSeen && (
-        <CoachMark
-          title={t('tour.welcomeTitle')}
-          body={t('tour.welcomeBody')}
-          placement="center"
-          dismissLabel={t('common.begin')}
-          onDismiss={() => {
-            markCharacterCoachSeen();
-            setCoachSeen(true);
-          }}
-        />
-      )}
+      <TourModal
+        open={tutorialOpen}
+        onClose={closeTutorial}
+        eyebrow={t('welcomeTutorial.eyebrow')}
+        title={t('welcomeTutorial.title')}
+        body={t('welcomeTutorial.body')}
+        tipLabel={t('welcomeTutorial.tip')}
+        tip={t('welcomeTutorial.tipBody')}
+        confirmLabel={t('common.begin')}
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(122,90,190,.13),transparent_42%),radial-gradient(circle_at_50%_85%,rgba(201,162,74,.08),transparent_34%)]" />
       <form
         onSubmit={submit}

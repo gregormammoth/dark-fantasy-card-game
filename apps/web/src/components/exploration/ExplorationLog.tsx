@@ -2,6 +2,7 @@
 
 import type { ExplorationLogEntry } from '@dark-fantasy/shared/types/exploration';
 import { useTranslation } from '@/i18n/useTranslation';
+import { translateExplorationLogEntry } from '@/lib/explorationText';
 
 interface ExplorationLogProps {
   entries: ExplorationLogEntry[];
@@ -25,7 +26,7 @@ export function ExplorationLog({ entries }: ExplorationLogProps) {
       <div className="flex max-h-[140px] flex-col gap-1.5 overflow-y-auto">
         {recent.map((entry, index) => (
           <div key={`${entry.id}-${index}`} className={`text-[12px] leading-snug ${kindColor[entry.kind]}`}>
-            {entry.message}
+            {translateExplorationLogEntry(entry, t)}
           </div>
         ))}
         {recent.length === 0 && (

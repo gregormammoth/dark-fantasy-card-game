@@ -20,6 +20,7 @@ import {
   getNpcTag,
   getQuestName,
 } from '@/lib/contentLabels';
+import { translateQuestMarkHint } from '@/lib/explorationText';
 import { useTranslation } from '@/i18n/useTranslation';
 
 const LOOT_IMAGES: Record<string, string> = {
@@ -83,7 +84,7 @@ export function LocationDetailPanel({
     ...questMarks.map((mark) => ({
       key: mark.questId,
       name: getQuestName(mark.questId, t, mark.questName),
-      description: mark.hint,
+      description: translateQuestMarkHint(mark.hintKey, mark.questId, t, mark.hint),
     })),
   ];
 

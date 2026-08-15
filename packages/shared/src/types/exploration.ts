@@ -164,6 +164,8 @@ export type LocationSourceDefinition = Omit<LocationDefinition, 'enemies'> & {
 export interface ExplorationLogEntry {
   id: number;
   message: string;
+  messageKey?: string;
+  params?: Record<string, string | number>;
   kind: 'system' | 'action' | 'encounter' | 'move' | 'loot' | 'danger';
 }
 

@@ -27,9 +27,9 @@ import { ClaimBadge } from '@/components/ClaimBadge';
 import { DeckSwapPicker } from '@/components/player/DeckSwapPicker';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
-import { CoachMark } from '@/components/tour/CoachMark';
-import { useCoachStep } from '@/components/tour/useCoachStep';
+import { TourModal } from '@/components/tour/TourModal';
 import { useTranslation } from '@/i18n/useTranslation';
+import { isStepSeen, markStepSeen } from '@/lib/tour';
 import type { MessageKey } from '@/i18n/types';
 import { classThemes, getCardEffectSummary, getCardType, getClassLabel } from '@/lib/cardTheme';
 import { getCardName, getQuestDescription, getQuestName } from '@/lib/contentLabels';
@@ -145,7 +145,22 @@ export function PlayerScreen({
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(null);
   const [itemFilter, setItemFilter] = useState<ItemFilter>('all');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const progressionCoach = useCoachStep(profile.playerId, 'progression', activeTab === 'character');
+  const [progressionTutorialOpen, setProgressionTutorialOpen] = useState(
+    () => activeTab === 'character' && !isStepSeen(profile.playerId, 'progression'),
+  );
+
+  useEffect(() => {
+    if (activeTab !== 'character' || isStepSeen(profile.playerId, 'progression')) {
+      return;
+    }
+    setProgressionTutorialOpen(true);
+  }, [activeTab, profile.playerId]);
+
+  function closeProgressionTutorial() {
+    markStepSeen(profile.playerId, 'progression');
+    setProgressionTutorialOpen(false);
+  }
+
   const availableSkillPoints = getAvailableSkillPoints(progression);
   const playerLevel = getPlayerLevel(progression);
   const playerLevelProgress = getPlayerLevelProgress(progression);
@@ -365,14 +380,28 @@ export function PlayerScreen({
 
   return (
     <div className="flex min-h-[100dvh] justify-center px-6 py-8 text-[#e8ddcf] sm:px-10">
-      {progressionCoach.show && (
-        <CoachMark
-          title={t('tour.progressionTitle')}
-          body={t('tour.progressionBody')}
-          placement="top"
-          onDismiss={progressionCoach.dismiss}
-        />
-      )}
+      <TourModal
+        open={progressionTutorialOpen}
+        onClose={closeProgressionTutorial}
+        eyebrow={t('progressionTutorial.eyebrow')}
+        title={t('progressionTutorial.title')}
+        body={t('progressionTutorial.body')}
+        hints={[
+          {
+            title: t('progressionTutorial.hintATitle'),
+            body: t('progressionTutorial.hintABody'),
+          },
+          {
+            title: t('progressionTutorial.hintBTitle'),
+            body: t('progressionTutorial.hintBBody'),
+          },
+          {
+            title: t('progressionTutorial.hintCTitle'),
+            body: t('progressionTutorial.hintCBody'),
+          },
+        ]}
+        confirmLabel={t('common.gotIt')}
+      />
       <div className="flex w-full max-w-[1400px] flex-col gap-5">
         <div className="flex items-center justify-between pr-12">
           <button

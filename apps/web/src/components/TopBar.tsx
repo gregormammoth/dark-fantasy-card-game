@@ -9,6 +9,7 @@ interface TopBarProps {
   logEntries: BattleLogEntry[];
   emptyLogLabel?: string;
   roundCount?: number;
+  onOpenTutorial?: () => void;
 }
 
 const kindColors: Record<BattleLogEntry['kind'], string> = {
@@ -25,7 +26,13 @@ const kindColors: Record<BattleLogEntry['kind'], string> = {
   defeat: '#e0524a',
 };
 
-export function TopBar({ turnLabel, logEntries, emptyLogLabel, roundCount = 0 }: TopBarProps) {
+export function TopBar({
+  turnLabel,
+  logEntries,
+  emptyLogLabel,
+  roundCount = 0,
+  onOpenTutorial,
+}: TopBarProps) {
   const { t } = useTranslation();
   const emptyLabel = emptyLogLabel ?? t('battle.battleBegins');
   const [logOpen, setLogOpen] = useState(false);
@@ -62,16 +69,28 @@ export function TopBar({ turnLabel, logEntries, emptyLogLabel, roundCount = 0 }:
         {t('battle.duelTitle').replace(/\s+/g, '\u00a0')}
       </span>
       <div ref={popupRef} className="relative">
-        <button
-          type="button"
-          onClick={() => setLogOpen((current) => !current)}
-          className="flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.2)] px-[10px] py-[5px] text-[11px] tracking-[.02em] text-[#8a7f72] transition hover:border-[rgba(201,162,74,.5)] hover:text-[#c9a24a]"
-          title={logSnippet}
-        >
-          <span className="text-[10px] tracking-[.18em] text-[#c9a24a]">{t('battle.log')}</span>
-          <span className="max-w-[280px] truncate whitespace-nowrap">{logSnippet}</span>
-          <span className="text-[9px]">{logOpen ? '▲' : '▼'}</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setLogOpen((current) => !current)}
+            className="flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.2)] px-[10px] py-[5px] text-[11px] tracking-[.02em] text-[#8a7f72] transition hover:border-[rgba(201,162,74,.5)] hover:text-[#c9a24a]"
+            title={logSnippet}
+          >
+            <span className="text-[10px] tracking-[.18em] text-[#c9a24a]">{t('battle.log')}</span>
+            <span className="max-w-[280px] truncate whitespace-nowrap">{logSnippet}</span>
+            <span className="text-[9px]">{logOpen ? '▲' : '▼'}</span>
+          </button>
+          {onOpenTutorial && (
+            <button
+              type="button"
+              onClick={onOpenTutorial}
+              title={t('battleTutorial.helpTitle')}
+              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border border-[rgba(201,162,74,.4)] font-cinzel text-xs text-[#c9a24a] transition hover:border-[#e0b552] hover:bg-[rgba(224,181,82,.08)] hover:text-[#f0dfcb]"
+            >
+              ?
+            </button>
+          )}
+        </div>
         {logOpen && (
           <div className="absolute top-[calc(100%+8px)] right-0 z-[80] w-[380px] rounded-[6px] border border-[rgba(201,162,74,.28)] bg-[linear-gradient(180deg,#181310,#100c0b)] p-4 shadow-[0_20px_50px_-14px_#000]">
             <div className="mb-2.5 flex items-center justify-between">

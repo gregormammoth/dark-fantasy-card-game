@@ -14,6 +14,10 @@ export function appendExplorationLog(
   context: ExplorationContext,
   message: string,
   kind: ExplorationLogEntry['kind'] = 'system',
+  options?: {
+    messageKey?: string;
+    params?: Record<string, string | number>;
+  },
 ): void {
   syncExplorationLogCounter(context.log);
   logCounter += 1;
@@ -21,6 +25,8 @@ export function appendExplorationLog(
     id: logCounter,
     message,
     kind,
+    messageKey: options?.messageKey,
+    params: options?.params,
   });
   if (context.log.length > 40) {
     context.log.splice(0, context.log.length - 40);
