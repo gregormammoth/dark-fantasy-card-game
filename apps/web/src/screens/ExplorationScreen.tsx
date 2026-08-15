@@ -29,6 +29,7 @@ import { CoachMark } from '@/components/tour/CoachMark';
 import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
 import { ClaimBadge } from '@/components/ClaimBadge';
+import { getQuestDescription, getQuestName, getNpcLines } from '@/lib/contentLabels';
 import { getQuestSteps, questLocationLabel, questStepsLabel } from '@/lib/questUi';
 
 const QUEST_TOAST_SNAP_KEY = 'dfcg-quest-toast-snap';
@@ -86,7 +87,17 @@ export function ExplorationScreen({
     locationEncounter?.type === 'dialog'
       ? getDialogNpc(context, locationEncounter)
       : null;
-  const dialogLines = dialogNpc ? getDialogLines(dialogNpc) : [];
+  const rawDialogLines = dialogNpc ? getDialogLines(dialogNpc) : [];
+  const dialogFollowUp = Boolean(
+    dialogNpc?.followUpLines?.length &&
+      rawDialogLines.length === dialogNpc.followUpLines.length &&
+      rawDialogLines.every(
+        (line, index) => line === dialogNpc.followUpLines![index],
+      ),
+  );
+  const dialogLines = dialogNpc
+    ? getNpcLines(dialogNpc.id, rawDialogLines, t, dialogFollowUp)
+    : [];
   const dialogIndex = Math.min(context.dialogLineIndex, Math.max(dialogLines.length - 1, 0));
   const battleEnemy =
     locationEncounter?.type === 'battle'
@@ -231,9 +242,11 @@ export function ExplorationScreen({
                   key={quest.id}
                   className="rounded border-l-[3px] border-[#e0b552] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
                 >
-                  <div className="font-cinzel text-[12px] text-[#2b2116]">{quest.name}</div>
+                  <div className="font-cinzel text-[12px] text-[#2b2116]">
+                    {getQuestName(quest.id, t, quest.name)}
+                  </div>
                   <div className="mt-1 text-[11px] leading-snug text-[#4a3b22]">
-                    {quest.description}
+                    {getQuestDescription(quest.id, t, quest.description)}
                   </div>
                   <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
                     {questLocationLabel(quest, t)} · {t('exploration.active')}
@@ -276,7 +289,9 @@ export function ExplorationScreen({
                 key={quest.id}
                 className="rounded border-l-[3px] border-[#4a7a3a] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
               >
-                <div className="font-cinzel text-[12px] text-[#2b2116]">{quest.name}</div>
+                <div className="font-cinzel text-[12px] text-[#2b2116]">
+                  {getQuestName(quest.id, t, quest.name)}
+                </div>
                 <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
                   {questLocationLabel(quest, t)} · {t('exploration.complete')}
                 </div>

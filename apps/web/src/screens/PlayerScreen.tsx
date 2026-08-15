@@ -32,6 +32,7 @@ import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { MessageKey } from '@/i18n/types';
 import { classThemes, getCardEffectSummary, getCardType, getClassLabel } from '@/lib/cardTheme';
+import { getCardName, getQuestDescription, getQuestName } from '@/lib/contentLabels';
 import {
   getQuestSteps,
   listQuestItems,
@@ -643,7 +644,7 @@ export function PlayerScreen({
                         style={{ color: nameColor }}
                       >
                         {definition.improved ? '★ ' : ''}
-                        {definition.name}
+                        {getCardName(definition.id, t, definition.name)}
                       </span>
                       <span
                         className="w-[90px] text-[10px] tracking-wide"
@@ -652,7 +653,7 @@ export function PlayerScreen({
                         {typeLabel(definition, t)}
                       </span>
                       <span className="w-[150px] text-[12px] text-[#a99c8d]">
-                        {getCardEffectSummary(definition)}
+                        {getCardEffectSummary(definition, t)}
                       </span>
                       <span
                         className="w-[150px] text-right text-[11px]"
@@ -708,13 +709,13 @@ export function PlayerScreen({
                   <div className="flex flex-col gap-2.5 px-[18px] py-4">
                     <div className="font-cinzel text-[17px] text-[#f0dfcb]">
                       {activeCard.improved ? '★ ' : ''}
-                      {activeCard.name}
+                      {getCardName(activeCard.id, t, activeCard.name)}
                     </div>
                     {activeCard.improved && (
                       <div className="text-[10px] tracking-[.16em] text-[#c9a24a]">{t('player.improvedCost')}</div>
                     )}
                     <div className="text-[12px] text-[#a99c8d]">
-                      {getCardEffectSummary(activeCard)}
+                      {getCardEffectSummary(activeCard, t)}
                     </div>
                     <div className="my-0.5 h-px bg-[rgba(201,162,74,.18)]" />
                     <div
@@ -806,7 +807,13 @@ export function PlayerScreen({
 
       {swapIntent && (
         <DeckSwapPicker
-          incomingName={cardById[swapIntent.cardId]?.name ?? swapIntent.cardId}
+          incomingName={
+            getCardName(
+              swapIntent.cardId,
+              t,
+              cardById[swapIntent.cardId]?.name ?? swapIntent.cardId,
+            )
+          }
           deckCards={deck
             .map((id) => cardById[id])
             .filter((card): card is CardDefinition => Boolean(card))}
@@ -817,7 +824,7 @@ export function PlayerScreen({
 
       {confirmCard && confirmClassId && (
         <UnlockCardModal
-          name={confirmCard.name}
+          name={getCardName(confirmCard.id, t, confirmCard.name)}
           className={getClassLabel(confirmClassId, t)}
           color={classThemes[confirmClassId].accent}
           borderColor={`${classThemes[confirmClassId].accent}66`}
@@ -922,7 +929,7 @@ function QuestsTab({
                     className="font-cinzel text-[13px]"
                     style={{ color: selected ? '#e0b552' : '#f0dfcb' }}
                   >
-                    {quest.name}
+                    {getQuestName(quest.id, t, quest.name)}
                   </span>
                 </div>
                 <div className="ml-[17px] mt-1 text-[10px] tracking-[.1em] text-[#8a7f72]">
@@ -945,7 +952,7 @@ function QuestsTab({
                 {questLocationLabel(selectedQuest, t)}
               </div>
               <div className="mt-1.5 font-cinzel text-[24px] text-[#2b2116]">
-                {selectedQuest.name}
+                {getQuestName(selectedQuest.id, t, selectedQuest.name)}
               </div>
               <div
                 className="mt-2 font-cinzel text-[11px] tracking-[.12em]"
@@ -957,7 +964,7 @@ function QuestsTab({
               </div>
               <div className="my-4 h-px bg-[rgba(60,45,20,.25)]" />
               <p className="m-0 text-[14px] leading-relaxed text-[#3a2c1a]">
-                {selectedQuest.description}
+                {getQuestDescription(selectedQuest.id, t, selectedQuest.description)}
               </p>
               {steps && steps.length > 0 && (
                 <div className="mt-5 flex flex-col gap-2.5">

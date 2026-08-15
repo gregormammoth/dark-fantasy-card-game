@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getQuestDefinition } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import type { TranslateFn } from '@/i18n/types';
+import { getQuestName } from '@/lib/contentLabels';
 
 export type ToastKind = 'started' | 'updated' | 'completed' | 'failed' | 'reward';
 
@@ -120,14 +121,15 @@ export function useQuestToastWatcher(
 
     for (const quest of snapshot.quests) {
       const old = prev.quests.find((item) => item.id === quest.id);
+      const questName = getQuestName(quest.id, t, quest.name);
       if (!old) {
-        pushToast('started', t('rewards.questStarted'), quest.name);
+        pushToast('started', t('rewards.questStarted'), questName);
       } else if (old.status === 'active' && quest.status === 'completed') {
         const rewardMoney = getQuestDefinition(quest.id)?.rewardMoney;
         const body =
           rewardMoney && rewardMoney > 0
-            ? `${quest.name} · ${t('rewards.crownsShort', { amount: rewardMoney })}`
-            : quest.name;
+            ? `${questName} · ${t('rewards.crownsShort', { amount: rewardMoney })}`
+            : questName;
         pushToast('completed', t('rewards.questComplete'), body);
       }
     }

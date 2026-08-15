@@ -1,12 +1,15 @@
 import type { Locale, MessageKey, MessageParams, MessageTree } from './types';
-import en from './messages/en.json';
-import ru from './messages/ru.json';
-import sr from './messages/sr.json';
+import enUi from './messages/en.json';
+import ruUi from './messages/ru.json';
+import srUi from './messages/sr.json';
+import enContent from './messages/content-en.json';
+import ruContent from './messages/content-ru.json';
+import srContent from './messages/content-sr.json';
 
 const catalogs: Record<Locale, MessageTree> = {
-  en: en as MessageTree,
-  ru: ru as MessageTree,
-  sr: sr as MessageTree,
+  en: { ...(enUi as MessageTree), content: enContent as MessageTree },
+  ru: { ...(ruUi as MessageTree), content: ruContent as MessageTree },
+  sr: { ...(srUi as MessageTree), content: srContent as MessageTree },
 };
 
 function lookup(tree: MessageTree, key: string): string | undefined {

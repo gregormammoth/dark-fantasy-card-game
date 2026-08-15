@@ -1,0 +1,594 @@
+{
+  "cards": {
+    "warrior_attack_01": {
+      "name": "Teški udarac",
+      "description": "Nanesite 3 štete."
+    },
+    "warrior_attack_02": {
+      "name": "Borbeni zamah",
+      "description": "Nanesite 2 štete. +1 za svaku drugu kartu Napada u vašoj kombi."
+    },
+    "warrior_defense_01": {
+      "name": "Podigni štit",
+      "description": "Dobijte 2 Štita."
+    },
+    "rogue_attack_01": {
+      "name": "Otrovni bodež",
+      "description": "Primenite Otrov (1 šteta svaki potez tokom 3 poteza)."
+    },
+    "rogue_attack_02": {
+      "name": "Udarac u leđa",
+      "description": "Nanesite 2 štete. Ako je ovo prva napadačka komba u bitci, nanesite 4 umesto toga."
+    },
+    "rogue_defense_01": {
+      "name": "Dimni beg",
+      "description": "Smanjite dolazeću štetu za 50%."
+    },
+    "wizard_attack_01": {
+      "name": "Arcana strela",
+      "description": "Nanesite 2 štete ignorišući štitove. +1 šteta po potrošenoj Mani."
+    },
+    "wizard_defense_01": {
+      "name": "Magična barijera",
+      "description": "Dobijte 2 Barijere. +1 Barijera po potrošenoj Mani."
+    },
+    "wizard_defense_02": {
+      "name": "Fokus",
+      "description": "Dobijte 2 Mane."
+    },
+    "survivor_attack_01": {
+      "name": "Poslednji otpor",
+      "description": "Nanesite 2 štete. Ako vam je HP ispod 50%, nanesite 4 umesto toga."
+    },
+    "survivor_defense_01": {
+      "name": "Druga šansa",
+      "description": "Vratite 2 karte iz odbacivanja u ruku."
+    },
+    "survivor_defense_02": {
+      "name": "Instinkt preživljavanja",
+      "description": "Ako nemate Štit, vratite ga na maksimum."
+    },
+    "seeker_defense_01": {
+      "name": "Brzi pregled",
+      "description": "Odmah izvucite 2 karte. Ne troši mesto u kombi."
+    },
+    "seeker_defense_02": {
+      "name": "Označi metu",
+      "description": "Označite neprijatelja i izvucite 1 kartu."
+    },
+    "seeker_attack_01": {
+      "name": "Udarac u slabu tačku",
+      "description": "Nanesite 2 štete. Ako je neprijatelj označen, ignorišite štit i nanesite 4 umesto toga."
+    },
+    "improved_warrior_crushing_blow": {
+      "name": "Razorni udarac",
+      "description": "Nanesite 4 štete."
+    },
+    "improved_warrior_warpath": {
+      "name": "Ratni put",
+      "description": "Dobijte 2 Štita. Smanjite dolazeću štetu za 25%."
+    },
+    "improved_warrior_iron_wall": {
+      "name": "Gvozdeni zid",
+      "description": "Dobijte 3 Štita."
+    },
+    "improved_rogue_venom_needle": {
+      "name": "Otrovna igla",
+      "description": "Primenite Otrov (2 štete svaki potez tokom 2 poteza)."
+    },
+    "improved_rogue_assassinate": {
+      "name": "Atentat",
+      "description": "Nanesite 3 štete. Ako je ovo prva napadačka komba u bitci, nanesite 5 umesto toga."
+    },
+    "improved_rogue_phantom_step": {
+      "name": "Fantomski korak",
+      "description": "Smanjite dolazeću štetu za 75%."
+    },
+    "improved_wizard_arcane_lance": {
+      "name": "Arcana koplje",
+      "description": "Nanesite 3 štete ignorišući štitove. +2 štete po potrošenoj Mani."
+    },
+    "improved_wizard_ward_lattice": {
+      "name": "Rešetka amajlija",
+      "description": "Dobijte 3 Barijere. +2 Barijere po potrošenoj Mani."
+    },
+    "improved_wizard_cascade_ward": {
+      "name": "Duboki fokus",
+      "description": "Dobijte 3 Mane."
+    },
+    "improved_survivor_blood_fury": {
+      "name": "Krvava besnina",
+      "description": "Nanesite 3 štete. Ako vam je HP ispod 50%, nanesite 5 umesto toga."
+    },
+    "improved_survivor_second_wind": {
+      "name": "Drugi dah",
+      "description": "Vratite 2 karte iz odbacivanja u ruku, zatim nanesite 2 štete."
+    },
+    "improved_survivor_undying": {
+      "name": "Neuništiv",
+      "description": "Vratite 2 karte iz odbacivanja u ruku, zatim dobijte 2 Štita."
+    },
+    "improved_seeker_deep_search": {
+      "name": "Duboka pretraga",
+      "description": "Odmah izvucite 3 karte. Ne troši mesto u kombi."
+    },
+    "improved_seeker_anatomy_lesson": {
+      "name": "Čas anatomije",
+      "description": "Nanesite 2 štete. +1 šteta po karti izvučenoj u ovoj bitci."
+    },
+    "improved_seeker_case_closed": {
+      "name": "Slučaj zatvoren",
+      "description": "Nanesite 3 štete. Ako je neprijatelj označen, ignorišite štit i nanesite 6 umesto toga."
+    }
+  },
+  "enemies": {
+    "prisoner": {
+      "name": "Zatvorenik",
+      "description": "Sužanj u lancima, polugladan, udara na sve što se pomera.",
+      "tier": "Običan · Divlji"
+    },
+    "giant_rat": {
+      "name": "Džinovski pacov",
+      "description": "Nahranjen onim što je ritual ostavio za sobom, i narastao daleko preko svoje mere.",
+      "tier": "Čopor · Štetočina"
+    },
+    "crazy_prisoner": {
+      "name": "Ludi zatvorenik",
+      "description": "Poludeo još pre rituala — i gori sada kad ga nešto konačno sluša.",
+      "tier": "Običan · Poremećen"
+    },
+    "guard": {
+      "name": "Stražar",
+      "description": "Vaskrsnuti stražar u punoj opremi, štit podignut iz same mišićne memorije.",
+      "tier": "Običan · Oklopljen"
+    },
+    "fat_prisoner": {
+      "name": "Debeli zatvorenik",
+      "description": "Naduvan onim čime ga je ritual hranio, i besan što ste mu prekinuli obrok.",
+      "tier": "Običan · Grubijan"
+    },
+    "butcher": {
+      "name": "Mesar",
+      "description": "Poslednji kuvar kuhinje, još uvek radi sa onim što je ostalo u ostavi.",
+      "tier": "Običan · Satara"
+    },
+    "knight": {
+      "name": "Vitez",
+      "description": "Vitez u punom oklopu, mač i štit još uvek stisnuti, čuva oružarnicu kojoj više nema šta da štiti.",
+      "tier": "Običan · Oklopljen"
+    },
+    "demon": {
+      "name": "Demon",
+      "description": "Nešto što je ritual prizvao i nikad potpuno savladao, još uvek okovano za ovu sobu.",
+      "tier": "Običan · Okovan"
+    },
+    "inquisitor_boss": {
+      "name": "Inkvizitor",
+      "description": "Bivši ispitivač, živ i daleko gori zbog toga, čuva izlaz iz kapele.",
+      "tier": "Elita · Ritualista"
+    },
+    "prison_warden_boss": {
+      "name": "Upravnik zatvora",
+      "description": "Simbol starog poretka, vaskrsnut da ga održi svim sredstvima koja mu još preostaju.",
+      "tier": "Elita · Grubijan"
+    },
+    "corrupted_anarchist": {
+      "name": "Vaskrsnuti anarhista",
+      "description": "Revolucija koju nikad nije završio, izopačena u nešto što služi ritualu umesto njegovom cilju.",
+      "tier": "Elita · Nemrtvi"
+    }
+  },
+  "enemyCards": {
+    "warrior_slash": {
+      "name": "Zamah",
+      "description": "Izdresiran udarac mačem."
+    },
+    "warrior_shield_wall": {
+      "name": "Zid štitova",
+      "description": "Podiže štit i čeka."
+    },
+    "warrior_shield_bash": {
+      "name": "Udarac štitom",
+      "description": "Sklanja se iza štita, pa ga gura napred."
+    },
+    "warrior_reforge_guard": {
+      "name": "Prekovati stražu",
+      "description": "Obnavlja slomljenu odbranu iz ničega."
+    },
+    "cutthroat_shiv": {
+      "name": "Oštrica",
+      "description": "Naoštren komad, korišćen izbliza."
+    },
+    "cutthroat_quick_cut": {
+      "name": "Brzi rez",
+      "description": "Brzo, plitko i iznova."
+    },
+    "cutthroat_backstab": {
+      "name": "Udarac u leđa",
+      "description": "Pronalazi pukotinu koju vaša odbrana ne pokriva."
+    },
+    "cutthroat_venom_flask": {
+      "name": "Boca otrova",
+      "description": "Nešto skuvano u tami i bačeno."
+    },
+    "ritualist_hex_bolt": {
+      "name": "Prokleta strela",
+      "description": "Mumljana reč koja udara kao kamen."
+    },
+    "ritualist_ward": {
+      "name": "Ritualna amajlija",
+      "description": "Kreč i krv, koji drže vazduh mirnim."
+    },
+    "ritualist_dark_bolt": {
+      "name": "Tamna strela",
+      "description": "Prolazi kroz oklop kao da ga nema."
+    },
+    "ritualist_unmaking": {
+      "name": "Raspadanje",
+      "description": "Ritual okrenut napolje, odjednom."
+    },
+    "beast_scratch": {
+      "name": "Grebanje",
+      "description": "Kandže, bez misli iza njih."
+    },
+    "beast_bite": {
+      "name": "Ujed",
+      "description": "Uhvati se i ne pušta."
+    },
+    "beast_poison_claws": {
+      "name": "Otrovne kandže",
+      "description": "Prljavština pod kandžama obavlja ostatak."
+    },
+    "beast_tail_whip": {
+      "name": "Udarac repom",
+      "description": "Okreće se i obara vam noge."
+    },
+    "undead_cold_grasp": {
+      "name": "Hladan stisak",
+      "description": "Prsti koji se ne umaraju."
+    },
+    "undead_creeping_rot": {
+      "name": "Puzajuća trulež",
+      "description": "Širi se polako i nikad ne žuri."
+    },
+    "undead_bone_guard": {
+      "name": "Koštana odbrana",
+      "description": "Ono što je ostalo od rebara još uvek skreće sečivo."
+    },
+    "undead_rise_again": {
+      "name": "Ustani ponovo",
+      "description": "Ponovo ustaje sa obnovljenom odbranom."
+    },
+    "brute_swipe": {
+      "name": "Zamah",
+      "description": "Širok, spor i dovoljno težak da se oseti."
+    },
+    "brute_thick_hide": {
+      "name": "Debela koža",
+      "description": "Previše mase da se prođe čisto."
+    },
+    "brute_cleaver": {
+      "name": "Satara",
+      "description": "Alat za meso, korišćen isto i ovde."
+    },
+    "brute_crushing_blow": {
+      "name": "Razorni udarac",
+      "description": "Pada sa svim što stoji iza njega."
+    },
+    "signature_warden_decree": {
+      "name": "Ukaz upravnika",
+      "description": "Stari poredak, sproveden poslednji put."
+    },
+    "signature_inquisitor_judgment": {
+      "name": "Presuda",
+      "description": "Kazna pročitana dok se izvršava."
+    },
+    "signature_anarchist_uprising": {
+      "name": "Poslednja pobuna",
+      "description": "Revolucija koju nikad nije završio, odgovarajući sada na nešto drugo."
+    }
+  },
+  "locations": {
+    "prison_cell": {
+      "name": "Zatvorska ćelija",
+      "subtitle": "Početna ćelija",
+      "description": "Gvozdene rešetke savijene napolje, slama rasuta po podu. Čovek u okovima kleči nad mrtvim stražarom i gleda vas kao da već zna vaše ime."
+    },
+    "cell_block": {
+      "name": "Blok ćelija",
+      "subtitle": "Blok ćelija",
+      "description": "Red za redom praznih ćelija. Neko je urezao crte na svaka vrata sa strane političkih zatvorenika — godine njih."
+    },
+    "ritual_room": {
+      "name": "Ritualna soba",
+      "subtitle": "Ritualna soba",
+      "description": "Ulegnuti krug kamena urezan amajlijama, sveće gore uz svaki stub. Ovde je ispod Hollowforta izveden ritual."
+    },
+    "underground_tunnels": {
+      "name": "Podzemni tuneli",
+      "subtitle": "Podzemni tuneli",
+      "description": "Stari temelji ispod tvrđave, osvetljeni bakljama koje odavno ne bi trebalo da gore. Nešto šušti baš izvan svetlosti."
+    },
+    "central_corridor": {
+      "name": "Centralni hodnik",
+      "subtitle": "Centralni hodnik",
+      "description": "Glavna arterija tvrđave. Baklje trepere nad razmrvljenom krvlju, i čini se da svaka vrata Hollowforta izlaze na ovaj hodnik — osim vrata trpezarije, koja ostaju zavarana."
+    },
+    "kitchen": {
+      "name": "Zatvorska kuhinja",
+      "subtitle": "Zatvorska kuhinja",
+      "description": "Hladne peći, prosuto zrno, blok noževa u kome nedostaje svako sečivo osim jednog."
+    },
+    "infirmary": {
+      "name": "Bolnica",
+      "subtitle": "Bolnica",
+      "description": "Redovi praznih kreveta, zavoji crni od stare krvi. Šta god je ovde poslednje umrlo, nije ostalo da leži."
+    },
+    "torture_chamber": {
+      "name": "Komora za mučenje",
+      "subtitle": "Komora za mučenje",
+      "description": "Lanci škripe a niko ih ne vuče. Oprema ovde je građena da natera ljude da progovore — ili da ih zauvek ućutka."
+    },
+    "guard_barracks": {
+      "name": "Kasarna straže",
+      "subtitle": "Kasarna straže",
+      "description": "Kreveti prevrnuti, sanduci razbijeni. Ko god je držao ovu sobu, više je ne drži."
+    },
+    "armory": {
+      "name": "Oružarnica",
+      "subtitle": "Oružarnica",
+      "description": "Stalci sa oružjem oboreni po podu, oklopi još uvek stoje u stavu duž zidova."
+    },
+    "dining_hall": {
+      "name": "Trpezarija",
+      "subtitle": "Trpezarija",
+      "description": "Dugački stolovi postavljeni za obrok koji se nikad nije dogodio, lusteri još gore nad praznim klupama."
+    },
+    "central_courtyard": {
+      "name": "Centralno dvorište",
+      "subtitle": "Račvanje dvorišta",
+      "description": "Napokon otvoreno nebo, zagušeno dimom. Tri vrata naspram vas preko kamena — kapela, kula i političko krilo. Čim se odlučite, druga dva će se zapečatiti."
+    },
+    "chapel": {
+      "name": "Kapela",
+      "subtitle": "Poslednja grana · Kapela",
+      "description": "Svetlost sveća nad oskrnavljenim oltarom. Inkvizitor kleči pred njim i ustaje u trenutku kad vas čuje."
+    },
+    "warden_tower": {
+      "name": "Kula upravnika",
+      "subtitle": "Poslednja grana · Kula",
+      "description": "Papiri razbacani svuda, stolica prevrnuta. Sam Upravnik je vrlo živo vraćen iz mrtvih."
+    },
+    "political_wing": {
+      "name": "Političko krilo",
+      "subtitle": "Poslednja grana · Političko krilo",
+      "description": "Ćelije gde je kruna držala svoje jeretike. Anarhista koga ste sreli na početku je takođe ovde — ili nešto što nosi ono što je od njega ostalo."
+    },
+    "exit_gate": {
+      "name": "Izlazna kapija",
+      "subtitle": "Bekstvo",
+      "description": "Sunčeva svetlost kroz rešetku. Koja god vrata da ste uzeli, ovde se završava svaki put iz Hollowforta."
+    }
+  },
+  "encounters": {
+    "nothing_happens": {
+      "title": "Ništa se ne dešava",
+      "description": "Pobuna na trenutak zastaje. Koraci nestaju. Za trenutak ste sami između frakcija."
+    },
+    "undead_patrol": {
+      "title": "Patrola nemrtvih",
+      "description": "Vaskrsnuti zatvorenici pretražuju hodnik. Sklanjate se u stranu — karta vam isklizne iz ruke."
+    },
+    "find_herbs": {
+      "title": "Naći bilje",
+      "description": "Gorka zatvorska mahovina raste među kamenjem kod starih vešala. Smiruje živce."
+    },
+    "hidden_stash": {
+      "title": "Anarhističko skrovište",
+      "description": "Labava cigla krije zaboravljenu revolucionarnu zalihu. Neko je nameravao da se vrati po nju."
+    },
+    "hanging_ambush": {
+      "title": "Zaseda kod vešala",
+      "description": "Obešeno telo pada sa grede. Borite se da se oslobodite, ali vam stisak popušta."
+    },
+    "wounded_rumor": {
+      "title": "Šaptani glas",
+      "description": "Poluludi zatvorenik šapuće o linijama frakcija — Anarhistima, Straži i tragu čarobnjaka."
+    },
+    "collapsed_corridor": {
+      "title": "Urušeni hodnik",
+      "description": "Kamen stenje dok pobuna trese temelje. Prašina i panika mešaju vaše karte."
+    },
+    "guard_whistle": {
+      "title": "Zvižduk straže",
+      "description": "Preživeli stražar daje znak. Red još drži džep tvrđave — za sada."
+    },
+    "riot_shuffle": {
+      "title": "Neredi u hodniku",
+      "description": "Tela jure mimo. Vaše pažljivo poređane karte raspadaju se u haos."
+    },
+    "press_gang": {
+      "title": "Nasilačka regrutacija",
+      "description": "Regruteri frakcije gurnu vam rezervno sečivo u torbu — hteli vi to ili ne."
+    },
+    "warden_tax": {
+      "title": "Porez upravnika",
+      "description": "Poreznik starog poretka dira vašu odbranu. Štit se trese."
+    },
+    "stolen_buckler": {
+      "title": "Ukradeni štit",
+      "description": "Otkinete napukli štit sa palog stražara. Neće dugo trajati, ali za sada drži."
+    },
+    "armorer_scrap": {
+      "title": "Zakrpa oružara",
+      "description": "Poluludi kovač zakuca zakrpu na vašu odbranu — gruba, ali za sada drži."
+    },
+    "poisoned_rivet": {
+      "title": "Otrovana zakovica",
+      "description": "Korozija jede oklop. Vaša odbrana slabi."
+    },
+    "arcane_residue": {
+      "title": "Arcani ostatak",
+      "description": "Napukli kamen-amajlija još zuji. Preostali naboj slegne se iza očiju."
+    },
+    "null_ward": {
+      "title": "Prazna amajlija",
+      "description": "Pečat mrtvog maga bljesne jednom i popije vazduh. Fokus vam tanka."
+    },
+    "smuggled_raise": {
+      "title": "Švercovani Podigni štit",
+      "description": "Anarhista vam podvali izlizanu kartu Podigni štit. Pridružuje se špilu."
+    }
+  },
+  "npcs": {
+    "dead_anarchist": {
+      "name": "Mrtvi anarhista",
+      "tag": "Vaskrsnuti zatvorenik",
+      "description": "Vaskrsnuti politički zatvorenik koji vas usmerava na Upravnika.",
+      "line0": "Nisi onaj zbog kog sam došao. Ali vrata su ionako otvorena.",
+      "line1": "Sahranili su me zbog revolucije koju nikad nisam završio. Izgleda da sam opet potreban.",
+      "line2": "Upravnik još izdaje naredbe iz kule, mrtav ili ne. Ubij ga, i ova tvrđava se raspada."
+    },
+    "sorcerer": {
+      "name": "Čarobnjak",
+      "tag": "Ritualni mag",
+      "description": "Mag iza rituala, otkriven kad Demon padne.",
+      "line0": "Oborio si demona. Dobro. Sada radiš za mene.",
+      "line1": "Treba mi sušena lavanda iz Bolnice i pečurka niskokape iz tunela ispod.",
+      "line2": "Donesi ih — i otvoriću hodnik. To je jedini put.",
+      "followUp0": "Lavanda. Pečurka. Krug će još malo izdržati.",
+      "followUp1": "Inkvizitor još drži drugu polovinu ovog rituala u kapeli.",
+      "followUp2": "Ubij ga — i amajlije prestaju da odgovaraju bilo kome osim meni. Hodnik je tvoj."
+    },
+    "smuggler": {
+      "name": "Švercer",
+      "tag": "Crno tržište",
+      "description": "Pacov hodnika koji prodaje lekovito za krune — bez pitanja, bez povraćaja.",
+      "line0": "Govori tiše. Krune ovde pričaju glasnije od molitava.",
+      "line1": "Zakrpa za štit ili gutljaj fokusa — biraj. Ne radim milostinju.",
+      "line2": "Hoćeš da izađeš iz Hollowforta — plati za privilegiju da stojiš."
+    },
+    "executioner": {
+      "name": "Dželat",
+      "tag": "Slomljen čovek",
+      "description": "Nudi privezak ključeva koji otvara vrata trpezarije sa hodnika.",
+      "line0": "Obešio sam sopstvenu nevestu po naredbi Upravnika. Jednom sam to zvao dužnošću.",
+      "line1": "Ta zavarana vrata u Trpezariju? Službeni privezak je na kuku. Uzmi.",
+      "line2": "Tri vrata iza dvorišta: kapela, kula, političko krilo. Biraj svoj otrov."
+    },
+    "guard_captain": {
+      "name": "Kapetan straže",
+      "tag": "Komandant dvorišta",
+      "description": "Još drži dvorište i traži da okončate Vaskrsnutog anarhistu.",
+      "line0": "Još vičem naredbe, još držim ovo dvorište samom voljom. Nisi ono što sam očekivao.",
+      "line1": "Vaskrsnuti anarhista diže političko krilo. Obori ga pre nego što povede pravu pobunu.",
+      "line2": "Kapela, kula, političko krilo — biraj vrata. Ostala se zapečate u trenutku kad to učiniš."
+    },
+    "gate_dead_anarchist": {
+      "name": "Mrtvi anarhista",
+      "tag": "Napokon slobodan",
+      "description": "Čeka na kapiji nakon pada Upravnika.",
+      "line0": "Sa Upravnikom je gotovo. Šta god je držalo ovu tvrđavu, umire sa njim.",
+      "line1": "Čudno — hteo sam samo svoju slobodu. Izgleda da sam kupio svima.",
+      "line2": "Idi. Kapija je sada tvoja."
+    },
+    "gate_sorcerer": {
+      "name": "Čarobnjak",
+      "tag": "Ritualni mag",
+      "description": "Čeka na kapiji nakon pada Inkvizitora.",
+      "line0": "Sa Inkvizitorom je gotovo — i sa njegovom polovinom rituala.",
+      "line1": "Šta god ova tvrđava postane sada, neće biti po njegovom nacrtu.",
+      "line2": "Kapija je otvorena. Više mi nije potrebna."
+    },
+    "gate_guard_captain": {
+      "name": "Kapetan straže",
+      "tag": "Komandant dvorišta",
+      "description": "Čeka na kapiji nakon pada Vaskrsnutog anarhiste.",
+      "line0": "Anarhistova pobuna se ovde završava, sa njim.",
+      "line1": "Održao sam reč. Kapija je tvoja, zatvoreniče.",
+      "line2": "Idi — pre nego što se setim ko si."
+    }
+  },
+  "quests": {
+    "undefined": {
+      "name": "Poslednja vrata",
+      "description": "Izaberite put iz Hollowforta — kapela, kula ili političko krilo. Druga dva biće vam izgubljena."
+    },
+    "kill_warden": {
+      "name": "Upravnik mora da umre",
+      "description": "Mrtvi anarhista želi smrt Upravnika zatvora. Čeka u kuli iza dvorišta."
+    },
+    "gather_ritual_ingredients": {
+      "name": "Sastojci za krug",
+      "description": "Čarobnjaku treba sušena lavanda iz Bolnice i pečurka niskokape iz Podzemnih tunela pre nego što vas pusti."
+    },
+    "find_dining_way": {
+      "name": "Zaključana trpezarija",
+      "description": "Vrata iz Centralnog hodnika u Trpezariju su zavarana. Nađite drugi put — kroz Kuhinju, ili uzmite dželatov privezak ključeva iz Komore za mučenje."
+    },
+    "kill_inquisitor": {
+      "name": "Ućutkaj Inkvizitora",
+      "description": "Oslobođeni Čarobnjak želi da uništi Inkvizitora pre nego što završi posao u kapeli."
+    },
+    "kill_resurrected_anarchist": {
+      "name": "Okončaj pobunu",
+      "description": "Kapetan straže želi da obori Vaskrsnutog anarhistu pre nego što povede političko krilo u otvorenu pobunu."
+    }
+  },
+  "worldLocations": {
+    "prison": {
+      "name": "Zatvorska tvrđava"
+    },
+    "viking": {
+      "name": "Vikinško selo"
+    },
+    "village": {
+      "name": "Selo"
+    },
+    "farmland": {
+      "name": "Njive"
+    },
+    "capital": {
+      "name": "Prestonica"
+    },
+    "dwarf": {
+      "name": "Patuljačko kraljevstvo"
+    },
+    "royal": {
+      "name": "Kraljevska tvrđava",
+      "threatName": "Kraljevski garnizon",
+      "threatTier": "Uporište"
+    },
+    "monastery": {
+      "name": "Manastir"
+    },
+    "elven": {
+      "name": "Vilenjački grad"
+    },
+    "cemetery": {
+      "name": "Groblje",
+      "threatName": "Nemirni mrtvi",
+      "threatTier": "Lutalice"
+    },
+    "chapel": {
+      "name": "Jezerska kapela"
+    },
+    "_map": {
+      "name": "Carstvo"
+    }
+  },
+  "loot": {
+    "lowcap_mushroom": {
+      "name": "Pečurka niskokape",
+      "description": "Bleda pečurka iz tunela — ritualni sastojak"
+    },
+    "dried_lavender": {
+      "name": "Sušena lavanda",
+      "description": "Ritualni sastojak koji je Čarobnjak zatražio"
+    },
+    "dining_keyring": {
+      "name": "Privezak ključeva trpezarije",
+      "description": "Otvara zavarana vrata iz Centralnog hodnika u Trpezariju"
+    }
+  }
+}

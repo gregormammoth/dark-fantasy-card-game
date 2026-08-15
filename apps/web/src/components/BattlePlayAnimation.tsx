@@ -4,10 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { AnimationCue } from '@dark-fantasy/shared/types/animation';
 import { getCardDefinition } from '@dark-fantasy/game-engine/engine/battleSetup';
 import { classThemes, enemyTheme } from '@/lib/cardTheme';
-import { getCardEffectSummary } from '@/lib/cardTheme';
+import { getCardEffectSummary, getClassLabel } from '@/lib/cardTheme';
 import type { CardClass } from '@dark-fantasy/shared/types/card';
 import { useAudio } from '@/audio/useAudio';
 import { getCombatSoundForCard } from '@/audio/combatCardSound';
+import { useTranslation } from '@/i18n/useTranslation';
+import { getAnyCardName } from '@/lib/contentLabels';
 import { AttackIcon, BarrierIcon, PierceIcon, PoisonIcon, ShieldIcon } from './EffectIcons';
 
 const duration = 0.45;
@@ -208,10 +210,13 @@ function buildPills(cue: AnimationCue): Array<{
 }
 
 function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
+  const { t } = useTranslation();
   const theme = getTheme(cue);
   const isAttack = cue.cardType === 'attack';
   const imageSrc = cue.cardClass ? `/cards/${cue.cardId}.png` : undefined;
   const fromPlayer = cue.source === 'player';
+  const cardName = getAnyCardName(cue.cardId, t, cue.cardName);
+  const classLabel = cue.cardClass ? getClassLabel(cue.cardClass, t) : theme.label;
 
   return (
     <motion.div
@@ -249,7 +254,7 @@ function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
             className="absolute top-[7px] left-[7px] rounded-[3px] px-1.5 py-0.5 text-[8px] tracking-[.12em] text-white"
             style={{ background: theme.badge }}
           >
-            {theme.label}
+            {classLabel}
           </span>
         )}
         <span className="absolute top-[7px] right-[7px]">
@@ -264,7 +269,7 @@ function PlayCard({ cue, phase }: { cue: AnimationCue; phase: Phase }) {
         <p className="text-[8px] tracking-[.18em] text-[#8a7f72] uppercase">
           {fromPlayer ? 'You play' : 'Enemy plays'}
         </p>
-        <p className="font-cinzel text-[13px] text-[#f0dfcb]">{cue.cardName}</p>
+        <p className="font-cinzel text-[13px] text-[#f0dfcb]">{cardName}</p>
       </div>
     </motion.div>
   );

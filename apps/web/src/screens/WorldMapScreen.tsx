@@ -5,6 +5,11 @@ import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldLocationDefinition, WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import { getWorldCategoryLabel, iconSizeForCategory, worldCategoryMeta } from '@/lib/worldTheme';
 import { useTranslation } from '@/i18n/useTranslation';
+import {
+  getWorldLocationName,
+  getWorldThreatName,
+  getWorldThreatTier,
+} from '@/lib/contentLabels';
 import { ClaimBadge } from '@/components/ClaimBadge';
 import { WorldMapClouds } from '@/components/world/WorldMapClouds';
 
@@ -180,7 +185,7 @@ export function WorldMapScreen({
             borderColor: `${markerColor}33`,
           }}
         >
-          {location.name}
+          {getWorldLocationName(location.id, t, location.name)}
         </span>
         {isCurrent && (
           <span className="animate-[herebob_1.6s_ease-in-out_infinite] whitespace-nowrap rounded-md bg-[#e0b552] px-1.5 py-0.5 font-cinzel text-[9px] tracking-[.14em] text-[#1a1208]">
@@ -196,7 +201,7 @@ export function WorldMapScreen({
       <div className="flex shrink-0 items-center justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-0.5">
           <span className="truncate font-cinzel text-[18px] tracking-wider text-[#e8ddcf]">
-            {worldMap.name}
+            {getWorldLocationName('_map', t, worldMap.name)}
           </span>
           <span className="text-[11px] text-[#8a7f72]">{t('world.chooseRegion')}</span>
         </div>
@@ -388,7 +393,7 @@ export function WorldMapScreen({
                 {getWorldCategoryLabel(selected.category, t)}
               </span>
               <div className="mt-1.5 font-cinzel text-[21px] leading-tight text-[#f3ead8]">
-                {selected.name}
+                {getWorldLocationName(selected.id, t, selected.name)}
               </div>
             </div>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
@@ -398,9 +403,11 @@ export function WorldMapScreen({
               {selected.threat && (
                 <div className="flex items-center gap-3 rounded-[10px] border-l-[3px] border-[#d6443a] bg-[rgba(214,68,58,.1)] px-3 py-2.5">
                   <div>
-                    <div className="text-[13px] text-[#ffd9d2]">{selected.threat.name}</div>
+                    <div className="text-[13px] text-[#ffd9d2]">
+                      {getWorldThreatName(selected.id, t, selected.threat.name)}
+                    </div>
                     <div className="mt-0.5 text-[10px] tracking-wider text-[#c99]">
-                      {selected.threat.tier}
+                      {getWorldThreatTier(selected.id, t, selected.threat.tier)}
                     </div>
                   </div>
                 </div>

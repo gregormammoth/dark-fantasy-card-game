@@ -3,6 +3,7 @@ import { canBuyShopService } from '@dark-fantasy/game-engine';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { MessageKey } from '@/i18n/types';
+import { getNpcName, getNpcTag } from '@/lib/contentLabels';
 
 interface NpcDialogModalProps {
   npc: LocationNpc;
@@ -39,6 +40,8 @@ export function NpcDialogModal({
   const { t } = useTranslation();
   const services = npc.shopServices ?? [];
   const showShop = services.length > 0 && context && onBuyService;
+  const npcName = getNpcName(npc.id, t, npc.name);
+  const npcTag = getNpcTag(npc.id, t, npc.tag ?? t('common.npc'));
 
   return (
     <div className="fixed inset-0 z-[60] flex animate-[fadeIn_.15s_ease-out] items-center justify-center bg-[rgba(6,5,4,.75)] p-6 backdrop-blur-[3px]">
@@ -53,7 +56,7 @@ export function NpcDialogModal({
             />
           ) : (
             <div className="flex h-full items-center justify-center font-cinzel text-[48px] text-[#cfe0fa]">
-              {npc.name.charAt(0)}
+              {npcName.charAt(0)}
             </div>
           )}
           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_65%,rgba(19,23,32,.9)_100%)]" />
@@ -61,9 +64,9 @@ export function NpcDialogModal({
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-[rgba(91,134,196,.2)] bg-[linear-gradient(180deg,rgba(91,134,196,.14),transparent)] px-6 py-5">
             <div className="text-[9px] tracking-[.2em] text-[#8fa8d6]">
-              {(npc.tag ?? 'NPC').toUpperCase()}
+              {npcTag.toUpperCase()}
             </div>
-            <div className="mt-1 font-cinzel text-[19px] text-[#e6edfa]">{npc.name}</div>
+            <div className="mt-1 font-cinzel text-[19px] text-[#e6edfa]">{npcName}</div>
             {showShop && (
               <div className="mt-2 text-[12px] text-[#c9a24a]">
                 {t('shop.crowns', { count: context.money ?? 0 })}

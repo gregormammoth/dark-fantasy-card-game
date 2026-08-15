@@ -24,6 +24,7 @@ import { useCoachStep } from '@/components/tour/useCoachStep';
 import { useTranslation } from '@/i18n/useTranslation';
 import { unclaimedCardChoices } from '@/data/playerProgress';
 import type { TranslateFn } from '@/i18n/types';
+import { getEnemyName } from '@/lib/contentLabels';
 type BattleActor = ActorRefFrom<typeof battleMachine>;
 
 interface BattleScreenProps {
@@ -195,6 +196,10 @@ export function BattleScreen({
     [battle, isPlayerTurn],
   );
   const enemyCardTypes = useMemo(() => getEnemyCardTypes(battle, t), [battle, t]);
+  const enemyId = battle.enemy.id;
+  const enemyName = enemyId
+    ? getEnemyName(enemyId, t, battle.enemy.name)
+    : battle.enemy.name;
 
   const audioPhase = isVictory
     ? 'victory'
@@ -366,7 +371,7 @@ export function BattleScreen({
         )}
 
         <EnemyZone
-          name={battle.enemy.name}
+          name={enemyName}
           portrait={battle.enemy.portrait}
           deckCount={battle.enemy.deck.length}
           health={enemyHealth}
@@ -427,7 +432,7 @@ export function BattleScreen({
       {(isVictory || isDefeat) && (
         <BattleResultModal
           victory={isVictory}
-          enemyName={battle.enemy.name}
+          enemyName={enemyName}
           stats={battle.battleStats}
           logEntries={battle.log}
           xpGained={xpGained}

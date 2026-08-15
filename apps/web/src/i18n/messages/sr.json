@@ -427,6 +427,29 @@
   },
   "locationBattle": {
     "title": "BORBA",
-    "fight": "BORBA"
+    "fight": "BORBA",
+    "blocksPath": "{name} blokira put."
+  },
+  "effects": {
+    "damage": "{value} štete",
+    "shield": "+{value} štita",
+    "barrier": "+{value} barijere",
+    "poison": "otrov {damage}×{duration}",
+    "reduceDamagePercent": "−{value}% štete",
+    "draw": "izvuci {count}",
+    "recoverDiscard": "+{count} karata",
+    "bonusDamagePerAttackCard": "+{value} po napadu",
+    "bonusBarrierPerDefenseCard": "+{value} po odbrani",
+    "bonusIfLowerHp": "+{damage} pri niskom HP",
+    "bonusIfFirstAttack": "+{damage} u prvoj napadačkoj kombi",
+    "restoreMaxShields": "maks. štit ako je prazan",
+    "ignoreShield": "proboj",
+    "gainMana": "+{value} mane",
+    "bonusDamagePerMana": "+{value} štete/mana",
+    "bonusBarrierPerMana": "+{value} barijere/mana",
+    "markEnemy": "označi neprijatelja",
+    "bonusIfMarked": "+{damage} ako je označen",
+    "ignoreShieldIfMarked": "proboj ako je označen",
+    "bonusDamagePerCardDrawn": "+{value} po izvučenoj karti"
   }
 }

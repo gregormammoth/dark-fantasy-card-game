@@ -8,6 +8,18 @@ import { canMoveTo, getLocationStatus, isLocationLocked, isExitBlocked, isCorrid
 import { isNpcAvailable, listQuestMarksForLocation } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
+import {
+  getEnemyName,
+  getEnemyTier,
+  getLocationDescription,
+  getLocationName,
+  getLocationSubtitle,
+  getLootDescription,
+  getLootName,
+  getNpcName,
+  getNpcTag,
+  getQuestName,
+} from '@/lib/contentLabels';
 import { useTranslation } from '@/i18n/useTranslation';
 
 const LOOT_IMAGES: Record<string, string> = {
@@ -60,11 +72,17 @@ export function LocationDetailPanel({
   const questMarks = listQuestMarksForLocation(context, location.id);
   const questCards = [
     ...(location.quest
-      ? [{ key: 'location-quest', name: location.quest.name, description: location.quest.description }]
+      ? [
+          {
+            key: 'location-quest',
+            name: location.quest.name,
+            description: location.quest.description,
+          },
+        ]
       : []),
     ...questMarks.map((mark) => ({
       key: mark.questId,
-      name: mark.questName,
+      name: getQuestName(mark.questId, t, mark.questName),
       description: mark.hint,
     })),
   ];
@@ -100,11 +118,15 @@ export function LocationDetailPanel({
             {locked
               ? t('location.branchSealed')
               : showInfo
-                ? location.subtitle.toUpperCase()
+                ? getLocationSubtitle(location.id, t, location.subtitle).toUpperCase()
                 : t('location.unknownChamber')}
           </span>
           <div className="mt-1 font-cinzel text-[22px] leading-tight text-[#f3ead8] [text-shadow:0_2px_8px_#000]">
-            {locked ? t('location.sealed') : showInfo ? location.name : t('location.unknown')}
+            {locked
+              ? t('location.sealed')
+              : showInfo
+                ? getLocationName(location.id, t, location.name)
+                : t('location.unknown')}
           </div>
         </div>
       </div>
@@ -114,7 +136,7 @@ export function LocationDetailPanel({
           {locked
             ? t('location.branchLockedDesc')
             : showInfo
-              ? location.description
+              ? getLocationDescription(location.id, t, location.description)
               : t('location.unexploredDesc')}
         </p>
 
@@ -168,9 +190,11 @@ export function LocationDetailPanel({
               />
             ) : null}
             <div className="flex-1">
-              <div className="text-[13px] text-[#d7e2f2]">{npc.name}</div>
+              <div className="text-[13px] text-[#d7e2f2]">
+                {getNpcName(npc.id, t, npc.name)}
+              </div>
               <div className="mt-0.5 text-[10px] tracking-wider text-[#9fb3d6]">
-                {(npc.tag ?? t('common.npc')).toUpperCase()}
+                {getNpcTag(npc.id, t, npc.tag ?? t('common.npc')).toUpperCase()}
               </div>
             </div>
             {isHere && onTalk && (
@@ -201,8 +225,12 @@ export function LocationDetailPanel({
               </span>
             )}
             <div className="flex-1">
-              <div className="text-[13px] text-[#ffd9d2]">{activeEnemy.name}</div>
-              <div className="mt-0.5 text-[10px] tracking-wider text-[#c99]">{activeEnemy.tier}</div>
+              <div className="text-[13px] text-[#ffd9d2]">
+                {getEnemyName(activeEnemy.id, t, activeEnemy.name)}
+              </div>
+              <div className="mt-0.5 text-[10px] tracking-wider text-[#c99]">
+                {getEnemyTier(activeEnemy.id, t, activeEnemy.tier)}
+              </div>
             </div>
             {isHere && onFight && (
               <button
@@ -254,8 +282,12 @@ export function LocationDetailPanel({
                       </span>
                     </div>
                     <div className="border-t-2 border-[#c9a24a] px-2.5 py-2">
-                      <div className="font-cinzel text-[12px] text-[#e8ddcf]">{loot.name}</div>
-                      <div className="mt-1 text-[10px] text-[#a99]">{loot.description}</div>
+                      <div className="font-cinzel text-[12px] text-[#e8ddcf]">
+                        {getLootName(loot.id, t, loot.name)}
+                      </div>
+                      <div className="mt-1 text-[10px] text-[#a99]">
+                        {getLootDescription(loot.id, t, loot.description)}
+                      </div>
                     </div>
                   </div>
                 );

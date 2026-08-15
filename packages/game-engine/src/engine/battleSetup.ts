@@ -147,6 +147,7 @@ export function createInitialBattle(
       discard: playerDiscard,
     },
     enemy: {
+      id: enemyOverride?.id,
       name: enemyOverride?.name ?? battleData.enemy.name,
       portrait: enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT,
       shield: Math.min(Math.max(0, enemyStartingShield), enemyMaxShield),

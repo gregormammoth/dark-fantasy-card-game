@@ -430,6 +430,29 @@
   },
   "locationBattle": {
     "title": "COMBAT ENCOUNTER",
-    "fight": "FIGHT"
+    "fight": "FIGHT",
+    "blocksPath": "{name} blocks your path."
+  },
+  "effects": {
+    "damage": "{value} damage",
+    "shield": "+{value} shield",
+    "barrier": "+{value} barrier",
+    "poison": "poison {damage}×{duration}",
+    "reduceDamagePercent": "−{value}% damage",
+    "draw": "draw {count}",
+    "recoverDiscard": "+{count} cards",
+    "bonusDamagePerAttackCard": "+{value} per attack",
+    "bonusBarrierPerDefenseCard": "+{value} per defense",
+    "bonusIfLowerHp": "+{damage} if low HP",
+    "bonusIfFirstAttack": "+{damage} if first attack combo",
+    "restoreMaxShields": "max shield if empty",
+    "ignoreShield": "pierce",
+    "gainMana": "+{value} mana",
+    "bonusDamagePerMana": "+{value} dmg/mana",
+    "bonusBarrierPerMana": "+{value} barrier/mana",
+    "markEnemy": "mark enemy",
+    "bonusIfMarked": "+{damage} if marked",
+    "ignoreShieldIfMarked": "pierce if marked",
+    "bonusDamagePerCardDrawn": "+{value} per card drawn"
   }
 }

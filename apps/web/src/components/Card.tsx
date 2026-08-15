@@ -8,9 +8,12 @@ import {
   getCardEffectTextColor,
   getCardHeight,
   getCardTheme,
+  getClassLabel,
 } from '@/lib/cardTheme';
+import { getAnyCardDescription, getAnyCardName } from '@/lib/contentLabels';
 import { useAudio } from '@/audio/useAudio';
 import { useHoverSound } from '@/audio/useHoverSound';
+import { useTranslation } from '@/i18n/useTranslation';
 import { CardEffectIcon } from './EffectIcons';
 
 interface CardProps {
@@ -80,18 +83,24 @@ export function Card({
   statusColor,
   footer,
 }: CardProps) {
+  const { t } = useTranslation();
   const { definition } = card;
   const theme = getCardTheme(definition);
   const effectIconType = getCardEffectIconType(definition);
   const effectColor = getCardEffectTextColor(effectIconType);
-  const summary = getCardEffectSummary(definition);
+  const summary = getCardEffectSummary(definition, t);
+  const cardName = getAnyCardName(definition.id, t, definition.name);
+  const classLabel = definition.class
+    ? getClassLabel(definition.class, t)
+    : t('classes.enemy');
   const imageSrc = definition.image ?? (definition.class ? `/cards/${definition.id}.png` : undefined);
   const isHand = variant === 'hand';
   const cardHeight = getCardHeight();
   const { play } = useAudio();
   const hover = useHoverSound('card_hover', 0.2);
   const sharedLayout = Boolean(layoutId);
-  const description = definition.description?.trim() || summary;
+  const description =
+    getAnyCardDescription(definition.id, t, definition.description).trim() || summary;
 
   return (
     <span
@@ -156,7 +165,7 @@ export function Card({
             className="absolute top-[7px] left-[7px] rounded-[3px] px-1.5 py-0.5 text-[8px] tracking-[.12em] text-white"
             style={{ background: theme.badge }}
           >
-            {theme.label}
+            {classLabel}
           </span>
         )}
         {!locked && !inDeck && (
@@ -174,7 +183,7 @@ export function Card({
         )}
         {!locked && inDeck && (
           <span className="absolute top-[6px] right-[6px] rounded-[5px] bg-[#e0b552] px-1.5 py-0.5 font-cinzel text-[9px] text-[#1a1208]">
-            IN DECK
+            {t('player.inDeck')}
           </span>
         )}
       </div>
@@ -183,7 +192,7 @@ export function Card({
         style={{ borderTop: `2px solid ${theme.accent}`, height: cardLayout.footerHeight }}
       >
         <div className="line-clamp-2 font-cinzel text-[13px] leading-tight text-[#f0dfcb]">
-          {definition.name}
+          {cardName}
         </div>
         <div className="mt-1 flex min-h-0 flex-1 items-start gap-1.5 text-[11px]" style={{ color: effectColor }}>
           <CardEffectIcon type={effectIconType} size="footer" />
@@ -205,7 +214,7 @@ export function Card({
           className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-left shadow-[0_12px_28px_-10px_#000] group-hover/card:block"
         >
           <span className="block font-cinzel text-[11px] leading-tight text-[#e0b552]">
-            {definition.name}
+            {cardName}
           </span>
           <span className="mt-1 block text-[11px] leading-snug text-[#d8cbb8]">{description}</span>
         </span>

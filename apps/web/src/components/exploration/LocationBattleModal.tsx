@@ -2,6 +2,7 @@
 
 import type { LocationEnemy } from '@dark-fantasy/shared/types/exploration';
 import { useTranslation } from '@/i18n/useTranslation';
+import { getEnemyDescription, getEnemyName, getEnemyTier } from '@/lib/contentLabels';
 
 interface LocationBattleModalProps {
   enemy: LocationEnemy;
@@ -10,6 +11,11 @@ interface LocationBattleModalProps {
 
 export function LocationBattleModal({ enemy, onFight }: LocationBattleModalProps) {
   const { t } = useTranslation();
+  const enemyName = getEnemyName(enemy.id, t, enemy.name);
+  const enemyTier = getEnemyTier(enemy.id, t, enemy.tier);
+  const enemyDescription =
+    getEnemyDescription(enemy.id, t, enemy.description) ||
+    t('locationBattle.blocksPath', { name: enemyName });
 
   return (
     <div className="fixed inset-0 z-[60] flex animate-[fadeIn_.15s_ease-out] items-center justify-center bg-[rgba(6,5,4,.8)] p-6 backdrop-blur-[3px]">
@@ -27,12 +33,12 @@ export function LocationBattleModal({ enemy, onFight }: LocationBattleModalProps
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-[rgba(224,82,74,.2)] bg-[linear-gradient(180deg,rgba(224,82,74,.14),transparent)] px-6 py-5">
-            <span className="text-[10px] tracking-[.22em] text-[#ff8f85]">{enemy.tier}</span>
-            <div className="mt-1 font-cinzel text-[20px] text-[#f3e2d6]">{enemy.name}</div>
+            <span className="text-[10px] tracking-[.22em] text-[#ff8f85]">{enemyTier}</span>
+            <div className="mt-1 font-cinzel text-[20px] text-[#f3e2d6]">{enemyName}</div>
           </div>
           <div className="flex-1 px-6 py-[18px]">
             <p className="m-0 text-[13px] leading-relaxed text-[#c7bba9]">
-              {enemy.description ?? `${enemy.name} blocks your path.`}
+              {enemyDescription}
             </p>
           </div>
           <div className="flex gap-2.5 px-6 pb-5">

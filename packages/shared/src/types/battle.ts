@@ -34,6 +34,7 @@ export interface PlayerState {
 }
 
 export interface EnemyState {
+  id?: string;
   name: string;
   portrait: string;
   shield: number;
@@ -86,6 +87,7 @@ export interface BattleContext {
 }
 
 export type BattleEnemyOverride = {
+  id?: string;
   name: string;
   portrait: string;
   band?: EnemyBand;

@@ -66,69 +66,154 @@ export function getCardTheme(definition: CardDefinition): ClassTheme {
   return enemyTheme;
 }
 
-export function getCardEffectSummary(definition: CardDefinition): string {
+export function getCardEffectSummary(
+  definition: CardDefinition,
+  t?: TranslateFn,
+): string {
   const parts: string[] = [];
+  const tr = (key: MessageKey, params?: Record<string, string | number>, fallback?: string) => {
+    if (!t) {
+      return fallback ?? key;
+    }
+    return t(key, params);
+  };
 
   for (const effect of definition.effects) {
     if (effect.type === 'damage') {
-      parts.push(`${effect.value ?? 0} damage`);
+      parts.push(
+        tr('effects.damage', { value: effect.value ?? 0 }, `${effect.value ?? 0} damage`),
+      );
     }
     if (effect.type === 'shield') {
-      parts.push(`+${effect.value ?? 0} shield`);
+      parts.push(
+        tr('effects.shield', { value: effect.value ?? 0 }, `+${effect.value ?? 0} shield`),
+      );
     }
     if (effect.type === 'barrier') {
-      parts.push(`+${effect.value ?? 0} barrier`);
+      parts.push(
+        tr('effects.barrier', { value: effect.value ?? 0 }, `+${effect.value ?? 0} barrier`),
+      );
     }
     if (effect.type === 'poison') {
-      parts.push(`poison ${effect.damagePerTurn ?? 1}×${effect.duration ?? 1}`);
+      parts.push(
+        tr(
+          'effects.poison',
+          { damage: effect.damagePerTurn ?? 1, duration: effect.duration ?? 1 },
+          `poison ${effect.damagePerTurn ?? 1}×${effect.duration ?? 1}`,
+        ),
+      );
     }
     if (effect.type === 'reduceDamagePercent') {
-      parts.push(`−${effect.value ?? 0}% damage`);
+      parts.push(
+        tr(
+          'effects.reduceDamagePercent',
+          { value: effect.value ?? 0 },
+          `−${effect.value ?? 0}% damage`,
+        ),
+      );
     }
     if (effect.type === 'draw') {
-      parts.push(`draw ${effect.count ?? 1}`);
+      parts.push(
+        tr('effects.draw', { count: effect.count ?? 1 }, `draw ${effect.count ?? 1}`),
+      );
     }
     if (effect.type === 'recoverDiscard') {
-      parts.push(`+${effect.count ?? 1} cards`);
+      parts.push(
+        tr(
+          'effects.recoverDiscard',
+          { count: effect.count ?? 1 },
+          `+${effect.count ?? 1} cards`,
+        ),
+      );
     }
     if (effect.type === 'bonusDamagePerAttackCard') {
-      parts.push(`+${effect.value ?? 0} per attack`);
+      parts.push(
+        tr(
+          'effects.bonusDamagePerAttackCard',
+          { value: effect.value ?? 0 },
+          `+${effect.value ?? 0} per attack`,
+        ),
+      );
     }
     if (effect.type === 'bonusBarrierPerDefenseCard') {
-      parts.push(`+${effect.value ?? 0} per defense`);
+      parts.push(
+        tr(
+          'effects.bonusBarrierPerDefenseCard',
+          { value: effect.value ?? 0 },
+          `+${effect.value ?? 0} per defense`,
+        ),
+      );
     }
     if (effect.type === 'bonusIfLowerHp') {
-      parts.push(`+${effect.damage ?? 0} if low HP`);
+      parts.push(
+        tr(
+          'effects.bonusIfLowerHp',
+          { damage: effect.damage ?? 0 },
+          `+${effect.damage ?? 0} if low HP`,
+        ),
+      );
     }
     if (effect.type === 'bonusIfFirstAttack') {
-      parts.push(`+${effect.damage ?? 0} if first attack combo`);
+      parts.push(
+        tr(
+          'effects.bonusIfFirstAttack',
+          { damage: effect.damage ?? 0 },
+          `+${effect.damage ?? 0} if first attack combo`,
+        ),
+      );
     }
     if (effect.type === 'restoreMaxShields') {
-      parts.push('max shield if empty');
+      parts.push(tr('effects.restoreMaxShields', undefined, 'max shield if empty'));
     }
     if (effect.type === 'ignoreShield') {
-      parts.push('pierce');
+      parts.push(tr('effects.ignoreShield', undefined, 'pierce'));
     }
     if (effect.type === 'gainMana') {
-      parts.push(`+${effect.value ?? 0} mana`);
+      parts.push(
+        tr('effects.gainMana', { value: effect.value ?? 0 }, `+${effect.value ?? 0} mana`),
+      );
     }
     if (effect.type === 'bonusDamagePerMana') {
-      parts.push(`+${effect.value ?? 0} dmg/mana`);
+      parts.push(
+        tr(
+          'effects.bonusDamagePerMana',
+          { value: effect.value ?? 0 },
+          `+${effect.value ?? 0} dmg/mana`,
+        ),
+      );
     }
     if (effect.type === 'bonusBarrierPerMana') {
-      parts.push(`+${effect.value ?? 0} barrier/mana`);
+      parts.push(
+        tr(
+          'effects.bonusBarrierPerMana',
+          { value: effect.value ?? 0 },
+          `+${effect.value ?? 0} barrier/mana`,
+        ),
+      );
     }
     if (effect.type === 'markEnemy') {
-      parts.push('mark enemy');
+      parts.push(tr('effects.markEnemy', undefined, 'mark enemy'));
     }
     if (effect.type === 'bonusIfMarked') {
-      parts.push(`+${effect.damage ?? 0} if marked`);
+      parts.push(
+        tr(
+          'effects.bonusIfMarked',
+          { damage: effect.damage ?? 0 },
+          `+${effect.damage ?? 0} if marked`,
+        ),
+      );
     }
     if (effect.type === 'ignoreShieldIfMarked') {
-      parts.push('pierce if marked');
+      parts.push(tr('effects.ignoreShieldIfMarked', undefined, 'pierce if marked'));
     }
     if (effect.type === 'bonusDamagePerCardDrawn') {
-      parts.push(`+${effect.value ?? 0} per card drawn`);
+      parts.push(
+        tr(
+          'effects.bonusDamagePerCardDrawn',
+          { value: effect.value ?? 0 },
+          `+${effect.value ?? 0} per card drawn`,
+        ),
+      );
     }
   }
 

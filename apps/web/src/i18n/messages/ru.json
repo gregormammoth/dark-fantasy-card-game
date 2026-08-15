@@ -427,6 +427,29 @@
   },
   "locationBattle": {
     "title": "БОЕВАЯ ВСТРЕЧА",
-    "fight": "СРАЖАТЬСЯ"
+    "fight": "СРАЖАТЬСЯ",
+    "blocksPath": "{name} преграждает путь."
+  },
+  "effects": {
+    "damage": "{value} урона",
+    "shield": "+{value} щита",
+    "barrier": "+{value} барьера",
+    "poison": "яд {damage}×{duration}",
+    "reduceDamagePercent": "−{value}% урона",
+    "draw": "взять {count}",
+    "recoverDiscard": "+{count} карт",
+    "bonusDamagePerAttackCard": "+{value} за атаку",
+    "bonusBarrierPerDefenseCard": "+{value} за защиту",
+    "bonusIfLowerHp": "+{damage} при низком HP",
+    "bonusIfFirstAttack": "+{damage} в первой атакующей комбо",
+    "restoreMaxShields": "макс. щит, если пусто",
+    "ignoreShield": "пробитие",
+    "gainMana": "+{value} маны",
+    "bonusDamagePerMana": "+{value} урона/мана",
+    "bonusBarrierPerMana": "+{value} барьера/мана",
+    "markEnemy": "метка врага",
+    "bonusIfMarked": "+{damage} если отмечен",
+    "ignoreShieldIfMarked": "пробитие если отмечен",
+    "bonusDamagePerCardDrawn": "+{value} за взятую карту"
   }
 }

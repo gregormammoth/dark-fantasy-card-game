@@ -27,6 +27,7 @@ import { isNpcAvailable, locationHasQuestMark } from '@dark-fantasy/game-engine/
 import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
 import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useTranslation } from '@/i18n/useTranslation';
+import { getLocationName } from '@/lib/contentLabels';
 import { locationTypeColors, roomSizeFor } from '@/lib/explorationTheme';
 
 function getOccupantCard(
@@ -667,7 +668,11 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                       }}
                     />
                     <span className="px-1 text-center font-cinzel text-[13px] tracking-wide text-[#f3ead8] [text-shadow:0_2px_6px_rgba(0,0,0,.9)]">
-                      {locked ? t('location.sealed') : showInfo ? location.name : t('location.unknown')}
+                      {locked
+                        ? t('location.sealed')
+                        : showInfo
+                          ? getLocationName(location.id, t, location.name)
+                          : t('location.unknown')}
                     </span>
                     {hasThreat && showInfo && (
                       <span className="text-[9px] tracking-[.14em] text-[#ff8f85] [text-shadow:0_1px_4px_#000]">

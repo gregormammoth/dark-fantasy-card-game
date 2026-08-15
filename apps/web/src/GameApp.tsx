@@ -543,6 +543,7 @@ function GameShell() {
       playerDeckIds: loadout.deckCardIds,
       playerGender: profile?.gender,
       enemy: {
+        id: enemy.id,
         name: enemy.name,
         portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
         band: enemy.band,

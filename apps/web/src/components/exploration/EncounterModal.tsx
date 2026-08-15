@@ -4,6 +4,11 @@ import { useEffect, useMemo } from 'react';
 import type { PendingEncounter } from '@dark-fantasy/shared/types/exploration';
 import { useAudio } from '@/audio/useAudio';
 import { useTranslation } from '@/i18n/useTranslation';
+import {
+  getAnyCardName,
+  getEncounterDescription,
+  getEncounterTitle,
+} from '@/lib/contentLabels';
 
 interface EncounterModalProps {
   encounter: PendingEncounter;
@@ -68,7 +73,9 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
     for (const card of results.discarded) {
       rows.push({
         key: `d-${card.instanceId}`,
-        label: t('encounter.changeDiscarded', { name: card.name }),
+        label: t('encounter.changeDiscarded', {
+          name: getAnyCardName(card.cardId, t, card.name),
+        }),
         sub: t('encounter.changeDiscardSub'),
         color: '#d6443a',
         bg: 'rgba(214,68,58,.1)',
@@ -77,7 +84,9 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
     for (const card of results.recovered) {
       rows.push({
         key: `r-${card.instanceId}`,
-        label: t('encounter.changeRecovered', { name: card.name }),
+        label: t('encounter.changeRecovered', {
+          name: getAnyCardName(card.cardId, t, card.name),
+        }),
         sub: t('encounter.changeRecoverSub'),
         color: '#4a965e',
         bg: 'rgba(74,150,94,.1)',
@@ -86,7 +95,9 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
     for (const card of results.added) {
       rows.push({
         key: `a-${card.instanceId}`,
-        label: t('encounter.changeAdded', { name: card.name }),
+        label: t('encounter.changeAdded', {
+          name: getAnyCardName(card.cardId, t, card.name),
+        }),
         sub: t('encounter.changeAddedSub'),
         color: '#e0b552',
         bg: 'rgba(224,181,82,.08)',
@@ -120,8 +131,12 @@ export function EncounterModal({ encounter, onDismiss }: EncounterModalProps) {
       <div className="w-full max-w-[460px] overflow-hidden rounded-md border border-[rgba(201,162,74,.4)] bg-[linear-gradient(180deg,#1a1512,#100d0b)] shadow-[0_40px_90px_-20px_#000]">
         <div className="border-b border-[rgba(201,162,74,.22)] bg-[linear-gradient(180deg,rgba(201,162,74,.14),transparent)] px-6 py-5">
           <span className="text-[10px] tracking-[.22em] text-[#e0b552]">{t('encounter.title')}</span>
-          <div className="mt-[3px] font-cinzel text-[19px] text-[#f3ead8]">{encounter.title}</div>
-          <p className="mt-2 text-xs leading-[1.55] text-[#c7bba9] italic">{encounter.description}</p>
+          <div className="mt-[3px] font-cinzel text-[19px] text-[#f3ead8]">
+            {getEncounterTitle(encounter.id, t, encounter.title)}
+          </div>
+          <p className="mt-2 text-xs leading-[1.55] text-[#c7bba9] italic">
+            {getEncounterDescription(encounter.id, t, encounter.description)}
+          </p>
         </div>
 
         {changes.length > 0 && (

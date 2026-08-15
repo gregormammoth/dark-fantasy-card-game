@@ -32,6 +32,9 @@ type DotPaths<T, Prefix extends string = ''> = T extends MessageLeaf
         : DotPaths<T[K], Join<Prefix, K>> | (T[K] extends MessageLeaf ? Join<Prefix, K> : never);
     }[keyof T & string];
 
-import type en from './messages/en.json';
+import type enUi from './messages/en.json';
+import type enContent from './messages/content-en.json';
 
-export type MessageKey = DotPaths<typeof en>;
+type EnMessages = typeof enUi & { content: typeof enContent };
+
+export type MessageKey = DotPaths<EnMessages>;
