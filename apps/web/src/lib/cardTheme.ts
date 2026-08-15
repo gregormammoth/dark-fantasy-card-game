@@ -237,9 +237,9 @@ export type CardEffectIconType =
   | 'recover';
 
 export const cardLayout = {
-  width: 152,
+  width: 168,
   imageHeight: 116,
-  footerHeight: 68,
+  footerHeight: 102,
 } as const;
 
 export function getCardHeight(): number {

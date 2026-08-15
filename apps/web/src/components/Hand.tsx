@@ -1,6 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import { isInstantPlayCard } from '@dark-fantasy/game-engine';
+import { getCardHeight } from '@/lib/cardTheme';
 import { Card } from './Card';
 
 interface HandProps {
@@ -11,9 +12,14 @@ interface HandProps {
 }
 
 export function Hand({ cards, onAddToCombo, disabled, comboAtCap = false }: HandProps) {
+  const handHeight = getCardHeight() + 16;
+
   return (
-    <div className='flex flex-1 items-end justify-center overflow-visible pb-1' style={{ height: 200 }}>
-      <div className='flex items-end overflow-visible'>
+    <div
+      className="flex flex-1 items-end justify-center overflow-visible pb-1"
+      style={{ height: handHeight }}
+    >
+      <div className="flex items-end overflow-visible">
         <AnimatePresence>
           {cards.map((card, index) => {
             const instant = isInstantPlayCard(card);

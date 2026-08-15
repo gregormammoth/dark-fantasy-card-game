@@ -196,7 +196,7 @@ export function Card({
         </div>
         <div className="mt-1 flex min-h-0 flex-1 items-start gap-1.5 text-[11px]" style={{ color: effectColor }}>
           <CardEffectIcon type={effectIconType} size="footer" />
-          <span className="line-clamp-2 min-w-0 leading-tight">{summary}</span>
+          <span className="line-clamp-3 min-w-0 leading-tight">{summary}</span>
         </div>
         {(statusLabel || footer) && (
           <div

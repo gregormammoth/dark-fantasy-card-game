@@ -788,7 +788,7 @@ export function PlayerScreen({
                   return (
                     <div key={classId} className="flex items-center gap-3">
                       <span
-                        className="w-[70px] font-cinzel text-[12px]"
+                        className="w-[150px] font-cinzel text-[12px]"
                         style={{ color: theme.accent }}
                       >
                         {getClassLabel(classId, t)}
