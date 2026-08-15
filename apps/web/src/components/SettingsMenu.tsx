@@ -38,15 +38,16 @@ export function SettingsMenu({
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
+        event.stopImmediatePropagation();
         setOpen(false);
       }
     }
 
     document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keydown', onKeyDown, true);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keydown', onKeyDown, true);
     };
   }, [open]);
 
@@ -65,7 +66,7 @@ export function SettingsMenu({
   }
 
   return (
-    <div ref={rootRef} className="fixed right-4 top-4 z-[70]">
+    <div ref={rootRef} className="fixed right-4 top-4 z-[110]">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}

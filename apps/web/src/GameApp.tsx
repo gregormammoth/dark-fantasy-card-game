@@ -569,14 +569,20 @@ function GameShell() {
 
   if (!profile) {
     return (
-      <CharacterCreationScreen
-        onCreate={async (name: string, gender: PlayerGender) => {
-          const next = await createPlayerProfile(name, gender);
-          trackEvent('player_created', next.playerId, { gender });
-          setProfile(next);
-          return next;
-        }}
-      />
+      <>
+        <SettingsMenu
+          runSeed={runSeed}
+          onRunSeedChange={handleRunSeedChange}
+        />
+        <CharacterCreationScreen
+          onCreate={async (name: string, gender: PlayerGender) => {
+            const next = await createPlayerProfile(name, gender);
+            trackEvent('player_created', next.playerId, { gender });
+            setProfile(next);
+            return next;
+          }}
+        />
+      </>
     );
   }
 
