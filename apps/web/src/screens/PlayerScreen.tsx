@@ -32,7 +32,7 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { isStepSeen, markStepSeen } from '@/lib/tour';
 import type { MessageKey } from '@/i18n/types';
 import { classThemes, getCardEffectSummary, getCardType, getClassLabel } from '@/lib/cardTheme';
-import { getCardName, getQuestDescription, getQuestName } from '@/lib/contentLabels';
+import { getCardDescription, getCardName, getQuestDescription, getQuestName } from '@/lib/contentLabels';
 import {
   getQuestSteps,
   listQuestItems,
@@ -239,6 +239,13 @@ export function PlayerScreen({
         t,
       )
     : { label: '', color: '#8a7f72' };
+  const activeCardDescription = activeCard
+    ? getCardDescription(activeCard.id, t, activeCard.description).trim() ||
+      getCardEffectSummary(activeCard, t)
+    : '';
+  const activeCardName = activeCard
+    ? getCardName(activeCard.id, t, activeCard.name)
+    : '';
 
   const confirmCard = confirmCardId ? cardById[confirmCardId] : null;
   const confirmClassId = confirmCardId ? cardClassById[confirmCardId] : null;
@@ -588,7 +595,7 @@ export function PlayerScreen({
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="min-w-0 flex-1 overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
+              <div className="min-w-0 flex-1 rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
                 <div className="flex border-b border-[rgba(201,162,74,.28)] bg-[rgba(201,162,74,.06)] px-4 py-2.5">
                   <span className="w-12" />
                   <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">{t('common.name')}</span>
@@ -629,6 +636,10 @@ export function PlayerScreen({
                       : selected
                         ? '#e0b552'
                         : '#f0dfcb';
+                  const cardName = getCardName(definition.id, t, definition.name);
+                  const description =
+                    getCardDescription(definition.id, t, definition.description).trim() ||
+                    getCardEffectSummary(definition, t);
                   return (
                     <button
                       key={definition.id}
@@ -639,7 +650,7 @@ export function PlayerScreen({
                           [selectedClassId]: definition.id,
                         }))
                       }
-                      className={`flex w-full items-center border-b border-[rgba(201,162,74,.08)] px-4 py-2 text-left transition hover:bg-[rgba(224,181,82,.1)]${
+                      className={`group/cardrow relative flex w-full items-center border-b border-[rgba(201,162,74,.08)] px-4 py-2 text-left transition hover:bg-[rgba(224,181,82,.1)]${
                         unlockable ? ' card-unlockable' : ''
                       }`}
                       style={{
@@ -647,6 +658,20 @@ export function PlayerScreen({
                         ['--unlock-accent' as string]: unlockable ? selectedTheme.accent : undefined,
                       }}
                     >
+                      {description && (
+                        <span
+                          role="tooltip"
+                          className="pointer-events-none absolute bottom-[calc(100%+8px)] left-4 z-50 hidden w-max max-w-[280px] rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-left shadow-[0_12px_28px_-10px_#000] group-hover/cardrow:block"
+                        >
+                          <span className="block font-cinzel text-[11px] leading-tight text-[#e0b552]">
+                            {definition.improved ? '★ ' : ''}
+                            {cardName}
+                          </span>
+                          <span className="mt-1 block text-[11px] leading-snug text-[#d8cbb8]">
+                            {description}
+                          </span>
+                        </span>
+                      )}
                       <span className="w-12 shrink-0">
                         <span
                           className="block h-[38px] w-[38px] overflow-hidden rounded"
@@ -673,7 +698,7 @@ export function PlayerScreen({
                         style={{ color: nameColor }}
                       >
                         {definition.improved ? '★ ' : ''}
-                        {getCardName(definition.id, t, definition.name)}
+                        {cardName}
                       </span>
                       <span
                         className="w-[90px] text-[10px] tracking-wide"
@@ -697,7 +722,7 @@ export function PlayerScreen({
 
               {activeCard && detailBtn && (
                 <div
-                  className={`w-[300px] shrink-0 overflow-hidden rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]${
+                  className={`group/carddetail relative w-[300px] shrink-0 overflow-visible rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]${
                     activeStatus === 'available' ? ' card-unlockable-panel' : ''
                   }`}
                   style={{
@@ -708,7 +733,21 @@ export function PlayerScreen({
                       activeStatus === 'available' ? selectedTheme.accent : undefined,
                   }}
                 >
-                  <div className="relative h-[300px] bg-[#0c0908]">
+                  {activeCardDescription && (
+                      <span
+                        role="tooltip"
+                        className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 hidden w-max max-w-[280px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-left shadow-[0_12px_28px_-10px_#000] group-hover/carddetail:block"
+                      >
+                        <span className="block font-cinzel text-[11px] leading-tight text-[#e0b552]">
+                          {activeCard.improved ? '★ ' : ''}
+                          {activeCardName}
+                        </span>
+                        <span className="mt-1 block text-[11px] leading-snug text-[#d8cbb8]">
+                          {activeCardDescription}
+                        </span>
+                      </span>
+                  )}
+                  <div className="relative h-[300px] overflow-hidden bg-[#0c0908]">
                     {(activeCard.image ??
                       (activeCard.class ? `/cards/${activeCard.id}.png` : undefined)) && (
                       <img
@@ -738,7 +777,7 @@ export function PlayerScreen({
                   <div className="flex flex-col gap-2.5 px-[18px] py-4">
                     <div className="font-cinzel text-[17px] text-[#f0dfcb]">
                       {activeCard.improved ? '★ ' : ''}
-                      {getCardName(activeCard.id, t, activeCard.name)}
+                      {activeCardName}
                     </div>
                     {activeCard.improved && (
                       <div className="text-[10px] tracking-[.16em] text-[#c9a24a]">{t('player.improvedCost')}</div>
