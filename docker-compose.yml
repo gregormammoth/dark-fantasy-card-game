@@ -4,18 +4,73 @@ services:
     container_name: dark-fantasy-postgres
     restart: unless-stopped
     ports:
-      - '5432:5432'
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
     environment:
-      POSTGRES_USER: darkfantasy
-      POSTGRES_PASSWORD: darkfantasy
-      POSTGRES_DB: darkfantasy
+      POSTGRES_USER: ${POSTGRES_USER:-darkfantasy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-darkfantasy}
+      POSTGRES_DB: ${POSTGRES_DB:-darkfantasy}
     volumes:
       - dark_fantasy_pg:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U darkfantasy -d darkfantasy']
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - dark-fantasy
+
+  api:
+    image: ${API_IMAGE:-048266892585.dkr.ecr.eu-north-1.amazonaws.com/dark-fantasy-backend:latest}
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: dark-fantasy-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-darkfantasy}:${POSTGRES_PASSWORD:-darkfantasy}@postgres:5432/${POSTGRES_DB:-darkfantasy}?schema=public
+      PORT: 3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - dark-fantasy
+
+  web:
+    image: ${WEB_IMAGE:-048266892585.dkr.ecr.eu-north-1.amazonaws.com/dark-fantasy-frontend:latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost}
+        NEXT_PUBLIC_SITE_NAME: ${NEXT_PUBLIC_SITE_NAME:-Hollowfort}
+    container_name: dark-fantasy-web
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      - api
+    networks:
+      - dark-fantasy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dark-fantasy-nginx
+    restart: unless-stopped
+    ports:
+      - '${HTTP_PORT:-80}:80'
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+      - api
+    networks:
+      - dark-fantasy
 
 volumes:
   dark_fantasy_pg:
+
+networks:
+  dark-fantasy:
+    driver: bridge

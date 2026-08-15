@@ -86,6 +86,106 @@ tests/e2e/         Playwright smoke tests
 docs/              Roadmap, positioning, architecture, mechanics
 ```
 
-## Deploy (Vercel)
+## Deploy with Docker
 
-Set the Vercel project root to `apps/web`. Build command: `cd ../.. && pnpm --filter @dark-fantasy/web build` (or install from repo root and build the web package). Output: Next.js default.
+Requires Docker and Docker Compose.
+
+### Local (build on the machine)
+
+```bash
+cp .env.example .env
+# set NEXT_PUBLIC_SITE_URL to your public URL, and a strong POSTGRES_PASSWORD
+docker compose up -d --build
+```
+
+Services:
+
+| Service | Role |
+|---------|------|
+| `nginx` | Public entry on `HTTP_PORT` (default 80); proxies `/` → web, `/api/` → API |
+| `web` | Next.js frontend (standalone) |
+| `api` | NestJS API + Prisma migrations on start |
+| `postgres` | Postgres 16 |
+
+Open `http://localhost` (or your `NEXT_PUBLIC_SITE_URL`). API health: `http://localhost/api/health`.
+
+Rebuild after env changes that affect the web build args (`NEXT_PUBLIC_*`):
+
+```bash
+docker compose up -d --build web
+```
+
+### AWS ECR (build locally, run on the server)
+
+Repositories:
+
+- Frontend: `048266892585.dkr.ecr.eu-north-1.amazonaws.com/dark-fantasy-frontend`
+- Backend: `048266892585.dkr.ecr.eu-north-1.amazonaws.com/dark-fantasy-backend`
+
+#### 1. Log in to ECR
+
+```bash
+aws ecr get-login-password --region eu-north-1 \
+  | docker login --username AWS --password-stdin 048266892585.dkr.ecr.eu-north-1.amazonaws.com
+```
+
+#### 2. Build and tag
+
+Set `NEXT_PUBLIC_SITE_URL` to the real public URL before building the frontend (it is baked into the image).
+
+On Apple Silicon, target the EC2 architecture (`linux/amd64`):
+
+```bash
+export AWS_ACCOUNT=048266892585
+export AWS_REGION=eu-north-1
+export ECR=$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com
+export TAG=latest
+
+# Backend
+docker build \
+  --platform linux/amd64 \
+  -f apps/api/Dockerfile \
+  -t $ECR/dark-fantasy-backend:$TAG \
+  .
+
+# Frontend
+docker build \
+  --platform linux/amd64 \
+  -f apps/web/Dockerfile \
+  --build-arg NEXT_PUBLIC_API_URL=/api \
+  --build-arg NEXT_PUBLIC_SITE_URL=https://your-domain.example \
+  --build-arg NEXT_PUBLIC_SITE_NAME=Hollowfort \
+  -t $ECR/dark-fantasy-frontend:$TAG \
+  .
+```
+
+Or build both via Compose (uses the same ECR image names from `docker-compose.yml`):
+
+```bash
+export NEXT_PUBLIC_SITE_URL=https://your-domain.example
+docker compose build web api
+```
+
+#### 3. Push
+
+```bash
+docker push $ECR/dark-fantasy-backend:$TAG
+docker push $ECR/dark-fantasy-frontend:$TAG
+```
+
+#### 4. On the EC2 host
+
+Install Docker + Compose, copy the repo (or at least `docker-compose.yml`, `deploy/nginx/`, `.env`), then:
+
+```bash
+aws ecr get-login-password --region eu-north-1 \
+  | docker login --username AWS --password-stdin 048266892585.dkr.ecr.eu-north-1.amazonaws.com
+
+cp .env.example .env
+# set POSTGRES_PASSWORD and NEXT_PUBLIC_SITE_URL (SITE_URL is only needed if you rebuild on the server)
+
+docker compose pull web api
+docker compose up -d
+```
+
+`nginx` and `postgres` still pull from Docker Hub. Only `web` and `api` come from ECR.
