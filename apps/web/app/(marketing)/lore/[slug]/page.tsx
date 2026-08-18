@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { MarkdownBody } from '@/components/site/MarkdownBody';
-import { PageHero, PageShell } from '@/components/site/PageBits';
+import { PageShell } from '@/components/site/PageBits';
+import { SiteDetailHero } from '@/components/site/SitePageHero';
 import { getDoc, getDocs } from '@/lib/content';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -24,7 +25,7 @@ export default async function LoreDocPage({ params }: Props) {
 
   return (
     <PageShell>
-      <PageHero eyebrow="LORE" title={doc.title} description={doc.description} />
+      <SiteDetailHero kind="lore" title={doc.title} description={doc.description} />
       <MarkdownBody content={doc.body} />
     </PageShell>
   );

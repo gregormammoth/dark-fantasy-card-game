@@ -297,6 +297,169 @@
     "music": "Music",
     "sfx": "SFX"
   },
+  "site": {
+    "enter": "ENTER",
+    "playNow": "PLAY NOW",
+    "improved": "IMPROVED",
+    "nav": {
+      "home": "Home",
+      "play": "Play",
+      "about": "About",
+      "lore": "Lore",
+      "regions": "Regions",
+      "cards": "Cards",
+      "classes": "Classes",
+      "enemies": "Enemies",
+      "blog": "Blog",
+      "roadmap": "Roadmap",
+      "patchNotes": "Patch Notes",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    },
+    "hero": {
+      "eyebrow": "DARK FANTASY DECKBUILDER",
+      "subtitle": "Escape Hollowfort Prison. Grow five classes, spend crowns, pick a faction, and burn through enemies one card at a time — your deck is your life.",
+      "play": "PLAY NOW",
+      "lore": "READ THE LORE",
+      "scroll": "SCROLL"
+    },
+    "stats": {
+      "classes": "CLASSES TO MASTER",
+      "cards": "PLAYER CARDS",
+      "rooms": "PRISON ROOMS",
+      "factions": "FACTION PATHS"
+    },
+    "loreSection": {
+      "eyebrow": "THE LORE",
+      "titleLine1": "A prison built",
+      "titleLine2": "from broken oaths",
+      "body": "Centuries ago the crown sealed its heretics beneath Hollowfort's walls. Now the wards are failing. Every prisoner who escapes carries a deck of stolen magic — the only currency that matters in the dark below.",
+      "link": "Explore the prison floorplan →"
+    },
+    "classesSection": {
+      "eyebrow": "CHOOSE YOUR PATH",
+      "title": "Five Classes. One Deck.",
+      "link": "View progression →"
+    },
+    "class": {
+      "warrior": {
+        "blurb": "Heavy strikes, raised shields, and reckless swings built to outlast anything below.",
+        "tag": "MELEE · DEFENCE"
+      },
+      "rogue": {
+        "blurb": "Backstabs, poison, and smoke — vanish before the guards ever see you.",
+        "tag": "STEALTH · TEMPO"
+      },
+      "wizard": {
+        "blurb": "Arcane bolts, barriers, and tempo swings — control the field before it closes in.",
+        "tag": "RANGED · CONTROL"
+      },
+      "survivor": {
+        "blurb": "Scrap tools, desperate defenses, and hard-won grit from the prison itself.",
+        "tag": "ENDURE · SCRAP"
+      },
+      "seeker": {
+        "blurb": "Mark weak points, dig for answers, then strike where the armor fails.",
+        "tag": "MARK · EXPLOIT"
+      }
+    },
+    "worldSection": {
+      "eyebrow": "THE WORLD",
+      "title": "Chart your escape",
+      "body": "Sixteen handcrafted rooms, three faction bosses, and an Exit Gate that only opens after you pick a side. Your exploration hand, deck, and shield carry into every fight.",
+      "openMap": "OPEN WORLD MAP",
+      "seeCombat": "SEE COMBAT"
+    },
+    "features": {
+      "progression": {
+        "tag": "PROGRESSION",
+        "title": "Cards And Skills Grow Together",
+        "desc": "Class XP unlocks improved cards. Player levels let you raise max shield, combo, mana, deck, or draw — without binding skills to a class."
+      },
+      "combat": {
+        "tag": "COMBAT",
+        "title": "Your Deck Is Your Life",
+        "desc": "Stack combos, read the preview, then burn through shields and barriers. Damage eats cards. The last card is the last breath."
+      },
+      "exploration": {
+        "tag": "EXPLORATION",
+        "title": "Quests, Crowns, And Loyalty",
+        "desc": "Sixteen rooms, faction kill-quests, and a Smuggler who sells restoratives. Your hand and shield carry from corridor into the fight."
+      }
+    },
+    "cta": {
+      "eyebrow": "YOUR RUN WAITS IN THE CELL",
+      "title": "Begin your escape",
+      "body": "Name a prisoner, spend class XP, pick combat skills, and find the door out of Hollowfort.",
+      "button": "ENTER HOLLOWFORT"
+    },
+    "pages": {
+      "about": {
+        "eyebrow": "THE PROJECT",
+        "fallbackTitle": "About"
+      },
+      "lore": {
+        "eyebrow": "CHRONICLES",
+        "title": "Lore",
+        "description": "Fragments recovered from the prison and the realm beyond."
+      },
+      "regions": {
+        "eyebrow": "THE REALM",
+        "title": "Regions",
+        "description": "Start in Hollowfort Prison. More of the realm waits beyond the gate."
+      },
+      "cards": {
+        "eyebrow": "ARSENAL",
+        "title": "Cards",
+        "description": "Thirty cards from the live content pack — base tools plus improved unlocks you buy with class levels."
+      },
+      "classes": {
+        "eyebrow": "CHOOSE YOUR PATH",
+        "title": "Five Classes. One Deck.",
+        "description": "Each played card grants class XP. Spend levels on improved cards. Player levels raise combat skills shared by every class."
+      },
+      "enemies": {
+        "eyebrow": "FOES",
+        "title": "Enemies",
+        "description": "Early rooms teach the loop. Later rooms and branch bosses play from their own card groups — not one shared deck."
+      },
+      "blog": {
+        "eyebrow": "DISPATCHES",
+        "title": "Blog",
+        "description": "Dev notes, slice updates, and reports from behind the walls."
+      },
+      "roadmap": {
+        "eyebrow": "PLANS",
+        "fallbackTitle": "Roadmap"
+      },
+      "patchNotes": {
+        "eyebrow": "CHANGES",
+        "title": "Patch Notes",
+        "description": "What changed in each Hollowfort release."
+      },
+      "privacy": {
+        "fallbackTitle": "Privacy"
+      },
+      "terms": {
+        "fallbackTitle": "Terms"
+      },
+      "detail": {
+        "lore": "LORE",
+        "region": "REGION",
+        "blog": "BLOG",
+        "patch": "PATCH"
+      }
+    },
+    "enemyGroups": {
+      "warrior": "Warrior",
+      "cutthroat": "Cutthroat",
+      "ritualist": "Ritualist",
+      "beast": "Beast",
+      "undead": "Undead",
+      "brute": "Brute"
+    },
+    "language": "Language"
+  },
   "welcomeTutorial": {
     "eyebrow": "HOW TO PLAY · REGISTRY",
     "tip": "TIP",

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Cinzel, Spectral } from 'next/font/google';
 import './globals.css';
+import { Providers } from '@/components/Providers';
 import { JsonLd } from '@/components/site/JsonLd';
 import { siteConfig } from '@/lib/site';
 
@@ -59,8 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${cinzel.variable} ${spectral.variable}`}>
       <body className="min-h-screen bg-[#0b0908] font-spectral text-[#e8ddcf] antialiased">
-        <JsonLd />
-        {children}
+        <Providers>
+          <JsonLd />
+          {children}
+        </Providers>
       </body>
     </html>
   );

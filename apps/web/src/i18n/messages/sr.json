@@ -294,6 +294,169 @@
     "music": "Muzika",
     "sfx": "Efekti"
   },
+  "site": {
+    "enter": "ULAZ",
+    "playNow": "IGRAJ",
+    "improved": "POBOLJŠANO",
+    "nav": {
+      "home": "Početna",
+      "play": "Igraj",
+      "about": "O projektu",
+      "lore": "Lor",
+      "regions": "Regioni",
+      "cards": "Karte",
+      "classes": "Klase",
+      "enemies": "Neprijatelji",
+      "blog": "Blog",
+      "roadmap": "Plan",
+      "patchNotes": "Zabeleške",
+      "privacy": "Privatnost",
+      "terms": "Uslovi"
+    },
+    "hero": {
+      "eyebrow": "MRAČNA FANTASY · GRADITELJ ŠPILOVA",
+      "subtitle": "Pobegni iz zatvora Hollowfort. Razvijaj pet klasa, troši krune, izaberi frakciju i spali neprijatelje kartama — špil je tvoj život.",
+      "play": "IGRAJ",
+      "lore": "ČITAJ LOR",
+      "scroll": "DALJE"
+    },
+    "stats": {
+      "classes": "KLASA",
+      "cards": "IGRAČKIH KARATA",
+      "rooms": "SOBA ZATVORA",
+      "factions": "PUTA FRAKCIJA"
+    },
+    "loreSection": {
+      "eyebrow": "LOR",
+      "titleLine1": "Zatvor sazdan",
+      "titleLine2": "od slomljenih zakletvi",
+      "body": "Pre vekova kruna je zapečatila jeretike pod zidinama Hollowforta. Sada pečati popuštaju. Svaki begunac nosi špil ukradene magije — jedinu valutu u tami ispod.",
+      "link": "Pogledaj plan zatvora →"
+    },
+    "classesSection": {
+      "eyebrow": "IZABERI PUT",
+      "title": "Pet klasa. Jedan špil.",
+      "link": "Ka progresiji →"
+    },
+    "class": {
+      "warrior": {
+        "blurb": "Teški udarci, podignuti štitovi i bezobzirni zamasi — da izdržiš sve što je ispod.",
+        "tag": "BLISKA · ODBRANA"
+      },
+      "rogue": {
+        "blurb": "Udarci u leđa, otrov i dim — nestani pre nego što te straža ugleda.",
+        "tag": "PRIKRIVENOST · TEMPO"
+      },
+      "wizard": {
+        "blurb": "Čarobne strele, barijere i zamene tempa — kontrolišite polje pre nego što se zatvori.",
+        "tag": "DALJINA · KONTROLA"
+      },
+      "survivor": {
+        "blurb": "Krš alatki, očajničke odbrane i tvrda volja izvučena iz samog zatvora.",
+        "tag": "IZDRŽLJIVOST · OTPAD"
+      },
+      "seeker": {
+        "blurb": "Označi slabe tačke, kopaј za odgovore, pa udari gde oklop puca.",
+        "tag": "OZNAKA · ISKORIŠĆENJE"
+      }
+    },
+    "worldSection": {
+      "eyebrow": "SVET",
+      "title": "Isplaniraj beg",
+      "body": "Šesnaest soba, tri šefa frakcija i Kapija koja se otvara tek kad izabereš stranu. Ruka, špil i štit istraživanja prelaze u svaku borbu.",
+      "openMap": "MAPA SVETA",
+      "seeCombat": "BORBA"
+    },
+    "features": {
+      "progression": {
+        "tag": "NAPREDOVANJE",
+        "title": "Karte i veštine rastu zajedno",
+        "desc": "XP klase otključava poboljšane karte. Igrački nivoi podižu štit, kombo, manu, špil ili vučenje — bez vezivanja veština za klasu."
+      },
+      "combat": {
+        "tag": "BORBA",
+        "title": "Špil je život",
+        "desc": "Složi kombo, proveri pregled, pa probij štitove i barijere. Šteta jede karte. Poslednja karta je poslednji dah."
+      },
+      "exploration": {
+        "tag": "ISTRAŽIVANJE",
+        "title": "Zadaci, krune i vernost",
+        "desc": "Šesnaest soba, frakcijski zadaci i Krijumčar sa potrošnim stvarima. Ruka i štit idu iz hodnika pravo u borbu."
+      }
+    },
+    "cta": {
+      "eyebrow": "TVOJ POTEZ ČEKA U ĆELIJI",
+      "title": "Započni beg",
+      "body": "Imenuj zatvorenika, troši XP klase, biraj borbene veštine i nađi izlaz iz Hollowforta.",
+      "button": "UĐI U HOLLOWFORT"
+    },
+    "pages": {
+      "about": {
+        "eyebrow": "PROJEKAT",
+        "fallbackTitle": "O projektu"
+      },
+      "lore": {
+        "eyebrow": "HRONIKE",
+        "title": "Lor",
+        "description": "Fragmenti pronađeni u zatvoru i van zidina."
+      },
+      "regions": {
+        "eyebrow": "CARSTVO",
+        "title": "Regioni",
+        "description": "Počni u zatvoru Hollowfort. Ostatak sveta čeka iza kapije."
+      },
+      "cards": {
+        "eyebrow": "ARSENAL",
+        "title": "Karte",
+        "description": "Trideset karata iz živog sadržaja — osnovne i poboljšane koje kupuješ nivoima klase."
+      },
+      "classes": {
+        "eyebrow": "IZABERI PUT",
+        "title": "Pet klasa. Jedan špil.",
+        "description": "Svaka odigrana karta daje XP klase. Troši nivoe na poboljšane karte. Igrački nivoi podižu zajedničke borbene veštine."
+      },
+      "enemies": {
+        "eyebrow": "NEPRIJATELJI",
+        "title": "Neprijatelji",
+        "description": "Rane sobe uče petlju. Kasnije sobe i šefovi frakcija igraju svojim grupama karata — ne jednim zajedničkim špilom."
+      },
+      "blog": {
+        "eyebrow": "IZVEŠTAJI",
+        "title": "Blog",
+        "description": "Beleške razvoja, ažuriranja i vesti iza zidina."
+      },
+      "roadmap": {
+        "eyebrow": "PLANOVI",
+        "fallbackTitle": "Plan"
+      },
+      "patchNotes": {
+        "eyebrow": "IZMENE",
+        "title": "Zabeleške",
+        "description": "Šta se promenilo u svakom izdanju Hollowforta."
+      },
+      "privacy": {
+        "fallbackTitle": "Privatnost"
+      },
+      "terms": {
+        "fallbackTitle": "Uslovi"
+      },
+      "detail": {
+        "lore": "LOR",
+        "region": "REGION",
+        "blog": "BLOG",
+        "patch": "ZABELEŠKA"
+      }
+    },
+    "enemyGroups": {
+      "warrior": "Ratnik",
+      "cutthroat": "Ubica",
+      "ritualist": "Ritualista",
+      "beast": "Zver",
+      "undead": "Nemrtvi",
+      "brute": "Siledžija"
+    },
+    "language": "Jezik"
+  },
   "welcomeTutorial": {
     "eyebrow": "KAKO IGRATI · REGISTAR",
     "tip": "SAVET",

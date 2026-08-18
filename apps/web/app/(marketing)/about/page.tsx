@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { MarkdownBody } from '@/components/site/MarkdownBody';
-import { PageHero, PageShell } from '@/components/site/PageBits';
+import { PageShell } from '@/components/site/PageBits';
+import { SiteDocHero } from '@/components/site/SitePageHero';
 import { getSingleton } from '@/lib/content';
 
 export const metadata: Metadata = {
@@ -13,11 +14,7 @@ export default function AboutPage() {
   const doc = getSingleton('about');
   return (
     <PageShell>
-      <PageHero
-        eyebrow="THE PROJECT"
-        title={doc?.title ?? 'About'}
-        description={doc?.description}
-      />
+      <SiteDocHero page="about" title={doc?.title} description={doc?.description} />
       {doc ? <MarkdownBody content={doc.body} /> : null}
     </PageShell>
   );

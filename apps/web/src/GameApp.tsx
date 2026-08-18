@@ -22,7 +22,6 @@ import type { RunState } from '@dark-fantasy/shared/types/run';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
 import { useScreenMusic } from '@/audio/useScreenMusic';
 import { AudioProvider } from '@/components/AudioProvider';
-import { LocaleProvider } from '@/i18n/LocaleProvider';
 import { useTranslation } from '@/i18n/useTranslation';
 import { SettingsMenu } from '@/components/SettingsMenu';
 import { BattleScreen } from '@/screens/BattleScreen';
@@ -677,10 +676,8 @@ function GameShell() {
 
 export function GameApp() {
   return (
-    <LocaleProvider>
-      <AudioProvider>
-        <GameShell />
-      </AudioProvider>
-    </LocaleProvider>
+    <AudioProvider>
+      <GameShell />
+    </AudioProvider>
   );
 }

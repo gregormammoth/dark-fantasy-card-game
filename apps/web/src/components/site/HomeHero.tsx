@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from '@/i18n/useTranslation';
 import { siteConfig } from '@/lib/site';
 
 const EMBERS = Array.from({ length: 16 }, (_, i) => ({
@@ -13,6 +14,7 @@ const EMBERS = Array.from({ length: 16 }, (_, i) => ({
 }));
 
 export function HomeHero() {
+  const { t } = useTranslation();
   const imageRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const scrollRef = useRef(0);
@@ -108,7 +110,7 @@ export function HomeHero() {
       <div className="relative z-[3] mx-auto w-full max-w-[1400px] px-6 lg:px-10">
         <div className="flex max-w-[660px] flex-col gap-[22px]">
           <p className="animate-[floatUp_.7s_ease-out_both] text-xs tracking-[0.34em] text-ember-400">
-            DARK FANTASY DECKBUILDER
+            {t('site.hero.eyebrow')}
           </p>
           <h1
             className="font-cinzel text-[56px] leading-[0.98] font-bold tracking-[0.02em] text-[#f3e6d6] sm:text-[72px] lg:text-[88px]"
@@ -117,28 +119,27 @@ export function HomeHero() {
             {siteConfig.name.toUpperCase()}
           </h1>
           <p className="animate-[floatUp_.8s_.16s_ease-out_both] text-lg leading-relaxed text-[#cabfae]">
-            Escape Hollowfort Prison. Grow five classes, spend crowns, pick a faction, and burn
-            through enemies one card at a time — your deck is your life.
+            {t('site.hero.subtitle')}
           </p>
           <div className="mt-2 flex flex-wrap gap-4 animate-[floatUp_.8s_.24s_ease-out_both]">
             <Link
               href="/play"
               className="rounded-[10px] bg-[linear-gradient(180deg,#f0cd7e,#c9a24a)] px-[30px] py-4 font-cinzel text-[13px] tracking-[0.14em] text-[#1a1208] shadow-[0_18px_40px_-14px_rgba(201,162,74,.55)] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:scale-[1.02] hover:brightness-[1.08] hover:shadow-[0_22px_46px_-12px_rgba(201,162,74,.7)]"
             >
-              PLAY NOW
+              {t('site.hero.play')}
             </Link>
             <Link
               href="/lore"
               className="rounded-[10px] border border-[rgba(201,162,74,.4)] px-[30px] py-4 font-cinzel text-[13px] tracking-[0.14em] text-[#e8ddcf] transition-[border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-ember-400 hover:text-[#f3e2d6]"
             >
-              READ THE LORE
+              {t('site.hero.lore')}
             </Link>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-[30px] left-1/2 z-[3] flex -translate-x-1/2 animate-[drift_3.2s_ease-in-out_infinite] flex-col items-center gap-2 opacity-60">
-        <span className="text-[10px] tracking-[0.3em] text-[#c7bba9]">SCROLL</span>
+        <span className="text-[10px] tracking-[0.3em] text-[#c7bba9]">{t('site.hero.scroll')}</span>
         <div className="h-9 w-px bg-[linear-gradient(180deg,#e0b552,transparent)]" />
       </div>
     </section>

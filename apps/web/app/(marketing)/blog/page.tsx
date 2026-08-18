@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { ContentCard, PageHero, PageShell } from '@/components/site/PageBits';
+import { ContentCard, PageShell } from '@/components/site/PageBits';
+import { SiteIndexHero } from '@/components/site/SitePageHero';
 import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
@@ -12,11 +13,7 @@ export default function BlogPage() {
   const docs = getDocs('blog');
   return (
     <PageShell>
-      <PageHero
-        eyebrow="DISPATCHES"
-        title="Blog"
-        description="Build notes from the prison slice and the Beta ship."
-      />
+      <SiteIndexHero page="blog" />
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map((doc) => (
           <ContentCard

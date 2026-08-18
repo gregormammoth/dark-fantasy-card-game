@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { ContentCard, PageHero, PageShell } from '@/components/site/PageBits';
+import { ContentCard, PageShell } from '@/components/site/PageBits';
+import { SiteIndexHero } from '@/components/site/SitePageHero';
 import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
@@ -12,11 +13,7 @@ export default function RegionsPage() {
   const docs = getDocs('regions');
   return (
     <PageShell>
-      <PageHero
-        eyebrow="THE REALM"
-        title="Regions"
-        description="Hollowfort Prison is the Beta region — sixteen authored rooms, not a procedural blur."
-      />
+      <SiteIndexHero page="regions" />
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map((doc) => (
           <ContentCard

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { ContentCard, PageHero, PageShell } from '@/components/site/PageBits';
+import { ContentCard, PageShell } from '@/components/site/PageBits';
+import { SiteIndexHero } from '@/components/site/SitePageHero';
 import { getDocs } from '@/lib/content';
 
 export const metadata: Metadata = {
@@ -12,11 +13,7 @@ export default function PatchNotesPage() {
   const docs = getDocs('patch-notes');
   return (
     <PageShell>
-      <PageHero
-        eyebrow="CHANGES"
-        title="Patch Notes"
-        description="Release-by-release notes for the platform and game."
-      />
+      <SiteIndexHero page="patchNotes" />
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map((doc) => (
           <ContentCard
