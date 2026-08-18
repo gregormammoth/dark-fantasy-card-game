@@ -1,6 +1,7 @@
 import type { LocationNpc, NpcShopService } from '@dark-fantasy/shared/types/exploration';
 import { canBuyShopService } from '@dark-fantasy/game-engine';
 import type { ExplorationContext } from '@dark-fantasy/shared/types/exploration';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { MessageKey } from '@/i18n/types';
 import { getNpcName, getNpcTag } from '@/lib/contentLabels';
@@ -48,18 +49,13 @@ export function NpcDialogModal({
       <div className="flex w-full max-w-[640px] animate-[modalIn_.18s_ease-out] overflow-hidden rounded-2xl border border-[rgba(91,134,196,.4)] bg-[linear-gradient(180deg,#131720,#0e1015)] shadow-[0_40px_90px_-20px_#000]">
         <div className="relative w-[230px] shrink-0 bg-[#0a0d13]">
           {npc.image ? (
-            <img
-              src={npc.image}
-              alt=""
-              className="h-full w-full object-cover object-top"
-              draggable={false}
-            />
+            <CharacterPortrait src={npc.image} className="h-full w-full min-h-[280px]" />
           ) : (
             <div className="flex h-full items-center justify-center font-cinzel text-[48px] text-[#cfe0fa]">
               {npcName.charAt(0)}
             </div>
           )}
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_65%,rgba(19,23,32,.9)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent_65%,rgba(19,23,32,.9)_100%)]" />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-[rgba(91,134,196,.2)] bg-[linear-gradient(180deg,rgba(91,134,196,.14),transparent)] px-6 py-5">

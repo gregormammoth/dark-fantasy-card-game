@@ -184,11 +184,10 @@ export function LocationDetailPanel({
             className="flex items-center gap-3 rounded-[5px] border-l-[3px] border-[#5b86c4] bg-[rgba(91,134,196,.1)] px-3 py-2.5"
           >
             {npc.image ? (
-              <img
+              <CharacterPortrait
                 src={npc.image}
-                alt=""
-                className="h-[52px] w-[52px] shrink-0 rounded-full border border-[rgba(91,134,196,.4)] object-cover object-top"
-                draggable={false}
+                className="h-[52px] w-[52px] shrink-0 rounded-full border border-[rgba(91,134,196,.4)]"
+                expandable={false}
               />
             ) : null}
             <div className="flex-1">

@@ -21,10 +21,17 @@ const enemyModelFallbacks = [
   'fat_prisoner',
   'butcher',
   'knight',
-  'demon',
   'inquisitor',
   'prison_warden',
   'resurrected_anarchist',
+] as const;
+
+const npcModelFallbacks = [
+  'dead_anarchist',
+  'sorcerer',
+  'smuggler',
+  'executioner',
+  'guard_captain',
 ] as const;
 
 const nextConfig: NextConfig = {
@@ -47,6 +54,10 @@ const nextConfig: NextConfig = {
         ...enemyModelFallbacks.map((name) => ({
           source: `/characters/${name}.glb`,
           destination: '/characters/enemy.glb',
+        })),
+        ...npcModelFallbacks.map((name) => ({
+          source: `/characters/${name}.glb`,
+          destination: '/characters/npc.glb',
         })),
       ],
     };

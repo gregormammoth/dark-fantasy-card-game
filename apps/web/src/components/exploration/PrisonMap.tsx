@@ -701,7 +701,15 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                       {isCurrent ? (
                         <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} />
                       ) : (
-                        <span className="block h-full w-full bg-[linear-gradient(180deg,rgba(214,68,58,.35),#120908)]" />
+                        <span
+                          className="block h-full w-full"
+                          style={{
+                            background:
+                              occupant.border === '#8fb0e0'
+                                ? 'linear-gradient(180deg,rgba(91,134,196,.35),#120908)'
+                                : 'linear-gradient(180deg,rgba(214,68,58,.35),#120908)',
+                          }}
+                        />
                       )}
                     </span>
                 )}

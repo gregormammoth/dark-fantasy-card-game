@@ -78,7 +78,7 @@
             "They buried me for a revolution I never finished. Seems I'm needed again.",
             "The Warden still gives orders from his tower, dead or not. Kill him, and this fortress falls apart."
           ],
-          "image": "/characters/dead_anarchist.png",
+          "image": "/characters/dead_anarchist.glb",
           "talked": false,
           "grantsQuestId": "kill_warden"
         }
@@ -142,7 +142,7 @@
             "The Inquisitor still sits on the other half of this ritual in the chapel.",
             "Kill him, and the wards stop answering to anyone but me. The corridor is yours."
           ],
-          "image": "/characters/sorcerer.png",
+          "image": "/characters/sorcerer.glb",
           "talked": false,
           "grantsQuestId": "gather_ritual_ingredients",
           "requiresFlag": "ritual_demon_cleared"
@@ -211,7 +211,7 @@
             "Shield patch or a shot of focus — pick one. I don't do charity.",
             "You want to walk out of Hollowfort, you'll pay for the privilege of standing."
           ],
-          "image": "/characters/smuggler.png",
+          "image": "/characters/smuggler.glb",
           "talked": false,
           "shopServices": [
             { "id": "restore_shield", "cost": 6, "effect": "restoreShield" },
@@ -303,7 +303,7 @@
             "That barred door into the Dining Hall? Staff keyring's on the hook. Take it.",
             "Three doors past the courtyard: chapel, tower, political wing. Pick your poison."
           ],
-          "image": "/characters/executioner.png",
+          "image": "/characters/executioner.glb",
           "talked": false
         }
       ],
@@ -412,7 +412,7 @@
             "The Resurrected Anarchist is stirring up the political wing. Put him down before he leads a real uprising.",
             "Chapel, tower, political wing — choose your door. The others seal the moment you do."
           ],
-          "image": "/characters/guard_captain.png",
+          "image": "/characters/guard_captain.glb",
           "talked": false,
           "grantsQuestId": "kill_resurrected_anarchist"
         }
@@ -521,7 +521,7 @@
             "Funny — I only wanted my own freedom. Seems I bought everyone's.",
             "Go on. The gate's yours now."
           ],
-          "image": "/characters/dead_anarchist.png",
+          "image": "/characters/dead_anarchist.glb",
           "talked": false,
           "requiresFlag": "boss_warden_defeated"
         },
@@ -535,7 +535,7 @@
             "Whatever this fortress becomes now, it won't be his design.",
             "The gate is open. I have no further use for it."
           ],
-          "image": "/characters/sorcerer.png",
+          "image": "/characters/sorcerer.glb",
           "talked": false,
           "requiresFlag": "boss_inquisitor_defeated"
         },
@@ -549,7 +549,7 @@
             "I kept my word. The gate is yours, prisoner.",
             "Go — before I remember what you are."
           ],
-          "image": "/characters/guard_captain.png",
+          "image": "/characters/guard_captain.glb",
           "talked": false,
           "requiresFlag": "boss_anarchist_defeated"
         }

@@ -21,6 +21,16 @@ export const PLAYER_PORTRAIT = PLAYER_GENDER_PORTRAITS.man.warrior;
 
 export const DEFAULT_ENEMY_PORTRAIT = '/characters/enemy.glb';
 
+export const DEFAULT_NPC_PORTRAIT = '/characters/npc.glb';
+
+export const NPC_MODEL_FALLBACKS = [
+  'dead_anarchist',
+  'sorcerer',
+  'smuggler',
+  'executioner',
+  'guard_captain',
+] as const;
+
 export const PLAYER_MODEL_FALLBACKS = [
   'player_fighter',
   'player_rogue',
@@ -49,6 +59,7 @@ export const ENEMY_MODEL_FALLBACKS = [
 
 const PLAYER_MODEL_NAMES = new Set<string>(['player', ...PLAYER_MODEL_FALLBACKS]);
 const ENEMY_MODEL_NAMES = new Set<string>(['enemy', ...ENEMY_MODEL_FALLBACKS]);
+const NPC_MODEL_NAMES = new Set<string>(['npc', ...NPC_MODEL_FALLBACKS]);
 
 export function resolveCharacterModelSrc(src: string): string {
   const file = src.split('/').pop()?.split('?')[0] ?? src;
@@ -57,6 +68,9 @@ export function resolveCharacterModelSrc(src: string): string {
     return `/characters/${name}.glb`;
   }
   if (ENEMY_MODEL_NAMES.has(name)) {
+    return `/characters/${name}.glb`;
+  }
+  if (NPC_MODEL_NAMES.has(name)) {
     return `/characters/${name}.glb`;
   }
   return src;

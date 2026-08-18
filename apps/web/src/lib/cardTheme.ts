@@ -1,4 +1,5 @@
 import type { CardClass, CardDefinition, CardType } from '@dark-fantasy/shared/types/card';
+import { NPC_MODEL_FALLBACKS } from '@dark-fantasy/content/portraits';
 import type { TranslateFn, MessageKey } from '@/i18n/types';
 
 export interface ClassTheme {
@@ -79,6 +80,22 @@ export function getClassFromPortraitSrc(src: string): CardClass | undefined {
   return undefined;
 }
 
+export const npcTheme: ClassTheme = {
+  label: 'NPC',
+  border: 'rgba(143,176,224,.45)',
+  accent: '#8fb0e0',
+  badge: 'rgba(91,134,196,.92)',
+  glow: 'rgba(143,176,224,.55)',
+};
+
+const NPC_PORTRAIT_NAMES = new Set<string>(['npc', ...NPC_MODEL_FALLBACKS]);
+
+export function isNpcPortraitSrc(src: string): boolean {
+  const file = src.split('/').pop()?.split('?')[0] ?? '';
+  const name = file.replace(/\.(png|glb|gltf)$/i, '');
+  return NPC_PORTRAIT_NAMES.has(name);
+}
+
 export function getPortraitAccent(src: string, classId?: CardClass): string {
   if (classId) {
     return classThemes[classId].accent;
@@ -86,6 +103,9 @@ export function getPortraitAccent(src: string, classId?: CardClass): string {
   const playerClass = getClassFromPortraitSrc(src);
   if (playerClass) {
     return classThemes[playerClass].accent;
+  }
+  if (isNpcPortraitSrc(src)) {
+    return npcTheme.accent;
   }
   return enemyTheme.accent;
 }
