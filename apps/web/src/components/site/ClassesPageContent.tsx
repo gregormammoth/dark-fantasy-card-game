@@ -6,6 +6,7 @@ import { SiteIndexHero } from '@/components/site/SitePageHero';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { MessageKey } from '@/i18n/types';
 import { homeClassShowcase } from '@/lib/site';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 
 export function ClassesPageContent() {
   const { t } = useTranslation();
@@ -21,10 +22,10 @@ export function ClassesPageContent() {
             style={{ border: `1px solid ${item.borderColor}` }}
           >
             <div className="relative h-[200px]">
-              <img src={item.image} alt="" className="h-full w-full object-cover object-top" />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(12,9,8,.94))]" />
+              <CharacterPortrait src={item.image} className="h-full w-full" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(12,9,8,.94))]" />
               <div
-                className="absolute bottom-3.5 left-5 font-cinzel text-xl tracking-[0.06em]"
+                className="pointer-events-none absolute bottom-3.5 left-5 font-cinzel text-xl tracking-[0.06em]"
                 style={{ color: item.color }}
               >
                 {t(`classes.${item.id}` as MessageKey)}

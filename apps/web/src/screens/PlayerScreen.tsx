@@ -24,6 +24,7 @@ import {
   toggleDeckCard,
 } from '@dark-fantasy/game-engine';
 import { ClaimBadge } from '@/components/ClaimBadge';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { DeckSwapPicker } from '@/components/player/DeckSwapPicker';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
@@ -454,11 +455,7 @@ export function PlayerScreen({
             <div className="-mt-px flex gap-[22px] rounded-md border border-[rgba(201,162,74,.28)] bg-[linear-gradient(180deg,#1a1512,#110d0b)] px-6 py-5">
               <div className="relative shrink-0">
                 <div className="h-[130px] w-[104px] overflow-hidden rounded">
-                  <img
-                    src={playerPortrait}
-                    alt=""
-                    className="h-full w-full object-cover object-top"
-                  />
+                  <CharacterPortrait src={playerPortrait} className="h-full w-full" />
                 </div>
                 <div className="pointer-events-none absolute inset-0 rounded border border-[rgba(201,162,74,.5)]" />
               </div>
@@ -1226,10 +1223,9 @@ function InventoryTab({
             })}
           </div>
           <div className="relative h-[340px] w-[180px] overflow-hidden rounded border border-[rgba(201,162,74,.2)] bg-[#0c0908]">
-            <img
+            <CharacterPortrait
               src={portrait}
-              alt=""
-              className="h-full w-full object-cover object-top opacity-90"
+              className="h-full w-full opacity-90"
             />
           </div>
           <div className="flex flex-col gap-2.5">

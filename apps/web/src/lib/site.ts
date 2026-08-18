@@ -44,7 +44,7 @@ export const homeClassShowcase = [
     color: '#5b86c4',
     borderColor: 'rgba(91,134,196,.35)',
     glow: 'rgba(91,134,196,.35)',
-    image: '/characters/player_fighter.png',
+    image: '/characters/player_fighter.glb',
   },
   {
     id: 'rogue',
@@ -52,7 +52,7 @@ export const homeClassShowcase = [
     color: '#6fb681',
     borderColor: 'rgba(74,150,94,.35)',
     glow: 'rgba(74,150,94,.35)',
-    image: '/characters/player_rogue.png',
+    image: '/characters/player_rogue.glb',
   },
   {
     id: 'wizard',
@@ -60,7 +60,7 @@ export const homeClassShowcase = [
     color: '#9b83d9',
     borderColor: 'rgba(122,90,190,.35)',
     glow: 'rgba(122,90,190,.35)',
-    image: '/characters/player_wizard.png',
+    image: '/characters/player_wizard.glb',
   },
   {
     id: 'survivor',
@@ -68,7 +68,7 @@ export const homeClassShowcase = [
     color: '#e0524a',
     borderColor: 'rgba(224,82,74,.35)',
     glow: 'rgba(224,82,74,.35)',
-    image: '/characters/player_survivor.png',
+    image: '/characters/player_survivor.glb',
   },
   {
     id: 'seeker',
@@ -76,7 +76,7 @@ export const homeClassShowcase = [
     color: '#c9a24a',
     borderColor: 'rgba(201,162,74,.35)',
     glow: 'rgba(201,162,74,.35)',
-    image: '/characters/player.png',
+    image: '/characters/player.glb',
   },
 ] as const;
 

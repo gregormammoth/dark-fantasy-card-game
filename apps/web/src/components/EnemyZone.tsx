@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { PoisonState } from '@dark-fantasy/shared/types/battle';
 import { useTranslation } from '@/i18n/useTranslation';
+import { CharacterPortrait } from './CharacterPortrait';
 import { CardStack } from './CardStack';
 import { PoisonIcon, ShieldIcon } from './EffectIcons';
 
@@ -79,11 +80,7 @@ export function EnemyZone({
     >
       <div className="animate-breathe relative">
         <div className="relative h-[308px] w-[236px] overflow-hidden rounded-[14px] bg-[#120908]">
-          <img
-            src={portrait}
-            alt=""
-            className="h-full w-full object-cover object-top"
-          />
+          <CharacterPortrait src={portrait} className="h-full w-full" />
         </div>
         <div
           className="pointer-events-none absolute inset-[-2px] rounded-[16px] border border-[rgba(214,68,58,.4)]"

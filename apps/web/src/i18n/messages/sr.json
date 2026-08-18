@@ -42,7 +42,8 @@
     "genderWoman": "žena",
     "submit": "POČNI BEŽANJE",
     "submitting": "UPIS U REGISTAR…",
-    "apiError": "Registar nije dostupan. Pokreni API i pokušaj ponovo."
+    "apiError": "Registar nije dostupan. Pokreni API i pokušaj ponovo.",
+    "viewFigure": "Pogledaj lik"
   },
   "world": {
     "chooseRegion": "Izaberi region za istraživanje",

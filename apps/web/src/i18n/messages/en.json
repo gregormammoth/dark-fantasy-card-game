@@ -42,7 +42,8 @@
     "genderWoman": "woman",
     "submit": "BEGIN ESCAPE",
     "submitting": "ENTERING THE REGISTRY…",
-    "apiError": "The registry is unavailable. Start the API and try again."
+    "apiError": "The registry is unavailable. Start the API and try again.",
+    "viewFigure": "View character"
   },
   "world": {
     "chooseRegion": "Choose a region to explore",

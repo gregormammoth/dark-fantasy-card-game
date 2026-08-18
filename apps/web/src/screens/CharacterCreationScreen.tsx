@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
 import { TourModal } from '@/components/tour/TourModal';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { useTranslation } from '@/i18n/useTranslation';
 import { isCharacterCoachSeen, markCharacterCoachSeen } from '@/lib/tour';
 
@@ -58,12 +59,11 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
         className="relative grid w-full max-w-[980px] overflow-hidden rounded-xl border border-[rgba(201,162,74,.28)] bg-[linear-gradient(145deg,rgba(25,20,17,.98),rgba(10,8,7,.99))] shadow-[0_30px_90px_rgba(0,0,0,.65)] md:grid-cols-[1.05fr_.95fr]"
       >
         <section className="relative min-h-[560px] overflow-hidden border-b border-[rgba(201,162,74,.2)] md:border-r md:border-b-0">
-          <img
+          <CharacterPortrait
             src={PLAYER_GENDER_PORTRAITS[gender].warrior}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(9,7,6,.55)_70%,#090706_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(9,7,6,.55)_70%,#090706_100%)]" />
         </section>
 
         <section className="flex flex-col justify-center px-7 py-10 sm:px-10">
@@ -90,25 +90,27 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
             {(['woman', 'man'] as const).map((option) => {
               const selected = gender === option;
               return (
-                <button
+                <div
                   key={option}
-                  type="button"
-                  onClick={() => setGender(option)}
-                  className="flex h-14 items-center gap-3 rounded-md border px-3 text-left transition"
+                  className="flex h-14 items-center gap-3 rounded-md border px-3"
                   style={{
                     borderColor: selected ? '#c9a24a' : 'rgba(201,162,74,.2)',
                     background: selected ? 'rgba(201,162,74,.1)' : '#0d0a09',
                   }}
                 >
-                  <img
+                  <CharacterPortrait
                     src={PLAYER_GENDER_PORTRAITS[option].warrior}
-                    alt=""
-                    className="h-10 w-8 rounded-sm object-cover object-top"
+                    className="h-10 w-8 overflow-hidden rounded-sm"
+                    onPreview={() => setGender(option)}
                   />
-                  <span className="font-cinzel text-xs tracking-[.12em] text-[#ddd0c1] uppercase">
+                  <button
+                    type="button"
+                    onClick={() => setGender(option)}
+                    className="flex-1 text-left font-cinzel text-xs tracking-[.12em] text-[#ddd0c1] uppercase"
+                  >
                     {option === 'woman' ? t('character.genderWoman') : t('character.genderMan')}
-                  </span>
-                </button>
+                  </button>
+                </div>
               );
             })}
           </div>

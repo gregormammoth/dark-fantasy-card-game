@@ -99,12 +99,12 @@ describe('deck-driven player portrait', () => {
     const deck = [...wizardIds, ...rogueIds.slice(0, 1)];
 
     expect(getDominantDeckClass(deck)).toBe('wizard');
-    expect(getPlayerPortraitForDeck(deck)).toBe('/characters/player_wizard.png');
+    expect(getPlayerPortraitForDeck(deck)).toBe('/characters/player_wizard.glb');
   });
 
   it('falls back to warrior for an empty deck', () => {
     expect(getDominantDeckClass([])).toBe('warrior');
-    expect(getPlayerPortraitForDeck([])).toBe('/characters/player_fighter.png');
+    expect(getPlayerPortraitForDeck([])).toBe('/characters/player_fighter.glb');
   });
 
   it('includes seeker cards in the starter deck', () => {

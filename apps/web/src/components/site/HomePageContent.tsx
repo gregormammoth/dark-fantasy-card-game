@@ -5,6 +5,7 @@ import { HomeHero } from '@/components/site/HomeHero';
 import { ParallaxFrame } from '@/components/site/ParallaxFrame';
 import { RevealOnScroll } from '@/components/site/RevealOnScroll';
 import { TiltCard } from '@/components/site/TiltCard';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { MessageKey } from '@/i18n/types';
 import {
@@ -94,7 +95,7 @@ export function HomePageContent() {
                 borderColor={item.borderColor}
               >
                 <div className="relative h-[220px]">
-                  <img src={item.image} alt="" className="h-full w-full object-cover object-top" />
+                  <CharacterPortrait src={item.image} className="h-full w-full" expandable={false} />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(12,9,8,.92))]" />
                   <div
                     className="absolute bottom-3.5 left-[18px] font-cinzel text-xl tracking-[0.06em]"

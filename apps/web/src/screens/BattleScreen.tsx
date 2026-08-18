@@ -11,6 +11,7 @@ import { useAudio } from '@/audio/useAudio';
 import { useGameAudio } from '@/audio/useGameAudio';
 import { useGameOverAudio } from '@/audio/useGameOverAudio';
 import { Combo } from '@/components/Combo';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { ComboPreviewPanel } from '@/components/ComboPreviewPanel';
 import { BattlePlayAnimation } from '@/components/BattlePlayAnimation';
 import { BattleResultModal } from '@/components/BattleResultModal';
@@ -330,11 +331,7 @@ export function BattleScreen({
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="relative">
             <div className="h-40 w-[118px] overflow-hidden rounded-[11px] border border-[rgba(201,162,74,.5)] bg-[#151009]">
-              <img
-                src={battle.player.portrait}
-                alt=""
-                className="h-full w-full object-cover object-top"
-              />
+              <CharacterPortrait src={battle.player.portrait} className="h-full w-full" />
             </div>
           </div>
           <div>

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { CardInstance } from '@dark-fantasy/shared/types/card';
 import type { PoisonState } from '@dark-fantasy/shared/types/battle';
 import { useTranslation } from '@/i18n/useTranslation';
+import { CharacterPortrait } from './CharacterPortrait';
 import { CardStack } from './CardStack';
 import { Hand } from './Hand';
 import { EndTurnButton } from './EndTurnButton';
@@ -74,11 +75,7 @@ export function PlayerZone({
       <div className="flex shrink-0 items-end gap-4">
         <div className="relative">
           <div className="h-[200px] w-[152px] overflow-hidden rounded-[13px] bg-[#151009]">
-            <img
-              src={portrait}
-              alt=""
-              className="h-full w-full object-cover object-top"
-            />
+            <CharacterPortrait src={portrait} className="h-full w-full" />
           </div>
           <div
             className="pointer-events-none absolute inset-0 rounded-[13px] border border-[rgba(201,162,74,.5)]"
