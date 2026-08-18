@@ -19,7 +19,7 @@ export const PLAYER_CLASS_PORTRAITS = PLAYER_GENDER_PORTRAITS.man;
 
 export const PLAYER_PORTRAIT = PLAYER_GENDER_PORTRAITS.man.warrior;
 
-export const DEFAULT_ENEMY_PORTRAIT = '/characters/prisoner.png';
+export const DEFAULT_ENEMY_PORTRAIT = '/characters/enemy.glb';
 
 export const PLAYER_MODEL_FALLBACKS = [
   'player_fighter',
@@ -32,3 +32,32 @@ export const PLAYER_MODEL_FALLBACKS = [
   'player_woman_wizard',
   'player_woman_survivor',
 ] as const;
+
+export const ENEMY_MODEL_FALLBACKS = [
+  'prisoner',
+  'giant_rat',
+  'crazy_prisoner',
+  'guard',
+  'fat_prisoner',
+  'butcher',
+  'knight',
+  'demon',
+  'inquisitor',
+  'prison_warden',
+  'resurrected_anarchist',
+] as const;
+
+const PLAYER_MODEL_NAMES = new Set<string>(['player', ...PLAYER_MODEL_FALLBACKS]);
+const ENEMY_MODEL_NAMES = new Set<string>(['enemy', ...ENEMY_MODEL_FALLBACKS]);
+
+export function resolveCharacterModelSrc(src: string): string {
+  const file = src.split('/').pop()?.split('?')[0] ?? src;
+  const name = file.replace(/\.(png|glb|gltf)$/i, '');
+  if (PLAYER_MODEL_NAMES.has(name)) {
+    return `/characters/${name}.glb`;
+  }
+  if (ENEMY_MODEL_NAMES.has(name)) {
+    return `/characters/${name}.glb`;
+  }
+  return src;
+}

@@ -21,6 +21,7 @@ import {
   getQuestName,
 } from '@/lib/contentLabels';
 import { translateQuestMarkHint } from '@/lib/explorationText';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { useTranslation } from '@/i18n/useTranslation';
 
 const LOOT_IMAGES: Record<string, string> = {
@@ -213,11 +214,10 @@ export function LocationDetailPanel({
         {activeEnemy && showInfo && (
           <div className="flex items-center gap-3 rounded-[5px] border-l-[3px] border-[#d6443a] bg-[rgba(214,68,58,.1)] px-3 py-2.5">
             {activeEnemy.image ? (
-              <img
+              <CharacterPortrait
                 src={activeEnemy.image}
-                alt=""
-                className="h-[52px] w-[52px] shrink-0 rounded-[5px] border border-[rgba(224,82,74,.4)] object-cover object-top"
-                draggable={false}
+                className="h-[52px] w-[52px] shrink-0 rounded-[5px] border border-[rgba(224,82,74,.4)]"
+                expandable={false}
               />
             ) : (
               <span className="relative flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[5px] border border-[#ff6a5c] bg-[rgba(120,16,14,.9)]">

@@ -19,7 +19,7 @@ import {
   syncInstanceCounterFromCards,
 } from './deck';
 import { resetLogCounter, appendLog } from './battleLog';
-import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { DEFAULT_ENEMY_PORTRAIT, resolveCharacterModelSrc } from '@dark-fantasy/content/portraits';
 import { createInitialProgression, normalizeProgression } from './progression/xp';
 import { createInitialLoadout, getPlayerPortraitForDeck } from './progression/loadout';
 import { reconcilePlayerCardPiles } from './playerPiles';
@@ -149,7 +149,7 @@ export function createInitialBattle(
     enemy: {
       id: enemyOverride?.id,
       name: enemyOverride?.name ?? battleData.enemy.name,
-      portrait: enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT,
+      portrait: resolveCharacterModelSrc(enemyOverride?.portrait ?? DEFAULT_ENEMY_PORTRAIT),
       shield: Math.min(Math.max(0, enemyStartingShield), enemyMaxShield),
       maxShield: enemyMaxShield,
       barrier: 0,

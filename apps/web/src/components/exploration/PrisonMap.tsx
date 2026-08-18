@@ -25,6 +25,7 @@ import {
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
 import { isNpcAvailable, locationHasQuestMark } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { getPlayerPortraitForDeck } from '@dark-fantasy/game-engine';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { CrownsIcon, ManaOrbIcon, ShieldBadgeIcon } from '@/components/EffectIcons';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocationName } from '@/lib/contentLabels';
@@ -693,26 +694,20 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                   </span>
                 )}
                 {occupant && (
-                  <span
-                    className="pointer-events-none absolute -right-[9px] -top-[11px] z-[6] h-[56px] w-[44px] rotate-[7deg] overflow-hidden rounded-md border-2 bg-[#0c0908] shadow-[0_8px_18px_-6px_rgba(0,0,0,.85),0_0_0_1px_rgba(0,0,0,.4)]"
-                    style={{ borderColor: occupant.border }}
-                  >
-                    <img
-                      src={occupant.image}
-                      alt=""
-                      className="h-full w-full object-cover object-top"
-                      draggable={false}
-                    />
-                  </span>
+                    <span
+                      className="pointer-events-none absolute -right-[9px] -top-[11px] z-[6] h-[56px] w-[44px] rotate-[7deg] overflow-hidden rounded-md border-2 bg-[#120908] shadow-[0_8px_18px_-6px_rgba(0,0,0,.85),0_0_0_1px_rgba(0,0,0,.4)]"
+                      style={{ borderColor: occupant.border }}
+                    >
+                      {isCurrent ? (
+                        <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} />
+                      ) : (
+                        <span className="block h-full w-full bg-[linear-gradient(180deg,rgba(214,68,58,.35),#120908)]" />
+                      )}
+                    </span>
                 )}
                 {isCurrent && showInfo && (
-                  <span className="pointer-events-none absolute -bottom-4 -left-3 z-[7] h-[76px] w-[60px] -rotate-[8deg] overflow-hidden rounded-md border-2 border-[#e0b552] bg-[#0c0908] shadow-[0_16px_28px_-8px_rgba(0,0,0,.9),0_0_0_1px_rgba(0,0,0,.5),0_0_22px_-3px_rgba(224,181,82,.65)]">
-                    <img
-                      src={playerPortrait}
-                      alt=""
-                      className="h-full w-full object-cover object-top"
-                      draggable={false}
-                    />
+                  <span className="pointer-events-none absolute -bottom-4 -left-3 z-[7] h-[76px] w-[60px] -rotate-[8deg] overflow-hidden rounded-md border-2 border-[#e0b552] bg-[#120908] shadow-[0_16px_28px_-8px_rgba(0,0,0,.9),0_0_0_1px_rgba(0,0,0,.5),0_0_22px_-3px_rgba(224,181,82,.65)]">
+                    <CharacterPortrait src={playerPortrait} className="h-full w-full" expandable={false} />
                   </span>
                 )}
                 {isCurrent && (

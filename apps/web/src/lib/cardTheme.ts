@@ -80,8 +80,14 @@ export function getClassFromPortraitSrc(src: string): CardClass | undefined {
 }
 
 export function getPortraitAccent(src: string, classId?: CardClass): string {
-  const resolved = classId ?? getClassFromPortraitSrc(src);
-  return classThemes[resolved ?? 'seeker'].accent;
+  if (classId) {
+    return classThemes[classId].accent;
+  }
+  const playerClass = getClassFromPortraitSrc(src);
+  if (playerClass) {
+    return classThemes[playerClass].accent;
+  }
+  return enemyTheme.accent;
 }
 
 export function getCardTheme(definition: CardDefinition): ClassTheme {

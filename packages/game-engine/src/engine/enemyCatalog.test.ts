@@ -78,7 +78,7 @@ describe('enemy catalog', () => {
     const cellBlock = context.locations.cell_block;
     expect(cellBlock?.enemies).toHaveLength(1);
     expect(cellBlock?.enemies[0]?.name).toBe('Prisoner');
-    expect(cellBlock?.enemies[0]?.image).toBe('/characters/prisoner.png');
+    expect(cellBlock?.enemies[0]?.image).toBe('/characters/prisoner.glb');
     expect(cellBlock?.enemies[0]?.band).toBe('intro');
   });
 

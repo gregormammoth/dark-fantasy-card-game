@@ -1,6 +1,7 @@
 'use client';
 
 import type { EnemyDefinition } from '@dark-fantasy/shared/types/enemy';
+import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { PageShell } from '@/components/site/PageBits';
 import { SiteIndexHero } from '@/components/site/SitePageHero';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -21,8 +22,8 @@ export function EnemiesPageContent({ enemies }: { enemies: EnemyDefinition[] }) 
           >
             {enemy.image ? (
               <div className="relative h-[180px]">
-                <img src={enemy.image} alt="" className="h-full w-full object-cover object-top" />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(12,9,8,.94))]" />
+                <CharacterPortrait src={enemy.image} className="h-full w-full" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(12,9,8,.94))]" />
               </div>
             ) : null}
             <div className="px-5 py-5">

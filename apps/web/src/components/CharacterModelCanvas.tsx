@@ -127,3 +127,4 @@ export function CharacterModelCanvas({
 }
 
 useGLTF.preload('/characters/player.glb');
+useGLTF.preload('/characters/enemy.glb');

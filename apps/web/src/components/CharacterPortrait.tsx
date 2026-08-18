@@ -7,6 +7,7 @@ import { CharacterPreviewModal } from '@/components/CharacterPreviewModal';
 import { PortraitBackdrop } from '@/components/PortraitBackdrop';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getPortraitAccent } from '@/lib/cardTheme';
+import { resolveCharacterModelSrc } from '@dark-fantasy/content/portraits';
 
 const CharacterModelCanvas = dynamic(
   () => import('./CharacterModelCanvas').then((mod) => mod.CharacterModelCanvas),
@@ -53,8 +54,9 @@ export function CharacterPortrait({
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const accent = getPortraitAccent(src, classId);
-  const showBackdrop = isGlb(src);
+  const modelSrc = resolveCharacterModelSrc(src);
+  const accent = getPortraitAccent(modelSrc, classId);
+  const showBackdrop = isGlb(modelSrc);
 
   const frame = (
     <div className={`relative overflow-hidden ${className ?? ''}`} style={style}>
@@ -69,11 +71,11 @@ export function CharacterPortrait({
           className="absolute inset-0 z-[1] cursor-zoom-in"
           aria-label={t('character.viewFigure')}
         >
-          <PortraitMedia src={src} alt={alt} accent={accent} />
+          <PortraitMedia src={modelSrc} alt={alt} accent={accent} />
         </button>
       ) : (
         <div className="absolute inset-0 z-[1]">
-          <PortraitMedia src={src} alt={alt} accent={accent} />
+          <PortraitMedia src={modelSrc} alt={alt} accent={accent} />
         </div>
       )}
     </div>
@@ -83,7 +85,7 @@ export function CharacterPortrait({
     <>
       {frame}
       {open ? (
-        <CharacterPreviewModal src={src} accent={accent} onClose={() => setOpen(false)} />
+        <CharacterPreviewModal src={modelSrc} accent={accent} onClose={() => setOpen(false)} />
       ) : null}
     </>
   );

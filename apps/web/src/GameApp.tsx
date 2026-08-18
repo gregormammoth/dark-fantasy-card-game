@@ -33,7 +33,7 @@ import type { AppScreen } from '@dark-fantasy/shared/types/world';
 import worldMapData from '@dark-fantasy/content/worldMap.json';
 import type { WorldMapDefinition } from '@dark-fantasy/shared/types/world';
 import type { MusicScreen } from '@/audio/types';
-import { DEFAULT_ENEMY_PORTRAIT } from '@dark-fantasy/content/portraits';
+import { DEFAULT_ENEMY_PORTRAIT, resolveCharacterModelSrc } from '@dark-fantasy/content/portraits';
 import { trackEvent } from '@/lib/analytics';
 import { createPlayerProfile, loadPlayerProfile } from '@/lib/playerProfile';
 import { unclaimedCardChoices } from '@/data/playerProgress';
@@ -544,7 +544,7 @@ function GameShell() {
       enemy: {
         id: enemy.id,
         name: enemy.name,
-        portrait: enemy.image ?? DEFAULT_ENEMY_PORTRAIT,
+        portrait: resolveCharacterModelSrc(enemy.image ?? DEFAULT_ENEMY_PORTRAIT),
         band: enemy.band,
         group: enemy.group,
         ...resolveEnemyBattleProfile(enemy),
