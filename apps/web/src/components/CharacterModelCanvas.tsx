@@ -4,17 +4,21 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Box3, PerspectiveCamera, Vector3, type Group } from 'three';
+import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { classThemes } from '@/lib/cardTheme';
 
 function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
   const { scene } = useGLTF(src);
-  const cloned = useMemo(() => scene.clone(true), [scene]);
+  const cloned = useMemo(() => cloneSkeleton(scene), [scene]);
   const ref = useRef<Group>(null);
+  const timeRef = useRef(0);
 
   useFrame((_, delta) => {
-    if (rotate && ref.current) {
-      ref.current.rotation.y += delta * 0.22;
+    if (!rotate || !ref.current) {
+      return;
     }
+    timeRef.current += delta;
+    ref.current.rotation.y = Math.sin(timeRef.current * 0.65) * 0.32;
   });
 
   return (
@@ -98,7 +102,7 @@ export function CharacterModelCanvas({
     }
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: '80px' },
+      { rootMargin: '200px', threshold: 0 },
     );
     observer.observe(el);
     return () => observer.disconnect();

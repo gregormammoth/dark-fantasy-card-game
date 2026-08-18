@@ -78,12 +78,12 @@ export function EnemyZone({
       transition={{ duration: 0.4 }}
       className="grid grid-cols-[auto_1fr_auto] items-center gap-7 border-b border-[rgba(201,162,74,.12)] px-1.5 pt-3 pb-4"
     >
-      <div className="animate-breathe relative">
+      <div className="relative">
         <div className="relative h-[308px] w-[236px] overflow-hidden rounded-[14px] bg-[#120908]">
           <CharacterPortrait src={portrait} className="h-full w-full" />
         </div>
         <div
-          className="pointer-events-none absolute inset-[-2px] rounded-[16px] border border-[rgba(214,68,58,.4)]"
+          className="animate-breathe pointer-events-none absolute inset-[-2px] rounded-[16px] border border-[rgba(214,68,58,.4)]"
           style={{ boxShadow: 'inset 0 0 46px -10px rgba(190,50,45,.7)' }}
         />
         <EmberParticle left={26} size={5} color="#f0a24a" delay={0.3} duration={4.2} />
