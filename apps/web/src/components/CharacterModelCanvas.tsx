@@ -131,5 +131,6 @@ export function CharacterModelCanvas({
 }
 
 useGLTF.preload('/characters/player.glb');
+useGLTF.preload('/characters/player_woman.glb');
 useGLTF.preload('/characters/enemy.glb');
 useGLTF.preload('/characters/npc.glb');

@@ -6,7 +6,9 @@ const playerModelFallbacks = [
   'player_rogue',
   'player_wizard',
   'player_survivor',
-  'player_woman',
+] as const;
+
+const womanModelFallbacks = [
   'player_woman_fighter',
   'player_woman_rogue',
   'player_woman_wizard',
@@ -50,6 +52,10 @@ const nextConfig: NextConfig = {
         ...playerModelFallbacks.map((name) => ({
           source: `/characters/${name}.glb`,
           destination: '/characters/player.glb',
+        })),
+        ...womanModelFallbacks.map((name) => ({
+          source: `/characters/${name}.glb`,
+          destination: '/characters/player_woman.glb',
         })),
         ...enemyModelFallbacks.map((name) => ({
           source: `/characters/${name}.glb`,
