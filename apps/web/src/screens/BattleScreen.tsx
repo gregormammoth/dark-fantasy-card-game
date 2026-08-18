@@ -330,7 +330,7 @@ export function BattleScreen({
       <div className="flex min-h-screen items-center justify-center px-7 py-10 font-spectral text-[#e8ddcf]">
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="relative">
-            <div className="h-40 w-[118px] overflow-hidden rounded-[11px] border border-[rgba(201,162,74,.5)] bg-[#151009]">
+            <div className="h-40 w-[118px] overflow-hidden rounded-[11px] border border-[rgba(201,162,74,.5)] bg-[#f3eadc]">
               <CharacterPortrait src={battle.player.portrait} className="h-full w-full" />
             </div>
           </div>

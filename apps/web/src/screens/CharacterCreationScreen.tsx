@@ -62,8 +62,9 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
           <CharacterPortrait
             src={PLAYER_GENDER_PORTRAITS[gender].warrior}
             className="absolute inset-0 h-full w-full"
+            classId="warrior"
           />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(9,7,6,.55)_70%,#090706_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_62%,rgba(243,234,220,.35)_82%,rgba(243,234,220,.82)_100%)]" />
         </section>
 
         <section className="flex flex-col justify-center px-7 py-10 sm:px-10">
@@ -101,6 +102,7 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
                   <CharacterPortrait
                     src={PLAYER_GENDER_PORTRAITS[option].warrior}
                     className="h-10 w-8 overflow-hidden rounded-sm"
+                    classId="warrior"
                     onPreview={() => setGender(option)}
                   />
                   <button

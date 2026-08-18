@@ -3,7 +3,8 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Box3, PerspectiveCamera, Sphere, Vector3, type Group } from 'three';
+import { Box3, PerspectiveCamera, Vector3, type Group } from 'three';
+import { classThemes } from '@/lib/cardTheme';
 
 function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
   const { scene } = useGLTF(src);
@@ -41,22 +42,20 @@ function FittedScene({ src, controls }: { src: string; controls: boolean }) {
       return;
     }
     const center = box.getCenter(new Vector3());
-    const sphere = box.getBoundingSphere(new Sphere());
-    if (sphere.radius <= 0) {
-      return;
-    }
+    const boxSize = box.getSize(new Vector3());
     const vFov = (perspective.fov * Math.PI) / 180;
     const aspect = Math.max(perspective.aspect || size.width / Math.max(size.height, 1), 0.0001);
-    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
-    const distance =
-      Math.max(sphere.radius / Math.sin(vFov / 2), sphere.radius / Math.sin(hFov / 2)) * 1.18;
+    const distForHeight = boxSize.y / 2 / Math.tan(vFov / 2);
+    const distForWidth = boxSize.x / 2 / (Math.tan(vFov / 2) * aspect);
+    const padding = controls ? 1.02 : 1.08;
+    const distance = Math.max(distForHeight, distForWidth) * padding;
     perspective.position.set(center.x, center.y, center.z + distance);
     perspective.lookAt(center);
     perspective.near = Math.max(0.05, distance / 80);
     perspective.far = Math.max(40, distance * 40);
     perspective.updateProjectionMatrix();
     setTarget([center.x, center.y, center.z]);
-  }, [camera, size.height, size.width, src]);
+  }, [camera, controls, size.height, size.width, src]);
 
   return (
     <>
@@ -72,6 +71,8 @@ function FittedScene({ src, controls }: { src: string; controls: boolean }) {
           autoRotateSpeed={0.7}
           minPolarAngle={Math.PI * 0.28}
           maxPolarAngle={Math.PI * 0.58}
+          minDistance={0.6}
+          maxDistance={3.2}
         />
       ) : null}
     </>
@@ -81,9 +82,11 @@ function FittedScene({ src, controls }: { src: string; controls: boolean }) {
 export function CharacterModelCanvas({
   src,
   controls = false,
+  accent = classThemes.seeker.accent,
 }: {
   src: string;
   controls?: boolean;
+  accent?: string;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
@@ -102,18 +105,19 @@ export function CharacterModelCanvas({
   }, []);
 
   return (
-    <div ref={wrapRef} className="h-full w-full">
+    <div ref={wrapRef} className="h-full w-full bg-transparent">
       <Canvas
         className={`${controls ? '' : 'pointer-events-none '}h-full w-full`}
-        camera={{ fov: 28, near: 0.1, far: 40 }}
+        camera={{ fov: 26, near: 0.1, far: 40 }}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}
         frameloop={visible ? 'always' : 'never'}
       >
-        <ambientLight intensity={0.58} color="#f0e6d8" />
-        <directionalLight position={[2.2, 3.2, 2.1]} intensity={1.35} color="#f3e2c8" />
-        <directionalLight position={[-2.2, 1.1, 0.6]} intensity={0.38} color="#8a9bb8" />
-        <directionalLight position={[0.15, 1.7, -2.1]} intensity={0.55} color="#c9a24a" />
+        <hemisphereLight args={['#fff6ea', accent, 0.82]} />
+        <ambientLight intensity={0.38} color="#fff8ee" />
+        <directionalLight position={[2.2, 3.2, 2.4]} intensity={1.12} color="#fff4e4" />
+        <directionalLight position={[-2.4, 1.2, 0.8]} intensity={0.34} color={accent} />
+        <directionalLight position={[0.2, 2.1, -2.2]} intensity={0.48} color={accent} />
         <Suspense fallback={null}>
           <FittedScene src={src} controls={controls} />
         </Suspense>

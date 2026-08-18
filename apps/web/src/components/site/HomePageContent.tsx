@@ -95,7 +95,7 @@ export function HomePageContent() {
                 borderColor={item.borderColor}
               >
                 <div className="relative h-[220px]">
-                  <CharacterPortrait src={item.image} className="h-full w-full" expandable={false} />
+                  <CharacterPortrait src={item.image} className="h-full w-full" expandable={false} classId={item.id} />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(12,9,8,.92))]" />
                   <div
                     className="absolute bottom-3.5 left-[18px] font-cinzel text-xl tracking-[0.06em]"

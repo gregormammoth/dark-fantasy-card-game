@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
+import { PortraitBackdrop } from '@/components/PortraitBackdrop';
 import { useTranslation } from '@/i18n/useTranslation';
 
 const CharacterModelCanvas = dynamic(
@@ -15,9 +16,11 @@ function isGlb(src: string) {
 
 export function CharacterPreviewModal({
   src,
+  accent,
   onClose,
 }: {
   src: string;
+  accent: string;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
@@ -38,20 +41,29 @@ export function CharacterPreviewModal({
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-[90vh] w-[min(92vw,420px)] flex-col overflow-hidden rounded-lg border border-[rgba(201,162,74,.28)] bg-[linear-gradient(180deg,#161110,#0d0a09)] shadow-[0_50px_120px_-30px_#000]"
+        className="relative flex max-h-[90vh] w-[min(92vw,460px)] flex-col overflow-hidden rounded-lg shadow-[0_50px_120px_-30px_#000]"
+        style={{
+          border: `1px solid color-mix(in srgb, ${accent} 70%, #c9a24a)`,
+          boxShadow: `0 50px 120px -30px #000, 0 0 48px color-mix(in srgb, ${accent} 35%, transparent)`,
+        }}
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 text-[22px] leading-none text-[#8a7f72] transition hover:text-[#e8ddcf]"
+          className="absolute top-3 right-3 z-10 text-[22px] leading-none text-[#3d342c] transition hover:text-[#1a1208]"
           aria-label={t('common.close')}
         >
           ×
         </button>
-        <div className="h-[min(82vh,720px)] w-full bg-[#120908]">
+        <div className="relative h-[min(82vh,760px)] w-full">
           {isGlb(src) ? (
-            <CharacterModelCanvas src={src} controls />
+            <>
+              <PortraitBackdrop accent={accent} />
+              <div className="absolute inset-0 z-[1]">
+                <CharacterModelCanvas src={src} controls accent={accent} />
+              </div>
+            </>
           ) : (
             <img src={src} alt="" className="h-full w-full object-contain" />
           )}

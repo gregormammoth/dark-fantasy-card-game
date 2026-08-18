@@ -59,6 +59,31 @@ export function getClassLabel(classId: CardClass, t: TranslateFn): string {
   return t(`classes.${classId}` as MessageKey).toUpperCase();
 }
 
+export function getClassFromPortraitSrc(src: string): CardClass | undefined {
+  const file = src.split('/').pop()?.split('?')[0] ?? '';
+  if (file.includes('fighter')) {
+    return 'warrior';
+  }
+  if (file.includes('rogue')) {
+    return 'rogue';
+  }
+  if (file.includes('wizard')) {
+    return 'wizard';
+  }
+  if (file.includes('survivor')) {
+    return 'survivor';
+  }
+  if (file.startsWith('player.') || file.startsWith('player_woman.')) {
+    return 'seeker';
+  }
+  return undefined;
+}
+
+export function getPortraitAccent(src: string, classId?: CardClass): string {
+  const resolved = classId ?? getClassFromPortraitSrc(src);
+  return classThemes[resolved ?? 'seeker'].accent;
+}
+
 export function getCardTheme(definition: CardDefinition): ClassTheme {
   if (definition.class) {
     return classThemes[definition.class];

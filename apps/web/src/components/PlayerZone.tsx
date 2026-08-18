@@ -74,7 +74,7 @@ export function PlayerZone({
     >
       <div className="flex shrink-0 items-end gap-4">
         <div className="relative">
-          <div className="h-[200px] w-[152px] overflow-hidden rounded-[13px] bg-[#151009]">
+          <div className="h-[200px] w-[152px] overflow-hidden rounded-[13px] bg-[#f3eadc]">
             <CharacterPortrait src={portrait} className="h-full w-full" />
           </div>
           <div

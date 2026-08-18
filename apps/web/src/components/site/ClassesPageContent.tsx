@@ -22,7 +22,7 @@ export function ClassesPageContent() {
             style={{ border: `1px solid ${item.borderColor}` }}
           >
             <div className="relative h-[200px]">
-              <CharacterPortrait src={item.image} className="h-full w-full" />
+              <CharacterPortrait src={item.image} className="h-full w-full" classId={item.id} />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(12,9,8,.94))]" />
               <div
                 className="pointer-events-none absolute bottom-3.5 left-5 font-cinzel text-xl tracking-[0.06em]"

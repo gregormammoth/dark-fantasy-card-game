@@ -1222,10 +1222,10 @@ function InventoryTab({
               );
             })}
           </div>
-          <div className="relative h-[340px] w-[180px] overflow-hidden rounded border border-[rgba(201,162,74,.2)] bg-[#0c0908]">
+          <div className="relative h-[340px] w-[180px] overflow-hidden rounded border border-[rgba(201,162,74,.2)] bg-[#f3eadc]">
             <CharacterPortrait
               src={portrait}
-              className="h-full w-full opacity-90"
+              className="h-full w-full"
             />
           </div>
           <div className="flex flex-col gap-2.5">
