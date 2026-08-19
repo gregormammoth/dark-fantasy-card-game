@@ -7,7 +7,7 @@ import type {
 import { canMoveTo, getLocationStatus, isLocationLocked, isExitBlocked, isCorridorBlocked, isDiningHallPathBlocked } from '@dark-fantasy/game-engine/engine/exploration/map';
 import { isNpcAvailable, listQuestMarksForLocation } from '@dark-fantasy/game-engine/engine/exploration/quests';
 import { isEnemyAvailable } from '@dark-fantasy/game-engine/engine/exploration/locationEncounters';
-import { activityColors, locationTypeColors } from '@/lib/explorationTheme';
+import { activityColors } from '@/lib/explorationTheme';
 import {
   getEnemyName,
   getEnemyTier,
@@ -101,8 +101,11 @@ export function LocationDetailPanel({
       ];
 
   return (
-    <div className="absolute bottom-0 right-0 top-0 z-[15] flex w-[370px] animate-[slidein_.2s_ease-out] flex-col border-l border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,rgba(15,11,10,.97),rgba(9,7,6,.99))] shadow-[-30px_0_60px_-20px_rgba(0,0,0,.7)]">
-      <div className="relative h-[160px] shrink-0 overflow-hidden">
+    <div
+      className="absolute bottom-0 right-0 top-0 z-[15] flex w-[370px] animate-[slidein_.2s_ease-out] flex-col border-l border-[rgba(232,200,116,.3)]"
+      style={{ background: 'linear-gradient(180deg,rgba(20,34,56,.97),rgba(10,16,26,.99))', boxShadow: '-30px 0 60px -20px rgba(0,0,0,.8),0 0 40px -18px rgba(74,192,255,.35)' }}
+    >
+      <div className="relative h-[190px] shrink-0 overflow-hidden">
         {showInfo && location.image && (
           <img
             src={location.image}
@@ -111,11 +114,11 @@ export function LocationDetailPanel({
             draggable={false}
           />
         )}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,7,.2),rgba(9,7,6,.96))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,16,26,.15),rgba(9,7,6,.96))]" />
         <div className="absolute bottom-3.5 left-[22px]">
           <span
-            className="text-[10px] tracking-[.24em] [text-shadow:0_1px_4px_#000]"
-            style={{ color: locked ? '#5a534a' : locationTypeColors[location.type] }}
+            className="text-[10px] tracking-[.24em] text-[#e8c874] [text-shadow:0_1px_4px_#000]"
+            style={{ color: locked ? '#5c7086' : undefined }}
           >
             {locked
               ? t('location.branchSealed')
@@ -123,7 +126,7 @@ export function LocationDetailPanel({
                 ? getLocationSubtitle(location.id, t, location.subtitle).toUpperCase()
                 : t('location.unknownChamber')}
           </span>
-          <div className="mt-1 font-cinzel text-[22px] leading-tight text-[#f3ead8] [text-shadow:0_2px_8px_#000]">
+          <div className="mt-1 font-cinzel text-[22px] leading-tight text-[#fff6e0] [text-shadow:0_2px_8px_#000]">
             {locked
               ? t('location.sealed')
               : showInfo
@@ -134,7 +137,7 @@ export function LocationDetailPanel({
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
-        <p className="m-0 text-[13px] italic leading-relaxed text-[#c7bba9]">
+        <p className="m-0 text-[13px] italic leading-relaxed text-[#c2d0e0]">
           {locked
             ? t('location.branchLockedDesc')
             : showInfo
@@ -156,7 +159,7 @@ export function LocationDetailPanel({
 
         {showInfo && chips.length > 0 && (
           <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">{t('location.availableHere')}</span>
+            <span className="text-[9px] tracking-[.22em] text-[#7d93ad]">{t('location.availableHere')}</span>
             <div className="flex flex-wrap gap-2">
               {chips.map((chip, index) => (
                 <span
@@ -247,11 +250,12 @@ export function LocationDetailPanel({
         {showInfo && questCards.map((quest) => (
           <div
             key={quest.key}
-            className="flex flex-col gap-1.5 rounded-[5px] border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-4 py-3.5"
+            className="flex flex-col gap-1.5 rounded-[5px] px-4 py-3.5"
+            style={{ background: 'linear-gradient(160deg,rgba(20,34,56,.9),rgba(10,16,26,.95))', border: '1px solid rgba(232,200,116,.28)' }}
           >
-            <span className="font-cinzel text-[9px] tracking-[.2em] text-[#6b5a38]">{t('common.quest')}</span>
-            <div className="font-cinzel text-[14px] text-[#2b2116]">{quest.name}</div>
-            <div className="text-[12px] leading-relaxed text-[#3a2c1a]">
+            <span className="font-cinzel text-[9px] tracking-[.2em] text-[#7d93ad]">{t('common.quest')}</span>
+            <div className="font-cinzel text-[14px] text-[#eef3f8]">{quest.name}</div>
+            <div className="text-[12px] leading-relaxed text-[#9db4cc]">
               {quest.description}
             </div>
           </div>
@@ -259,7 +263,7 @@ export function LocationDetailPanel({
 
         {showInfo && unclaimedLoot.length > 0 && (
           <div className="flex flex-col gap-2">
-            <span className="text-[9px] tracking-[.22em] text-[#8a7f72]">{t('location.loot')}</span>
+            <span className="text-[9px] tracking-[.22em] text-[#7d93ad]">{t('location.loot')}</span>
             <div className="flex flex-wrap gap-2">
               {unclaimedLoot.map((loot) => {
                 const image = LOOT_IMAGES[loot.id];
@@ -297,20 +301,21 @@ export function LocationDetailPanel({
         )}
       </div>
 
-      <div className="flex gap-2.5 border-t border-[rgba(201,162,74,.14)] px-[22px] py-4">
+      <div className="flex gap-2.5 border-t border-[rgba(232,200,116,.14)] px-[22px] py-4">
         {canTravel && (
           <button
             type="button"
             disabled={context.hand.length <= 0}
             onClick={() => onTravel(location.id)}
-            className="flex-1 rounded-[5px] border border-[rgba(224,82,74,.6)] bg-[linear-gradient(180deg,rgba(224,82,74,.22),rgba(90,23,19,.3))] px-3 py-3 font-cinzel text-[13px] tracking-wider text-[#f3e2d6] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex-1 rounded-[8px] border border-[rgba(224,82,74,.6)] px-3 py-[13px] font-cinzel text-[13px] tracking-[.1em] text-[#fff2ee] transition hover:brightness-110 hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ background: 'linear-gradient(180deg,rgba(224,82,74,.28),rgba(90,23,19,.35))', boxShadow: '0 1px 0 rgba(255,255,255,.1) inset,0 14px 26px -12px rgba(0,0,0,.8)' }}
           >
             {t('location.travelHere')}
           </button>
         )}
         {isHere && (
-          <span className="flex-1 rounded-[5px] border border-[rgba(224,181,82,.4)] px-3 py-3 text-center text-[11px] tracking-wider text-[#e0b552]">
-            {t('location.youAreHere')}
+          <span className="flex-1 rounded-[8px] border border-[rgba(232,200,116,.15)] px-3 py-[13px] text-center font-cinzel text-[12px] tracking-[.1em] text-[#5c6a7a]">
+            ◆ {t('location.youAreHere')}
           </span>
         )}
         {!isHere && status === 'visited' && !canTravel && (
@@ -318,7 +323,8 @@ export function LocationDetailPanel({
             type="button"
             disabled={context.hand.length <= 0 || !canMoveTo(context, location.id)}
             onClick={() => onTravel(location.id)}
-            className="flex-1 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-transparent px-3 py-3 font-cinzel text-[12px] tracking-wider text-[#c9a24a] transition hover:border-[rgba(201,162,74,.7)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex-1 rounded-[8px] border border-[rgba(232,200,116,.35)] px-3 py-[13px] font-cinzel text-[12px] tracking-[.1em] text-[#e8c874] transition hover:border-[rgba(232,200,116,.8)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ background: 'linear-gradient(180deg,rgba(232,200,116,.12),rgba(0,0,0,.2))', boxShadow: '0 1px 0 rgba(255,255,255,.06) inset' }}
           >
             {t('location.returnHere')}
           </button>
@@ -326,7 +332,8 @@ export function LocationDetailPanel({
         <button
           type="button"
           onClick={onClose}
-          className="w-[46px] rounded-[5px] border border-[rgba(201,162,74,.24)] text-[#8a7f72] transition hover:text-[#e8ddcf]"
+          className="w-[46px] rounded-[8px] border border-[rgba(232,200,116,.24)] text-[#7d93ad] transition hover:border-[rgba(232,200,116,.5)] hover:text-[#eef3f8]"
+          style={{ background: 'linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.2))', boxShadow: '0 1px 0 rgba(255,255,255,.04) inset' }}
         >
           ✕
         </button>
@@ -335,9 +342,10 @@ export function LocationDetailPanel({
         <button
           type="button"
           onClick={onEscape}
-          className="mx-[22px] mb-5 w-[calc(100%-44px)] rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[linear-gradient(180deg,rgba(224,181,82,.2),rgba(90,68,19,.3))] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
+          className="mx-[22px] mb-5 block w-[calc(100%-44px)] rounded-[5px] border border-[rgba(232,200,116,.5)] px-3 py-3 text-center font-cinzel text-[12px] tracking-[.1em] text-[#f3e2d6] transition hover:brightness-110"
+          style={{ background: 'linear-gradient(180deg,rgba(232,200,116,.2),rgba(90,68,19,.3))' }}
         >
-          {t('location.escape')}
+          {t('location.escape')} →
         </button>
       )}
     </div>

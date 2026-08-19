@@ -493,11 +493,12 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
   return (
     <div
       ref={viewportRef}
-      className={`relative h-[660px] select-none overflow-hidden rounded-[14px] border border-[rgba(201,162,74,.18)] bg-[radial-gradient(1000px_700px_at_24%_10%,#241a14,#0c0908_68%)] ${
+      className={`relative h-[660px] select-none overflow-hidden rounded-[6px] border border-[rgba(232,200,116,.18)] ${
         dragging
           ? 'cursor-grabbing [&_[data-map-room]]:pointer-events-none'
           : 'cursor-grab'
       }`}
+      style={{ background: 'radial-gradient(1000px 700px at 24% 10%,#16283f,#060a14 68%),#060a14' }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
@@ -636,7 +637,7 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                       : status === 'visited' && !locked
                         ? `0 0 26px -6px ${color}99`
                         : 'none',
-                  background: '#1a1512',
+                  background: '#152540',
                 }}
               >
                 <div className="absolute inset-0 z-[1] overflow-hidden rounded-md">
@@ -735,18 +736,21 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
         className="pointer-events-none absolute left-5 top-4 z-[9] flex items-center justify-between transition-[right] duration-200"
         style={{ right: hasSelection ? 390 : 20 }}
       >
-        <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-[rgba(201,162,74,.25)] bg-[rgba(10,8,7,.72)] py-2 pl-2 pr-4">
+        <div
+          className="pointer-events-auto flex items-center gap-3 rounded-[40px] border border-[rgba(232,200,116,.3)] py-2 pl-2 pr-4"
+          style={{ background: 'linear-gradient(160deg,rgba(20,34,56,.85),rgba(10,16,26,.85))', boxShadow: '0 1px 0 rgba(255,255,255,.06) inset,0 14px 26px -14px rgba(0,0,0,.8)' }}
+        >
           <img
             src={playerPortrait}
             alt=""
-            className="h-[38px] w-[38px] rounded-full border border-[rgba(201,162,74,.35)] object-cover object-top"
+            className="h-[38px] w-[38px] rounded-full border border-[rgba(232,200,116,.35)] object-cover object-top"
             draggable={false}
           />
           <div className="flex flex-col gap-0.5">
-            <span className="font-cinzel text-[12px] tracking-wide text-[#e8ddcf]">
+            <span className="font-cinzel text-[12px] tracking-[.04em] text-[#eef3f8]">
               {playerName || t('exploration.unnamedPrisoner')}
             </span>
-            <div className="flex items-center gap-2.5 text-[11px] text-[#b7ab9c]">
+            <div className="flex items-center gap-2.5 text-[11px] text-[#9db4cc]">
               <span className="inline-flex items-center gap-1">
                 {t('exploration.actionsShort', {
                   remaining: context.hand.length,
@@ -761,23 +765,26 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                 <ManaOrbIcon className="h-[9px] w-[9px]" style={{ boxShadow: 'none' }} />
                 {context.mana ?? 0}/{context.maxMana ?? 0}
               </span>
-              <span className="inline-flex items-center gap-1 text-[#e0b552]">
+              <span className="inline-flex items-center gap-1 text-[#e8c874]">
                 <CrownsIcon className="h-[9px] w-[9px]" style={{ boxShadow: 'none' }} />
                 {context.money ?? 0}
               </span>
             </div>
           </div>
         </div>
-        <span className="font-cinzel text-[15px] tracking-[.34em] text-[#b8917f]">
+        <span
+          className="font-cinzel text-[15px] tracking-[.34em]"
+          style={{ background: 'linear-gradient(180deg,#fff6e0,#e8c874)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+        >
           {context.mapName.toUpperCase().replace(/\s+/g, '\u00a0')}
         </span>
-        <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">
+        <span className="text-[10px] tracking-[.18em] text-[#7d93ad]">
           {t('exploration.exploredCount', { visited: visitedCount, total: totalCount })}
         </span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[5px] border border-[rgba(201,162,74,.28)] bg-[rgba(10,8,7,.82)] p-2.5">
-        <span className="text-[8px] tracking-[.2em] text-[#8a7f72]">
+      <div className="pointer-events-none absolute bottom-5 left-5 z-[9] box-border h-[140px] w-[220px] rounded-[5px] border border-[rgba(232,200,116,.28)] bg-[rgba(10,16,26,.82)] p-2.5">
+        <span className="text-[8px] tracking-[.2em] text-[#7d93ad]">
           {t('exploration.mapRegionLabel')}
         </span>
         <div className="relative mt-1.5 h-[98px] w-full rounded-md border border-dashed border-[rgba(201,162,74,.2)]">

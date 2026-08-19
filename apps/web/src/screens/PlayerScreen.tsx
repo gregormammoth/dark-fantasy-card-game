@@ -387,7 +387,7 @@ export function PlayerScreen({
   const detailBtn = activeCard ? actionButton(activeCard) : null;
 
   return (
-    <div className="flex min-h-[100dvh] justify-center px-6 py-8 text-[#e8ddcf] sm:px-10">
+    <div className="player-screen-bg flex min-h-[100dvh] justify-center px-6 py-8 sm:px-10">
       <TourModal
         open={progressionTutorialOpen}
         onClose={closeProgressionTutorial}
@@ -415,12 +415,17 @@ export function PlayerScreen({
           <button
             type="button"
             onClick={onBack}
-            className="text-[12px] text-[#8a7f72] transition hover:text-[#e0b552]"
+            className="text-[12px] text-[#7d93ad] transition hover:text-[#f5dfa0]"
           >
             {backLabel}
           </button>
-          <span className="font-cinzel text-[16px] tracking-[.3em] text-[#b8917f]">{topLabel}</span>
-          <span className="text-[10px] tracking-[.18em] text-[#8a7f72]">{t('player.ledger')}</span>
+          <span
+            className="font-cinzel text-[15px] tracking-[.35em]"
+            style={{ background: 'linear-gradient(180deg,#f5dfa0,#c9a24a)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+          >
+            {topLabel}
+          </span>
+          <span className="text-[9px] tracking-[.2em] text-[#5c7086]">{t('player.ledger')}</span>
         </div>
 
         <div className="flex gap-2.5">
@@ -437,11 +442,13 @@ export function PlayerScreen({
                 key={id}
                 type="button"
                 onClick={() => setActiveTab(id)}
-                className="rounded-t-[4px] border border-b-0 px-[22px] py-[11px] font-cinzel text-[12px] tracking-[.14em] transition"
+                className="rounded-t-[8px] border px-7 py-[13px] font-cinzel text-[12px] tracking-[.16em] transition hover:-translate-y-[3px]"
                 style={{
-                  color: selected ? '#f0dfcb' : '#8a7f72',
-                  background: selected ? 'rgba(224,181,82,.12)' : 'transparent',
-                  borderColor: selected ? 'rgba(224,181,82,.5)' : 'rgba(201,162,74,.2)',
+                  color: selected ? '#fff6e0' : '#7d93ad',
+                  background: selected ? 'linear-gradient(160deg,rgba(232,200,116,.3),rgba(232,200,116,.06))' : 'linear-gradient(160deg,rgba(255,255,255,.03),rgba(0,0,0,.2))',
+                  borderColor: selected ? 'rgba(232,200,116,.6)' : 'rgba(232,200,116,.15)',
+                  borderBottomColor: 'rgba(232,200,116,.6)',
+                  boxShadow: selected ? '0 1px 0 rgba(255,255,255,.1) inset,0 -8px 22px -10px rgba(232,200,116,.5)' : '0 1px 0 rgba(255,255,255,.02) inset',
                 }}
               >
                 {label}
@@ -452,81 +459,115 @@ export function PlayerScreen({
 
         {activeTab === 'character' && (
           <>
-            <div className="-mt-px flex gap-[22px] rounded-md border border-[rgba(201,162,74,.28)] bg-[linear-gradient(180deg,#1a1512,#110d0b)] px-6 py-5">
+            <div
+              className="-mt-px relative flex gap-[26px] rounded-[12px] px-7 py-6"
+              style={{
+                border: '1px solid rgba(232,200,116,.35)',
+                background: 'linear-gradient(160deg,#142238,#0a1120)',
+                boxShadow: '0 1px 0 rgba(255,255,255,.06) inset,0 34px 70px -26px rgba(0,0,0,.9),0 0 50px -20px rgba(74,192,255,.35)',
+              }}
+            >
+              <span className="pointer-events-none absolute -left-[5px] -top-[5px] h-[10px] w-[10px] rotate-45 bg-[#e8c874] shadow-[0_0_8px_#e8c874]" />
+              <span className="pointer-events-none absolute -right-[5px] -top-[5px] h-[10px] w-[10px] rotate-45 bg-[#e8c874] shadow-[0_0_8px_#e8c874]" />
+              <span className="pointer-events-none absolute -bottom-[5px] -left-[5px] h-[10px] w-[10px] rotate-45 bg-[#e8c874] shadow-[0_0_8px_#e8c874]" />
+              <span className="pointer-events-none absolute -bottom-[5px] -right-[5px] h-[10px] w-[10px] rotate-45 bg-[#e8c874] shadow-[0_0_8px_#e8c874]" />
+
               <div className="relative shrink-0">
-                <div className="h-[130px] w-[104px] overflow-hidden rounded">
+                <div
+                  className="pointer-events-none absolute inset-[-10px] rounded-full border border-dashed border-[rgba(232,200,116,.4)]"
+                  style={{ animation: 'ringSpin 18s linear infinite' }}
+                />
+                <div
+                  className="relative h-[186px] w-[150px] overflow-hidden rounded-[10px]"
+                  style={{
+                    background: 'radial-gradient(120% 140% at 50% 15%,#3a6a94 0%,#1a3a5c 45%,#0c1830 100%)',
+                    boxShadow: '0 24px 44px -16px rgba(0,0,0,.85),0 0 34px -6px rgba(74,192,255,.45),0 0 0 1px rgba(232,200,116,.5),inset 0 0 0 1px rgba(255,255,255,.1)',
+                  }}
+                >
                   <CharacterPortrait src={playerPortrait} className="h-full w-full" />
+                  <div className="pointer-events-none absolute inset-0 rounded-[10px] border border-[rgba(232,200,116,.6)] shadow-[inset_0_0_30px_rgba(0,0,0,.5)]" />
                 </div>
-                <div className="pointer-events-none absolute inset-0 rounded border border-[rgba(201,162,74,.5)]" />
               </div>
-              <div className="flex flex-1 flex-col justify-center gap-2.5">
+
+              <div className="flex flex-1 flex-col justify-center gap-3">
                 <div>
-                  <div className="font-cinzel text-[22px] text-[#f0dfcb]">{profile.name}</div>
-                  <div className="mt-0.5 text-[12px] italic text-[#8a7f72]">{t('player.escapedFrom')}</div>
+                  <div
+                    className="font-cinzel text-[26px]"
+                    style={{ background: 'linear-gradient(180deg,#fff6e0,#e8c874)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+                  >
+                    {profile.name}
+                  </div>
+                  <div className="mt-0.5 text-[12px] text-[#7d93ad]">{t('player.escapedFrom')}</div>
                 </div>
-                <div className="flex flex-wrap gap-10">
-                  <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.build')}</div>
-                    <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {buildParts.length ? buildParts.join(' / ') : t('player.unaligned')}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.level')}</div>
-                    <div className="mt-1 flex items-center gap-2 font-cinzel text-[14px] leading-none text-[#c9a24a]">
-                      {playerLevel}
-                      {availableSkillPoints > 0 && (
-                        <ClaimBadge kind="level" count={availableSkillPoints} />
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.totalXp')}</div>
-                    <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {totalXp.toLocaleString()}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.deck')}</div>
-                    <div className="mt-1 font-cinzel text-[14px] text-[#e8ddcf]">
-                      {t('player.deckCount', { count: deck.length, cap: deckCap })}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-1">
-                  <div className="mb-1 flex items-baseline justify-between gap-2">
-                    <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">
-                      {t('player.level')}
-                    </span>
-                    <span className="text-[11px] text-[#8a7f72]">
-                      {t('player.playerLevelBar', {
-                        current: playerLevelProgress.current,
-                        total: playerLevelProgress.total,
-                      })}
-                    </span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-sm bg-[rgba(0,0,0,.4)]">
+                <div className="flex flex-wrap gap-3.5">
+                  {[
+                    { label: t('player.build'), value: buildParts.length ? buildParts.join(' / ') : t('player.unaligned'), color: '#eef3f8' },
+                    { label: t('player.level'), value: playerLevel, color: '#e8c874' },
+                    { label: t('player.totalXp'), value: totalXp.toLocaleString(), color: '#eef3f8' },
+                    { label: t('player.deck'), value: t('player.deckCount', { count: deck.length, cap: deckCap }), color: '#eef3f8' },
+                  ].map((chip) => (
                     <div
-                      className="h-full bg-[#c9a24a] transition-[width] duration-300"
-                      style={{ width: `${playerLevelPct}%` }}
-                    />
+                      key={chip.label}
+                      className="rounded-[8px] border px-4 py-2"
+                      style={{
+                        background: 'linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.25))',
+                        borderColor: 'rgba(232,200,116,.25)',
+                        boxShadow: '0 1px 0 rgba(255,255,255,.05) inset',
+                      }}
+                    >
+                      <div className="text-[8px] tracking-[.18em] text-[#5c7086]">{chip.label}</div>
+                      <div className="mt-[3px] font-cinzel text-[14px]" style={{ color: chip.color }}>
+                        {chip.value}
+                        {chip.label === t('player.level') && availableSkillPoints > 0 && (
+                          <ClaimBadge kind="level" count={availableSkillPoints} />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="mb-1.5 flex justify-between text-[10px] tracking-[.14em] text-[#5c7086]">
+                    <span>{t('player.level')} {playerLevel}</span>
+                    <span>{t('player.playerLevelBar', { current: playerLevelProgress.current, total: playerLevelProgress.total })}</span>
+                  </div>
+                  <div
+                    className="relative h-2 overflow-hidden rounded-[4px]"
+                    style={{ background: 'rgba(0,0,0,.5)', boxShadow: 'inset 0 2px 4px rgba(0,0,0,.6)' }}
+                  >
+                    <div
+                      className="relative h-full overflow-hidden"
+                      style={{ width: `${playerLevelPct}%`, background: 'linear-gradient(90deg,#c9922e,#e8c874)' }}
+                    >
+                      <div
+                        className="absolute inset-0 w-[40%]"
+                        style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)', animation: 'shimmerSweep 2.4s ease-in-out infinite' }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-1 flex flex-wrap items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.2)] bg-[rgba(0,0,0,.2)] px-4 py-3">
-              <span className="text-[9px] tracking-[.2em] text-[#8a7f72]">{t('player.skills')}</span>
-              <div className="flex flex-1 flex-wrap gap-2">
+            <div
+              className="flex flex-wrap items-center gap-2.5 rounded-[10px] px-[22px] py-3.5 transition hover:-translate-y-[2px]"
+              style={{
+                border: `1px solid ${availableSkillPoints > 0 ? 'rgba(232,200,116,.7)' : 'rgba(232,200,116,.25)'}`,
+                background: 'linear-gradient(160deg,#142238,#0a1120)',
+                boxShadow: availableSkillPoints > 0
+                  ? '0 1px 0 rgba(255,255,255,.08) inset,0 16px 30px -18px rgba(0,0,0,.8),0 0 26px -6px rgba(232,200,116,.65)'
+                  : '0 1px 0 rgba(255,255,255,.06) inset,0 16px 30px -18px rgba(0,0,0,.8)',
+              }}
+            >
+              <span className="shrink-0 text-[9px] tracking-[.2em] text-[#5c7086]">{t('player.skills')}</span>
+              <div className="flex flex-1 flex-wrap gap-2.5">
                 {PLAYER_SKILL_IDS.map((skillId) => (
                   <span
                     key={skillId}
-                    className="group relative rounded-[5px] border border-transparent px-2 py-1 text-[12px] text-[#e8ddcf] transition duration-150 hover:border-[rgba(224,181,82,.7)] hover:bg-[rgba(224,181,82,.14)]"
+                    className="group relative flex items-center gap-[7px] rounded-[20px] border border-[rgba(74,192,255,.25)] bg-[rgba(74,192,255,.08)] px-3 py-1.5"
                   >
-                    <span className="text-[#8a7f72]">{t(SKILL_LABEL_KEYS[skillId])}</span>
-                    {' '}
-                    <span className="font-cinzel text-[#c9a24a]">{progression.skills[skillId]}</span>
-                    <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-1.5 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#161110] px-2.5 py-1.5 text-[11px] leading-snug text-[#d8cbb8] shadow-[0_12px_28px_-10px_#000] group-hover:block">
+                    <span className="text-[11px] text-[#9db4cc]">{t(SKILL_LABEL_KEYS[skillId])}</span>
+                    <span className="font-cinzel text-[12px] text-[#4ac0ff]">{progression.skills[skillId]}</span>
+                    <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-1.5 hidden w-max max-w-[240px] -translate-x-1/2 rounded-[6px] border border-[rgba(201,162,74,.4)] bg-[#0a1120] px-2.5 py-1.5 text-[11px] leading-snug text-[#d8cbb8] shadow-[0_12px_28px_-10px_#000] group-hover:block">
                       {t(SKILL_DESC_KEYS[skillId])}
                     </span>
                   </span>
@@ -536,15 +577,18 @@ export function PlayerScreen({
                 <button
                   type="button"
                   onClick={() => setLevelUpOpen(true)}
-                  className="claim-glow inline-flex items-center gap-1.5 rounded-[5px] border border-[rgba(224,181,82,.5)] bg-[rgba(224,181,82,.12)] px-3 py-1.5 font-cinzel text-[11px] leading-none tracking-[.12em] text-[#e0b552] transition hover:brightness-110"
+                  className="shrink-0 rounded-[20px] px-3.5 py-[7px] font-cinzel text-[10px] tracking-[.1em] text-[#1a1208] transition"
+                  style={{
+                    background: 'linear-gradient(180deg,#f5dfa0,#c9922e)',
+                    animation: 'pulseGlow 1.8s ease-in-out infinite',
+                  }}
                 >
-                  {t('player.chooseSkill')}
-                  <ClaimBadge kind="level" count={availableSkillPoints} />
+                  +{availableSkillPoints} {t('player.chooseSkill')}
                 </button>
               )}
             </div>
 
-            <div className="mt-1 flex gap-2">
+            <div className="flex gap-2.5">
               {PLAYER_CLASSES.map((classId) => {
                 const theme = classThemes[classId];
                 const earned = getClassXp(progression, classId);
@@ -558,33 +602,43 @@ export function PlayerScreen({
                     key={classId}
                     type="button"
                     onClick={() => setSelectedClassId(classId)}
-                    className="flex flex-1 flex-col gap-[7px] rounded-[5px] border px-4 py-3 text-left transition hover:brightness-110"
+                    className="flex flex-1 flex-col gap-2.5 rounded-[10px] border p-4 text-left transition"
                     style={{
-                      background: selected ? `${theme.accent}14` : 'rgba(0,0,0,.2)',
-                      borderColor: selected ? theme.accent : 'rgba(201,162,74,.2)',
+                      background: selected ? `linear-gradient(160deg,${theme.accent}22,${theme.accent}08)` : 'linear-gradient(160deg,#142238,#0a1120)',
+                      borderColor: selected ? theme.accent : 'rgba(232,200,116,.18)',
+                      boxShadow: selected
+                        ? `0 1px 0 rgba(255,255,255,.1) inset,0 20px 36px -16px rgba(0,0,0,.9),0 0 20px -4px ${theme.accent}`
+                        : '0 1px 0 rgba(255,255,255,.04) inset,0 12px 22px -14px rgba(0,0,0,.7)',
                     }}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="flex items-center gap-[7px]">
-                        <span
-                          className="font-cinzel text-[14px] leading-none tracking-wide"
-                          style={{ color: theme.accent }}
-                        >
-                          {getClassLabel(classId, t)}
-                        </span>
-                        {unclaimedCount > 0 && (
-                          <ClaimBadge kind="card" count={unclaimedCount} accent={theme.accent} />
-                        )}
-                      </span>
-                      <span className="shrink-0 text-[11px] text-[#8a7f72]">
-                        {t('player.xpBar', { level, current: xpInto, total: XP_PER_LEVEL })}
-                      </span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-sm bg-[rgba(0,0,0,.4)]">
+                    <div className="flex items-center gap-2.5">
                       <div
-                        className="h-full transition-[width] duration-300"
-                        style={{ width: `${xpPct}%`, background: theme.accent }}
-                      />
+                        className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full"
+                        style={{ background: `conic-gradient(${theme.accent} ${xpPct}%, rgba(255,255,255,.08) 0)` }}
+                      >
+                        <div
+                          className="flex h-[26px] w-[26px] items-center justify-center rounded-full font-cinzel text-[11px]"
+                          style={{ background: '#0a1120', color: theme.accent }}
+                        >
+                          {level}
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-cinzel text-[13px] leading-none tracking-wide" style={{ color: theme.accent }}>
+                            {getClassLabel(classId, t)}
+                          </span>
+                          {unclaimedCount > 0 && (
+                            <span
+                              className="shrink-0 rounded-[3px] px-1.5 py-0.5 font-cinzel text-[9px]"
+                              style={{ background: theme.accent, color: '#0a1120' }}
+                            >
+                              +{unclaimedCount}
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-[#5c7086]">{xpInto}/{XP_PER_LEVEL} XP</div>
+                      </div>
                     </div>
                   </button>
                 );
@@ -592,15 +646,18 @@ export function PlayerScreen({
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="min-w-0 flex-1 rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
-                <div className="flex border-b border-[rgba(201,162,74,.28)] bg-[rgba(201,162,74,.06)] px-4 py-2.5">
+              <div
+                className="min-w-0 flex-1 overflow-hidden rounded-[10px]"
+                style={{ border: '1px solid rgba(232,200,116,.28)', background: 'linear-gradient(160deg,#142238,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.05) inset,0 28px 54px -24px rgba(0,0,0,.85)' }}
+              >
+                <div className="flex border-b border-[rgba(232,200,116,.28)] bg-[rgba(232,200,116,.06)] px-4 py-2.5">
                   <span className="w-12" />
-                  <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">{t('common.name')}</span>
-                  <span className="w-[90px] text-[10px] tracking-[.16em] text-[#8a7f72]">{t('player.typeHeader')}</span>
-                  <span className="w-[150px] text-[10px] tracking-[.16em] text-[#8a7f72]">
+                  <span className="flex-1 text-[10px] tracking-[.16em] text-[#7d93ad]">{t('common.name')}</span>
+                  <span className="w-[90px] text-[10px] tracking-[.16em] text-[#7d93ad]">{t('player.typeHeader')}</span>
+                  <span className="w-[150px] text-[10px] tracking-[.16em] text-[#7d93ad]">
                     {t('player.valueHeader')}
                   </span>
-                  <span className="w-[150px] text-right text-[10px] tracking-[.16em] text-[#8a7f72]">
+                  <span className="w-[150px] text-right text-[10px] tracking-[.16em] text-[#7d93ad]">
                     {t('player.statusHeader')}
                   </span>
                 </div>
@@ -647,7 +704,7 @@ export function PlayerScreen({
                           [selectedClassId]: definition.id,
                         }))
                       }
-                      className={`group/cardrow relative flex w-full items-center border-b border-[rgba(201,162,74,.08)] px-4 py-2 text-left transition hover:bg-[rgba(224,181,82,.1)]${
+                      className={`group/cardrow relative flex w-full items-center border-b border-[rgba(232,200,116,.08)] px-4 py-2 text-left transition hover:translate-x-1 hover:bg-[rgba(74,192,255,.08)]${
                         unlockable ? ' card-unlockable' : ''
                       }`}
                       style={{
@@ -719,10 +776,12 @@ export function PlayerScreen({
 
               {activeCard && detailBtn && (
                 <div
-                  className={`group/carddetail relative w-[300px] shrink-0 overflow-visible rounded-md bg-[linear-gradient(180deg,#181211,#100c0b)]${
+                  className={`group/carddetail relative w-[300px] shrink-0 overflow-visible rounded-[10px]${
                     activeStatus === 'available' ? ' card-unlockable-panel' : ''
                   }`}
                   style={{
+                    background: 'linear-gradient(160deg,#152540,#0a1120)',
+                    boxShadow: '0 1px 0 rgba(255,255,255,.05) inset,0 28px 54px -24px rgba(0,0,0,.85)',
                     border: `1px solid ${
                       activeStatus === 'available' ? selectedTheme.accent : `${selectedTheme.accent}55`
                     }`,
@@ -807,35 +866,52 @@ export function PlayerScreen({
               )}
             </div>
 
-            <div className="rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)] px-[22px] py-[18px]">
+            <div
+              className="rounded-[10px] px-[22px] py-[18px]"
+              style={{ border: '1px solid rgba(232,200,116,.24)', background: 'linear-gradient(160deg,#142238,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.05) inset,0 22px 44px -22px rgba(0,0,0,.8)' }}
+            >
               <div className="mb-3 flex items-baseline justify-between">
-                <span className="font-cinzel text-[14px] tracking-[.1em] text-[#e8ddcf]">
+                <span className="font-cinzel text-[14px] tracking-[.1em] text-[#eef3f8]">
                   {t('player.currentDeck')}
                 </span>
-                <span className="text-[12px] text-[#8a7f72]">
+                <span className="text-[12px] text-[#7d93ad]">
                   {t('player.currentDeckCount', { count: deck.length, cap: deckCap })}
                 </span>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-[9px]">
                 {PLAYER_CLASSES.map((classId) => {
                   const theme = classThemes[classId];
                   const count = deckByClass[classId];
                   const pct = deckCap > 0 ? Math.round((count / deckCap) * 100) : 0;
+                  const glow = theme.accent + '80';
                   return (
                     <div key={classId} className="flex items-center gap-3">
                       <span
-                        className="w-[150px] font-cinzel text-[12px]"
-                        style={{ color: theme.accent }}
+                        className="w-[70px] font-cinzel text-[12px]"
+                        style={{ color: theme.accent, textShadow: `0 0 10px ${theme.accent}` }}
                       >
                         {getClassLabel(classId, t)}
                       </span>
-                      <div className="h-2 flex-1 overflow-hidden rounded-[2px] bg-[rgba(0,0,0,.4)]">
+                      <div
+                        className="h-[13px] flex-1 overflow-hidden rounded-[7px]"
+                        style={{ background: 'rgba(0,0,0,.55)', boxShadow: 'inset 0 2px 5px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03)' }}
+                      >
                         <div
-                          className="h-full"
-                          style={{ width: `${pct}%`, background: theme.accent }}
-                        />
+                          className="relative h-full overflow-hidden rounded-[7px]"
+                          style={{
+                            width: `${pct}%`,
+                            background: `linear-gradient(90deg,${theme.accent}bb,${theme.accent})`,
+                            boxShadow: `0 0 16px ${glow},0 0 3px ${glow} inset`,
+                          }}
+                        >
+                          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg,rgba(255,255,255,.5),transparent 55%)' }} />
+                          <div
+                            className="absolute bottom-0 top-0 w-[35%]"
+                            style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent)', animation: 'shimmerSweep 2.8s ease-in-out infinite' }}
+                          />
+                        </div>
                       </div>
-                      <span className="w-11 text-right text-[12px] text-[#b7ab9c]">{count}</span>
+                      <span className="w-11 text-right font-cinzel text-[12px]" style={{ color: theme.accent }}>{count}</span>
                     </div>
                   );
                 })}
@@ -963,7 +1039,7 @@ function QuestsTab({
       </div>
 
       <div className="flex items-start gap-4">
-        <div className="w-[340px] shrink-0 overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
+        <div className="w-[340px] shrink-0 overflow-hidden rounded-[10px]" style={{ border: '1px solid rgba(232,200,116,.24)', background: 'linear-gradient(160deg,#142238,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.05) inset,0 26px 50px -24px rgba(0,0,0,.85)' }}>
           {allQuests.length === 0 && (
             <p className="m-0 px-4 py-5 text-[12px] text-[#8a7f72]">{t('player.noQuestsYet')}</p>
           )}
@@ -1010,37 +1086,42 @@ function QuestsTab({
           })}
         </div>
 
-        <div className="flex-1 rounded-md border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] px-[34px] py-[30px] shadow-[inset_0_0_40px_-10px_rgba(60,45,20,.5)]">
+        <div
+          className="relative flex-1 rounded-[10px] px-[34px] py-[30px]"
+          style={{ border: '1px solid rgba(232,200,116,.35)', background: 'linear-gradient(160deg,#152540,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.06) inset,0 30px 60px -24px rgba(0,0,0,.9)' }}
+        >
           {selectedQuest ? (
             <>
-              <div className="text-[10px] tracking-[.2em] text-[#6b5a38]">
+              <div className="text-[10px] tracking-[.2em] text-[#5c7086]">
                 {questLocationLabel(selectedQuest, t)}
               </div>
-              <div className="mt-1.5 font-cinzel text-[24px] text-[#2b2116]">
+              <div
+                className="mt-1.5 font-cinzel text-[24px]"
+                style={{ background: 'linear-gradient(180deg,#fff6e0,#e8c874)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+              >
                 {getQuestName(selectedQuest.id, t, selectedQuest.name)}
               </div>
               <div
                 className="mt-2 font-cinzel text-[11px] tracking-[.12em]"
-                style={{
-                  color: selectedQuest.status === 'completed' ? '#3f6b4a' : '#8a5a1a',
-                }}
+                style={{ color: selectedQuest.status === 'completed' ? '#5fd68a' : '#4ac0ff' }}
               >
                 {selectedQuest.status === 'completed' ? t('common.completed') : t('common.inProgress')}
               </div>
-              <div className="my-4 h-px bg-[rgba(60,45,20,.25)]" />
-              <p className="m-0 text-[14px] leading-relaxed text-[#3a2c1a]">
+              <div className="my-4 h-px bg-[rgba(232,200,116,.18)]" />
+              <p className="m-0 text-[14px] leading-relaxed text-[#c2d0e0]">
                 {getQuestDescription(selectedQuest.id, t, selectedQuest.description)}
               </p>
               {steps && steps.length > 0 && (
-                <div className="mt-5 flex flex-col gap-2.5">
+                <div className="mt-5 flex flex-col gap-[11px]">
                   {steps.map((step) => (
                     <div key={step.id} className="flex items-center gap-2.5">
                       <span
-                        className="flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[3px] border text-[11px]"
+                        className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] border-[1.5px] text-[11px]"
                         style={{
-                          borderColor: step.done ? '#3f6b4a' : '#8a744a',
-                          background: step.done ? 'rgba(63,107,74,.15)' : 'transparent',
-                          color: step.done ? '#3f6b4a' : '#8a744a',
+                          borderColor: step.done ? '#5fd68a' : '#8a94a6',
+                          background: step.done ? 'rgba(95,214,138,.15)' : 'transparent',
+                          color: step.done ? '#5fd68a' : '#8a94a6',
+                          boxShadow: step.done ? '0 0 8px rgba(95,214,138,.5)' : 'none',
                         }}
                       >
                         {step.done ? '✓' : ''}
@@ -1048,7 +1129,7 @@ function QuestsTab({
                       <span
                         className="text-[13px]"
                         style={{
-                          color: step.done ? '#5a6b4a' : '#3a2c1a',
+                          color: step.done ? '#6f8a7a' : '#c2d0e0',
                           textDecoration: step.done ? 'line-through' : 'none',
                         }}
                       >
@@ -1060,7 +1141,7 @@ function QuestsTab({
               )}
             </>
           ) : (
-            <p className="m-0 text-[14px] text-[#3a2c1a]">{t('player.noQuestSelected')}</p>
+            <p className="m-0 text-[14px] text-[#7d93ad]">{t('player.noQuestSelected')}</p>
           )}
         </div>
       </div>
@@ -1128,14 +1209,17 @@ function InventoryTab({
           })}
         </div>
 
-        <div className="overflow-hidden rounded-md border border-[rgba(201,162,74,.24)] bg-[linear-gradient(180deg,#161110,#100c0b)]">
-          <div className="flex border-b border-[rgba(201,162,74,.28)] bg-[rgba(201,162,74,.06)] px-4 py-2.5">
+        <div
+          className="overflow-hidden rounded-[10px]"
+          style={{ border: '1px solid rgba(232,200,116,.24)', background: 'linear-gradient(160deg,#142238,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.05) inset,0 26px 50px -24px rgba(0,0,0,.85)' }}
+        >
+          <div className="flex border-b border-[rgba(232,200,116,.28)] bg-[rgba(232,200,116,.06)] px-4 py-2.5">
             <span className="w-[46px]" />
-            <span className="w-[180px] text-[10px] tracking-[.16em] text-[#8a7f72]">{t('common.name')}</span>
-            <span className="flex-1 text-[10px] tracking-[.16em] text-[#8a7f72]">
+            <span className="w-[180px] text-[10px] tracking-[.16em] text-[#7d93ad]">{t('common.name')}</span>
+            <span className="flex-1 text-[10px] tracking-[.16em] text-[#7d93ad]">
               {t('common.description')}
             </span>
-            <span className="w-[160px] text-right text-[10px] tracking-[.16em] text-[#8a7f72]">
+            <span className="w-[160px] text-right text-[10px] tracking-[.16em] text-[#7d93ad]">
               {t('player.questProgress')}
             </span>
           </div>
@@ -1193,7 +1277,10 @@ function InventoryTab({
         )}
       </div>
 
-      <div className="w-[440px] shrink-0 overflow-hidden rounded-md border border-[rgba(201,162,74,.28)] bg-[linear-gradient(180deg,#1a1512,#110d0b)]">
+        <div
+          className="w-[440px] shrink-0 overflow-hidden rounded-[10px]"
+          style={{ border: '1px solid rgba(232,200,116,.28)', background: 'linear-gradient(160deg,#142238,#0a1120)', boxShadow: '0 1px 0 rgba(255,255,255,.06) inset,0 30px 60px -24px rgba(0,0,0,.9)' }}
+        >
         <div className="flex items-center justify-center gap-3.5 px-[18px] py-5">
           <div className="flex flex-col gap-2.5">
             {[0, 1, 2, 3, 4, 5].map((index) => {
@@ -1222,7 +1309,10 @@ function InventoryTab({
               );
             })}
           </div>
-          <div className="relative h-[340px] w-[180px] overflow-hidden rounded border border-[rgba(201,162,74,.2)] bg-[#f3eadc]">
+          <div
+            className="relative h-[298px] w-[158px] overflow-hidden rounded-[10px]"
+            style={{ background: 'radial-gradient(120% 130% at 50% 12%,#3a6a94 0%,#1a3a5c 45%,#0c1830 100%)', boxShadow: '0 26px 48px -18px rgba(0,0,0,.9),0 0 0 1px rgba(232,200,116,.5),inset 0 0 0 1px rgba(255,255,255,.1)' }}
+          >
             <CharacterPortrait
               src={portrait}
               className="h-full w-full"

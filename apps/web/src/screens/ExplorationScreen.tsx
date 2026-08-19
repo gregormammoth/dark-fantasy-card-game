@@ -151,6 +151,7 @@ export function ExplorationScreen({
 
   if (isIdle) {
     return (
+      <div className="player-screen-bg min-h-screen w-full">
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
         <div className="text-[11px] tracking-[.3em] text-[#c9a24a]">{t('exploration.locationMap')}</div>
         <h1 className="font-cinzel text-4xl text-[#f3ead8]">{t('exploration.prisonTitle')}</h1>
@@ -170,37 +171,44 @@ export function ExplorationScreen({
           {t('exploration.enterPrison')}
         </button>
       </div>
+      </div>
     );
   }
 
   return (
+    <div className="player-screen-bg min-h-screen w-full">
     <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-3.5 px-5 py-6">
       <ExplorationToasts toasts={toasts} onDismiss={dismissToast} />
       <ExplorationTutorialModal open={tutorialOpen} onClose={closeTutorial} />
       <div className="relative flex items-center justify-between gap-3">
-        <span className="font-cinzel text-[14px] tracking-[.28em] text-[#b8917f]">
+        <span
+          className="font-cinzel text-[15px] tracking-[.34em]"
+          style={{ background: 'linear-gradient(180deg,#fff6e0,#e8c874)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+        >
           {t('exploration.header')}
         </span>
-        <span className="font-mono text-[10px] tracking-wider text-[#8a7f72]">
+        <span className="font-mono text-[10px] tracking-[.18em] text-[#7d93ad]">
           {t('exploration.seedLabel', { seed: context.rng.seed })}
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => setTutorialOpen(true)}
             title={t('explorationTutorial.helpTitle')}
-            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] font-cinzel text-[13px] text-[#e0b552] transition hover:border-[#e0b552] hover:text-[#f0dfcb]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(232,200,116,.4)] font-cinzel text-[13px] text-[#fff6e0] transition hover:-translate-y-[2px] hover:border-[#e8c874] hover:shadow-[0_0_20px_-6px_rgba(232,200,116,.6)]"
+            style={{ background: 'linear-gradient(160deg,rgba(232,200,116,.22),rgba(232,200,116,.05))', boxShadow: '0 1px 0 rgba(255,255,255,.08) inset,0 10px 20px -12px rgba(0,0,0,.7)' }}
           >
             ?
           </button>
           <button
             type="button"
             onClick={() => setQuestLogOpen((open) => !open)}
-            className="relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.3)] bg-[rgba(10,8,7,.72)] px-3.5 py-2 font-cinzel text-[11px] tracking-[.12em] text-[#e0b552] transition hover:border-[rgba(201,162,74,.7)]"
+            className="relative flex items-center gap-2 rounded-[8px] border border-[rgba(232,200,116,.4)] px-4 py-[9px] font-cinzel text-[11px] tracking-[.12em] text-[#fff6e0] transition hover:-translate-y-[2px] hover:border-[rgba(232,200,116,.8)]"
+            style={{ background: 'linear-gradient(160deg,rgba(232,200,116,.22),rgba(232,200,116,.05))', boxShadow: '0 1px 0 rgba(255,255,255,.08) inset,0 10px 20px -12px rgba(0,0,0,.7)' }}
           >
             {t('exploration.questLog')}
             {activeQuests.length > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0b552] px-1 text-[10px] text-[#1a1208]">
+              <span className="flex min-w-[16px] items-center justify-center rounded-[5px] px-1 py-0 font-cinzel text-[10px] text-[#1a1208] shadow-[0_0_8px_rgba(232,200,116,.6)]" style={{ height: 16, background: 'linear-gradient(180deg,#f5dfa0,#c9922e)' }}>
                 {activeQuests.length}
               </span>
             )}
@@ -209,9 +217,10 @@ export function ExplorationScreen({
             <button
               type="button"
               onClick={onOpenPlayer}
-              className={`relative flex items-center gap-2 rounded-[5px] border border-[rgba(201,162,74,.35)] bg-[rgba(10,8,7,.85)] px-3 py-2 font-cinzel text-[11px] leading-none tracking-[.18em] text-[#e0b552] transition hover:brightness-110${
+              className={`relative flex items-center gap-2 rounded-[8px] border border-[rgba(232,200,116,.4)] px-4 py-[9px] font-cinzel text-[11px] tracking-[.12em] text-[#fff6e0] transition hover:-translate-y-[2px] hover:border-[rgba(232,200,116,.8)]${
                 unclaimedSkillCount > 0 || unclaimedCardCount > 0 ? ' claim-glow' : ''
               }`}
+              style={{ background: 'linear-gradient(160deg,rgba(232,200,116,.22),rgba(232,200,116,.05))', boxShadow: '0 1px 0 rgba(255,255,255,.08) inset,0 10px 20px -12px rgba(0,0,0,.7)' }}
             >
               {t('common.character')}
               {unclaimedSkillCount > 0 && (
@@ -224,12 +233,15 @@ export function ExplorationScreen({
           )}
         </div>
         {questLogOpen && (
-          <div className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-2.5 overflow-y-auto rounded-md border border-[#8a744a] bg-[linear-gradient(165deg,#d8c9a0,#c3ac7d)] p-3.5 shadow-[0_24px_60px_-14px_#000] animate-[slidein_.18s_ease-out]">
-            <span className="font-cinzel text-[10px] tracking-[.24em] text-[#6b5a38]">
+          <div
+            className="absolute right-0 top-12 z-30 flex max-h-[400px] w-[320px] flex-col gap-[9px] overflow-y-auto rounded-[10px] p-3.5 shadow-[0_30px_60px_-14px_rgba(0,0,0,.9),0_0_40px_-18px_rgba(74,192,255,.35)] animate-[slidein_.18s_ease-out]"
+            style={{ background: 'linear-gradient(160deg,#142238,#0a1120)', border: '1px solid rgba(232,200,116,.3)', boxShadow: '0 1px 0 rgba(255,255,255,.06) inset,0 30px 60px -14px rgba(0,0,0,.9),0 0 40px -18px rgba(74,192,255,.35)' }}
+          >
+            <span className="font-cinzel text-[10px] tracking-[.24em] text-[#7d93ad]">
               {t('exploration.activeThreads')}
             </span>
             {activeQuests.length === 0 && completedQuests.length === 0 && (
-              <p className="m-0 text-[12px] text-[#4a3b22]">{t('exploration.noQuestsYet')}</p>
+              <p className="m-0 text-[12px] text-[#9db4cc]">{t('exploration.noQuestsYet')}</p>
             )}
             {activeQuests.map((quest) => {
               const steps = getQuestSteps(context, quest, t);
@@ -237,19 +249,20 @@ export function ExplorationScreen({
               return (
                 <div
                   key={quest.id}
-                  className="rounded border-l-[3px] border-[#e0b552] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
+                  className="rounded-[8px] border-l-[3px] border-[#e8c874] px-[13px] py-[11px]"
+                  style={{ background: 'linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.15))', boxShadow: '0 1px 0 rgba(255,255,255,.04) inset' }}
                 >
-                  <div className="font-cinzel text-[12px] text-[#2b2116]">
+                  <div className="font-cinzel text-[12px] text-[#eef3f8]">
                     {getQuestName(quest.id, t, quest.name)}
                   </div>
-                  <div className="mt-1 text-[11px] leading-snug text-[#4a3b22]">
+                  <div className="mt-[3px] text-[11px] leading-snug text-[#9db4cc]">
                     {getQuestDescription(quest.id, t, quest.description)}
                   </div>
-                  <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
+                  <div className="mt-[5px] text-[9px] tracking-[.08em] text-[#7d93ad]">
                     {questLocationLabel(quest, t)} · {t('exploration.active')}
                   </div>
                   {stepsText && (
-                    <div className="mt-1 text-[9px] tracking-wider text-[#6b5a38]">{stepsText}</div>
+                    <div className="mt-1 text-[9px] tracking-[.08em] text-[#7d93ad]">{stepsText}</div>
                   )}
                   {steps && steps.length > 0 && (
                     <div className="mt-2 flex flex-col gap-1.5">
@@ -258,9 +271,9 @@ export function ExplorationScreen({
                           <span
                             className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[2px] border text-[9px]"
                             style={{
-                              borderColor: step.done ? '#4a7a3a' : 'rgba(60,45,20,.35)',
-                              color: step.done ? '#4a7a3a' : 'transparent',
-                              background: step.done ? 'rgba(74,122,58,.15)' : 'transparent',
+                              borderColor: step.done ? '#5fd68a' : 'rgba(232,200,116,.3)',
+                              color: step.done ? '#5fd68a' : 'transparent',
+                              background: step.done ? 'rgba(95,214,138,.15)' : 'transparent',
                             }}
                           >
                             {step.done ? '✓' : ''}
@@ -268,7 +281,7 @@ export function ExplorationScreen({
                           <span
                             className="text-[10px] leading-snug"
                             style={{
-                              color: step.done ? '#5a6a4a' : '#4a3b22',
+                              color: step.done ? '#6f8a7a' : '#c2d0e0',
                               textDecoration: step.done ? 'line-through' : 'none',
                             }}
                           >
@@ -284,12 +297,13 @@ export function ExplorationScreen({
             {completedQuests.map((quest) => (
               <div
                 key={quest.id}
-                className="rounded border-l-[3px] border-[#4a7a3a] bg-[rgba(60,45,20,.08)] px-2.5 py-2"
+                className="rounded-[8px] border-l-[3px] border-[#5fd68a] px-[13px] py-[11px]"
+                style={{ background: 'linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.15))', boxShadow: '0 1px 0 rgba(255,255,255,.04) inset' }}
               >
-                <div className="font-cinzel text-[12px] text-[#2b2116]">
+                <div className="font-cinzel text-[12px] text-[#eef3f8]">
                   {getQuestName(quest.id, t, quest.name)}
                 </div>
-                <div className="mt-1.5 text-[9px] tracking-wider text-[#6b5a38]">
+                <div className="mt-1.5 text-[9px] tracking-[.08em] text-[#7d93ad]">
                   {questLocationLabel(quest, t)} · {t('exploration.complete')}
                 </div>
               </div>
@@ -386,6 +400,7 @@ export function ExplorationScreen({
           onCancel={() => actor.send({ type: 'DISMISS_ENCOUNTER' })}
         />
       )}
+    </div>
     </div>
   );
 }
