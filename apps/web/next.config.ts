@@ -33,7 +33,6 @@ const npcModelFallbacks = [
   'sorcerer',
   'smuggler',
   'executioner',
-  'guard_captain',
 ] as const;
 
 const nextConfig: NextConfig = {
