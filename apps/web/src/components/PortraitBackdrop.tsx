@@ -14,32 +14,28 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
       <div
         className="absolute inset-0"
         style={{
-          background: [
-            `radial-gradient(ellipse 90% 70% at 50% 6%, color-mix(in srgb, ${accent} 38%, white) 0%, transparent 58%)`,
-            `radial-gradient(ellipse 85% 60% at 50% 108%, color-mix(in srgb, ${accent} 62%, #1a1208) 0%, transparent 64%)`,
-            `linear-gradient(165deg, color-mix(in srgb, ${accent} 26%, #f8f2e8), color-mix(in srgb, ${accent} 54%, #d7c9b4))`,
-          ].join(', '),
+          background: `linear-gradient(180deg, #1a1520 0%, #0c0a10 48%, #06050a 100%)`,
         }}
       />
       <div
-        className="absolute inset-[-45%] opacity-[0.28]"
+        className="absolute left-1/2 top-[-8%] h-[118%] w-[78%] -translate-x-1/2"
         style={{
-          background: `conic-gradient(from 210deg, transparent 0deg, color-mix(in srgb, ${accent} 70%, white) 50deg, transparent 110deg, color-mix(in srgb, ${accent} 45%, transparent) 180deg, transparent 260deg)`,
-          animation: 'portraitSheen 22s linear infinite',
+          background: `linear-gradient(180deg, color-mix(in srgb, ${accent} 55%, #fff1c8) 0%, color-mix(in srgb, ${accent} 28%, #d4b07a) 28%, color-mix(in srgb, ${accent} 10%, transparent) 72%, transparent 100%)`,
+          clipPath: 'polygon(32% 0, 68% 0, 96% 100%, 4% 100%)',
+          opacity: 0.55,
+          filter: 'blur(8px)',
         }}
       />
       <div
-        className="absolute top-[-18%] left-1/2 h-[62%] w-[88%] -translate-x-1/2 rounded-full blur-2xl"
+        className="absolute left-1/2 top-[8%] h-[70%] w-[62%] -translate-x-1/2 rounded-full"
         style={{
-          background: `radial-gradient(circle, color-mix(in srgb, ${accent} 58%, white), transparent 70%)`,
-          animation: 'glow 6.5s ease-in-out infinite',
+          background: `radial-gradient(ellipse at 50% 20%, color-mix(in srgb, ${accent} 48%, #ffe9b8) 0%, color-mix(in srgb, ${accent} 18%, transparent) 42%, transparent 70%)`,
         }}
       />
       <div
-        className="absolute bottom-[-28%] left-[6%] h-[58%] w-[86%] rounded-full blur-3xl"
+        className="absolute bottom-[-8%] left-1/2 h-[42%] w-[88%] -translate-x-1/2 rounded-full blur-2xl"
         style={{
-          background: `radial-gradient(circle, color-mix(in srgb, ${accent} 42%, transparent), transparent 72%)`,
-          animation: 'drift 8.5s ease-in-out infinite',
+          background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, ${accent} 40%, #f0d090) 0%, transparent 68%)`,
         }}
       />
       {MOTES.map((mote) => (
@@ -60,7 +56,7 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
       <div
         className="absolute inset-0"
         style={{
-          boxShadow: `inset 0 0 42px color-mix(in srgb, ${accent} 32%, transparent), inset 0 -36px 54px color-mix(in srgb, ${accent} 28%, #1a1208)`,
+          boxShadow: 'inset 0 0 48px rgba(5,4,8,.55), inset 0 -28px 40px rgba(5,4,8,.4)',
         }}
       />
     </div>

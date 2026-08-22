@@ -17,7 +17,6 @@ const womanModelFallbacks = [
 
 const enemyModelFallbacks = [
   'prisoner',
-  'giant_rat',
   'crazy_prisoner',
   'guard',
   'fat_prisoner',
@@ -29,10 +28,8 @@ const enemyModelFallbacks = [
 ] as const;
 
 const npcModelFallbacks = [
-  'dead_anarchist',
   'sorcerer',
   'smuggler',
-  'executioner',
 ] as const;
 
 const nextConfig: NextConfig = {

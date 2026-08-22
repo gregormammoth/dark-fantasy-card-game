@@ -3,7 +3,7 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Box3, PerspectiveCamera, Vector3, type Group } from 'three';
+import { Box3, PerspectiveCamera, SpotLight, Vector3, type Group } from 'three';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { classThemes } from '@/lib/cardTheme';
 
@@ -25,6 +25,54 @@ function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
     <group ref={ref}>
       <primitive object={cloned} />
     </group>
+  );
+}
+
+function SpotlightRig({ accent }: { accent: string }) {
+  const keyRef = useRef<SpotLight>(null);
+  const fillRef = useRef<SpotLight>(null);
+  const scene = useThree((state) => state.scene);
+
+  useLayoutEffect(() => {
+    const key = keyRef.current;
+    const fill = fillRef.current;
+    if (key) {
+      key.target.position.set(0, 0.42, 0);
+      scene.add(key.target);
+      key.target.updateMatrixWorld();
+    }
+    if (fill) {
+      fill.target.position.set(0, 0.5, 0);
+      scene.add(fill.target);
+      fill.target.updateMatrixWorld();
+    }
+  }, [scene]);
+
+  return (
+    <>
+      <spotLight
+        ref={keyRef}
+        position={[0.45, 3.4, 2.8]}
+        angle={0.36}
+        penumbra={0.82}
+        intensity={68}
+        color="#fff3dc"
+        distance={16}
+        decay={1.55}
+      />
+      <spotLight
+        ref={fillRef}
+        position={[-1.8, 1.8, 1.4]}
+        angle={0.5}
+        penumbra={0.9}
+        intensity={8}
+        color={accent}
+        distance={12}
+        decay={1.8}
+      />
+      <directionalLight position={[-1.6, 1.4, -2.2]} intensity={0.38} color={accent} />
+      <ambientLight intensity={0.22} color="#c4b8a4" />
+    </>
   );
 }
 
@@ -113,15 +161,16 @@ export function CharacterModelCanvas({
       <Canvas
         className={`${controls ? '' : 'pointer-events-none '}h-full w-full`}
         camera={{ fov: 26, near: 0.1, far: 40 }}
-        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+        gl={{
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+          toneMappingExposure: 1.2,
+        }}
         dpr={[1, 1.5]}
         frameloop={visible ? 'always' : 'never'}
       >
-        <hemisphereLight args={['#fff6ea', accent, 0.82]} />
-        <ambientLight intensity={0.38} color="#fff8ee" />
-        <directionalLight position={[2.2, 3.2, 2.4]} intensity={1.12} color="#fff4e4" />
-        <directionalLight position={[-2.4, 1.2, 0.8]} intensity={0.34} color={accent} />
-        <directionalLight position={[0.2, 2.1, -2.2]} intensity={0.48} color={accent} />
+        <SpotlightRig accent={accent} />
         <Suspense fallback={null}>
           <FittedScene src={src} controls={controls} />
         </Suspense>
