@@ -55,23 +55,23 @@ function SpotlightRig({ accent }: { accent: string }) {
         position={[0.45, 3.4, 2.8]}
         angle={0.36}
         penumbra={0.82}
-        intensity={68}
-        color="#fff3dc"
+        intensity={32}
+        color="#eef2f8"
         distance={16}
-        decay={1.55}
+        decay={1.7}
       />
       <spotLight
         ref={fillRef}
         position={[-1.8, 1.8, 1.4]}
         angle={0.5}
         penumbra={0.9}
-        intensity={8}
+        intensity={2.4}
         color={accent}
         distance={12}
-        decay={1.8}
+        decay={1.9}
       />
-      <directionalLight position={[-1.6, 1.4, -2.2]} intensity={0.38} color={accent} />
-      <ambientLight intensity={0.22} color="#c4b8a4" />
+      <directionalLight position={[-1.6, 1.4, -2.2]} intensity={0.1} color="#9eb0c8" />
+      <ambientLight intensity={0.09} color="#7a8494" />
     </>
   );
 }
@@ -165,7 +165,7 @@ export function CharacterModelCanvas({
           alpha: true,
           antialias: true,
           powerPreference: 'high-performance',
-          toneMappingExposure: 1.2,
+          toneMappingExposure: 0.82,
         }}
         dpr={[1, 1.5]}
         frameloop={visible ? 'always' : 'never'}

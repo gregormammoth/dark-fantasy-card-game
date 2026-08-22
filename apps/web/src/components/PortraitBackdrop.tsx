@@ -20,22 +20,22 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
       <div
         className="absolute left-1/2 top-[-8%] h-[118%] w-[78%] -translate-x-1/2"
         style={{
-          background: `linear-gradient(180deg, color-mix(in srgb, ${accent} 55%, #fff1c8) 0%, color-mix(in srgb, ${accent} 28%, #d4b07a) 28%, color-mix(in srgb, ${accent} 10%, transparent) 72%, transparent 100%)`,
+          background: `linear-gradient(180deg, color-mix(in srgb, ${accent} 22%, #c8d4e8) 0%, color-mix(in srgb, ${accent} 10%, #6a7488) 28%, color-mix(in srgb, ${accent} 6%, transparent) 72%, transparent 100%)`,
           clipPath: 'polygon(32% 0, 68% 0, 96% 100%, 4% 100%)',
-          opacity: 0.55,
+          opacity: 0.28,
           filter: 'blur(8px)',
         }}
       />
       <div
         className="absolute left-1/2 top-[8%] h-[70%] w-[62%] -translate-x-1/2 rounded-full"
         style={{
-          background: `radial-gradient(ellipse at 50% 20%, color-mix(in srgb, ${accent} 48%, #ffe9b8) 0%, color-mix(in srgb, ${accent} 18%, transparent) 42%, transparent 70%)`,
+          background: `radial-gradient(ellipse at 50% 20%, color-mix(in srgb, ${accent} 16%, #d0d8e8) 0%, color-mix(in srgb, ${accent} 8%, transparent) 42%, transparent 70%)`,
         }}
       />
       <div
         className="absolute bottom-[-8%] left-1/2 h-[42%] w-[88%] -translate-x-1/2 rounded-full blur-2xl"
         style={{
-          background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, ${accent} 40%, #f0d090) 0%, transparent 68%)`,
+          background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, ${accent} 14%, #8896aa) 0%, transparent 68%)`,
         }}
       />
       {MOTES.map((mote) => (
