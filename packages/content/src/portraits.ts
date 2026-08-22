@@ -75,3 +75,15 @@ export function resolveCharacterModelSrc(src: string): string {
   }
   return src;
 }
+
+export function resolveCharacterStillSrc(src: string): string | null {
+  const file = src.split('/').pop()?.split('?')[0] ?? src;
+  const name = file.replace(/\.(png|glb|gltf|webp)$/i, '');
+  if (!name) {
+    return null;
+  }
+  if (PLAYER_MODEL_NAMES.has(name) || ENEMY_MODEL_NAMES.has(name) || NPC_MODEL_NAMES.has(name)) {
+    return `/characters/stills/${name}.webp`;
+  }
+  return null;
+}

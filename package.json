@@ -13,7 +13,8 @@
     "e2e:ui": "pnpm --filter @dark-fantasy/e2e e2e:ui",
     "e2e:report": "pnpm --filter @dark-fantasy/e2e e2e:report",
     "e2e:install": "pnpm --filter @dark-fantasy/e2e exec playwright install chromium",
-    "compress:glb": "bash scripts/compress-glb.sh"
+    "compress:glb": "bash scripts/compress-glb.sh",
+    "stills:glb": "node scripts/render-character-stills.mjs"
   },
   "devDependencies": {
     "turbo": "^2.5.4"

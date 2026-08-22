@@ -47,6 +47,14 @@ volta run --node 24.18.1 gltf-transform optimize 3.glb output3.glb --compress me
 
 Copy the result to `apps/web/public/characters/` when you want it in the game (for example `dead_anarchist.glb`).
 
+Render loading stills from each GLB (Playwright + Chromium):
+
+```bash
+pnpm stills:glb
+```
+
+Writes WebP files to `apps/web/public/characters/stills/`. Portraits show the still for at least 3 seconds while the GLB loads.
+
 ## Turbo tasks
 
 From the repo root:
@@ -60,6 +68,7 @@ From the repo root:
 | `pnpm test` | Unit / package tests |
 | `pnpm e2e` | Playwright E2E (builds first, then runs tests) |
 | `pnpm compress:glb -- in.glb out.glb` | Meshopt + WebP GLB via gltf-transform (Node 24) |
+| `pnpm stills:glb` | Render WebP stills from character GLBs |
 
 Turbo caches build, lint, test, and typecheck. `dev` and `e2e` are not cached.
 

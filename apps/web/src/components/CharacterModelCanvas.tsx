@@ -5,8 +5,19 @@ import { ContactShadows, OrbitControls, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Box3, PerspectiveCamera, SpotLight, Vector3, type Group, type Mesh } from 'three';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
+import { resolveCharacterStillSrc } from '@dark-fantasy/content/portraits';
 
-function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
+const STILL_MS = 3000;
+
+function CharacterModel({
+  src,
+  rotate,
+  onReady,
+}: {
+  src: string;
+  rotate: boolean;
+  onReady: () => void;
+}) {
   const { scene } = useGLTF(src);
   const cloned = useMemo(() => cloneSkeleton(scene), [scene]);
   const ref = useRef<Group>(null);
@@ -20,7 +31,8 @@ function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
         mesh.receiveShadow = true;
       }
     });
-  }, [cloned]);
+    onReady();
+  }, [cloned, onReady]);
 
   useFrame((_, delta) => {
     if (!rotate || !ref.current) {
@@ -95,9 +107,11 @@ function SpotlightRig({ aim }: { aim: [number, number, number] }) {
 function FittedScene({
   src,
   controls,
+  onReady,
 }: {
   src: string;
   controls: boolean;
+  onReady: () => void;
 }) {
   const groupRef = useRef<Group>(null);
   const camera = useThree((state) => state.camera);
@@ -139,7 +153,7 @@ function FittedScene({
     <>
       <SpotlightRig aim={aim} />
       <group ref={groupRef}>
-        <CharacterModel src={src} rotate={!controls} />
+        <CharacterModel src={src} rotate={!controls} onReady={onReady} />
       </group>
       <ContactShadows
         position={[target[0], floorY + 0.01, target[2]]}
@@ -176,6 +190,26 @@ export function CharacterModelCanvas({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const [showStill, setShowStill] = useState(true);
+  const stillSrc = resolveCharacterStillSrc(src);
+  const startedAt = useRef(Date.now());
+
+  const stillTimer = useRef<number>(0);
+
+  useEffect(() => {
+    startedAt.current = Date.now();
+    setShowStill(true);
+    return () => window.clearTimeout(stillTimer.current);
+  }, [src]);
+
+  const handleReady = useMemo(
+    () => () => {
+      window.clearTimeout(stillTimer.current);
+      const wait = Math.max(0, STILL_MS - (Date.now() - startedAt.current));
+      stillTimer.current = window.setTimeout(() => setShowStill(false), wait);
+    },
+    [],
+  );
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -191,9 +225,16 @@ export function CharacterModelCanvas({
   }, []);
 
   return (
-    <div ref={wrapRef} className="h-full w-full bg-transparent">
+    <div ref={wrapRef} className="relative h-full w-full bg-transparent">
+      {stillSrc && showStill ? (
+        <img
+          src={stillSrc}
+          alt=""
+          className="pointer-events-none absolute inset-0 z-[2] h-full w-full object-contain"
+        />
+      ) : null}
       <Canvas
-        className={`${controls ? '' : 'pointer-events-none '}h-full w-full`}
+        className={`${controls ? '' : 'pointer-events-none '}${stillSrc && showStill ? 'invisible ' : ''}h-full w-full`}
         camera={{ fov: 26, near: 0.1, far: 40 }}
         gl={{
           alpha: true,
@@ -206,7 +247,7 @@ export function CharacterModelCanvas({
         frameloop={visible ? 'always' : 'never'}
       >
         <Suspense fallback={null}>
-          <FittedScene src={src} controls={controls} />
+          <FittedScene src={src} controls={controls} onReady={handleReady} />
         </Suspense>
       </Canvas>
     </div>
