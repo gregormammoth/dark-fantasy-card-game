@@ -83,15 +83,21 @@ export function hydrate(): void {
 }
 
 export async function unlock(): Promise<void> {
-  if (snapshot.unlocked) return;
-  const ok = await getAudioManager().unlock();
-  if (!ok) return;
+  const manager = getAudioManager();
+  const ok = await manager.unlock();
+  if (!ok) {
+    return;
+  }
+  if (snapshot.unlocked) {
+    await manager.resume();
+    return;
+  }
   setSnapshot({ unlocked: true });
-  await getAudioManager().preloadCategories(['ui', 'event']);
-  await getAudioManager().ensureBaseAmbient();
-  void getAudioManager().startGameplayBed();
+  await manager.preloadCategories(['ui', 'event']);
+  await manager.ensureBaseAmbient();
+  void manager.startGameplayBed();
   window.setTimeout(() => {
-    void getAudioManager().preloadLoops();
+    void manager.preloadLoops();
   }, 2000);
 }
 

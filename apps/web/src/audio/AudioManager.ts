@@ -37,6 +37,9 @@ const DEFAULT_SCREEN: MusicScreen = 'world';
 const GAMEPLAY_FADE_RATE = 0.025;
 const HOWL_LOAD_TIMEOUT_MS = 6000;
 
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
 const GAME_OVER_STINGS: SoundId[] = ['victory_sting', 'defeat_sting'];
@@ -66,7 +69,7 @@ export class AudioManager {
   private fadingOut = false;
   private gameOverMode = false;
   private gameplayFadeRate = CROSSFADE_RATE;
-  private unlockInFlight = false;
+  private unlockPromise: Promise<boolean> | null = null;
   private bedBaseTarget = 0;
   private activeScreen: MusicScreen = DEFAULT_SCREEN;
 
@@ -98,36 +101,114 @@ export class AudioManager {
 
   async unlock(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
-    if (this.unlocked) return true;
-    if (this.unlockInFlight) return true;
+    if (this.disposed) return false;
+    if (this.unlocked && this.contextRunning()) {
+      return true;
+    }
+    if (this.unlockPromise) {
+      return this.unlockPromise;
+    }
 
-    this.unlockInFlight = true;
+    this.unlockPromise = this.performUnlock();
     try {
-      const ctx = Howler.ctx;
-      if (ctx.state === 'suspended') {
+      return await this.unlockPromise;
+    } finally {
+      this.unlockPromise = null;
+    }
+  }
+
+  async resume(): Promise<void> {
+    if (typeof window === 'undefined' || this.disposed) {
+      return;
+    }
+    Howler.autoSuspend = false;
+    const ctx = await this.ensureContext();
+    if (!ctx) {
+      return;
+    }
+    if (ctx.state !== 'running') {
+      try {
+        await ctx.resume();
+      } catch (err) {
+        this.log(`resume failed: ${String(err)}`);
+        return;
+      }
+    }
+    this.procedural.attachContext(ctx);
+    if (this.unlocked && !this.settings.muted && this.musicBedStarted) {
+      void this.ensureScreenMusic();
+    }
+  }
+
+  private async performUnlock(): Promise<boolean> {
+    try {
+      Howler.autoUnlock = true;
+      Howler.autoSuspend = false;
+      const ctx = await this.ensureContext();
+      if (!ctx) {
+        this.log('unlock failed: no audio context');
+        return false;
+      }
+      if (ctx.state !== 'running') {
         await ctx.resume();
       }
-
-      const buffer = ctx.createBuffer(1, 1, 22050);
+      const tick = ctx.createBuffer(1, 1, ctx.sampleRate);
       const source = ctx.createBufferSource();
-      source.buffer = buffer;
+      source.buffer = tick;
       source.connect(ctx.destination);
       source.start(0);
-      source.stop(0);
 
       this.procedural.attachContext(ctx);
       this.unlocked = true;
       this.startFadeLoop();
       this.scheduleSirens();
-      this.log('audio unlocked');
+      this.log(`audio unlocked (${ctx.state})`);
       void this.startGameplayBed();
-      return true;
+      return ctx.state === 'running';
     } catch (err) {
       this.log(`unlock failed: ${String(err)}`);
       return false;
-    } finally {
-      this.unlockInFlight = false;
     }
+  }
+
+  private contextRunning(): boolean {
+    const ctx = Howler.ctx as AudioContext | undefined;
+    return Boolean(ctx && ctx.state === 'running');
+  }
+
+  private async ensureContext(): Promise<AudioContext | null> {
+    Howler.autoSuspend = false;
+    if (!Howler.ctx) {
+      const priming = new Howl({
+        src: [SILENT_WAV],
+        volume: 0,
+        html5: false,
+        preload: true,
+      });
+      priming.play();
+    }
+    const ctx = Howler.ctx as AudioContext | undefined;
+    return ctx ?? null;
+  }
+
+  private playableSrc(src: string[]): string[] {
+    const codecs = Howler.codecs;
+    if (typeof codecs !== 'function') {
+      return src;
+    }
+    return src.filter((url) => {
+      const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
+      if (!ext) {
+        return false;
+      }
+      if (ext === 'oga') {
+        return codecs('ogg');
+      }
+      if (ext === 'm4a' || ext === 'aac' || ext === 'mp4') {
+        return codecs('m4a') || codecs('aac') || codecs('mp4');
+      }
+      return codecs(ext);
+    });
   }
 
   async setMusicScreen(screen: MusicScreen): Promise<void> {
@@ -464,12 +545,8 @@ export class AudioManager {
         startPlayback(loaded);
         return;
       }
-      if (def.procedural) {
-        this.playProceduralShot(soundId, vol);
-        this.log(`playback started (procedural fallback): ${soundId}`);
-      } else {
-        this.log(`playback failed: ${soundId}`);
-      }
+      this.playProceduralShot(this.proceduralFallbackId(soundId), vol);
+      this.log(`playback started (procedural fallback): ${soundId}`);
     });
   }
 
@@ -629,6 +706,14 @@ export class AudioManager {
     const def = MANIFEST_BY_ID.get(soundId);
     if (!def) return null;
 
+    const src = this.playableSrc(def.src);
+    if (src.length === 0) {
+      this.log(`no playable codec: ${soundId}`);
+      const failed = { howl: new Howl({ src: [SILENT_WAV], volume: 0, preload: false }), def, failed: true };
+      this.cache.set(soundId, failed);
+      return failed;
+    }
+
     const promise = new Promise<LoadedHowl | null>((resolve) => {
       let settled = false;
 
@@ -641,7 +726,7 @@ export class AudioManager {
       };
 
       const howl = new Howl({
-        src: def.src,
+        src,
         loop: false,
         volume: 0,
         preload: def.preload ?? true,
@@ -681,6 +766,13 @@ export class AudioManager {
       if (Math.random() > 0.35) return;
       this.play('distant_howl', { volume: 0.25 });
     }, 32000);
+  }
+
+  private proceduralFallbackId(soundId: SoundId): SoundId {
+    if (soundId.startsWith('combat_') && soundId !== 'combat_hit') {
+      return 'combat_hit';
+    }
+    return soundId;
   }
 
   private applyMasterVolume(): void {
