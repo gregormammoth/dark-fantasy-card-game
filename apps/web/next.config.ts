@@ -15,23 +15,6 @@ const womanModelFallbacks = [
   'player_woman_survivor',
 ] as const;
 
-const enemyModelFallbacks = [
-  'prisoner',
-  'crazy_prisoner',
-  'guard',
-  'fat_prisoner',
-  'butcher',
-  'knight',
-  'inquisitor',
-  'prison_warden',
-  'resurrected_anarchist',
-] as const;
-
-const npcModelFallbacks = [
-  'sorcerer',
-  'smuggler',
-] as const;
-
 const nextConfig: NextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../..'),
@@ -52,14 +35,6 @@ const nextConfig: NextConfig = {
         ...womanModelFallbacks.map((name) => ({
           source: `/characters/${name}.glb`,
           destination: '/characters/player_woman.glb',
-        })),
-        ...enemyModelFallbacks.map((name) => ({
-          source: `/characters/${name}.glb`,
-          destination: '/characters/enemy.glb',
-        })),
-        ...npcModelFallbacks.map((name) => ({
-          source: `/characters/${name}.glb`,
-          destination: '/characters/npc.glb',
         })),
       ],
     };

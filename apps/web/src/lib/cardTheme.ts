@@ -88,7 +88,7 @@ export const npcTheme: ClassTheme = {
   glow: 'rgba(143,176,224,.55)',
 };
 
-const NPC_PORTRAIT_NAMES = new Set<string>(['npc', ...NPC_MODEL_FALLBACKS]);
+const NPC_PORTRAIT_NAMES = new Set<string>(NPC_MODEL_FALLBACKS);
 
 export function isNpcPortraitSrc(src: string): boolean {
   const file = src.split('/').pop()?.split('?')[0] ?? '';

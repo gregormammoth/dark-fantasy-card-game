@@ -19,9 +19,9 @@ export const PLAYER_CLASS_PORTRAITS = PLAYER_GENDER_PORTRAITS.man;
 
 export const PLAYER_PORTRAIT = PLAYER_GENDER_PORTRAITS.man.warrior;
 
-export const DEFAULT_ENEMY_PORTRAIT = '/characters/enemy.glb';
+export const DEFAULT_ENEMY_PORTRAIT = '/characters/prisoner.glb';
 
-export const DEFAULT_NPC_PORTRAIT = '/characters/npc.glb';
+export const DEFAULT_NPC_PORTRAIT = '/characters/sorcerer.glb';
 
 export const NPC_MODEL_FALLBACKS = [
   'dead_anarchist',
@@ -58,8 +58,8 @@ export const ENEMY_MODEL_FALLBACKS = [
 ] as const;
 
 const PLAYER_MODEL_NAMES = new Set<string>(['player', ...PLAYER_MODEL_FALLBACKS]);
-const ENEMY_MODEL_NAMES = new Set<string>(['enemy', ...ENEMY_MODEL_FALLBACKS]);
-const NPC_MODEL_NAMES = new Set<string>(['npc', ...NPC_MODEL_FALLBACKS]);
+const ENEMY_MODEL_NAMES = new Set<string>(ENEMY_MODEL_FALLBACKS);
+const NPC_MODEL_NAMES = new Set<string>(NPC_MODEL_FALLBACKS);
 
 export function resolveCharacterModelSrc(src: string): string {
   const file = src.split('/').pop()?.split('?')[0] ?? src;
