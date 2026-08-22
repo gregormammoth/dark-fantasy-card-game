@@ -92,7 +92,7 @@ describe('enemy bands and card pools', () => {
     const profile = resolveEnemyBattleProfile({ band: 'boss', group: 'brute' });
     const battle = createInitialBattle(undefined, {
       name: 'The Prison Warden',
-      portrait: '/characters/prison_warden.png',
+      portrait: '/characters/prison_warden.glb',
       ...profile,
     });
     expect(battle.enemy.deck).toHaveLength(profile.deckSize);

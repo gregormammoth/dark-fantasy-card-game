@@ -48,7 +48,7 @@ function makeBattle(options: {
 
   return {
     player: {
-      portrait: '/characters/player.png',
+      portrait: '/characters/player.glb',
       shield: 0,
       maxShield: 2,
       barrier: 0,
@@ -58,7 +58,7 @@ function makeBattle(options: {
     },
     enemy: {
       name: 'Test Enemy',
-      portrait: '/characters/prisoner.png',
+      portrait: '/characters/prisoner.glb',
       shield: 0,
       maxShield: 2,
       barrier: 0,

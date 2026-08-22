@@ -37,7 +37,7 @@ describe('enemy barrier timing', () => {
       progression: createInitialProgression(),
       enemy: {
         name: 'Test Sorcerer',
-        portrait: '/characters/prisoner.png',
+        portrait: '/characters/prisoner.glb',
         barrierPerTurn: 0,
         deckCardIds: Array.from({ length: 5 }, () => 'ritualist_ward'),
         startingShield: 0,
