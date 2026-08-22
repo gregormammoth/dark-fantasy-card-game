@@ -397,7 +397,6 @@ export function ExplorationScreen({
               onStartLocationBattle(locationEncounter.locationId, battleEnemy.id);
             }
           }}
-          onCancel={() => actor.send({ type: 'DISMISS_ENCOUNTER' })}
         />
       )}
     </div>

@@ -699,19 +699,7 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                       className="pointer-events-none absolute -right-[9px] -top-[11px] z-[6] h-[56px] w-[44px] rotate-[7deg] overflow-hidden rounded-md border-2 bg-[#120908] shadow-[0_8px_18px_-6px_rgba(0,0,0,.85),0_0_0_1px_rgba(0,0,0,.4)]"
                       style={{ borderColor: occupant.border }}
                     >
-                      {isCurrent ? (
-                        <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} media="still" />
-                      ) : (
-                        <span
-                          className="block h-full w-full"
-                          style={{
-                            background:
-                              occupant.border === '#8fb0e0'
-                                ? 'linear-gradient(180deg,rgba(91,134,196,.35),#120908)'
-                                : 'linear-gradient(180deg,rgba(214,68,58,.35),#120908)',
-                          }}
-                        />
-                      )}
+                      <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} media="still" />
                     </span>
                 )}
                 {isCurrent && showInfo && (
