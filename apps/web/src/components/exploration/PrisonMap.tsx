@@ -700,7 +700,7 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                       style={{ borderColor: occupant.border }}
                     >
                       {isCurrent ? (
-                        <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} />
+                        <CharacterPortrait src={occupant.image} className="h-full w-full" expandable={false} media="still" />
                       ) : (
                         <span
                           className="block h-full w-full"
@@ -716,7 +716,7 @@ export function PrisonMap({ context, playerGender, playerName, onSelect }: Priso
                 )}
                 {isCurrent && showInfo && (
                   <span className="pointer-events-none absolute -bottom-4 -left-3 z-[7] h-[76px] w-[60px] -rotate-[8deg] overflow-hidden rounded-md border-2 border-[#e0b552] bg-[#120908] shadow-[0_16px_28px_-8px_rgba(0,0,0,.9),0_0_0_1px_rgba(0,0,0,.5),0_0_22px_-3px_rgba(224,181,82,.65)]">
-                    <CharacterPortrait src={playerPortrait} className="h-full w-full" expandable={false} />
+                    <CharacterPortrait src={playerPortrait} className="h-full w-full" expandable={false} media="still" />
                   </span>
                 )}
                 {isCurrent && (

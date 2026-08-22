@@ -53,7 +53,7 @@ Render loading stills from each GLB (Playwright + Chromium):
 pnpm stills:glb
 ```
 
-Writes WebP files to `apps/web/public/characters/stills/`. Portraits show the still for at least 3 seconds while the GLB loads.
+Writes WebP files to `apps/web/public/characters/stills/`. Dialog and battle portraits show the still only until the GLB has loaded once; later opens skip it.
 
 ## Turbo tasks
 

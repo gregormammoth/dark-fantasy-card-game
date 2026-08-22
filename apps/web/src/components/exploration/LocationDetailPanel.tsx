@@ -191,6 +191,7 @@ export function LocationDetailPanel({
                 src={npc.image}
                 className="h-[52px] w-[52px] shrink-0 rounded-full border border-[rgba(91,134,196,.4)]"
                 expandable={false}
+                media="still"
               />
             ) : null}
             <div className="flex-1">
@@ -220,6 +221,7 @@ export function LocationDetailPanel({
                 src={activeEnemy.image}
                 className="h-[52px] w-[52px] shrink-0 rounded-[5px] border border-[rgba(224,82,74,.4)]"
                 expandable={false}
+                media="still"
               />
             ) : (
               <span className="relative flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[5px] border border-[#ff6a5c] bg-[rgba(120,16,14,.9)]">

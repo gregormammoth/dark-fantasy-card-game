@@ -7,7 +7,7 @@ import { CharacterPreviewModal } from '@/components/CharacterPreviewModal';
 import { PortraitBackdrop } from '@/components/PortraitBackdrop';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getPortraitAccent } from '@/lib/cardTheme';
-import { resolveCharacterModelSrc } from '@dark-fantasy/content/portraits';
+import { resolveCharacterModelSrc, resolveCharacterStillSrc } from '@dark-fantasy/content/portraits';
 
 const CharacterModelCanvas = dynamic(
   () => import('./CharacterModelCanvas').then((mod) => mod.CharacterModelCanvas),
@@ -23,12 +23,18 @@ function PortraitMedia({
   alt,
   controls,
   accent,
+  media,
 }: {
   src: string;
   alt: string;
   controls?: boolean;
   accent: string;
+  media: 'still' | 'model';
 }) {
+  const stillSrc = resolveCharacterStillSrc(src);
+  if (media === 'still' && stillSrc) {
+    return <img src={stillSrc} alt={alt} className="h-full w-full object-contain" />;
+  }
   if (isGlb(src)) {
     return <CharacterModelCanvas src={src} controls={controls} accent={accent} />;
   }
@@ -43,6 +49,7 @@ export function CharacterPortrait({
   expandable = true,
   classId,
   onPreview,
+  media = 'model',
 }: {
   src: string;
   alt?: string;
@@ -51,12 +58,13 @@ export function CharacterPortrait({
   expandable?: boolean;
   classId?: CardClass;
   onPreview?: () => void;
+  media?: 'still' | 'model';
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const modelSrc = resolveCharacterModelSrc(src);
   const accent = getPortraitAccent(modelSrc, classId);
-  const showBackdrop = isGlb(modelSrc);
+  const showBackdrop = media === 'model' && isGlb(modelSrc);
 
   const frame = (
     <div className={`relative overflow-hidden ${className ?? ''}`} style={style}>
@@ -71,11 +79,11 @@ export function CharacterPortrait({
           className="absolute inset-0 z-[1] cursor-zoom-in"
           aria-label={t('character.viewFigure')}
         >
-          <PortraitMedia src={modelSrc} alt={alt} accent={accent} />
+          <PortraitMedia src={modelSrc} alt={alt} accent={accent} media={media} />
         </button>
       ) : (
         <div className="absolute inset-0 z-[1]">
-          <PortraitMedia src={modelSrc} alt={alt} accent={accent} />
+          <PortraitMedia src={modelSrc} alt={alt} accent={accent} media={media} />
         </div>
       )}
     </div>

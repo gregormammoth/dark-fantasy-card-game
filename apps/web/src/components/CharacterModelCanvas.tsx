@@ -7,17 +7,9 @@ import { Box3, PerspectiveCamera, SpotLight, Vector3, type Group, type Mesh } fr
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { resolveCharacterStillSrc } from '@dark-fantasy/content/portraits';
 
-const STILL_MS = 3000;
+const readyModels = new Set<string>();
 
-function CharacterModel({
-  src,
-  rotate,
-  onReady,
-}: {
-  src: string;
-  rotate: boolean;
-  onReady: () => void;
-}) {
+function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
   const { scene } = useGLTF(src);
   const cloned = useMemo(() => cloneSkeleton(scene), [scene]);
   const ref = useRef<Group>(null);
@@ -31,8 +23,7 @@ function CharacterModel({
         mesh.receiveShadow = true;
       }
     });
-    onReady();
-  }, [cloned, onReady]);
+  }, [cloned]);
 
   useFrame((_, delta) => {
     if (!rotate || !ref.current) {
@@ -147,13 +138,14 @@ function FittedScene({
     setTarget([center.x, center.y, center.z]);
     setAim([center.x, center.y + boxSize.y * 0.12, center.z]);
     setFloorY(box.min.y);
-  }, [camera, controls, size.height, size.width, src]);
+    onReady();
+  }, [camera, controls, onReady, size.height, size.width, src]);
 
   return (
     <>
       <SpotlightRig aim={aim} />
       <group ref={groupRef}>
-        <CharacterModel src={src} rotate={!controls} onReady={onReady} />
+        <CharacterModel src={src} rotate={!controls} />
       </group>
       <ContactShadows
         position={[target[0], floorY + 0.01, target[2]]}
@@ -190,25 +182,21 @@ export function CharacterModelCanvas({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
-  const [showStill, setShowStill] = useState(true);
   const stillSrc = resolveCharacterStillSrc(src);
-  const startedAt = useRef(Date.now());
-
-  const stillTimer = useRef<number>(0);
+  const [showStill, setShowStill] = useState(
+    () => Boolean(stillSrc) && !readyModels.has(src),
+  );
 
   useEffect(() => {
-    startedAt.current = Date.now();
-    setShowStill(true);
-    return () => window.clearTimeout(stillTimer.current);
-  }, [src]);
+    setShowStill(Boolean(stillSrc) && !readyModels.has(src));
+  }, [src, stillSrc]);
 
   const handleReady = useMemo(
     () => () => {
-      window.clearTimeout(stillTimer.current);
-      const wait = Math.max(0, STILL_MS - (Date.now() - startedAt.current));
-      stillTimer.current = window.setTimeout(() => setShowStill(false), wait);
+      readyModels.add(src);
+      setShowStill(false);
     },
-    [],
+    [src],
   );
 
   useEffect(() => {
