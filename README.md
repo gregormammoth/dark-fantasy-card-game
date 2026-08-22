@@ -31,6 +31,22 @@ pnpm --filter @dark-fantasy/web dev
 
 Copy `apps/web/.env.example` to `apps/web/.env.local` to override site URL / name.
 
+## Compress GLB
+
+Requires a global [`@gltf-transform/cli`](https://gltf-transform.dev/) installed under Node 24 (Volta). Meshopt + WebP:
+
+```bash
+pnpm compress:glb -- 3.glb output3.glb
+```
+
+Same as:
+
+```bash
+volta run --node 24.18.1 gltf-transform optimize 3.glb output3.glb --compress meshopt --texture-compress webp
+```
+
+Copy the result to `apps/web/public/characters/` when you want it in the game (for example `dead_anarchist.glb`).
+
 ## Turbo tasks
 
 From the repo root:
@@ -43,6 +59,7 @@ From the repo root:
 | `pnpm typecheck` | TypeScript `--noEmit` |
 | `pnpm test` | Unit / package tests |
 | `pnpm e2e` | Playwright E2E (builds first, then runs tests) |
+| `pnpm compress:glb -- in.glb out.glb` | Meshopt + WebP GLB via gltf-transform (Node 24) |
 
 Turbo caches build, lint, test, and typecheck. `dev` and `e2e` are not cached.
 
