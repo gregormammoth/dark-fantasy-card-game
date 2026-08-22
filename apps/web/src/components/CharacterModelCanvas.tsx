@@ -1,17 +1,26 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { ContactShadows, OrbitControls, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Box3, PerspectiveCamera, SpotLight, Vector3, type Group } from 'three';
+import { Box3, PerspectiveCamera, SpotLight, Vector3, type Group, type Mesh } from 'three';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { classThemes } from '@/lib/cardTheme';
 
 function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
   const { scene } = useGLTF(src);
   const cloned = useMemo(() => cloneSkeleton(scene), [scene]);
   const ref = useRef<Group>(null);
   const timeRef = useRef(0);
+
+  useLayoutEffect(() => {
+    cloned.traverse((node) => {
+      const mesh = node as Mesh;
+      if (mesh.isMesh) {
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+      }
+    });
+  }, [cloned]);
 
   useFrame((_, delta) => {
     if (!rotate || !ref.current) {
@@ -28,59 +37,74 @@ function CharacterModel({ src, rotate }: { src: string; rotate: boolean }) {
   );
 }
 
-function SpotlightRig({ accent }: { accent: string }) {
+function SpotlightRig({ aim }: { aim: [number, number, number] }) {
   const keyRef = useRef<SpotLight>(null);
-  const fillRef = useRef<SpotLight>(null);
+  const bounceRef = useRef<SpotLight>(null);
   const scene = useThree((state) => state.scene);
 
   useLayoutEffect(() => {
     const key = keyRef.current;
-    const fill = fillRef.current;
+    const bounce = bounceRef.current;
     if (key) {
-      key.target.position.set(0, 0.42, 0);
+      key.target.position.set(aim[0], aim[1], aim[2]);
       scene.add(key.target);
       key.target.updateMatrixWorld();
     }
-    if (fill) {
-      fill.target.position.set(0, 0.5, 0);
-      scene.add(fill.target);
-      fill.target.updateMatrixWorld();
+    if (bounce) {
+      bounce.target.position.set(aim[0], aim[1] - 0.22, aim[2]);
+      scene.add(bounce.target);
+      bounce.target.updateMatrixWorld();
     }
-  }, [scene]);
+  }, [aim, scene]);
 
   return (
     <>
       <spotLight
         ref={keyRef}
-        position={[0.45, 3.4, 2.8]}
-        angle={0.36}
-        penumbra={0.82}
-        intensity={32}
-        color="#eef2f8"
-        distance={16}
-        decay={1.7}
+        position={[aim[0] + 0.28, aim[1] + 2.15, aim[2] + 1.55]}
+        angle={0.38}
+        penumbra={0.42}
+        intensity={48}
+        color="#f4f6fa"
+        distance={9}
+        decay={2}
+        castShadow
+        shadow-mapSize={[1024, 1024]}
+        shadow-bias={-0.00018}
+        shadow-normalBias={0.035}
+        shadow-radius={3.5}
+        shadow-focus={0.85}
+        shadow-camera-near={0.4}
+        shadow-camera-far={8}
       />
       <spotLight
-        ref={fillRef}
-        position={[-1.8, 1.8, 1.4]}
-        angle={0.5}
-        penumbra={0.9}
-        intensity={2.4}
-        color={accent}
-        distance={12}
-        decay={1.9}
+        ref={bounceRef}
+        position={[aim[0] - 1.15, aim[1] + 0.35, aim[2] + 0.85]}
+        angle={0.72}
+        penumbra={0.95}
+        intensity={4.2}
+        color="#d8dee8"
+        distance={6}
+        decay={2}
       />
-      <directionalLight position={[-1.6, 1.4, -2.2]} intensity={0.1} color="#9eb0c8" />
-      <ambientLight intensity={0.09} color="#7a8494" />
+      <hemisphereLight args={['#8b97a8', '#121018', 0.22]} />
     </>
   );
 }
 
-function FittedScene({ src, controls }: { src: string; controls: boolean }) {
+function FittedScene({
+  src,
+  controls,
+}: {
+  src: string;
+  controls: boolean;
+}) {
   const groupRef = useRef<Group>(null);
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
   const [target, setTarget] = useState<[number, number, number]>([0, 0.49, 0]);
+  const [floorY, setFloorY] = useState(0);
+  const [aim, setAim] = useState<[number, number, number]>([0, 0.62, 0]);
 
   useLayoutEffect(() => {
     const group = groupRef.current;
@@ -107,13 +131,24 @@ function FittedScene({ src, controls }: { src: string; controls: boolean }) {
     perspective.far = Math.max(40, distance * 40);
     perspective.updateProjectionMatrix();
     setTarget([center.x, center.y, center.z]);
+    setAim([center.x, center.y + boxSize.y * 0.12, center.z]);
+    setFloorY(box.min.y);
   }, [camera, controls, size.height, size.width, src]);
 
   return (
     <>
+      <SpotlightRig aim={aim} />
       <group ref={groupRef}>
         <CharacterModel src={src} rotate={!controls} />
       </group>
+      <ContactShadows
+        position={[target[0], floorY + 0.01, target[2]]}
+        opacity={0.48}
+        scale={2.8}
+        blur={2.2}
+        far={1.4}
+        color="#05040a"
+      />
       {controls ? (
         <OrbitControls
           target={target}
@@ -134,7 +169,6 @@ function FittedScene({ src, controls }: { src: string; controls: boolean }) {
 export function CharacterModelCanvas({
   src,
   controls = false,
-  accent = classThemes.seeker.accent,
 }: {
   src: string;
   controls?: boolean;
@@ -168,9 +202,9 @@ export function CharacterModelCanvas({
           toneMappingExposure: 0.82,
         }}
         dpr={[1, 1.5]}
+        shadows="soft"
         frameloop={visible ? 'always' : 'never'}
       >
-        <SpotlightRig accent={accent} />
         <Suspense fallback={null}>
           <FittedScene src={src} controls={controls} />
         </Suspense>

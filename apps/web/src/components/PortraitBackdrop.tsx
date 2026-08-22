@@ -20,7 +20,7 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
       <div
         className="absolute left-1/2 top-[-8%] h-[118%] w-[78%] -translate-x-1/2"
         style={{
-          background: `linear-gradient(180deg, color-mix(in srgb, ${accent} 22%, #c8d4e8) 0%, color-mix(in srgb, ${accent} 10%, #6a7488) 28%, color-mix(in srgb, ${accent} 6%, transparent) 72%, transparent 100%)`,
+          background: `linear-gradient(180deg, #d0d8e8 0%, #6a7488 28%, transparent 72%)`,
           clipPath: 'polygon(32% 0, 68% 0, 96% 100%, 4% 100%)',
           opacity: 0.28,
           filter: 'blur(8px)',
@@ -29,13 +29,13 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
       <div
         className="absolute left-1/2 top-[8%] h-[70%] w-[62%] -translate-x-1/2 rounded-full"
         style={{
-          background: `radial-gradient(ellipse at 50% 20%, color-mix(in srgb, ${accent} 16%, #d0d8e8) 0%, color-mix(in srgb, ${accent} 8%, transparent) 42%, transparent 70%)`,
+          background: `radial-gradient(ellipse at 50% 20%, #d0d8e8 0%, transparent 70%)`,
         }}
       />
       <div
         className="absolute bottom-[-8%] left-1/2 h-[42%] w-[88%] -translate-x-1/2 rounded-full blur-2xl"
         style={{
-          background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, ${accent} 14%, #8896aa) 0%, transparent 68%)`,
+          background: `radial-gradient(ellipse at 50% 40%, #6a7488 0%, transparent 68%)`,
         }}
       />
       {MOTES.map((mote) => (
@@ -46,8 +46,8 @@ export function PortraitBackdrop({ accent }: { accent: string }) {
             left: mote.left,
             width: mote.size,
             height: mote.size,
-            background: `radial-gradient(circle, color-mix(in srgb, ${accent} 80%, white), transparent 70%)`,
-            boxShadow: `0 0 8px color-mix(in srgb, ${accent} 70%, white)`,
+            background: `radial-gradient(circle, color-mix(in srgb, ${accent} 35%, white), transparent 70%)`,
+            boxShadow: `0 0 8px color-mix(in srgb, ${accent} 25%, white)`,
             animation: `emberRise ${mote.duration} linear ${mote.delay} infinite`,
             ['--drift' as string]: mote.drift,
           }}
