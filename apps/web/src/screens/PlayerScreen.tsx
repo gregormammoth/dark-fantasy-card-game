@@ -28,7 +28,11 @@ import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { DeckSwapPicker } from '@/components/player/DeckSwapPicker';
 import { UnlockCardModal } from '@/components/player/UnlockCardModal';
 import { LevelUpSkillModal } from '@/components/player/LevelUpSkillModal';
-import { TourModal } from '@/components/tour/TourModal';
+import {
+  TutorialBody,
+  TutorialModal,
+  TutorialTitle,
+} from '@/components/tour/TutorialModal';
 import { useTranslation } from '@/i18n/useTranslation';
 import { isStepSeen, markStepSeen } from '@/lib/tour';
 import type { MessageKey } from '@/i18n/types';
@@ -388,27 +392,32 @@ export function PlayerScreen({
 
   return (
     <div className="player-screen-bg flex min-h-[100dvh] justify-center px-6 py-8 sm:px-10">
-      <TourModal
+      <TutorialModal
         open={progressionTutorialOpen}
         onClose={closeProgressionTutorial}
         eyebrow={t('progressionTutorial.eyebrow')}
-        title={t('progressionTutorial.title')}
-        body={t('progressionTutorial.body')}
-        hints={[
-          {
-            title: t('progressionTutorial.hintATitle'),
-            body: t('progressionTutorial.hintABody'),
-          },
-          {
-            title: t('progressionTutorial.hintBTitle'),
-            body: t('progressionTutorial.hintBBody'),
-          },
-          {
-            title: t('progressionTutorial.hintCTitle'),
-            body: t('progressionTutorial.hintCBody'),
-          },
+        backLabel={t('progressionTutorial.back')}
+        nextLabel={t('progressionTutorial.next')}
+        doneLabel={t('progressionTutorial.letsGo')}
+        stepLabel={(step) => t('progressionTutorial.stepLabel', { step })}
+        steps={[
+          <>
+            <TutorialTitle>{t('progressionTutorial.title')}</TutorialTitle>
+            <TutorialBody>{t('progressionTutorial.body')}</TutorialBody>
+          </>,
+          <>
+            <TutorialTitle>{t('progressionTutorial.hintATitle')}</TutorialTitle>
+            <TutorialBody>{t('progressionTutorial.hintABody')}</TutorialBody>
+          </>,
+          <>
+            <TutorialTitle>{t('progressionTutorial.hintBTitle')}</TutorialTitle>
+            <TutorialBody>{t('progressionTutorial.hintBBody')}</TutorialBody>
+          </>,
+          <>
+            <TutorialTitle>{t('progressionTutorial.hintCTitle')}</TutorialTitle>
+            <TutorialBody>{t('progressionTutorial.hintCBody')}</TutorialBody>
+          </>,
         ]}
-        confirmLabel={t('common.gotIt')}
       />
       <div className="flex w-full max-w-[1400px] flex-col gap-5">
         <div className="flex items-center justify-between pr-12">
@@ -425,7 +434,18 @@ export function PlayerScreen({
           >
             {topLabel}
           </span>
-          <span className="text-[9px] tracking-[.2em] text-[#5c7086]">{t('player.ledger')}</span>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setProgressionTutorialOpen(true)}
+              title={t('progressionTutorial.helpTitle')}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(232,200,116,.4)] font-cinzel text-[13px] text-[#fff6e0] transition hover:-translate-y-[2px] hover:border-[#e8c874] hover:shadow-[0_0_20px_-6px_rgba(232,200,116,.6)]"
+              style={{ background: 'linear-gradient(160deg,rgba(232,200,116,.22),rgba(232,200,116,.05))', boxShadow: '0 1px 0 rgba(255,255,255,.08) inset,0 10px 20px -12px rgba(0,0,0,.7)' }}
+            >
+              ?
+            </button>
+            <span className="text-[9px] tracking-[.2em] text-[#5c7086]">{t('player.ledger')}</span>
+          </div>
         </div>
 
         <div className="flex gap-2.5">

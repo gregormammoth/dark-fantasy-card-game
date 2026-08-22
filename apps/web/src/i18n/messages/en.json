@@ -477,7 +477,12 @@
     "hintBTitle": "Player level",
     "hintBBody": "rises as class levels add up — every five class levels grant a player level you spend on Shield, Combo, Mana, Deck size, or Draw.",
     "hintCTitle": "Your battle portrait",
-    "hintCBody": "follows the deck you build on this screen."
+    "hintCBody": "follows the deck you build on this screen.",
+    "helpTitle": "How to play",
+    "back": "BACK",
+    "next": "NEXT",
+    "letsGo": "GOT IT",
+    "stepLabel": "Step {step}"
   },
   "explorationTutorial": {
     "eyebrow": "HOW TO PLAY · THE PRISON",

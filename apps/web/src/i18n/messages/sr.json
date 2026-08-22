@@ -474,7 +474,12 @@
     "hintBTitle": "Igrački nivo",
     "hintBBody": "raste kako se sabiraju nivoi klasa — svakih pet nivoa klase daje igrački nivo za Štit, Kombo, Manu, veličinu špila ili Vučene karte.",
     "hintCTitle": "Portret u borbi",
-    "hintCBody": "prati špil koji sastaviš na ovom ekranu."
+    "hintCBody": "prati špil koji sastaviš na ovom ekranu.",
+    "helpTitle": "Kako igrati",
+    "back": "NAZAD",
+    "next": "DALJE",
+    "letsGo": "RAZUMEM",
+    "stepLabel": "Korak {step}"
   },
   "explorationTutorial": {
     "eyebrow": "KAKO IGRATI · ZATVOR",

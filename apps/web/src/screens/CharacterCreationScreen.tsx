@@ -3,7 +3,12 @@
 import { useState, type FormEvent } from 'react';
 import { PLAYER_GENDER_PORTRAITS } from '@dark-fantasy/content/portraits';
 import type { PlayerGender, PlayerProfile } from '@dark-fantasy/shared/types/player';
-import { TourModal } from '@/components/tour/TourModal';
+import {
+  TutorialBody,
+  TutorialModal,
+  TutorialTip,
+  TutorialTitle,
+} from '@/components/tour/TutorialModal';
 import { CharacterPortrait } from '@/components/CharacterPortrait';
 import { useTranslation } from '@/i18n/useTranslation';
 import { isCharacterCoachSeen, markCharacterCoachSeen } from '@/lib/tour';
@@ -43,15 +48,21 @@ export function CharacterCreationScreen({ onCreate }: CharacterCreationScreenPro
 
   return (
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#090706] px-5 py-10 text-[#e8ddcf]">
-      <TourModal
+      <TutorialModal
         open={tutorialOpen}
         onClose={closeTutorial}
         eyebrow={t('welcomeTutorial.eyebrow')}
-        title={t('welcomeTutorial.title')}
-        body={t('welcomeTutorial.body')}
-        tipLabel={t('welcomeTutorial.tip')}
-        tip={t('welcomeTutorial.tipBody')}
-        confirmLabel={t('common.begin')}
+        backLabel={t('explorationTutorial.back')}
+        nextLabel={t('explorationTutorial.next')}
+        doneLabel={t('common.begin')}
+        stepLabel={(step) => t('explorationTutorial.stepLabel', { step })}
+        steps={[
+          <>
+            <TutorialTitle>{t('welcomeTutorial.title')}</TutorialTitle>
+            <TutorialBody>{t('welcomeTutorial.body')}</TutorialBody>
+            <TutorialTip label={t('welcomeTutorial.tip')}>{t('welcomeTutorial.tipBody')}</TutorialTip>
+          </>,
+        ]}
       />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(122,90,190,.13),transparent_42%),radial-gradient(circle_at_50%_85%,rgba(201,162,74,.08),transparent_34%)]" />
       <form
